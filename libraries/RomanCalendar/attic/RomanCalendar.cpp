@@ -1,8 +1,15 @@
-#include "Arduino.h"
+//#include "stdafx.h" // comment out for cross-platform/embedded. It doesn't play well with Windows Visual Studio if you wrap it in a #ifdef _WIN32!
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../Time/TimeLib.h"
+
+#ifndef _WIN32
+	#include "Arduino.h"
+	#include "../Time/TimeLib.h"
+#else
+	#include <time.h>
+#endif
+
 #include "RomanCalendar.h"
 
 const char* const RomanCalendar::DAYS_OF_WEEK[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -82,19 +89,19 @@ const char* const RomanCalendar::RANK_PRIORITY[14] = {
 };
 
 const RomanCalendar::RankType RomanCalendar::RANK_TYPE[14] = {
-	RANKTYPE_EASTER_TRIDUUM, 
-	RANKTYPE_PRIMARY_LITURGICAL_DAYS, 
-	RANKTYPE_SOLEMNITY, 
-	RANKTYPE_SOLEMNITY, 
-	RANKTYPE_FEAST, 
-	RANKTYPE_SUNDAY, 
-	RANKTYPE_FEAST, 
-	RANKTYPE_FEAST, 
-	RANKTYPE_FERIAL, 
-	RANKTYPE_MEMORIAL, 
-	RANKTYPE_MEMORIAL, 
-	RANKTYPE_MEMORIAL_OPT, 
-	RANKTYPE_FERIAL, 
+	RANKTYPE_EASTER_TRIDUUM,
+	RANKTYPE_PRIMARY_LITURGICAL_DAYS,
+	RANKTYPE_SOLEMNITY,
+	RANKTYPE_SOLEMNITY,
+	RANKTYPE_FEAST,
+	RANKTYPE_SUNDAY,
+	RANKTYPE_FEAST,
+	RANKTYPE_FEAST,
+	RANKTYPE_FERIAL,
+	RANKTYPE_MEMORIAL,
+	RANKTYPE_MEMORIAL,
+	RANKTYPE_MEMORIAL_OPT,
+	RANKTYPE_FERIAL,
 	RANKTYPE_COMMEMORATION
 };
 
@@ -145,7 +152,7 @@ RomanCalendar::~RomanCalendar(void) {
 
 
 void RomanCalendar::datestests() {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	printf("\n\ndatestests()\n");
 
 	struct tm ts;
@@ -161,7 +168,7 @@ void RomanCalendar::datestests() {
 }
 
 bool RomanCalendar::getTm(int day, int month, int year, int hours, int minutes, int seconds, struct tm* ts) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	ts->tm_sec = seconds;					/* seconds,  range 0 to 59          */
 	ts->tm_min = minutes;					/* minutes, range 0 to 59           */
 	ts->tm_hour = hours;					/* hours, range 0 to 23             */
@@ -180,7 +187,7 @@ bool RomanCalendar::getTm(int day, int month, int year, int hours, int minutes, 
 }
 
 time_t RomanCalendar::date(int day, int month, int year) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm ts;
 	ts.tm_sec = 0;							/* seconds,  range 0 to 59          */
 	ts.tm_min = 0;							/* minutes, range 0 to 59           */
@@ -200,22 +207,22 @@ time_t RomanCalendar::date(int day, int month, int year) {
 	ts.Month = month;						/* month, range 1 to 12             */
 	ts.Year = year - BEGIN_EPOCH;			/* The number of years since 1970   */
 
-	return ::makeTime(ts);	
+	return ::makeTime(ts);
 #endif
 }
 
 time_t RomanCalendar::weekday_before(int weekdayBefore, time_t date) {
 	if (weekdayBefore < 0 || weekdayBefore > 6) return (time_t)-1;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	int currentWeekday = ts->tm_wday;
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(date, ts); 
+	::breakTime(date, ts);
 	int currentWeekday = ts.Wday - 1;
 #endif`
-//	s->tm_isdst = -1; // set is dst to auto
+	//	s->tm_isdst = -1; // set is dst to auto
 
 
 	int daysBefore = WEEK; // if the date is exactly one week ago
@@ -227,13 +234,13 @@ time_t RomanCalendar::weekday_before(int weekdayBefore, time_t date) {
 
 	time_t outputDate = date - (daysBefore * DAY); // subtract number of days (in seconds) from date
 
-/*
-	char inDateStr[100];
-	char outDateStr[100];
-	sprintf(inDateStr, "%s", ctime(&date));
-	sprintf(outDateStr,"%s", ctime(&outputDate));
-	printf("Output: the %s before %s is %s\n", DAYS_OF_WEEK[weekdayBefore], inDateStr, outDateStr);
-*/
+												   /*
+												   char inDateStr[100];
+												   char outDateStr[100];
+												   sprintf(inDateStr, "%s", ctime(&date));
+												   sprintf(outDateStr,"%s", ctime(&outputDate));
+												   printf("Output: the %s before %s is %s\n", DAYS_OF_WEEK[weekdayBefore], inDateStr, outDateStr);
+												   */
 
 	return outputDate;
 
@@ -251,15 +258,15 @@ time_t RomanCalendar::saturday_before(time_t date) { return weekday_before(6, da
 time_t RomanCalendar::weekday_after(int weekdayAfter, time_t date) {
 	if (weekdayAfter < 0 || weekdayAfter > 6) return (time_t)-1;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	int currentWeekday = ts->tm_wday;
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(date, ts); 
+	::breakTime(date, ts);
 	int currentWeekday = ts.Wday - 1;
 #endif
-	
+
 	int daysAfter = WEEK; // if the date is exactly one week later
 
 	if (currentWeekday != weekdayAfter) { // otherwise (will be true in most cases)
@@ -269,13 +276,13 @@ time_t RomanCalendar::weekday_after(int weekdayAfter, time_t date) {
 
 	time_t outputDate = date + (daysAfter * DAY);  // add number of days (in seconds) from date
 
-/*
-	char inDateStr[100];
-	char outDateStr[100];
-	sprintf(inDateStr, "%s", ctime(&date));
-	sprintf(outDateStr, "%s", ctime(&outputDate));
-	printf("Output: the %s after %s is %s\n", DAYS_OF_WEEK[weekdayAfter], inDateStr, outDateStr);
-*/
+												   /*
+												   char inDateStr[100];
+												   char outDateStr[100];
+												   sprintf(inDateStr, "%s", ctime(&date));
+												   sprintf(outDateStr, "%s", ctime(&outputDate));
+												   printf("Output: the %s after %s is %s\n", DAYS_OF_WEEK[weekdayAfter], inDateStr, outDateStr);
+												   */
 
 	return outputDate;
 	// bug: when crossing dst, may be ahead or behind by one hour - will not affect actual date.
@@ -290,12 +297,12 @@ time_t RomanCalendar::friday_after(time_t date) { return weekday_after(5, date);
 time_t RomanCalendar::saturday_after(time_t date) { return weekday_after(6, date); }
 
 int RomanCalendar::dayofweek(time_t date) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_wday;
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(date, ts); 
+	::breakTime(date, ts);
 	return ts.Wday - 1;
 #endif
 }
@@ -309,7 +316,7 @@ bool RomanCalendar::friday(time_t date) { return (dayofweek(date) == 5); }
 bool RomanCalendar::saturday(time_t date) { return (dayofweek(date) == 6); }
 
 int RomanCalendar::year(time_t date) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_year + BEGIN_EPOCH;
 #else
@@ -318,12 +325,12 @@ int RomanCalendar::year(time_t date) {
 }
 
 int RomanCalendar::dayofmonth(time_t date) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_mday;
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(date, ts); 
+	::breakTime(date, ts);
 	return ts.Day;
 #endif
 }
@@ -337,7 +344,7 @@ bool RomanCalendar::issameday(time_t date1, time_t date2) {
 	printf("\n\n");
 	*/
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts = gmtime(&date1);
 	int d1 = ts->tm_mday;
 	int m1 = ts->tm_mon;
@@ -348,14 +355,14 @@ bool RomanCalendar::issameday(time_t date1, time_t date2) {
 	if (ts->tm_mday == d1 && ts->tm_mon == m1 && ts->tm_year == y1) return true;
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(date1, ts); 
+	::breakTime(date1, ts);
 
 	int d1 = ts.Day;
 	int m1 = ts.Month;
 	int y1 = ts.Year;
 
 	::breakTime(date2, ts);
-	if (ts.Day == d1 && ts.Month == m1 && ts.Year == y1) return true;	
+	if (ts.Day == d1 && ts.Month == m1 && ts.Year == y1) return true;
 #endif
 
 	return false;
@@ -363,11 +370,11 @@ bool RomanCalendar::issameday(time_t date1, time_t date2) {
 }
 
 int RomanCalendar::date_difference(time_t date1, time_t date2) { // assumes that time_t values are seconds since 1970 or 1900, and can have arithmetic
-	//if (date1 >= date2) {								 // performed on them. Not guaranteed on all systems, but should work on arduino embedded.
-	//	return (int)(date1 - date2);
-	//}
-	//else {
-		return (int)(date2 - date1);
+																 //if (date1 >= date2) {								 // performed on them. Not guaranteed on all systems, but should work on arduino embedded.
+																 //	return (int)(date1 - date2);
+																 //}
+																 //else {
+	return (int)(date2 - date1);
 	//}
 }
 
@@ -540,7 +547,7 @@ RomanCalendar::Season RomanCalendar::season(time_t date) {
 
 	if ((first_advent_sunday(year) <= date) && (nativity(year) > date)) {
 		return SEASON_ADVENT;
-	}	
+	}
 
 	if ((nativity(liturgical_year(date)) <= date) && (baptism_of_lord(liturgical_year(date))) >= date) {
 		/*printf("--dates of nativity for date, and baptism of lord\n");
@@ -608,7 +615,7 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 		week = 0;
 		//printf("|");
 	}
-	
+
 	if (seasonn == SEASON_LENT && week == 0) {
 		week = sunday(date) ? 1 : 0;
 		//printf("*");
@@ -618,22 +625,22 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 		//# ordinary time does not begin with Sunday, but the first week
 		//# is week 1, not 0
 		week += 1;					// first period of ordinary time
-		
-		/*
-		printf("year: %d", year);
-		printf(" pentecost: ");
-		print_date(pentecost(year - 1));
-		printf(" this date: ");
-		print_date(date);
-		printf("------------------------------------------------\n");
-		*/
+
+									/*
+									printf("year: %d", year);
+									printf(" pentecost: ");
+									print_date(pentecost(year - 1));
+									printf(" this date: ");
+									print_date(date);
+									printf("------------------------------------------------\n");
+									*/
 
 		if (date > pentecost(year - 1)) { // second period of ordinary time
-			/*
-			printf("first_advent_sunday = ");
-			print_date(first_advent_sunday(RomanCalendar::year(date)));
-			printf("\t");
-			*/
+										  /*
+										  printf("first_advent_sunday = ");
+										  print_date(first_advent_sunday(RomanCalendar::year(date)));
+										  printf("\t");
+										  */
 			int weeks_after_date = (date_difference(date, first_advent_sunday(RomanCalendar::year(date)))) / (WEEK * DAY);
 			week = 34 - weeks_after_date;
 			if (sunday(date)) week += 1;
@@ -653,19 +660,19 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 	time_t week1_beginning = season_beginning(seasonn, date);
 
 	if (!sunday(week1_beginning)) { // Lent begins on Ash Wednesday, this will set the starting week to the following sunday
-		week1_beginning = sunday_after(week1_beginning);
+	week1_beginning = sunday_after(week1_beginning);
 	}
 
 	int week = (date_difference(week1_beginning, date) / (DAY * WEEK)) + 1;
 
 	if (seasonn == SEASON_ORDINARY) {
-		week += 1;
+	week += 1;
 
-		if (date > pentecost(year)) { // second period of ordinary time
-			int weeks_after_date = (date_difference(date, first_advent_sunday(RomanCalendar::year(date)))) / (WEEK * DAY);
-			week = 34 - weeks_after_date;
-			if (sunday(date)) week += 1;
-		}
+	if (date > pentecost(year)) { // second period of ordinary time
+	int weeks_after_date = (date_difference(date, first_advent_sunday(RomanCalendar::year(date)))) / (WEEK * DAY);
+	week = 34 - weeks_after_date;
+	if (sunday(date)) week += 1;
+	}
 	}
 
 	printf("week == %d\n", week);
@@ -673,7 +680,7 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 	*/
 }
 
-const RomanCalendar::Season SEASONS_SUNDAY_PRIMARY[3] = {RomanCalendar::SEASON_ADVENT, RomanCalendar::SEASON_LENT, RomanCalendar::SEASON_EASTER};
+const RomanCalendar::Season SEASONS_SUNDAY_PRIMARY[3] = { RomanCalendar::SEASON_ADVENT, RomanCalendar::SEASON_LENT, RomanCalendar::SEASON_EASTER };
 char* RomanCalendar::sunday_temporale(time_t date) {
 	if (!(sunday(date))) return NULL;
 
@@ -687,7 +694,7 @@ char* RomanCalendar::sunday_temporale(time_t date) {
 	int week = season_week(seas, date);
 	ordinalize(week);
 
-	switch(seas)
+	switch (seas)
 	{
 	case SEASON_ADVENT:
 		sprintf(_buffer, "%s Sunday of Advent", _ordinal); // %s = week
@@ -725,7 +732,7 @@ char* RomanCalendar::ferial_temporale(time_t date) {
 		if (date >= RomanCalendar::date(17, 12, year(date))) {
 			rank = RANKS_FERIAL_PRIVILEGED;
 			ordinalize(dayofmonth(date)); // writes it into the object string variable "_ordinal"
-			sprintf (_buffer, "%s December", _ordinal); // %s = ordinal day of month
+			sprintf(_buffer, "%s December", _ordinal); // %s = ordinal day of month
 			bIsSet = true;
 		}
 		break;
@@ -733,18 +740,19 @@ char* RomanCalendar::ferial_temporale(time_t date) {
 	case SEASON_CHRISTMAS:
 		if (date < mother_of_god(liturgical_year(date))) {
 			rank = RANKS_FERIAL_PRIVILEGED;
-			
+
 			//print_date(date);
 			//print_date(mother_of_god(liturgical_year(date)));
 			//printf("dayofmonth(date) = %d, dayofmonth(nativity() = %d\n", dayofmonth(date), dayofmonth(nativity(year(date))));
 			//printf("mother_of_god(%d)=", RomanCalendar::year(date));
 			//print_date(mother_of_god(RomanCalendar::year(date)));
 			//printf("*\n");
-			
+
 			ordinalize(dayofmonth(date) - dayofmonth(nativity(RomanCalendar::year(date))) + 1); //# 1 - based counting;
 			sprintf(_buffer, "%s day of Christmas Octave", _ordinal);
 			bIsSet = true;
-		} else if(date > epiphany(RomanCalendar::year(date))) {
+		}
+		else if (date > epiphany(RomanCalendar::year(date))) {
 			sprintf(_buffer, "%s after Epiphany", DAYS_OF_WEEK[dayofweek(date)]);
 			bIsSet = true;
 		}
@@ -780,7 +788,7 @@ char* RomanCalendar::ferial_temporale(time_t date) {
 		ordinalize(week); // writes it into the object string variable "_ordinal"
 		sprintf(_buffer, "%s, %s week of Advent", DAYS_OF_WEEK[dayofweek(date)], _ordinal); // %s1 = day of week, %s2 ordinal week of season
 		break;
-		
+
 	case SEASON_CHRISTMAS:
 		sprintf(_buffer, "%s after Christmas Octave", DAYS_OF_WEEK[dayofweek(date)]); // %s1 = day of week
 		break;
@@ -810,23 +818,23 @@ char* RomanCalendar::liturgical_day(time_t date) {
 	Solemnities s;
 
 	//if (issameday(date, first_advent_sunday(year)) {s = ;
-	if (issameday(date, nativity(year))) { s = SOLEMNITIES_NATIVITY; bIsSolemnity = true;}
-	if (issameday(date, holy_family(year))) { s = SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true;}
-	if (issameday(date, mother_of_god(year))) { s = SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true;}
-	if (issameday(date, epiphany(year))) { s = SOLEMNITIES_EPIPHANY;  bIsSolemnity = true;}
-	if (issameday(date, baptism_of_lord(year))) { s = SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true;}
-	if (issameday(date, ash_wednesday(year))) { s = SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true;}
-	if (issameday(date, palm_sunday(year))) { s = SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true;}
-	if (issameday(date, good_friday(year))) { s = SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true;}
-	if (issameday(date, holy_saturday(year))) { s = SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true;}
+	if (issameday(date, nativity(year))) { s = SOLEMNITIES_NATIVITY; bIsSolemnity = true; }
+	if (issameday(date, holy_family(year))) { s = SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; }
+	if (issameday(date, mother_of_god(year))) { s = SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true; }
+	if (issameday(date, epiphany(year))) { s = SOLEMNITIES_EPIPHANY;  bIsSolemnity = true; }
+	if (issameday(date, baptism_of_lord(year))) { s = SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; }
+	if (issameday(date, ash_wednesday(year))) { s = SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; }
+	if (issameday(date, palm_sunday(year))) { s = SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; }
+	if (issameday(date, good_friday(year))) { s = SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; }
+	if (issameday(date, holy_saturday(year))) { s = SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; }
 	if (issameday(date, easter_sunday(year))) { s = SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; }
-	if (issameday(date, ascension(year))) { s = SOLEMNITIES_ASCENSION;  bIsSolemnity = true;}
-	if (issameday(date, pentecost(year))) { s = SOLEMNITIES_PENTECOST;  bIsSolemnity = true;}
-	if (issameday(date, holy_trinity(year))) { s = SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true;}
-	if (issameday(date, corpus_christi(year))) { s = SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true;}
-	if (issameday(date, sacred_heart(year))) { s = SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true;}
-	if (issameday(date, immaculate_heart(year))) { s = SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true;}
-	if (issameday(date, christ_king(year))) { s = SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true;}
+	if (issameday(date, ascension(year))) { s = SOLEMNITIES_ASCENSION;  bIsSolemnity = true; }
+	if (issameday(date, pentecost(year))) { s = SOLEMNITIES_PENTECOST;  bIsSolemnity = true; }
+	if (issameday(date, holy_trinity(year))) { s = SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; }
+	if (issameday(date, corpus_christi(year))) { s = SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; }
+	if (issameday(date, sacred_heart(year))) { s = SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; }
+	if (issameday(date, immaculate_heart(year))) { s = SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true; }
+	if (issameday(date, christ_king(year))) { s = SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true; }
 
 	_season = SEASONS[season(date)];
 
@@ -860,14 +868,15 @@ bool RomanCalendar::includes(const char* s, const char* const strarray[]) {
 }
 
 void RomanCalendar::temporaletests() {
+#ifdef _WIN32
 	printf("\n\ntemporaletests()\n");
 	//printf("epiphany is in SUNDAY_TRANSFERABLE_SOLEMNITIES[]: %s\n", includes("epiphany", SUNDAY_TRANSFERABLE_SOLEMNITIES) ? "true" : "false");
 	//printf("christmas is in SUNDAY_TRANSFERABLE_SOLEMNITIES[]: %s\n", includes("christmas", SUNDAY_TRANSFERABLE_SOLEMNITIES) ? "true" : "false");
-	
+
 	//easter_tests();
 	//return;
 	//epiphany_tests();
-/*
+	
 	time_t t;
 	struct tm* ts;
 
@@ -896,13 +905,15 @@ void RomanCalendar::temporaletests() {
 			}
 		}
 	}
+	
 	fclose(fpo);
 	printf("wrote csv\n");
-*/
+#else
+#endif
 }
 
 int RomanCalendar::get_monthdays(int mon, int year) {
-	static const int days[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	static const int days[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	int leap = yisleap(year) ? 1 : 0;
 
 	return days[mon] + leap;
@@ -958,12 +969,12 @@ char* RomanCalendar::ordinalize(int number) {
 	}
 
 	sprintf(_ordinal, str, number);
-	
+
 	return _ordinal;
 }
 
 void RomanCalendar::print_date(time_t t) {
-#ifdef _WINDOWS
+#ifdef _WIN32
 	struct tm* ts;
 
 	char buffer[128];
@@ -973,12 +984,12 @@ void RomanCalendar::print_date(time_t t) {
 	printf("%s ", buffer);
 #else
 	::tmElements_t ts;						// for arduino
-	::breakTime(t, ts); 
-	
+	::breakTime(t, ts);
+
 	Serial.print(ts.Day);
 	Serial.print("-");
 	Serial.print(ts.Month);
 	Serial.print("-");
-	Serial.print(ts.Year);	
+	Serial.print(ts.Year);
 #endif
 }

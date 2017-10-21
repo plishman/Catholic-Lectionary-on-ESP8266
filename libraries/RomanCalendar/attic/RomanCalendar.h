@@ -1,7 +1,13 @@
+#pragma once
 #ifndef RomanCalender_h
 #define RomanCalendar_h
 
-const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time_t, sometimes 1970 (may be on embedded system)
+#ifdef _WIN32
+	const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time_t, sometimes 1970 (may be on embedded system)
+#else
+	const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time_t, sometimes 1970 (may be on embedded system)
+#endif
+
 const int WEEK = 7;
 const int DAY = 24 * 3600;
 
@@ -30,19 +36,19 @@ public:
 		RANKS_SOLEMNITY_GENERAL = 11,						//= Rank.new(1.3, 'rank.1_3', 'rank.short.solemnity'), # description may not be exact
 		RANKS_SOLEMNITY_PROPER = 10,						//= Rank.new(1.4, 'rank.1_4', 'rank.short.solemnity'),
 															//
-		RANKS_FEAST_LORD_GENERAL = 9,						//= Rank.new(2.5, 'rank.2_5', 'rank.short.feast'),
-		RANKS_SUNDAY_UNPRIVILEGED = 8,						//= Rank.new(2.6, 'rank.2_6', 'rank.short.sunday'),
-		RANKS_FEAST_GENERAL = 7,							//= Rank.new(2.7, 'rank.2_7', 'rank.short.feast'),
-		RANKS_FEAST_PROPER = 6,								//= Rank.new(2.8, 'rank.2_8', 'rank.short.feast'),
-		RANKS_FERIAL_PRIVILEGED = 5,						//= Rank.new(2.9, 'rank.2_9', 'rank.short.ferial'),
-		
-		RANKS_MEMORIAL_GENERAL = 4,							//= Rank.new(3.10, 'rank.3_10', 'rank.short.memorial'),
-		RANKS_MEMORIAL_PROPER = 3,							//= Rank.new(3.11, 'rank.3_11', 'rank.short.memorial'),
-		RANKS_MEMORIAL_OPTIONAL = 2,						//= Rank.new(3.12, 'rank.3_12', 'rank.short.memorial_opt'),
-		RANKS_FERIAL = 1,									//= Rank.new(3.13, 'rank.3_13', 'rank.short.ferial'),
-		//# not included as a celebration rank on it's own
-		//# in the Table of Liturgical Days
-		RANKS_COMMEMORATION = 0,							//= Rank.new(4.0, 'rank.4_0', 'rank.short.commemoration')
+															RANKS_FEAST_LORD_GENERAL = 9,						//= Rank.new(2.5, 'rank.2_5', 'rank.short.feast'),
+															RANKS_SUNDAY_UNPRIVILEGED = 8,						//= Rank.new(2.6, 'rank.2_6', 'rank.short.sunday'),
+															RANKS_FEAST_GENERAL = 7,							//= Rank.new(2.7, 'rank.2_7', 'rank.short.feast'),
+															RANKS_FEAST_PROPER = 6,								//= Rank.new(2.8, 'rank.2_8', 'rank.short.feast'),
+															RANKS_FERIAL_PRIVILEGED = 5,						//= Rank.new(2.9, 'rank.2_9', 'rank.short.ferial'),
+
+															RANKS_MEMORIAL_GENERAL = 4,							//= Rank.new(3.10, 'rank.3_10', 'rank.short.memorial'),
+															RANKS_MEMORIAL_PROPER = 3,							//= Rank.new(3.11, 'rank.3_11', 'rank.short.memorial'),
+															RANKS_MEMORIAL_OPTIONAL = 2,						//= Rank.new(3.12, 'rank.3_12', 'rank.short.memorial_opt'),
+															RANKS_FERIAL = 1,									//= Rank.new(3.13, 'rank.3_13', 'rank.short.ferial'),
+																												//# not included as a celebration rank on it's own
+																												//# in the Table of Liturgical Days
+																												RANKS_COMMEMORATION = 0,							//= Rank.new(4.0, 'rank.4_0', 'rank.short.commemoration')
 	};
 
 	enum RankType {
@@ -56,7 +62,7 @@ public:
 		RANKTYPE_FERIAL,
 		RANKTYPE_COMMEMORATION
 	};
-	
+
 	static const RankType RANK_TYPE[14];
 
 	enum Solemnities {
@@ -86,11 +92,11 @@ public:
 		COLOURS_RED,
 	};
 
-	typedef struct Solemnity {
+	typedef struct {
 		Solemnities s;
 		Colours c;
 		Ranks r;
-	};
+	} Solemnity;
 
 	static const char* const DAYS_OF_WEEK[7];
 
@@ -105,14 +111,14 @@ public:
 	static const Colours SOLEMNITIES_COLOURS[17];
 	/*
 	struct Celebration {
-		CelebrationName celebration_name;
-		CelebrationFullName celebration_full_name;
-		Colour colour;
-		Season season;
-		RankEnum rank;
+	CelebrationName celebration_name;
+	CelebrationFullName celebration_full_name;
+	Colour colour;
+	Season season;
+	RankEnum rank;
 
 	};
-*/
+	*/
 	bool _transfer_to_sunday; // flag determines whether epiphany, ascension and corpus Christi should be transferred to sunday (us, uk etc)
 
 	RomanCalendar(bool transfer_to_sunday);
@@ -148,7 +154,7 @@ public:
 	bool thursday(time_t date);
 	bool friday(time_t date);
 	bool saturday(time_t date);
-	
+
 	int date_difference(time_t date1, time_t date2);
 	int year(time_t date);
 	int dayofmonth(time_t date);
@@ -192,7 +198,7 @@ public:
 	void temporaletests();
 	int get_monthdays(int mon, int year);
 	bool yisleap(int year);
-	
+
 	void easter_tests();
 	void epiphany_tests(void);
 	void print_date(time_t t);
