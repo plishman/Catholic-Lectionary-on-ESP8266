@@ -43,6 +43,9 @@ void loop() {
       }
     }
   }
+  while(true) {
+    delay(5000);
+  }
 }
 
 void slash(void) {
@@ -70,4 +73,7 @@ int get_monthdays(int mon, int year) {
 bool yisleap(int year) {
   return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
+
+//Sketch uses 230913 bytes (22%) of program storage space. Maximum is 1044464 bytes.
+//Global variables use 33904 bytes (41%) of dynamic memory, leaving 48016 bytes for local variables. Maximum is 81920 bytes.
 

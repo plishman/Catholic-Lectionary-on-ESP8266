@@ -27,7 +27,8 @@ void setup() {
   BibleVerse b(10);
 
   //String verse = b.verse(50,3,16);
-  String verse = b.verse(22,22,22);
+  //String verse = b.verse(22,22,22);
+  String verse = b.verse(1,18,13);
 
   if (verse == String("")) Serial.println("Verse not found");
   
@@ -247,7 +248,7 @@ String readCsvString(String csvLine, int* ppos, bool bSingleWordUnquoted) {
         continue;                                                   // and read the next character. If it's a quote, it will be added to the string, if not, it will not and the end of the
       }                                                             // field will have been reached
       else {                                                        // if true, this is the second quote, hence the quote is escaped and not at the end of the line
-        Serial.println("no longer looking for escape quote");
+        //Serial.println("no longer looking for escape quote");
         bLookingForEscapeQuote = false;                             // reset the looking for escaped quote flag, no longer looking for it
       }
     } 
