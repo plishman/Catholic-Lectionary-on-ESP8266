@@ -113,7 +113,7 @@ void Bible::dump_refs() {
 	r = refsList.get(i);
 
 	while (r != NULL) {
-/*
+
 		printf("%s", r->refs.c_str());
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
 			printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str());
@@ -137,12 +137,12 @@ void Bible::dump_refs() {
 					sentence_ref(r->end_first_sentence, r->end_last_sentence).c_str());
 			}
 		}
-*/
+
 		i++;
 		r = refsList.get(i);
-		Serial.println(".");
+		//Serial.println(".");
 	} 
-	Serial.println("finished");
+	//Serial.println("finished");
 }
 
 String Bible::sentence_ref(int from, int to) {

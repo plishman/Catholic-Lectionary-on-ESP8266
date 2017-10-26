@@ -1,9 +1,5 @@
-//#include "stdafx.h" // comment out for cross-platform/embedded. It doesn't play well with Windows Visual Studio if you wrap it in a #ifdef _WIN32!
+#include "stdafx.h" // comment out for cross-platform/embedded. It doesn't play well with Windows Visual Studio if you wrap it in a #ifdef _WIN32!
 #include "Temporale.h"
-
-//const char* const RomanCalendar::DAYS_OF_WEEK[7] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-
-//const char* const Temporale::SUNDAY_TRANSFERABLE_SOLEMNITIES[3] = { "epiphany", "ascension", "corpus_christi" };
 
 /*
 const char* const RomanCalendar::SOLEMNITIES[17] = {
@@ -26,29 +22,6 @@ const char* const RomanCalendar::SOLEMNITIES[17] = {
 	"Our Lord Jesus Christ, King of the Universe"		//christ_king
 };
 */
-/*
-const char* const Temporale::SOLEMNITIES_I18n[17] = {
-	"temporale.solemnity.nativity",						//nativity
-	"temporale.solemnity.holy_family",					//holy_family
-	"temporale.solemnity.mother_of_god",				//mother_of_god
-	"temporale.solemnity.epiphany",						//epiphany
-	"temporale.solemnity.baptism_of_lord",				//baptism_of_lord
-	"temporale.solemnity.ash_wednesday",				//ash_wednesday
-	"temporale.solemnity.palm_sunday",					//palm_sunday
-	"temporale.solemnity.good_friday",					//good_friday
-	"temporale.solemnity.holy_saturday",				//holy_saturday
-	"temporale.solemnity.easter_sunday",				//easter_sunday
-	"temporale.solemnity.ascension",					//ascension
-	"temporale.solemnity.pentecost",					//pentecost
-	"temporale.solemnity.holy_trinity",					//holy_trinity
-	"temporale.solemnity.corpus_christi",				//corpus_christi
-	"temporale.solemnity.sacred_heart",					//sacred_heart
-	"temporale.solemnity.immaculate_heart",				//immaculate_heart
-	"temporale.solemnity.christ_king"					//christ_king
-};
-*/
-//const char* const Temporale::LITURGICAL_YEARS[3] = { "A", "B", "C" };
-//const char* const Temporale::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 const Enums::Ranks Temporale::SOLEMNITIES_RANKS[17] = {		// the ranks of the solemnities, in the same order as in solemnities[17]
 	Enums::RANKS_PRIMARY,										//nativity
@@ -90,134 +63,6 @@ const Enums::Colours Temporale::SOLEMNITIES_COLOURS[17] = {	// the colours of th
 	Enums::COLOURS_WHITE										//christ_king
 };
 
-/*
-const char* const RomanCalendar::SEASONS[5] = {
-	"Advent",
-	"Christmas Season",
-	"Lent",
-	"Easter Season",
-	"Ordinary Time"
-};
-*/
-
-/*
-const char* const RomanCalendar::I18n_SEASONS[5] = {
-	"temporale.season.advent",
-	"temporale.season.christmas",
-	"temporale.season.lent",
-	"temporale.season.easter",
-	"temporale.season.ordinary"
-};
-*/
-/*
-const char* const Temporale::I18n_SEASONS[5] = {
-	"advent",
-	"christmas",
-	"lent",
-	"easter",
-	"ordinary"
-};
-*/
-/*
-const char* const Temporale::RANK_PRIORITY[14] = {
-	"4.0", "3.13", "3.12", "3.11", "3.10", "2.9", "2.8", "2.7", "2.6", "2.5", "1.4", "1.3", "1.2", "1.1"
-};
-*/
-/*
-const Temporale::RankType Temporale::RANK_TYPE[14] = {
-	RANKTYPE_EASTER_TRIDUUM,
-	RANKTYPE_PRIMARY_LITURGICAL_DAYS,
-	RANKTYPE_SOLEMNITY,
-	RANKTYPE_SOLEMNITY,
-	RANKTYPE_FEAST,
-	RANKTYPE_SUNDAY,
-	RANKTYPE_FEAST,
-	RANKTYPE_FEAST,
-	RANKTYPE_FERIAL,
-	RANKTYPE_MEMORIAL,
-	RANKTYPE_MEMORIAL,
-	RANKTYPE_MEMORIAL_OPT,
-	RANKTYPE_FERIAL,
-	RANKTYPE_COMMEMORATION
-};
-*/
-/****
-const char* const Temporale::I18n_COLOURS[4] = {
-	"colour.green",	
-	"colour.violet",
-	"colour.white",	
-	"colour.red"
-};
-
-const char* const Temporale::I18n_RANK_NAMES[14] = {
-	"rank.4_0",
-	"rank.3_13",
-	"rank.3_12",
-	"rank.3_11",
-	"rank.3_10",
-	"rank.2_9",
-	"rank.2_8",
-	"rank.2_7",
-	"rank.2_6",
-	"rank.2_5",
-	"rank.1_4",
-	"rank.1_3",
-	"rank.1_2",
-	"rank.1_1"
-};
-****/
-/*
-const char* const RomanCalendar::RANK_NAME[14] = { // order of array items is significant, since they are indexed by Ranks enum members
-	"Commemorations",
-	"Ferials",
-	"Optional memorials",
-	"Proper obligatory memorials",
-	"Obligatory memorials in the General Calendar",
-	"Privileged ferials",
-	"Proper feasts",
-	"Feasts of saints in the General Calendar",
-	"Unprivileged Sundays",
-	"Feasts of the Lord in the General Calendar",
-	"Proper solemnities",
-	"Solemnities in the General Calendar",
-	"Primary liturgical days",
-	"Easter triduum"
-};
-*/
-/*
-const char* const RomanCalendar::RANK_TYPES[9] = {
-	"", // these first two are for easter and primary liturgical days, where no short description is needed
-	"",
-	"solemnity",
-	"feast",
-	"Sunday",
-	"memorial",
-	"optional memorial",
-	"ferial",
-	"commemoration"
-};
-*/
-/*
-const char* const RomanCalendar::SUNDAYS_AND_FERIALS[16] = {
-	"%s Sunday of Advent",
-	"%s Sunday after the Nativity of the Lord",
-	"%s Sunday of Easter",
-	"%s Sunday of Lent",
-	"%s Sunday in Ordinary Time",
-	"%s December",
-	"%s day of Christmas Octave",
-	"%s after Epiphany",
-	"%s after Ash Wednesday",
-	"%s of Holy Week",
-	"Easter %s"
-	"%s, %s week of Advent",
-	"%s after Christmas Octave",
-	"%s, %s week of Lent",
-	"%s, %s week of Easter",
-	"%s, %s week in Ordinary Time"
-};
-*/
-
 Temporale::Temporale(bool transfer_to_sunday, I18n* i ) {
 	_transfer_to_sunday = transfer_to_sunday;
 	_I18n = i;
@@ -227,277 +72,11 @@ Temporale::Temporale(bool transfer_to_sunday, I18n* i ) {
 Temporale::~Temporale(void) {
 	return;
 }
-/*
-const char* const Temporale::I18n_FILENAMES[7] = {
-	"daysofweek.txt",
-	"seasons.txt",
-	"colours.txt",
-	"solemnities.txt",
-	"ranknames.txt",
-	"ranktypes.txt",
-	"sundays_ferials.txt"
-};
-*/
-/*
-const char* const Temporale::I18n_LANGUAGES[5] = {
-	"en",
-	"it",
-	"fr",
-	"la",
-	"cs"
-};
-
-const char* const Temporale::I18n_SANCTORALE[5] = {
-	"universal-en.txt",
-	"universal-it.txt",
-	"universal-fr.txt",
-	"universal-la.txt",
-	"universal-cs.txt"
-};
-*/
-
-/*
-void RomanCalendar::loadI18nStrings(void) {
-	I18nLanguages l = LANGUAGE_EN;
-
-	readI18nfile(DAYS_OF_WEEK, 7, FILENAMES_SEASONS, l);					//readSeasons();
-	readI18nfile(SEASONS, 5, FILENAMES_SEASONS, l);							//readSeasons();
-	readI18nfile(COLOURS, 4, FILENAMES_COLOURS, l);							//readColours();
-	readI18nfile(SOLEMNITIES, 17, FILENAMES_SOLEMNITIES, l);				//readSolemnities/celebrations();
-	readI18nfile(RANK_NAME, 14, FILENAMES_RANKNAMES, l);					//readRanks();
-	readI18nfile(RANK_TYPES, 9, FILENAMES_RANKTYPES, l);					//readRankTypes();
-	readI18nfile(SUNDAYS_AND_FERIALS, 16, FILENAMES_SUNDAYSFERIALS, l);		//readSundaysFerials();
-}
-
-bool RomanCalendar::readI18nfile(char* strArray[], int num, I18nFilenames f, I18nLanguages l) {
-	char filename[128];
-
-	sprintf(filename, "locale/%s/%s", I18n_LANGUAGES[l], I18n_FILENAMES[f]);
-	
-	//FILE* fpi = fopen()
-	
-	return false; // placeholder
-}
-*/
-
-// need to make this yml parser work=======================================================================
-/*
-String Temporale::_I18n->get(String I18nPath) {
-	char* filestr;
-
-	I18nPath = I18n_LANGUAGES[_locale] + String(".") + I18nPath;
-	String I18nFilename = "locales/" + String(I18n_LANGUAGES[_locale]) + ".yml";
-
-	FILE* fpi = fopen(I18nFilename.c_str(), "r");
-
-	char buf[1024];
-	bool bTokenMatched = false;
-	String lookingforToken;
-	String readToken;
-	String readData;
-	String readLine;
-	String I18nCurrentPath;
-
-	int l;
-
-	int currenttokendepth = 0;
-	int readtokendepth = 0;
-	
-	int numtokensinI18nPath = 1;
-	l = I18nPath.length();
-	for (int i = 0; i < l; i++) {
-		if (I18nPath.charAt(i) == '.') numtokensinI18nPath++;
-	}
-	
-	int numtokensinI18nCurrentPath = 0;
-
-	int tokenindentwidth = 0;
-	bool bFirstPass = true;
-
-	do {
-		filestr = fgets(buf, 1024, fpi);
-		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
-
-		readLine = String(buf);
-		readToken = readLine.substring(0, readLine.indexOf(":"));			
-
-		readtokendepth = readToken.lastIndexOf(" ") + 1;
-		readToken.trim();
-
-		l = readToken.length() - 1;
-
-		if ((readToken.charAt(0) == '\'') && (readToken.charAt(l) == (const char)'\'')) {	// strip enclosing single quotes from token, if present
-			readToken = readToken.substring(1, l);
-		}
-
-		if (bFirstPass == true && readtokendepth > 0) {
-			tokenindentwidth = readtokendepth;		// calculate the width in characters of the indents (yaml files are structured by the indentation)
-			bFirstPass = false;
-		}
-
-		if (readtokendepth == 0) {
-			I18nCurrentPath = readToken;
-			numtokensinI18nCurrentPath = 1;
-		}
-
-		if (currenttokendepth < readtokendepth) {
-			I18nCurrentPath += "." + readToken;	// one level deeper, add on new token to path
-			numtokensinI18nCurrentPath++;
-		}
-
-		if ((currenttokendepth != 0) && (currenttokendepth == readtokendepth)) { // same level, replace last token with read token
-			I18nCurrentPath = I18nCurrentPath.substring(0, I18nCurrentPath.lastIndexOf("."));		// remove last field,
-			I18nCurrentPath += "." + readToken;														// and replace it with the token just read
-		}
-
-		if ((readtokendepth != 0) && (currenttokendepth > readtokendepth)) { // most complicated case: remove number of tokens indicated by change in indentation, and replace end token
-			for (int i = readtokendepth; i <= currenttokendepth; i += tokenindentwidth) {
-				I18nCurrentPath = I18nCurrentPath.substring(0, I18nCurrentPath.lastIndexOf("."));	// remove last field,
-				numtokensinI18nCurrentPath--;
-			}
-			I18nCurrentPath += "." + readToken;														// and replace it with the token just read
-			numtokensinI18nCurrentPath++;
-		}
-
-		currenttokendepth = readtokendepth;
-
-		if ((I18nPath.indexOf(I18nCurrentPath) == 0) && numtokensinI18nCurrentPath == numtokensinI18nPath) { // found our key
-			readData = readLine.substring(readLine.indexOf(":") + 1);
-			readData.trim();
-			bTokenMatched = true;
-		}
-	} while (filestr != NULL && !bTokenMatched); // to loop, File needs to have returned data and token remained unmatched
-
-	if (!bTokenMatched) { // reached end of file without finding the token
-		printf("token %s not found (EOF)\n", lookingforToken.c_str());
-		fclose(fpi);
-		return String("");
-	}
-
-	fclose(fpi);
-	
-	l = readData.length() - 1;
-
-	if ((readData.charAt(0) == '\'') && (readData.charAt(l) == (const char)'\'')) {	// strip enclosing single quotes
-		readData = readData.substring(1, l);
-	}
-
-	//printf("Found: read data: %s\n", readData.c_str());
-	return readData;
-}
-*/
-
-/*
-bool RomanCalendar::parseline(const char* buf, char* readtokenbuf, char* readtokendata) {
-	const char *e;
-	int index;
-
-	if ((buf == NULL) || (readtokenbuf == NULL) || (readtokendata == NULL)) return false;
-
-	e = strchr(buf, ':');
-	if (e == NULL) return false;
-	
-	index = (int)(e - buf);
-
-	strncpy(readtokenbuf, buf, index);
-	readtokenbuf[index] = '\0';
-
-	e += sizeof(char); // skip over the period, so the returned string points to the start of the next toke, or NULL if at the end of the string
-
-	strcpy(readtokendata, e); // copy the rest of the string to readtokendata: e now points to the remaining characters in the string (after the ':')
-
-	return true;
-}
-*/
-
-// strstrip from Linux kernel code - see https://stackoverflow.com/questions/1488372/mimic-pythons-strip-function-in-c
-/*
-char* RomanCalendar::strstrip(char *s)
-{
-	size_t size;
-	char *end;
-
-	size = strlen(s);
-
-	if (!size)
-		return s;
-
-	end = s + size - 1;
-	while (end >= s && isspace(*end))
-		end--;
-	*(end + 1) = '\0';
-
-	while (*s && isspace(*s))
-		s++;
-
-	return s;
-}
-
-bool RomanCalendar::isspace(int c) {
-	switch (c) {
-	case ' ':
-	case '\t':
-	case '\n':
-	case '\v':
-	case '\f':
-	case '\r':
-		return true;
-		break;
-	default:
-		return false;
-	}
-}
-
-String RomanCalendar::removeTemplateVars(String inString) {	// replaces all the occurences of templated yaml variables in the string with %s
-	inString.replace("%{week}", "%s");
-	inString.replace("%{weekday}", "%s");
-	inString.replace("%{day}", "%s");
-
-	return inString;
-}
-
-const char* RomanCalendar::getNextToken(char* buf, const char* I18n_path) {
-	const char *e;
-	int index;
-
-	if ((buf == NULL) || (I18n_path == NULL) || (strlen(I18n_path) == 0)) return NULL;
-
-	e = strchr(I18n_path, '.');
-	if (e == NULL) {
-		strcpy(buf, I18n_path);
-	}
-	else {
-		index = (int)(e - I18n_path); 
-
-		strncpy(buf, I18n_path, index);
-
-		buf[index] = '\0';
-
-		e += sizeof(char); // skip over the period, so the returned string points to the start of the next toke, or NULL if at the end of the string
-	}
-	printf("token: %s\n", buf);
-	printf("I18n_path: %s\n", I18n_path);
-	return e;
-}
-*/
-
-/*
-char* RomanCalendar::getLocaleWeekday(int dayofweek, char* buf) {
-	if (dayofweek < 0 || dayofweek > 6) return NULL;
-
-	char ymlpath[128];
-
-	sprintf(ymlpath, "weekday.'%d'", dayofweek);
-	strcpy(buf, _I18n->get(ymlpath).c_str());
-	return buf;
-}
-*/
 
 String Temporale::getLocaleWeekday(int dayofweek) {
 	if (dayofweek < 0 || dayofweek > 6) return String("");
 	return _I18n->get("weekday." + String(dayofweek));
 }
-
 
 void Temporale::datestests() {
 #ifdef _WIN32
@@ -736,6 +315,17 @@ int Temporale::date_difference(time_t date1, time_t date2) { // assumes that tim
 	//}
 }
 
+int Temporale::hour_of_day(time_t time) {
+#ifdef _WIN32
+	struct tm* ts = gmtime(&time);
+	return ts->tm_hour;
+#else
+	::tmElements_t ts;						// for arduino
+	::breakTime(time, ts);
+	return ts.Hour;
+#endif
+}
+
 time_t Temporale::start_date(int year) {
 	return first_advent_sunday(year);
 }
@@ -869,7 +459,8 @@ time_t Temporale::corpus_christi(int year) {
 }
 
 time_t Temporale::sacred_heart(int year) {
-	return corpus_christi(year) + (8 * DAY);
+	//return corpus_christi(year) + (8 * DAY);
+	return pentecost(year) + (19 * DAY);
 }
 
 time_t Temporale::immaculate_heart(int year) {
@@ -1061,149 +652,7 @@ int Temporale::season_week(Enums::Season seasonn, time_t date) {
 	printf("season: %s\t week: %d\t", SEASONS[seasonn], week);
 	*/
 	return week;
-
-	/*
-	int year = RomanCalendar::year(date);
-	time_t week1_beginning = season_beginning(seasonn, date);
-
-	if (!sunday(week1_beginning)) { // Lent begins on Ash Wednesday, this will set the starting week to the following sunday
-	week1_beginning = sunday_after(week1_beginning);
-	}
-
-	int week = (date_difference(week1_beginning, date) / (DAY * WEEK)) + 1;
-
-	if (seasonn == SEASON_ORDINARY) {
-	week += 1;
-
-	if (date > pentecost(year)) { // second period of ordinary time
-	int weeks_after_date = (date_difference(date, first_advent_sunday(RomanCalendar::year(date)))) / (WEEK * DAY);
-	week = 34 - weeks_after_date;
-	if (sunday(date)) week += 1;
-	}
-	}
-
-	printf("week == %d\n", week);
-	return week;
-	*/
 }
-
-/*
-bool Temporale::sanctorale_get(time_t date, bool move_to_monday) { // in lent and advent, solemnities falling on a sunday are moved to monday.
-															     		     // On mondays in lent and advent, need to look back and check if there was a
-																			 // solemnity the previous sunday.
-	char buf[1024];
-	String readtoken;
-	String readtokendata;
-	char* filestr;
-
-	int m = month(date);
-	int d = dayofmonth(date);
-
-	String month_token = "= " + String(m);
-	String readLine;
-
-	//I18nPath = I18n_LANGUAGES[_locale] + String(".") + I18nPath;
-	String I18nFilename = "data/" + String(I18n_SANCTORALE[_locale]);
-
-	FILE* fpi = fopen(I18nFilename.c_str(), "r");
-
-	// scan for "= <month_number>"
-	bool bFound = false;
-	do {
-		filestr = fgets(buf, 1024, fpi);
-		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
-
-		readLine = String(buf);
-		if (readLine.indexOf(month_token) == 0) {
-			bFound = true;
-		}
-	} while (!bFound && filestr != NULL);
-
-	if (!bFound) return false; // got to the end of the file without finding it
-
-	// scan for string starting with the same number as the day of the month
-	bFound = false;
-	bool bEndOfMonth = false;
-	String daynumber = String(d) + " ";
-	do {
-		filestr = fgets(buf, 1024, fpi);
-		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
-
-		readLine = String(buf);
-		if (readLine.indexOf(daynumber) == 0) {
-			bFound = true;
-		}
-
-		if (readLine == "" || readLine.indexOf("=") == 0) { // scanned past end of month
-			bEndOfMonth = true;
-		}
-	} while (!bFound && !bEndOfMonth && filestr != NULL);
-
-	if (!bFound || bEndOfMonth) return false; // got to the end of the file without finding it
-
-	String monthdayandflags = readLine.substring(0, readLine.indexOf(":"));
-	Season seas = season(date);
-	Ranks rank = _rank_e;
-	Colours colour = _colour_e;
-
-	if (monthdayandflags.indexOf("s") != -1) {	// solemnity
-		if (move_to_monday) {
-			if ((seas == SEASON_ADVENT || seas == SEASON_LENT) && sunday(date)) return false; // if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after
-		}
-		rank = RANKS_SOLEMNITY_GENERAL;
-		colour = COLOURS_WHITE;
-	}
-	else if (monthdayandflags.indexOf("m") != -1) {	//memorial
-		if (monthdayandflags.indexOf("m2.5") != -1) {
-			colour = COLOURS_WHITE;
-			rank = RANKS_FEAST_LORD_GENERAL; // rank is 2.5
-		}
-		else {
-			if (seas != SEASON_LENT) {
-				colour = COLOURS_WHITE;
-				rank = RANKS_MEMORIAL_GENERAL;
-			}
-			else {
-				rank = RANKS_COMMEMORATION;
-			}
-		}
-	}
-	else if (monthdayandflags.indexOf("f") != -1) {
-		colour = COLOURS_WHITE;
-		rank = RANKS_FEAST_GENERAL;
-	}
-	else {
-		if (seas != SEASON_LENT) {
-			rank = RANKS_MEMORIAL_OPTIONAL;	// colour is the colour of the season
-		}
-		else {
-			rank = RANKS_COMMEMORATION; // commemorations fall in lent
-		}
-	}
-
-//	if ((monthdayandflags.indexOf("s") == -1) && (monthdayandflags.indexOf("m") == -1) && (monthdayandflags.indexOf("f") == -1)) {
-//		// if none of s, m, or f flags are set, the entry is a commemoration.
-//		rank = RANKS_COMMEMORATION;	// colour is the colour of the season
-//	}
-
-	if (monthdayandflags.indexOf("R") != -1) {
-		if (!(((seas == SEASON_LENT) && (rank == RANKS_MEMORIAL_GENERAL)) || (rank == RANKS_MEMORIAL_OPTIONAL))) {
-			colour = COLOURS_RED;
-		}
-	}
-
-	//if ((rank > _rank_e) || () ) {
-		_sanctorale = readLine.substring(readLine.indexOf(":") + 1);
-		_sanctorale.trim();
-		_sanctorale_colour_e = colour;
-		_sanctorale_rank_e = rank;
-		return true;
-	//}
-
-	//_sanctorale = "";
-	//return false;
-}
-*/
 
 const Enums::Season SEASONS_SUNDAY_PRIMARY[3] = { Enums::SEASON_ADVENT, Enums::SEASON_LENT, Enums::SEASON_EASTER };
 String Temporale::sunday_temporale(time_t date) {
@@ -1219,49 +668,47 @@ String Temporale::sunday_temporale(time_t date) {
 	int week = season_week(seas, date);
 	ordinalize(week);
 
-	//char I18nbuf[1024];
-	//sprintf(I18nbuf, "temporale.%s.sunday", SEASONS_I18n[seas]);
-	
-	//String I18nbuf;
 	_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".sunday");
 	_day.replace("%{week}", ordinalize(week));
-	//_rank = _I18n->get(I18n_RANK_NAMES[rank]);
 	_rank_e = rank;
-	return _day;
 	
-	//I18nbuf = "temporale." + String(SEASONS_I18n[seas]) + ".sunday";
-	//sprintf(_buffer, _I18n->get(I18nbuf).c_str(), _ordinal);
-	/*
+	int lit_year = liturgical_year(date) % 3;
+	//printf("Lit_year=%d", lit_year);
+
 	switch (seas)
 	{
-	case SEASON_ADVENT:
-		sprintf(_buffer, SUNDAYS_AND_FERIALS[SUNDAYS_OF_ADVENT], _ordinal); // %s = week
+	case Enums::SEASON_ADVENT:
+		_Lectionary = (3 * (week - 1)) + lit_year;
+		christmas_vigil(date); // check to see if after 6pm on Christmas eve
 		break;
 
-	case SEASON_CHRISTMAS:
-		sprintf(_buffer, SUNDAYS_AND_FERIALS[SUNDAYS_AFTER_NATIVITY], _ordinal); // %s = week
+	case Enums::SEASON_LENT:
+		_Lectionary = (3 * (week - 1)) + lit_year + 22;
 		break;
 
-	case SEASON_EASTER:
-		sprintf(_buffer, SUNDAYS_AND_FERIALS[SUNDAYS_OF_EASTER], _ordinal); // %s = week
+	case Enums::SEASON_ORDINARY:
+		_Lectionary = (3 * (week - 2)) + lit_year + 64;
 		break;
 
-	case SEASON_LENT:
-		sprintf(_buffer, SUNDAYS_AND_FERIALS[SUNDAYS_OF_LENT], _ordinal); // %s = week
+	case Enums::SEASON_EASTER:
+		if (week > 1 && week < 7) { // weeks 2-6
+			_Lectionary = (3 * (week - 1)) + lit_year + 43;
+		}
+		if (week == 7) {
+			_Lectionary = 58 + lit_year;
+		}
 		break;
 
-	case SEASON_ORDINARY:
-		sprintf(_buffer, SUNDAYS_AND_FERIALS[SUNDAYS_OF_ORDINARY_TIME], _ordinal); // %s = week
+	case Enums::SEASON_CHRISTMAS:
+		christmas_lectionary(date);
 		break;
+
 	}
-	
-	return _buffer;
-	*/
+
+	return _day;
 }
 
 String Temporale::ferial_temporale(time_t date) {
-	//char I18nbuf[1024];
-	//String I18nbuf;
 	String weekday = getLocaleWeekday(dayofweek(date));
 
 	Enums::Season seas = season(date);
@@ -1275,14 +722,18 @@ String Temporale::ferial_temporale(time_t date) {
 	case Enums::SEASON_ADVENT:
 		if (date >= Temporale::date(17, 12, year(date))) {
 			rank = Enums::RANKS_FERIAL_PRIVILEGED;
-			//ordinalize(dayofmonth(date)); // writes it into the object string variable "_ordinal"
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_DECEMBER_BEFORE_CHRISTMAS], _ordinal); // %s = ordinal day of month
-			//sprintf(_buffer, _I18n->get("temporale.advent.before_christmas").c_str(), _ordinal);
-			
+
 			_day = _I18n->get("temporale.advent.before_christmas");
 			_day.replace("%{day}", ordinalize(dayofmonth(date)));
 			bIsSet = true;
+
+			_Lectionary = dayofmonth(date) + 176;
 		}
+		else {
+			_Lectionary = (6 * (week - 1)) + (dayofweek(date) - 1) + 175;
+		}
+
+		christmas_vigil(date); // check to see if after 6pm on Christmas eve
 		break;
 
 	case Enums::SEASON_CHRISTMAS:
@@ -1296,20 +747,16 @@ String Temporale::ferial_temporale(time_t date) {
 			//print_date(mother_of_god(RomanCalendar::year(date)));
 			//printf("*\n");
 
-			//ordinalize(dayofmonth(date) - dayofmonth(nativity(RomanCalendar::year(date))) + 1); //# 1 - based counting;
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_CHRISTMAS_OCTAVE], _ordinal);
-			//sprintf(_buffer, _I18n->get("temporale.christmas.nativity_octave.ferial").c_str(), _ordinal);
 			_day = _I18n->get("temporale.christmas.nativity_octave.ferial");
 			_day.replace("%{day}", ordinalize(dayofmonth(date) - dayofmonth(nativity(Temporale::year(date))) + 1));
 			bIsSet = true;
 		}
 		else if (date > epiphany(Temporale::year(date))) {
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_AFTER_EPIPHANY], DAYS_OF_WEEK[dayofweek(date)]);
-			//sprintf(_buffer, _I18n->get("temporale.christmas.after_epiphany.ferial").c_str(), weekday);
 			_day = _I18n->get("temporale.christmas.after_epiphany.ferial");
 			_day.replace("%{weekday}", weekday);
 			bIsSet = true;
 		}
+		christmas_lectionary(date);
 		break;
 
 	case Enums::SEASON_LENT:
@@ -1320,17 +767,20 @@ String Temporale::ferial_temporale(time_t date) {
 		printf("year(date) = %d\n", year(date));
 		printf("-------------\n");
 */
+		_Lectionary = (6 * (week - 1)) + (dayofweek(date) - 1) + 224;
+		if (week == 3) _Lectionary += 1;
+		if (week == 4) _Lectionary += 2;
+		if (week == 5) _Lectionary += 3;
+
+		if (week == 0) _Lectionary--;
+
 		if (week == 0) {
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_AFTER_ASH_WEDNESDAY], DAYS_OF_WEEK[dayofweek(date)]);
-			//sprintf(_buffer, _I18n->get("temporale.lent.after_ashes.ferial").c_str(), weekday);
 			_day = _I18n->get("temporale.lent.after_ashes.ferial");
 			_day.replace("%{weekday}", weekday);
 			bIsSet = true;
 		}
 		else if (date > palm_sunday(liturgical_year(date))) {
 			rank = Enums::RANKS_PRIMARY;
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_HOLY_WEEK], DAYS_OF_WEEK[dayofweek(date)]);
-			//sprintf(_buffer, _I18n->get("temporale.lent.holy_week.ferial").c_str(), weekday);
 			if (!thursday(date)) {
 				_day = _I18n->get("temporale.lent.holy_week.ferial");
 				_day.replace("%{weekday}", weekday);
@@ -1340,136 +790,174 @@ String Temporale::ferial_temporale(time_t date) {
 				_colour_e = Enums::COLOURS_WHITE;
 			}
 			bIsSet = true;
+
+			_Lectionary = (dayofweek(date) - 1) + 257; // lectionary for Holy Week
+
 		}
 		rank = (rank > Enums::RANKS_FERIAL_PRIVILEGED) ? rank : Enums::RANKS_FERIAL_PRIVILEGED; // watch this - comparison is dependent on the in which each enum member represents, which have been chosen to make this work
+
 		break;
 
 	case Enums::SEASON_EASTER:
 		if (week == 1) {
 			rank = Enums::RANKS_PRIMARY;
-			//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_EASTER_WEEK], DAYS_OF_WEEK[dayofweek(date)]);
-			//sprintf(_buffer, _I18n->get("temporale.easter.octave.ferial").c_str(), weekday);
 			_day = _I18n->get("temporale.easter.octave.ferial");
 			_day.replace("%{weekday}", weekday);
 			bIsSet = true;
+			_Lectionary = 261 + (dayofweek(date) - 1);
+		}
+		else {
+			_Lectionary = (6 * (week - 2)) + (dayofweek(date) - 1) + 267;
 		}
 		break;
+
+	case Enums::SEASON_ORDINARY:
+		_Lectionary = (6 * (week - 1)) + (dayofweek(date) - 1) + 305;
+		break;
+
 	}
 
-	//_rank = _I18n->get(I18n_RANK_NAMES[rank]);
 	_rank_e = rank;
 
 	if (bIsSet) return _day;
-
-	//sprintf(I18nbuf, "temporale.%s.ferial", I18n_SEASONS[seas]);
-	//sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday);
 
 	_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".ferial");
 	_day.replace("%{weekday}", weekday);
 	_day.replace("%{week}", ordinalize(week));
 	
 	return _day;
-	/*
-	switch (seas)
-	{
-	case SEASON_ADVENT:
-		ordinalize(week); // writes it into the object string variable "_ordinal"
-		//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_ADVENT], DAYS_OF_WEEK[dayofweek(date)], _ordinal); // %s1 = day of week, %s2 ordinal week of season
-		sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday, _ordinal);
-		break;
+}
 
-	case SEASON_CHRISTMAS:
-		//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_AFTER_CHRISTMAS_OCTAVE], DAYS_OF_WEEK[dayofweek(date)]); // %s1 = day of week
-		sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday);
-		break;
-
-	case SEASON_LENT:
-		ordinalize(week); // writes it into the object string variable "_ordinal"
-		//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_LENT], DAYS_OF_WEEK[dayofweek(date)], _ordinal); // %s1 = day of week, %s2 ordinal week of season
-		sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday, _ordinal);
-		break;
-
-	case SEASON_EASTER:
-		ordinalize(week); // writes it into the object string variable "_ordinal"
-		//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_EASTER], DAYS_OF_WEEK[dayofweek(date)], _ordinal); // %s1 = day of week, %s2 ordinal week of season
-		sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday, _ordinal);
-		break;
-
-	case SEASON_ORDINARY:
-		ordinalize(week); // writes it into the object string variable "_ordinal"
-		//sprintf(_buffer, SUNDAYS_AND_FERIALS[DAYS_OF_ORDINARY_TIME], DAYS_OF_WEEK[dayofweek(date)], _ordinal); // %s1 = day of week, %s2 ordinal week of season
-		sprintf(_buffer, _I18n->get(I18nbuf).c_str(), weekday, _ordinal);
-		break;
+void Temporale::christmas_vigil(time_t date) {
+	if (month(date) == 12 && dayofmonth(date) == 24) { // Christmas eve
+		if (hour_of_day(date) >= 18) { // after 6pm
+			_Lectionary = 13; // Christmas eve, vigil mass
+		}
 	}
-	
-	return _buffer;
-	*/
+}
+
+void Temporale::christmas_lectionary(time_t date) {
+	Enums::Season seas = season(date);
+	int week = season_week(seas, date);
+
+	if (seas != Enums::SEASON_CHRISTMAS) return;
+
+	int day_of_month = dayofmonth(date);
+	int mon = month(date);
+	int yr = year(date);
+	int lit_yr = liturgical_year(date);
+
+	if (issameday(nativity(yr), date)) {
+		//Christmas day
+		int hour = hour_of_day(date);
+
+		if (hour >= 0 && hour < 3) { // midnight mass
+			_Lectionary = 14;
+		}
+
+		if (hour >= 3 && hour < 6) { // dawn mass
+			_Lectionary = 15;
+		}
+
+		if (hour >= 6) { // mass during the day 
+			_Lectionary = 16;
+		}
+
+		return;
+	}
+
+
+	if (mon == 12 && day_of_month >= 26 && day_of_month <= 28) { // 29th Dec to 31st Dec
+		switch (day_of_month) {
+		case 26:
+			_Lectionary = 696; // Feast of St. Stephen - should be handled in Sanctorale
+			break;
+
+		case 27:
+			_Lectionary = 697; // Feast of St. John - should be handled in Sanctorale
+			break;
+
+		case 28:
+			_Lectionary = 698; // Feast of Holy Innocents - should be handled in Sanctorale
+			break;
+		}
+		
+		return;
+	}
+
+	if (mon == 12 && day_of_month >= 29 && day_of_month <= 31) { // 29th Dec to 31st Dec
+		_Lectionary = 202 + day_of_month - 29;
+		return;
+	}
+
+	if (mon == 1 && day_of_month >= 2 && day_of_month <= 5) { // 2nd Jan - 5th Jan
+		_Lectionary = 205 + day_of_month - 2;
+		return;
+	}
+
+	if (mon == 1 && date <= baptism_of_lord(yr)) {
+		int epiphany_month_day = dayofmonth(epiphany(lit_yr));
+
+		if (epiphany_month_day == 6) {
+			if (day_of_month >= 7 && day_of_month <= 12) {
+				_Lectionary = 212 + day_of_month - 7;
+				return;
+			}
+		}
+		else {
+			time_t monday_after_epiphany = monday_after(epiphany(lit_yr));
+			int epiphany_week_start_month_day = dayofmonth(monday_after_epiphany);
+
+			_Lectionary = 212 + day_of_month - epiphany_week_start_month_day;
+			return;
+		}
+
+		if (epiphany_month_day == 7 || epiphany_month_day == 8) {
+			if (day_of_month == 6) _Lectionary = 209; return;
+			if (day_of_month == 7) _Lectionary = 210; return;
+		}
+	}
+
+	//printf("christmas_lectionary(): Didn't set lectionary number");
 }
 
 bool Temporale::do_solemnities(time_t date) {
-	//Serial.println("Temporale::do_solemnities()");
-
-	int year = liturgical_year(date);
+	int lit_year = liturgical_year(date);
+	int cal_year = Temporale::year(date);
 	bool bIsSolemnity = false;
 	Enums::Solemnities s;
 
-//	_liturgical_year = String(LITURGICAL_YEARS[liturgical_year_letter(date)]);
-//	_liturgical_cycle = String(LITURGICAL_CYCLES[liturgical_cycle(date)]);
+	//printf("lit_year=%d\t", lit_year);
 
-	//if (issameday(date, first_advent_sunday(year)) {s = ;
-	if (issameday(date, nativity(year))) { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; }
-	if (issameday(date, holy_family(year))) { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; }
-	if (issameday(date, mother_of_god(year))) { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true; }
-	if (issameday(date, epiphany(year))) { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true; }
-	if (issameday(date, baptism_of_lord(year))) { s = Enums::SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; }
-	if (issameday(date, ash_wednesday(year))) { s = Enums::SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; }
-	if (issameday(date, palm_sunday(year))) { s = Enums::SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; }
-	if (issameday(date, good_friday(year))) { s = Enums::SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; }
-	if (issameday(date, holy_saturday(year))) { s = Enums::SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; }
-	if (issameday(date, easter_sunday(year))) { s = Enums::SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; }
-	if (issameday(date, ascension(year))) { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; }
-	if (issameday(date, pentecost(year))) { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; }
-	if (issameday(date, holy_trinity(year))) { s = Enums::SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; }
-	if (issameday(date, corpus_christi(year))) { s = Enums::SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; }
-	if (issameday(date, sacred_heart(year))) { s = Enums::SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; }
-	if (issameday(date, immaculate_heart(year))) { s = Enums::SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true; }
-	if (issameday(date, christ_king(year))) { s = Enums::SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true; }
+	if (issameday(date, nativity(lit_year))) { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; christmas_lectionary(date);}
+	if (issameday(date, holy_family(lit_year))) { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; _Lectionary = 17; }
+	if (issameday(date, mother_of_god(lit_year))) { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true;  _Lectionary = 18; }
+	if (issameday(date, epiphany(lit_year))) { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true;  _Lectionary = 20; }
+	if (issameday(date, baptism_of_lord(lit_year + 1))) { s = Enums::SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; _Lectionary = 21; }
+	if (issameday(date, ash_wednesday(lit_year))) { s = Enums::SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; _Lectionary = 219; }
+	if (issameday(date, palm_sunday(lit_year))) { s = Enums::SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; _Lectionary = 38; }
+	if (issameday(date, good_friday(lit_year))) { s = Enums::SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; _Lectionary = 40; }
+	if (issameday(date, holy_saturday(lit_year))) { s = Enums::SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; _Lectionary = 41; }
+	if (issameday(date, easter_sunday(lit_year))) { s = Enums::SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; _Lectionary = 42; }
+	if (issameday(date, ascension(lit_year))) { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; _Lectionary = 58; }
+	if (issameday(date, pentecost(lit_year))) { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; _Lectionary = 62; }
+	if (issameday(date, holy_trinity(lit_year))) { s = Enums::SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 164; } //check lectionary
+	if (issameday(date, corpus_christi(lit_year))) { s = Enums::SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 167; }
+	if (issameday(date, sacred_heart(lit_year))) { s = Enums::SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 170; }
+	if (issameday(date, immaculate_heart(lit_year))) { s = Enums::SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true; _Lectionary = 622; }
+	if (issameday(date, christ_king(lit_year + 1/*is relative to next liturgical year's first advent sunday*/))) { s = Enums::SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 160; }
 
 	if (bIsSolemnity) {
 		_rank_e = SOLEMNITIES_RANKS[s];
 		_colour_e = SOLEMNITIES_COLOURS[s];
-		//_colour = _I18n->get(I18n_COLOURS[_colour_e]);
 		_day = _I18n->get(_I18n->I18n_SOLEMNITIES[s]);
+		//printf("*********************\n");
 	}
 
 	return bIsSolemnity;
 }
-/*
-bool Temporale::do_feasts_and_memorials(time_t date) {
-	Season seas = season(date);
-	bool b_is_feast_or_memorial = false;
-
-	if ((seas == SEASON_ADVENT || seas == SEASON_LENT)) {
-		if (monday(date)) { // if on monday, need to back-check to see if there was a solemnity on the day before
-							// if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after, so need to check if this happened the previous day 
-			if (!(feasts_and_memorials(sunday_before(date), false))) { // call with the flag "move to monday" set to false, for the sunday before the monday.
-				b_is_feast_or_memorial = feasts_and_memorials(date, true); // if there wasn't a memorial on the sunday, check for today (monday) instead
-			}
-		}
-		else {
-			b_is_feast_or_memorial = feasts_and_memorials(date, true); // not on a monday, but in Advent or Lent, so move to monday should be set.
-		}
-	}
-	else {
-		b_is_feast_or_memorial = feasts_and_memorials(date, false); // if not in Advent or Lent, check for today instead, with move_to_monday set to false, since memorials can occur on sundays outside this Lent and Advent
-	}
-
-	return b_is_feast_or_memorial;
-}
-*/
 
 bool Temporale::do_sundays(time_t date) {
-	//Serial.println("Temporale::do_sundays()");
 	if (sunday(date)) {
 		sunday_temporale(date);
 		return true;
@@ -1478,8 +966,6 @@ bool Temporale::do_sundays(time_t date) {
 }
 
 bool Temporale::do_ferials(time_t date) {
-	//Serial.println("Temporale::do_ferials()");
-	
 	if (!sunday(date)) {
 		ferial_temporale(date);
 		return true;
@@ -1490,10 +976,7 @@ bool Temporale::do_ferials(time_t date) {
 }
 
 bool Temporale::get(time_t date) {
-	//Serial.print("Temporale::get() ");
-	//print_date(date);
-	//Serial.println();
-	
+	_Lectionary = 0;
 	_day = "";
 	_rank = "";
 	_season = "";
@@ -1528,128 +1011,12 @@ bool Temporale::get(time_t date) {
 	do_ferials(date);
 	do_sundays(date);
 	_bIsSolemnity = do_solemnities(date);
-/*
-	bool isSanctorale = false;
-	if ((seas == SEASON_ADVENT || seas == SEASON_LENT)) {
-		if (monday(date)) { // if on monday, need to back-check to see if there was a solemnity on the day before
-							// if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after, so need to check if this happened the previous day 
-			if (!(sanctorale_get(sunday_before(date), false))) { // call with the flag "move to monday" set to false, for the sunday before the monday.
-				isSanctorale = sanctorale_get(date, true); // if there wasn't a memorial on the sunday, check for today (monday) instead
-			}
-		}
-		else { // Day in Lent or Advent not monday
-			isSanctorale = sanctorale_get(date, true); // not on a monday, but in Advent or Lent, so move to monday should be set.
-		}
-	}
-	else { // for seasons other than Advent or Lent
-		isSanctorale = sanctorale_get(date, false); // if not in Advent or Lent, check for today instead, with move_to_monday set to false, since memorials can occur on sundays outside this Lent and Advent
-	}
-*/
 
 	_colour = _I18n->get(_I18n->I18n_COLOURS[_colour_e]);
 	_rank = _I18n->get(_I18n->I18n_RANK_NAMES[_rank_e]);
 
 	return _day;
 }
-
-
-/*
-String RomanCalendar::liturgical_day(time_t date) {
-	_day = "";
-	_rank = "";
-	_season = "";
-	_celebration = "";
-	_colour = "";
-	_liturgical_year = "";
-	_liturgical_cycle = "";
-	
-	Season seas = season(date);
-	_season = _I18n->get("temporale.season." + String(I18n_SEASONS[seas]));
-
-	switch (seas) {
-	case SEASON_ADVENT:
-	case SEASON_LENT:
-		_colour_e = COLOURS_VIOLET;
-		break;
-
-	case SEASON_CHRISTMAS:
-	case SEASON_EASTER:
-		_colour_e = COLOURS_WHITE;
-		break;
-
-	case SEASON_ORDINARY:
-		_colour_e = COLOURS_GREEN;
-		break;
-
-	default:
-		printf("Colours:Season not set!\n");
-		_colour_e = COLOURS_GREEN;
-	}
-
-	int year = liturgical_year(date);
-	bool bIsSolemnity = false;
-	Solemnities s;
-
-	_liturgical_year = String(LITURGICAL_YEARS[liturgical_year_letter(date)]);
-	_liturgical_cycle = String(LITURGICAL_CYCLES[liturgical_cycle(date)]);
-	
-	//if (issameday(date, first_advent_sunday(year)) {s = ;
-	if (issameday(date, nativity(year))) { s = SOLEMNITIES_NATIVITY; bIsSolemnity = true; }
-	if (issameday(date, holy_family(year))) { s = SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; }
-	if (issameday(date, mother_of_god(year))) { s = SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true; }
-	if (issameday(date, epiphany(year))) { s = SOLEMNITIES_EPIPHANY;  bIsSolemnity = true; }
-	if (issameday(date, baptism_of_lord(year))) { s = SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; }
-	if (issameday(date, ash_wednesday(year))) { s = SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; }
-	if (issameday(date, palm_sunday(year))) { s = SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; }
-	if (issameday(date, good_friday(year))) { s = SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; }
-	if (issameday(date, holy_saturday(year))) { s = SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; }
-	if (issameday(date, easter_sunday(year))) { s = SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; }
-	if (issameday(date, ascension(year))) { s = SOLEMNITIES_ASCENSION;  bIsSolemnity = true; }
-	if (issameday(date, pentecost(year))) { s = SOLEMNITIES_PENTECOST;  bIsSolemnity = true; }
-	if (issameday(date, holy_trinity(year))) { s = SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; }
-	if (issameday(date, corpus_christi(year))) { s = SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; }
-	if (issameday(date, sacred_heart(year))) { s = SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; }
-	if (issameday(date, immaculate_heart(year))) { s = SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true; }
-	if (issameday(date, christ_king(year))) { s = SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true; }
-
-	if (bIsSolemnity) {
-		_rank = _I18n->get(I18n_RANK_NAMES[SOLEMNITIES_RANKS[s]]);
-		_colour_e = SOLEMNITIES_COLOURS[s];
-		_colour = _I18n->get(I18n_COLOURS[_colour_e]);
-		_day = _I18n->get(SOLEMNITIES_I18n[s]);
-		return _day;
-	}
-
-	_day = sunday_temporale(date);
-
-	if (_day == "") {
-		_day = ferial_temporale(date);
-	}
-
-	if ((seas == SEASON_ADVENT || seas == SEASON_LENT)) {
-		if (monday(date)) { // if on monday, need to back-check to see if there was a solemnity on the day before
-			// if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after, so need to check if this happened the previous day 
-			if (!(feasts_and_memorials(sunday_before(date), false))) { // call with the flag "move to monday" set to false, for the sunday before the monday.
-				feasts_and_memorials(date, true); // if there wasn't a memorial on the sunday, check for today (monday) instead
-			}
-		}
-		else {
-			feasts_and_memorials(date, true); // not on a monday, but in Advent or Lent, so move to monday should be set.
-		}
-	}
-	else {
-		feasts_and_memorials(date, false); // if not in Advent or Lent, check for today instead, with move_to_monday set to false, since memorials can occur on sundays outside this Lent and Advent
-	}
-
-	_colour = _I18n->get(I18n_COLOURS[_colour_e]);
-	_rank = _I18n->get(I18n_RANK_NAMES[_rank_e]);
-
-	return _day;
-
-
-	//return _buffer;
-}
-*/
 
 bool Temporale::includes(const char* s, const char* const strarray[]) {
 	int i = 0;

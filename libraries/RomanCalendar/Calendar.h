@@ -27,6 +27,7 @@ public:
 		String colour;
 		String rank;
 		String day;
+		int lectionary;				 
 		bool is_sanctorale;
 		String sanctorale;
 		String sanctorale_colour;

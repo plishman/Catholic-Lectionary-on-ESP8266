@@ -149,6 +149,7 @@ bool Calendar::get(time_t date) {
 	day.day = temporale->_day;
 	day.rank = temporale->_rank;
 	day.season = temporale->_season;
+	day.lectionary = temporale->_Lectionary;									 
 
 	return true;
 }

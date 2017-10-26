@@ -5,9 +5,9 @@
 
 BibleVerse::BibleVerse(I18n* i)
 {
-	Serial.println("BibleVerse::BibleVerse()");
+	//Serial.println("BibleVerse::BibleVerse()");
 	_I18n = i;
-	Serial.println("+");
+	//Serial.println("+");
 }
 
 BibleVerse::~BibleVerse()
@@ -15,11 +15,11 @@ BibleVerse::~BibleVerse()
 }
 
 bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
-	Serial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
+	//Serial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
 	
 	//if (!initializeSD()) return String("");
 
-//	book++;
+	book++;
 
 	if (_I18n == NULL) return false;
 
@@ -27,7 +27,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 
 	String index_filename = "Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);
 
-	Serial.println("Index filename is " + index_filename);
+	//Serial.println("Index filename is " + index_filename);
 	
 	File file = _I18n->openFile(index_filename, FILE_READ);
 
@@ -37,8 +37,8 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 	
 	long fileOffset = atol(fileOffsetStr.c_str());	// first line must contain a 32 bit number, the offset into the bible csv file containing the record of the verse
 
-	Serial.println("file offset string is " + fileOffsetStr);
-	Serial.println("file offset = " + String(fileOffset));
+	//Serial.println("file offset string is " + fileOffsetStr);
+	//Serial.println("file offset = " + String(fileOffset));
 	
 	_I18n->closeFile(file);
 
