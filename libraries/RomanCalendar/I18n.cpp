@@ -108,6 +108,7 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 	File file = openFile(I18nFilename, FILE_READ);
+	if (file == NULL) return "";
 #else
 	FILE* fpi = fopen(I18nFilename.c_str(), "r");
 	char buf[1024];
@@ -235,15 +236,15 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 bool I18n::initializeSD() {
-  Serial.println("Initializing SD card...");
+  //Serial.println("Initializing SD card...");
   pinMode(_CS_PIN, OUTPUT);
 
   bool bResult = SD.begin();
    
   if (bResult) {
-    Serial.println("SD card is ready to use.");
+    //Serial.println("SD card is ready to use.");
   } else {
-    Serial.println("SD card initialization failed");
+    //Serial.println("SD card initialization failed or already open");
   }
   
   return bResult;
@@ -252,6 +253,9 @@ bool I18n::initializeSD() {
 String I18n::readLine(File file) {
   String received = "";
   char ch;
+  
+  if (file == NULL) return "";
+  
   while (file.available()) {
     ch = file.read();
     if (ch == '\n') {
@@ -267,6 +271,8 @@ String I18n::readLine(File file) {
 }
 
 File I18n::openFile(String filename, uint8_t mode) {
+  initializeSD();
+  
   File file = SD.open(filename.c_str(), mode);
   if (file) {
     //Serial.println("File opened with success!");

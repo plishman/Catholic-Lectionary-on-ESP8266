@@ -79,6 +79,9 @@ bool Transfers::do_transfers(time_t date) {
 		}
 
 		currDate = next_day(currDate);
+#ifndef _WIN32
+		ESP.wdtFeed();
+#endif
 	} while (currDate <= endDate);
 
 	Serial.println("do_transfers() complete");
