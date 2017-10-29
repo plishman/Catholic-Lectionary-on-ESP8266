@@ -30,7 +30,7 @@ public:
 	int _callcount = 0;
 #ifndef _WIN32
 	int _CS_PIN = 10;
-	
+
 	I18n(Enums::I18nLanguages l, int CS_PIN);
 	void suppress_output(bool s);
 	bool initializeSD();

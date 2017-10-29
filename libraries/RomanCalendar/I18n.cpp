@@ -236,18 +236,13 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 bool I18n::initializeSD() {
-  //Serial.println("Initializing SD card...");
-  pinMode(_CS_PIN, OUTPUT);
-
-  bool bResult = SD.begin();
-   
-  if (bResult) {
-    //Serial.println("SD card is ready to use.");
-  } else {
-    //Serial.println("SD card initialization failed or already open");
-  }
+ //Serial.println("Initializing SD card...");
+ //Serial.println("_CS_PIN is " + String(_CS_PIN));
   
-  return bResult;
+  pinMode(_CS_PIN, OUTPUT);
+  digitalWrite(_CS_PIN, HIGH);
+  
+  return SD.begin(_CS_PIN, SPI_HALF_SPEED);
 }
 
 String I18n::readLine(File file) {

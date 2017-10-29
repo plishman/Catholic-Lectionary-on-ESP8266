@@ -17,7 +17,13 @@
 #define COLORED     1
 #define UNCOLORED   0
 
+#define PANEL_SIZE_X 264
+#define PANEL_SIZE_Y 176
+
 Epd epd;
+
+unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
+
 char jan[] PROGMEM = "Jan";
 char feb[] PROGMEM = "Feb";
 char mar[] PROGMEM = "Mar";
@@ -51,7 +57,7 @@ void loop(void) {
   Lectionary l(c._I18n);
   Serial.println("*3*\n");
 
-  time_t date = c.temporale->date(1,11,2017);
+  time_t date = c.temporale->date(29,10,2017);
   c.get(date);
   Serial.println("*4*\n");
 
@@ -72,116 +78,16 @@ void loop(void) {
 
   Serial.println();
 
-  display_calendar(c.day, datetime);
-
-  Serial.println("*7*\n");
-
-  
-
   String refs;
   l.get(c.day.liturgical_year, c.day.liturgical_cycle, Lectionary::READINGS_G, c.day.lectionary, &refs);
 
-  Bible b;
-  b.get(refs);
+  display_calendar(datetime, &c, refs);
+
   Serial.println("*8*\n");
-    
-  //b.get("Eccl 1:2, 2:21-23");
-  //b.get("John 3:16");
-  //b.get("Wisdom 3:1-2");
-  //b.get("Gen 37:3-4, 12-13a, 17b-28a");
-  //b.get("Ps 22:1-23:1");
-  //b.get("Jonah 4:1-11");
-  //b.get("Gen 16:1-12, 15-16 or 16:6b-12, 15-16");
-  //b.get("Matt 9:35-10:1, 5a, 6-8");
-  //b.get("Deut 32:35cd-36ab");
-  //b.get("Josh 3:7-10a, 11, 13-17");
-  //b.get("Ps 51:3-4, 5-6, 12-13, 14+17");
-  //b.get("Ps 118:1-2, 16-17, 22-23");
-  b.dump_refs();
-
-  //Serial.print("creating BibleVerse object: ");
-  //I18n* pI18n = &i18n;
-  BibleVerse bv(c._I18n);
-  //Serial.println("done.");  
-
-  Ref* r;
-  int i = 0;
-
-  r = b.refsList.get(0);
-
-  while (r != NULL) {
-    int start_chapter = r->start_chapter;
-    int end_chapter = r->end_chapter;
-    int verse = r->start_verse;
-    int start_verse;
-    int end_verse;
-    int start_sentence;
-    int end_sentence;
-    String verse_text;
-    String output;
-
-    for (int c = start_chapter; c <= end_chapter; c++) {
-      printf("\n%d:", c);
-      if (c < end_chapter) {
-        end_verse = -1; //b.books_chaptercounts[r->book_index]; // -1 -> output until last verse
-      }
-      else {
-        end_verse = r->end_verse;
-      }
-
-      if (c > start_chapter) {
-        start_verse = 1;
-      }
-      else {
-        start_verse = r->start_verse;
-      }
-
-      int v = start_verse;
-      bool bDone = false;
-    
-      //for (int v = start_verse; v <= end_verse; v++) {
-      while (!bDone) {
-        if (bv.get(r->book_index, c, v, &verse_text)) {
-          printf(" %d ", v);
-
-          if (c == start_chapter && v == start_verse) { // this deals with the intra-verse references a,b,c etc. It might not work
-            start_sentence = r->start_first_sentence;     // exactly, since boundaries may not align with commas or sentences, this is a best guess.
-            end_sentence = r->start_last_sentence;
-          }
-          else if (c == end_chapter && v == end_verse) {
-            start_sentence = r->end_first_sentence;
-            end_sentence = r->end_last_sentence;
-          }
-          else {
-            start_sentence = -1;
-            end_sentence = -1;
-          }
-
-          start_sentence = -1; // this feature doesn't work as expected, so return all parts of verse
-          end_sentence = -1;   // 
-
-          output += output_verse(verse_text, start_sentence, end_sentence) + "\n";
-          printf("\n");
-          v++;
-          if (end_verse != -1 && v > end_verse) bDone = true; // end_verse will be set to -1 if all verses up to the end of the chapter are to be returned.
-        }
-        else {
-          printf("Error\n");
-          bDone = true;
-        }
-      } 
-    }
-
-    //epd_write(output);
-    
-    //i++;
-    //r = b.refsList.get(i);
-    r = NULL;
-  }
   
   while(1) {
-    ESP.deepSleep(20e6); //20 seconds
-    Serial.print(".");
+    delay(2000);
+    //ESP.deepSleep(20e6); //20 seconds
   }
 }
 
@@ -262,80 +168,272 @@ void epd_write(String s) {
   epd.DisplayFrame();
   epd.Sleep();
   Serial.println("done");
-
 }
-//---------------------------------------------------------------------------calendar
-#define PANEL_SIZE_X 264
-#define PANEL_SIZE_Y 176
 
+//---------------------------------------------------------------------------calendar
 void init_panel() {
   epd_init();
   epd.ClearFrame();  
 }
 
-void display_calendar(Calendar::Day day, String date) {
+void display_calendar(String date, Calendar* c, String refs) {
   FONT_INFO* font = &calibri_8pt;
   
   init_panel();
-  unsigned char image[1024];
+  Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
+  paint.SetRotate(ROTATE_90);
+  paint.Clear(UNCOLORED);
   
-  /**
-    * Due to RAM not enough in Arduino UNO, a frame buffer is not allowed.
-    * In this case, a smaller image buffer is allocated and you have to 
-    * update a partial display several times.
-    * 1 byte = 8 pixels, therefore you have to set 8*N pixels at a time.
-    */
-  if (day.is_sanctorale) {
-    display_day(day.sanctorale, image, font);
-    if (day.sanctorale == day.day) {
-      display_date(date, "", image, font);  
+  if (c->day.is_sanctorale) {
+    display_day(c->day.sanctorale, &paint, font);
+    if (c->day.sanctorale == c->day.day) {
+      display_date(date, "", &paint, font);  
     } else {
-      display_date(date, day.day, image, font);
+      display_date(date, c->day.day, &paint, font);
     }
   } else {
-    display_day(day.day, image, font);    
-    display_date(date, "", image, font);
+    display_day(c->day.day, &paint, font);    
+    display_date(date, "", &paint, font);
   }
   
+  display_verses(c, refs, &paint, font);
+
+  epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
 
   epd.DisplayFrame();
   epd.Sleep();
   Serial.println("done");  
 }
 
-void display_day(String d, unsigned char* image, FONT_INFO* font) {
-  int title_bar_y_height = font->heightPages + 1;
-
-  Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-  paint.SetRotate(ROTATE_90);
-
-  int text_xpos = (paint.GetHeight() / 2) - ((paint.GetTextWidth(d.c_str(), font))/2);
+void display_day(String d, Paint* paint, FONT_INFO* font) {
+  //Serial.println("display_day() d=" + d);
   
-  paint.Clear(UNCOLORED);
-  paint.DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
-  paint.DrawLine(0, 15, 264, 15, COLORED);
-  epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
+  //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+  //paint.SetRotate(ROTATE_90);
+
+  int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d.c_str(), font))/2);
+  
+  paint->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+  paint->DrawLine(0, 15, 264, 15, COLORED);
+  //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
 }
 
-void display_date(String date, String day, unsigned char* image, FONT_INFO* font) {
+void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
   printf("\ndisplay_date: s= %s\n", date.c_str());
 
-  /**
-    * Due to RAM not enough in Arduino UNO, a frame buffer is not allowed.
-    * In this case, a smaller image buffer is allocated and you have to 
-    * update a partial display several times.
-    * 1 byte = 8 pixels, therefore you have to set 8*N pixels at a time.
-    */
-  Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-  paint.SetRotate(ROTATE_90);
+  //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+  //paint.SetRotate(ROTATE_90);
 
-  int text_xpos = paint.GetHeight() - (paint.GetTextWidth(date.c_str(), font)); // right justified
+  int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date.c_str(), font)); // right justified
  
-  paint.Clear(UNCOLORED);
-  paint.DrawStringAt(text_xpos, 0, date.c_str(), font, COLORED);
-
-  paint.DrawStringAt(0, 0, day.c_str(), font, COLORED);
+  //paint.Clear(UNCOLORED);
+  paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date.c_str(), font, COLORED);
+  paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day.c_str(), font, COLORED);
   
   //paint.DrawLine(0, 15, 264, 15, COLORED);
-  epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+  //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 }
+
+void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
+  Bible b;
+  b.get(refs);
+  Serial.println("*7*\n");
+    
+  b.dump_refs();
+
+  BibleVerse bv(c->_I18n);
+
+  Ref* r;
+
+  int i = 0;
+
+  r = b.refsList.get(i++);
+
+  bool bEndOfScreen = false;
+
+  int xpos = 0;
+  int ypos = font->heightPages;
+
+  String line_above = "";
+
+  while (r != NULL && !bEndOfScreen) {     
+    int start_chapter = r->start_chapter;
+    int end_chapter = r->end_chapter;
+    int verse = r->start_verse;
+    int start_verse;
+    int end_verse;
+    int start_sentence;
+    int end_sentence;
+    String verse_record;
+    String verse_text;
+    String output;
+
+    for (int c = start_chapter; c <= end_chapter; c++) {
+      printf("\n%d:", c);
+      if (c < end_chapter) {
+        end_verse = b.books_chaptercounts[r->book_index]; // -1 -> output until last verse
+      }
+      else {
+        end_verse = r->end_verse;
+      }
+
+      if (c > start_chapter) {
+        start_verse = 1;
+      }
+      else {
+        start_verse = r->start_verse;
+      }
+
+      int v = start_verse;
+      bool bDone = false;
+    
+      while (!bDone && !bEndOfScreen) {
+        if (bv.get(r->book_index, c, v, &verse_record)) {
+          printf(" %d ", v);
+          verse_text = get_verse(verse_record);
+
+          bEndOfScreen = epd_verse(verse_text, paint, &xpos, &ypos, font); // returns false if at end of screen
+          Serial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
+          printf("\n");
+          v++;
+          if (v > end_verse) bDone = true; // end_verse will be set to -1 if all verses up to the end of the chapter are to be returned.
+        }
+        else {
+          printf("Error\n");
+          bDone = true;
+        }
+      }
+      if (bEndOfScreen) break; // out of chapter for loop
+    }
+    r = b.refsList.get(i++);
+  }
+}
+
+bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
+  Serial.println("epd_verse() verse=" + verse);
+  
+  int line_height = font->heightPages;
+  
+  if (*ypos > (PANEL_SIZE_Y + line_height)) return false;
+  
+  //Paint paint(image, (8*((font->heightPages)/8)) + 8, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+  //paint.SetRotate(ROTATE_90);
+
+  int xsize;
+  int next_space_pos;
+  String w = "";
+  String s = "";
+  String last_s = "";
+
+  int len = verse.length();
+  int s_len = 0;
+  int i = 0;
+  int last_space_index = 0;
+  String ch;
+  
+  bool bDone = false;
+  
+  while (!bDone) {
+    ch = utf8CharAt(verse, i);
+    //Serial.print(ch);
+    //Serial.print(String(ch.length()));
+    
+    if (ch == " " || i == len) {
+      last_s = s;
+      w = verse.substring(last_space_index, i);
+      s += w;
+      last_space_index = i;
+      
+      s_len = s.length();
+
+      Serial.println("i=" + String(i) + " len=" + String(len) + " xpos=" + String(*xpos) + " ypos=" + String(*ypos));
+
+      if (paint->GetTextWidth(s.c_str(), font) > (PANEL_SIZE_X - (*xpos)) || i == len) {
+        //paint->Clear(UNCOLORED);
+        if (i == len) {
+          paint->DrawStringAt(*xpos, *ypos, s.c_str(), font, COLORED);
+          bDone = true;
+          //epd.TransmitPartialBlack(paint.GetImage(), y, *xpos, paint.GetWidth(), paint.GetHeight());
+        } else {
+          paint->DrawStringAt(*xpos, *ypos, last_s.c_str(), font, COLORED);
+          s = w;
+          //epd.TransmitPartialBlack(paint.GetImage(), y, *xpos, paint.GetWidth(), paint.GetHeight());  
+          *xpos = 0;
+          (*ypos)+= font->heightPages; // higher coordinates are towards to top of the screen, so subsequent lines are at lower y coordinates
+        }
+
+        if (i == len) {
+          *xpos = paint->GetTextWidth(s.c_str(), font);
+        } 
+        
+        Serial.println("*ypos=" + String(*ypos) + " line_height=" + String(line_height));
+        if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+      }
+    }
+
+    i += ch.length();
+  }
+
+  return false;
+}
+
+String utf8CharAt(String s, int pos) { 
+  //Serial.println("String=" + s);
+  
+  if (pos >= s.length()) {
+    //Serial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
+    return String("");
+  }
+  
+  int charLen = charLenBytesUTF8(s.charAt(pos));
+
+  //Serial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
+
+  if (charLen == 0) {
+    return String("");
+  } 
+  else {
+    //Serial.print("substring is" + s.substring(pos, pos+charLen));
+    return s.substring(pos, pos + charLen);
+  }
+}
+
+int charLenBytesUTF8(char s) {
+  byte ch = (byte) s;
+  //Serial.println(String(ch)+ ";");
+
+  byte b;
+ 
+  b = (ch & 0xE0);  // 2-byte utf-8 characters start with 110xxxxx
+  if (b == 0xC0) return 2;
+
+  b = (ch & 0xF0);  // 3-byte utf-8 characters start with 1110xxxx
+  if (b == 0xE0) return 3;
+
+  b = (ch & 0xF8);  // 4-byte utf-8 characters start with 11110xxx
+  if (b == 0xF0) return 4;
+
+  b = (ch & 0xC0);  // bytes within multibyte utf-8 characters are 10xxxxxx
+  if (b == 0x80) return 0; //somewhere in a multi-byte utf-8 character, so don't know the length. Return 0 so the scanner can keep looking
+
+  return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
+}
+
+String get_verse(String verse_record) {
+  Csv csv;
+
+  int pos = 0;
+  int i = 0;
+
+  String f;
+  do {
+    //Serial.println("pos = " + String(pos));
+    f = csv.getCsvField(verse_record, &pos);
+    if (i == 5) {
+      return f;
+    }
+  } while (pos < verse_record.length() && i++ < 6);
+
+  return "";
+}
+

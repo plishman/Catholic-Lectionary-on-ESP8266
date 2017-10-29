@@ -189,29 +189,29 @@ int Paint::DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int 
 	if (ascii_char == 32) return font->spacePixels; // space character
 
 	int charIndex = (int)ascii_char - font->startChar;
-	printf("ascii char=%c, font->startChar = %d, char_index=%d\n", ascii_char, font->startChar, charIndex);
+	//printf("ascii char=%c, font->startChar = %d, char_index=%d\n", ascii_char, font->startChar, charIndex);
 
 	uint8_t char_height = font->heightPages;
-	printf("char_height=%d\n", char_height);
+	//printf("char_height=%d\n", char_height);
 
 	uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
-	printf("char_width=%d\n", char_width);
+	//printf("char_width=%d\n", char_width);
 
 	uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
-	printf("char_offset=%d\n", char_offset);
+	//printf("char_offset=%d\n", char_offset);
 	
     int i, j;
     //unsigned int char_offset = (ascii_char - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
     const uint8_t* ptr = &font->data[char_offset];
 	
     for (j = 0; j < char_height; j++) {
-		printf("\n%d:\t|", j);
+		//printf("\n%d:\t|", j);
         for (i = 0; i < char_width; i++) {
             if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
                 DrawPixel(x + i, y + j, colored);
-				printf("#");
+				//printf("#");
             } else {
-				printf(" ");
+				//printf(" ");
 			}
 			
             if (i % 8 == 7) {
@@ -223,7 +223,7 @@ int Paint::DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int 
         }
     }
 	
-	printf("char width=%d\n", char_width);
+	//printf("char width=%d\n", char_width);
 	
 	return char_width + 1;
 }
