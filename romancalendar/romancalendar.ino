@@ -23,6 +23,8 @@
 Epd epd;
 
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
+unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
+
 
 char jan[] PROGMEM = "Jan";
 char feb[] PROGMEM = "Feb";
@@ -57,7 +59,7 @@ void loop(void) {
   Lectionary l(c._I18n);
   Serial.println("*3*\n");
 
-  time_t date = c.temporale->date(29,10,2017);
+  time_t date = c.temporale->date(30,3,2018);
   c.get(date);
   Serial.println("*4*\n");
 
@@ -183,37 +185,60 @@ void display_calendar(String date, Calendar* c, String refs) {
   Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
   paint.SetRotate(ROTATE_90);
   paint.Clear(UNCOLORED);
+
+  Paint paint_red(image_red, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
+  paint_red.SetRotate(ROTATE_90);
+  paint_red.Clear(UNCOLORED);
+
+//  String w = "abcdefghijklmnop qrstuvw xyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrs tuvwxyzABCDE FGHIJKLMNOPQRSTU VWXYZ0123456789";
+//  String word_part = "";
+//  int width = 0;
+//  bool bEOL = false;
+//  
+//  while(w.length() != 0) {
+//    bEOL = hyphenate_word(&w, &word_part, &width, font, &paint);
+//    Serial.print(word_part);
+//    if (bEOL) Serial.println();
+//  }
+//  return;
+
+  bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
   if (c->day.is_sanctorale) {
-    display_day(c->day.sanctorale, &paint, font);
+    display_day(c->day.sanctorale, &paint, &paint_red, font, bRed);
     if (c->day.sanctorale == c->day.day) {
       display_date(date, "", &paint, font);  
     } else {
       display_date(date, c->day.day, &paint, font);
     }
   } else {
-    display_day(c->day.day, &paint, font);    
+    display_day(c->day.day, &paint, &paint_red, font, bRed);    
     display_date(date, "", &paint, font);
   }
   
   display_verses(c, refs, &paint, font);
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
+  epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
 
   epd.DisplayFrame();
   epd.Sleep();
   Serial.println("done");  
 }
 
-void display_day(String d, Paint* paint, FONT_INFO* font) {
+void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, bool bRed) {
   //Serial.println("display_day() d=" + d);
   
   //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
   //paint.SetRotate(ROTATE_90);
 
   int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d.c_str(), font))/2);
-  
-  paint->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+
+  if (bRed) {
+    paint_red->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+  } else {
+    paint->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+  }
   paint->DrawLine(0, 15, 264, 15, COLORED);
   //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
 }
@@ -311,6 +336,34 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
 
 bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
   Serial.println("epd_verse() verse=" + verse);
+
+  String word_part = "";
+  bool bEOL = false;
+  
+  int width = 0;
+  
+  int line_height = font->heightPages;
+  
+  if (*ypos > (PANEL_SIZE_Y + line_height)) return true;
+  
+  while(verse.length() > 0) {
+    bEOL = hyphenate_word(&verse, &word_part, &width, font, paint);
+
+    if (*xpos + width > PANEL_SIZE_X) {
+      *xpos = 0;
+      (*ypos)+= font->heightPages;      
+      if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+    }
+    
+    paint->DrawStringAt(*xpos, *ypos, word_part.c_str(), font, COLORED);
+    (*xpos) += width;
+  }
+  
+  return false;
+}
+
+bool epd_verse2(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
+  Serial.println("epd_verse() verse=" + verse);
   
   int line_height = font->heightPages;
   
@@ -334,41 +387,42 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
   bool bDone = false;
   
   while (!bDone) {
-    ch = utf8CharAt(verse, i);
+    ch = utf8CharAt(verse, i); // utf8CharAt will return and empty string ("") if i > verse.length()
+
     //Serial.print(ch);
     //Serial.print(String(ch.length()));
     
-    if (ch == " " || i == len) {
-      last_s = s;
-      w = verse.substring(last_space_index, i);
-      s += w;
-      last_space_index = i;
+    if (ch == " " || i >= len) {// drops into this if i == len or i == len+1. ensures that the last word is also output (since the fragment minus the word that 
+      last_s = s;               // overflows the box is output each time, then that overflowing word becomes the first word of the next fragment - so at the end of the string,
+                                // that last un-printed word must also be output.
+      if (i <= len) {
+        w = verse.substring(last_space_index, i);        
+        s += w;
+      } else {
+        bDone = true;
+      }
       
       s_len = s.length();
 
       Serial.println("i=" + String(i) + " len=" + String(len) + " xpos=" + String(*xpos) + " ypos=" + String(*ypos));
 
-      if (paint->GetTextWidth(s.c_str(), font) > (PANEL_SIZE_X - (*xpos)) || i == len) {
-        //paint->Clear(UNCOLORED);
-        if (i == len) {
-          paint->DrawStringAt(*xpos, *ypos, s.c_str(), font, COLORED);
-          bDone = true;
-          //epd.TransmitPartialBlack(paint.GetImage(), y, *xpos, paint.GetWidth(), paint.GetHeight());
-        } else {
-          paint->DrawStringAt(*xpos, *ypos, last_s.c_str(), font, COLORED);
-          s = w;
-          //epd.TransmitPartialBlack(paint.GetImage(), y, *xpos, paint.GetWidth(), paint.GetHeight());  
-          *xpos = 0;
-          (*ypos)+= font->heightPages; // higher coordinates are towards to top of the screen, so subsequent lines are at lower y coordinates
-        }
-
-        if (i == len) {
-          *xpos = paint->GetTextWidth(s.c_str(), font);
-        } 
-        
-        Serial.println("*ypos=" + String(*ypos) + " line_height=" + String(line_height));
-        if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+      if (paint->GetTextWidth(s.c_str(), font) > (PANEL_SIZE_X - (*xpos))) {
+        paint->Clear(UNCOLORED);
+        paint->DrawStringAt(*xpos, *ypos, last_s.c_str(), font, COLORED);
+        s = w;
+        *xpos = 0;
+        (*ypos)+= font->heightPages; // higher coordinates are towards to top of the screen, so subsequent lines are at lower y coordinates
       }
+      
+      if (i == len) {
+        *xpos = paint->GetTextWidth(s.c_str(), font);
+        bDone = true;
+      } 
+        
+      Serial.println("*ypos=" + String(*ypos) + " line_height=" + String(line_height));
+      if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+
+      last_space_index = i;
     }
 
     i += ch.length();
@@ -437,3 +491,46 @@ String get_verse(String verse_record) {
   return "";
 }
 
+bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint) {
+  //if (paint->GetTextWidth(w->c_str(), font) > PANEL_SIZE_X) { // word alone is wider than the display, so split and hyphenate
+    int j = 0;
+    bool bHyphenDone = false;
+    String w_ch;
+    String w_str;
+    String w_str_last;
+    int hyphen_width = paint->GetTextWidth("-", font);
+    int len = w->length();
+    String hyphen = "-";
+    bool bEOL = false;
+    
+    while(!bHyphenDone) {
+      w_str_last = w_str;
+      w_ch = utf8CharAt(*w, j);
+      w_str += w_ch;
+
+      if (paint->GetTextWidth(w_str.c_str(), font) > (PANEL_SIZE_X - hyphen_width)) {
+        bEOL = true;
+        bHyphenDone = true;
+      } else {
+        bEOL = false;
+        w_str_last = w_str;
+        j += w_ch.length();
+
+        if (w_ch == " " || j >= len) {
+          hyphen = "";
+          bHyphenDone = true;
+        }
+      }
+    }
+    Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
+    *w = w->substring(w_str_last.length());
+    *word_part = (w_str_last + hyphen);
+    *x_width = paint->GetTextWidth(word_part->c_str(), font);
+    return bEOL;
+  //} else {
+  //  *word_part = *w;
+  //  *w = "";
+  //  *x_width = paint->GetTextWidth(word_part->c_str(), font);
+  //  return false;
+  //}
+}
