@@ -357,6 +357,7 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
     
     paint->DrawStringAt(*xpos, *ypos, word_part.c_str(), font, COLORED);
     (*xpos) += width;
+    ESP.wdtFeed();
   }
   
   return false;

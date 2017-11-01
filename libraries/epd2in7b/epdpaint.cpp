@@ -25,14 +25,17 @@
  */
 
 #include <pgmspace.h>
+#include <arduino.h>
 #include "epdpaint.h"
 
 Paint::Paint(unsigned char* image, int width, int height) {
-    this->rotate = ROTATE_0;
+    Serial.println("paint constructor");
+	this->rotate = ROTATE_0;
     this->image = image;
     /* 1 byte = 8 pixels, so the width should be the multiple of 8 */
     this->width = width % 8 ? width + 8 - (width % 8) : width;
     this->height = height;
+    Serial.println("done");
 }
 
 Paint::~Paint() {
@@ -183,35 +186,39 @@ void Paint::DrawStringAt(int x, int y, const char* text, sFONT* font, int colore
 }
 
 /**
- *  @brief: this draws a charactor on the frame buffer but not refresh [uses the dot factory proportional font]
+ *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
 int Paint::DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int colored) {	
-	if (ascii_char == 32) return font->spacePixels; // space character
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), font, colored);
+}
+ 
+int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int colored) {	
+	if (codepoint == 32) return font->spacePixels; // space character
 
-	int charIndex = (int)ascii_char - font->startChar;
-	//printf("ascii char=%c, font->startChar = %d, char_index=%d\n", ascii_char, font->startChar, charIndex);
+	int charIndex = codepoint - font->startChar;
+	printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
 
 	uint8_t char_height = font->heightPages;
-	//printf("char_height=%d\n", char_height);
+	printf("char_height=%d\n", char_height);
 
 	uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
-	//printf("char_width=%d\n", char_width);
+	printf("char_width=%d\n", char_width);
 
 	uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
-	//printf("char_offset=%d\n", char_offset);
+	printf("char_offset=%d\n", char_offset);
 	
     int i, j;
     //unsigned int char_offset = (ascii_char - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
     const uint8_t* ptr = &font->data[char_offset];
 	
     for (j = 0; j < char_height; j++) {
-		//printf("\n%d:\t|", j);
+		printf("\n%d:\t|", j);
         for (i = 0; i < char_width; i++) {
             if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
                 DrawPixel(x + i, y + j, colored);
-				//printf("#");
+				printf("#");
             } else {
-				//printf(" ");
+				printf(" ");
 			}
 			
             if (i % 8 == 7) {
@@ -223,7 +230,7 @@ int Paint::DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int 
         }
     }
 	
-	//printf("char width=%d\n", char_width);
+	printf("char width=%d\n", char_width);
 	
 	return char_width + 1;
 }
@@ -251,6 +258,28 @@ void Paint::DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, 
     }
 }
 
+void Paint::DrawStringAt(int x, int y, String text, const FONT_INFO* font, int colored) {
+	int charIndex = 0;
+	int len = text.length();
+	
+    int refcolumn = x;
+	String ch;
+	
+	printf("text=%s\n", text.c_str());
+    
+    /* Send the string character by character on EPD */
+    while (charIndex != len) {
+		printf("refcolumn=%d\n", refcolumn);
+        /* Display one character on EPD */
+		ch = utf8CharAt(text, charIndex);
+        refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), font, colored);
+        /* Decrement the column position by 16 */
+        //refcolumn += font->Width;
+        /* Point on the next character */
+        charIndex += ch.length();
+    }
+}
+
 int Paint::GetTextWidth(const char* text, const FONT_INFO* font) {
     const char* p_text = text;
     unsigned int counter = 0;
@@ -269,6 +298,134 @@ int Paint::GetTextWidth(const char* text, const FONT_INFO* font) {
         counter++;
     }
 	return refcolumn;
+}
+
+int Paint::GetTextWidth(String text, const FONT_INFO* font) {
+	int charIndex = 0;
+	int i = 0;
+	int len = text.length();
+    int refcolumn = 0;
+	String ch;
+
+    while (i < len) {
+		ch = utf8CharAt(text, i);
+		if (ch == " ") {
+			refcolumn += font->spacePixels;
+		} else {
+			charIndex = (int)(codepointUtf8(ch) - font->startChar);
+			refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+		}
+
+		i += ch.length();
+	}
+	return refcolumn;
+}
+
+
+int Paint::codepointUtf8(String c) {
+	unsigned char b;
+	int u = 0;
+
+	const char* ch = c.c_str();
+
+	int len = c.length();
+
+	b = (ch[0] & 0x80);
+	if (b == 0 && len > 0) return (int)ch[0];	   // 1 byte character, u=0-0x7f
+
+	b = (ch[0] & 0xE0);
+	if (b == 0xC0 && len > 1) return (int)(((ch[0] & 0x1f) << 6) | (ch[1] & 0x3F)); // 2 byte character, u=0x80-0x7ff
+
+	b = (ch[0] & 0xF0);
+	if (b == 0xE0 && len > 2) return (int)(((ch[0] & 0x0f) << 12) | ((ch[1] & 0x3F) << 6) | (ch[2] & 0x3F)); // 3 byte character, u=0x800-0xFFFF
+
+	b = (ch[0] & 0xF8);
+	if (b == 0xF0 && len > 3) return (int)(((ch[0] & 0x07) << 18) | ((ch[1] & 0x3F) << 12) | ((ch[2] & 0x3F) << 6) | (ch[3] & 0x3F)); // 4 byte character, u=0x800-0xFFFF
+
+	return 0;
+}
+
+String Paint::utf8fromCodepoint(int c) {
+	unsigned char char0;
+	unsigned char char1;
+	unsigned char char2;
+	unsigned char char3;
+
+	String ch;
+
+	if (c < 0x80) {
+		char0 = c & 0x7f;					// 1 byte
+		char u[] = { char0, '\0' };
+		return String(u);
+	}
+
+	if (c >= 0x80 && c < 0x800) {					// 2 bytes
+		char1 = ((c & 0x3f) | 0x80);
+		char0 = ((c & 0x7c0) >> 6 | 0xc0);
+		char u[] = { char0, char1, '\0' };
+		return String(u);
+	}
+
+	if (c >= 0x800 && c < 0x10000) {				// 3 bytes
+		char2 = ((c & 0x3f) | 0x80);
+		char1 = (((c & 0xfc0) >> 6) | 0x80);
+		char0 = (((c & 0xf000)) >> 12 | 0xe0);
+		char u[] = { char0, char1, char2, '\0' };
+		return String(u);
+	}
+
+	if (c >= 0x10000 && c < 0x200000) {				// 4 bytes
+		char3 = ((c & 0x3f) | 0x80);
+		char2 = (((c & 0xfc0) >> 6) | 0x80);
+		char1 = (((c & 0x3f000) >> 12) | 0x80);
+		char0 = (((c & 0x1c0000)) >> 18 | 0xF0);
+		char u[] = { char0, char1, char2, char3, '\0' };
+		return String(u);
+	}
+	
+	return String("");
+}
+
+String Paint::utf8CharAt(String s, int pos) { 
+  //Serial.println("String=" + s);
+  
+  if (pos >= s.length()) {
+    //Serial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
+    return String("");
+  }
+  
+  int charLen = charLenBytesUTF8(s.charAt(pos));
+
+  //Serial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
+
+  if (charLen == 0) {
+    return String("");
+  } 
+  else {
+    //Serial.print("substring is" + s.substring(pos, pos+charLen));
+    return s.substring(pos, pos + charLen);
+  }
+}
+
+int Paint::charLenBytesUTF8(char s) {
+  byte ch = (byte) s;
+  //Serial.println(String(ch)+ ";");
+
+  byte b;
+ 
+  b = (ch & 0xE0);  // 2-byte utf-8 characters start with 110xxxxx
+  if (b == 0xC0) return 2;
+
+  b = (ch & 0xF0);  // 3-byte utf-8 characters start with 1110xxxx
+  if (b == 0xE0) return 3;
+
+  b = (ch & 0xF8);  // 4-byte utf-8 characters start with 11110xxx
+  if (b == 0xF0) return 4;
+
+  b = (ch & 0xC0);  // bytes within multibyte utf-8 characters are 10xxxxxx
+  if (b == 0x80) return 0; //somewhere in a multi-byte utf-8 character, so don't know the length. Return 0 so the scanner can keep looking
+
+  return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
 
 /**

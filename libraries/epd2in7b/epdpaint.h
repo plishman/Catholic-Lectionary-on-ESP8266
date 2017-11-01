@@ -56,8 +56,17 @@ public:
     void DrawStringAt(int x, int y, const char* text, sFONT* font, int colored);
 	
 	int DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int colored);
+	int DrawCharAt(int x, int y, int utf8_char, const FONT_INFO* font, int colored);
+
 	void DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, int colored);
+	void DrawStringAt(int x, int y, String text, const FONT_INFO* font, int colored);
 	int GetTextWidth(const char* text, const FONT_INFO* font);
+	int GetTextWidth(String text, const FONT_INFO* font);
+	
+	int codepointUtf8(String c);
+	String utf8fromCodepoint(int c);
+	String utf8CharAt(String s, int pos);
+	int charLenBytesUTF8(char s);
 	
     void DrawLine(int x0, int y0, int x1, int y1, int colored);
     void DrawHorizontalLine(int x, int y, int width, int colored);
