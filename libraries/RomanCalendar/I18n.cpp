@@ -246,20 +246,33 @@ bool I18n::initializeSD() {
 }
 
 String I18n::readLine(File file) {
+  //Serial.println("readLine()");
   String received = "";
   char ch;
   
-  if (file == NULL) return "";
+  if (file == NULL) {
+	  //Serial.println("file ptr is null");
+	  return "";
+  }
   
   while (file.available()) {
     ch = file.read();
-    if (ch == '\n') {
-      return String(received);
+    
+	//Serial.print(ch);
+	
+	if (ch == '\r' && file.available()) { // skip over windows line ending 
+		ch = file.read();		
+	}
+	
+	if (ch == '\n') {
+      return received;
     } else {
       received += ch;
     }
+	
 	if (file.position() == file.size()) {
-		return String(received);
+		//Serial.println("EOF");
+		return received;
 	} 
   }
   return "";

@@ -66,6 +66,7 @@ String Csv::utf8CharAt(String s, int pos) {
 
 //---------------------------------------
 String Csv::getCsvField(String csvLine, int* ppos) {
+	//Serial.println("getCsvField: csvLine=" + csvLine);
 	//int pos = 0;
 	String field = "";
 	String currChar = "";
@@ -90,8 +91,8 @@ String Csv::getCsvField(String csvLine, int* ppos) {
 	char currDigit = currChar.charAt(0);
 
 	if (isDigit(currDigit)) {
-		//Serial.println("csv: found a digit");
-		//Serial.println("getCsvField:csvLine = " + csvLine);
+		Serial.println("csv: found a digit");
+		Serial.println("getCsvField:csvLine = " + csvLine);
 		return readCsvNumber(csvLine, ppos);
 	}
 
@@ -110,27 +111,40 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 	bool bGotDecimalPoint = false;
 	char currDigit;
 
-	//Serial.println("readCsvNumber()");
+	Serial.println("readCsvNumber()");
 
-	//Serial.println("readCsvNumber: *ppos = " + String(*ppos));
-	//Serial.println("readCsvNumber: csvLine, csvLine.length() = " + String(csvLine.length()));
+	Serial.println("readCsvNumber: *ppos = " + String(*ppos));
+	Serial.println("readCsvNumber: csvLine, csvLine.length() = " + String(csvLine.length()));
 
 	while (!bDone) {
 		currChar = utf8CharAt(csvLine, *ppos);
 
+		if (currChar == ",") {
+			bDone = true;
+			*ppos += currChar.length();                                   // leave char counter pointing at next char after the field delimeter ','
+			continue;                                                     // not a double quote, so end of field
+		}
+
+		if (*ppos >= csvLine.length()) {                                // zero based, so length() is one more than highest index
+			//field = "";                                                   // partial field recovered before end of string encountered, so return empty string
+			bDone = true;                                                 // at end of string (not line), partial field recovered
+		}
+
+		Serial.println("currChar.length() = " + String(currChar.length()));
+		
 		if (currChar.length() != 1 || currChar == "") {             // recovered character was a partial utf-8 or a 2, 3 or 4 byte utf8 character, so not a digit
 																	//Serial.print("Character is " + currChar + " length is " + currChar.length());
-			field = "";
+			//field = "";
 			bDone = true;
 			*ppos += ((currChar.length() == 0) ? 1 : currChar.length()); // skip over this character, so the csv scanner can at least move on, and not get stuck here (if it's a length of zero, then some partial utf8 character was encountered, which is one byte)
 			continue;                                                 // it can't be a 7-bit ascii digit, must be some other 2, 3 or 4 byte utf-8 character
 		}
 
 		currDigit = currChar.charAt(0);
-		//Serial.println("currDigit = " + String(currDigit) );
+		Serial.println("currDigit = " + String(currDigit) );
 
 		if (isDigit(currDigit)) {
-			//Serial.println("is a digit");
+			Serial.println("is a digit");
 			field += currChar;
 			*ppos += currChar.length();
 			continue;
@@ -138,7 +152,7 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 
 		if (currChar == ".") {
 			if (bGotDecimalPoint == false) {
-				//Serial.println("is a decimal point");
+				Serial.println("is a decimal point");
 				bGotDecimalPoint = true;
 				field += currChar;
 				*ppos += currChar.length();
@@ -154,19 +168,9 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 				bDone = true;
 			}
 		}
-
-		if (currChar == ",") {
-			bDone = true;
-			*ppos += currChar.length();                                   // leave char counter pointing at next char after the field delimeter ','
-			continue;                                                     // not a double quote, so end of field
-		}
-
-		if (*ppos >= csvLine.length()) {                                // zero based, so length() is one more than highest index
-			field = "";                                                   // partial field recovered before end of string encountered, so return empty string
-			bDone = true;                                                 // at end of string (not line), partial field recovered
-		}
 	}
 
+	Serial.println("number field=" + field);
 	return field;
 }
 

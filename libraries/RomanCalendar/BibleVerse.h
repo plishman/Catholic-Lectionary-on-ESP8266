@@ -9,16 +9,16 @@
 	#include "WString.h"
 #endif
 
-#include <I18n.h>
+#include "I18n.h"
 
 class BibleVerse
 {
 public:
-	String _bible_filename = "njb.csv";
-
 	I18n* _I18n;
+	int _book_count = 73;
 	BibleVerse(I18n* i);
 	~BibleVerse();
+	bool get_bible_filename(String* filename);
 	bool get(int book, int chapter, int verse, String* verse_text);
 	//bool initializeSD();
 	//void closeFile();

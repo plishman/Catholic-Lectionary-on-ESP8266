@@ -11,6 +11,9 @@
 	#include "LinkedList.h"
 #endif
 
+#include "I18n.h"
+#include "BibleVerse.h"
+
 class Ref {
 public:
 	int book_index;
@@ -23,16 +26,28 @@ public:
 	int end_first_sentence; // eg c
 	int end_last_sentence;
 	String refs;
+	int book_count;
 };
 
 class Bible {
 public:
 	LinkedList<Ref*> refsList = LinkedList<Ref*>();
-	static const char* const books[];
-	static const char* const books_shortnames[];
-	static const int books_chaptercounts[73];
+	I18n* _I18n;
+	BibleVerse* _bibleverse;
+	static const char* const books_no_apocrypha[];
+	static const char* const books_shortnames_no_apocrypha[];
+	static const int books_chaptercounts_no_apocrypha[];
 
-	Bible(void);
+	static const char* const books_with_apocrypha[];
+	static const char* const books_shortnames_with_apocrypha[];
+	static const int books_chaptercounts_with_apocrypha[];
+	
+	const char* const *books;
+	const char* const *books_shortnames;
+	const int* books_chaptercounts;
+	int _book_count = 66;
+	
+	Bible(I18n* i);
 	~Bible(void);
 
 	bool get(String refs);

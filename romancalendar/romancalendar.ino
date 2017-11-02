@@ -54,7 +54,7 @@ void setup() {
 void loop(void) {
   /************************************************/ 
   Serial.println("*1*\n");
-  Calendar c(true, Enums::LANGUAGE_EN, D1);
+  Calendar c(true, Enums::LANGUAGE_FR, D1);
   Serial.println("*2*\n");
   Lectionary l(c._I18n);
   Serial.println("*3*\n");
@@ -93,53 +93,8 @@ void loop(void) {
   }
 }
 
-String output_verse(String verse, int start_sentence, int end_sentence) {
-  Csv csv;
 
-  int pos = 0;
-  int i = 0;
-
-  String f;
-  do {
-    //Serial.println("pos = " + String(pos));
-    f = csv.getCsvField(verse, &pos);
-    if (i == 5) {
-      if (start_sentence == -1 && end_sentence == -1) {
-        printf("%s", f.c_str());
-      }
-      else {
-        //printf("start_sentence=%d, end_sentence=%d\n", start_sentence, end_sentence);
-
-        int start_charpos = 0;
-        int end_charpos = 0;
-
-        if (start_sentence > -1 && end_sentence == -1) { // print from start_sentence to end of verse
-          end_charpos = f.length();
-
-          for (int i = 0; i <= start_sentence; i++) { // must get done at least once
-            start_charpos = f.indexOf(".", start_charpos);
-          }
-          
-        }
-
-        if (start_sentence == -1 && end_sentence > -1) { // print from start of verse to end_sentence
-          start_charpos = 0;
-
-          for (int i = 0; i <= end_sentence; i++) { // must get done at least once
-            end_charpos = f.indexOf(".", end_charpos);
-          }
-        }
-
-        //printf("start_charpos=%d, end_charpos=%d, f.length()=%d", start_charpos, end_charpos, f.length());
-        printf("%s\n", f.substring(start_charpos, end_charpos).c_str());
-        //printf("[%s]\n", f.c_str());
-      }
-    }
-  } while (pos < verse.length() && i++ < 6);
-
-  return f;
-}
-
+//---------------------------------------------------------------------------calendar
 bool epd_init(void) {
   if (epd.Init() != 0) {
     Serial.print("e-Paper init failed");
@@ -148,31 +103,6 @@ bool epd_init(void) {
   return true;
 }
 
-void epd_write(String s) {
-  epd_init();
-  Serial.print("writing to the display");
-  epd.ClearFrame();
-
-  /**
-    * Due to RAM not enough in Arduino UNO, a frame buffer is not allowed.
-    * In this case, a smaller image buffer is allocated and you have to 
-    * update a partial display several times.
-    * 1 byte = 8 pixels, therefore you have to set 8*N pixels at a time.
-    */
-  unsigned char image[1024];
-  Paint paint(image, 24, 264);    //width should be the multiple of 8 
-
-  paint.SetRotate(ROTATE_90);
-  paint.Clear(UNCOLORED);
-  paint.DrawStringAt(0, 0, s.c_str(), &Font12, COLORED);
-  epd.TransmitPartialBlack(paint.GetImage(), 154, 0, paint.GetWidth(), paint.GetHeight());
-
-  epd.DisplayFrame();
-  epd.Sleep();
-  Serial.println("done");
-}
-
-//---------------------------------------------------------------------------calendar
 void init_panel() {
   epd_init();
   epd.ClearFrame();  
@@ -232,41 +162,39 @@ void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, bool
   //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
   //paint.SetRotate(ROTATE_90);
 
-  int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d.c_str(), font))/2);
+  int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
 
   if (bRed) {
-    paint_red->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+    paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED);
   } else {
-    paint->DrawStringAt(text_xpos, 0, d.c_str(), font, COLORED);
+    paint->DrawStringAt(text_xpos, 0, d, font, COLORED);
   }
   paint->DrawLine(0, 15, 264, 15, COLORED);
   //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
 }
 
 void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
-  printf("\ndisplay_date: s= %s\n", date.c_str());
+  Serial.println("\ndisplay_date: s=" + date);
 
   //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
   //paint.SetRotate(ROTATE_90);
 
-  int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date.c_str(), font)); // right justified
+  int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
  
   //paint.Clear(UNCOLORED);
-  paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date.c_str(), font, COLORED);
-  paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day.c_str(), font, COLORED);
+  paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED);
+  paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED);
   
   //paint.DrawLine(0, 15, 264, 15, COLORED);
   //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 }
 
 void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
-  Bible b;
+  Bible b(c->_I18n);
   b.get(refs);
   Serial.println("*7*\n");
     
   b.dump_refs();
-
-  BibleVerse bv(c->_I18n);
 
   Ref* r;
 
@@ -313,7 +241,7 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
       bool bDone = false;
     
       while (!bDone && !bEndOfScreen) {
-        if (bv.get(r->book_index, c, v, &verse_record)) {
+        if (b._bibleverse->get(r->book_index, c, v, &verse_record)) {
           printf(" %d ", v);
           verse_text = get_verse(verse_record);
 
@@ -355,80 +283,11 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
       if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
     }
     
-    paint->DrawStringAt(*xpos, *ypos, word_part.c_str(), font, COLORED);
+    paint->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
     (*xpos) += width;
     ESP.wdtFeed();
   }
   
-  return false;
-}
-
-bool epd_verse2(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
-  Serial.println("epd_verse() verse=" + verse);
-  
-  int line_height = font->heightPages;
-  
-  if (*ypos > (PANEL_SIZE_Y + line_height)) return false;
-  
-  //Paint paint(image, (8*((font->heightPages)/8)) + 8, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-  //paint.SetRotate(ROTATE_90);
-
-  int xsize;
-  int next_space_pos;
-  String w = "";
-  String s = "";
-  String last_s = "";
-
-  int len = verse.length();
-  int s_len = 0;
-  int i = 0;
-  int last_space_index = 0;
-  String ch;
-  
-  bool bDone = false;
-  
-  while (!bDone) {
-    ch = utf8CharAt(verse, i); // utf8CharAt will return and empty string ("") if i > verse.length()
-
-    //Serial.print(ch);
-    //Serial.print(String(ch.length()));
-    
-    if (ch == " " || i >= len) {// drops into this if i == len or i == len+1. ensures that the last word is also output (since the fragment minus the word that 
-      last_s = s;               // overflows the box is output each time, then that overflowing word becomes the first word of the next fragment - so at the end of the string,
-                                // that last un-printed word must also be output.
-      if (i <= len) {
-        w = verse.substring(last_space_index, i);        
-        s += w;
-      } else {
-        bDone = true;
-      }
-      
-      s_len = s.length();
-
-      Serial.println("i=" + String(i) + " len=" + String(len) + " xpos=" + String(*xpos) + " ypos=" + String(*ypos));
-
-      if (paint->GetTextWidth(s.c_str(), font) > (PANEL_SIZE_X - (*xpos))) {
-        paint->Clear(UNCOLORED);
-        paint->DrawStringAt(*xpos, *ypos, last_s.c_str(), font, COLORED);
-        s = w;
-        *xpos = 0;
-        (*ypos)+= font->heightPages; // higher coordinates are towards to top of the screen, so subsequent lines are at lower y coordinates
-      }
-      
-      if (i == len) {
-        *xpos = paint->GetTextWidth(s.c_str(), font);
-        bDone = true;
-      } 
-        
-      Serial.println("*ypos=" + String(*ypos) + " line_height=" + String(line_height));
-      if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
-
-      last_space_index = i;
-    }
-
-    i += ch.length();
-  }
-
   return false;
 }
 
@@ -484,54 +343,47 @@ String get_verse(String verse_record) {
   do {
     //Serial.println("pos = " + String(pos));
     f = csv.getCsvField(verse_record, &pos);
-    if (i == 5) {
+    if (i == 4) {
       return f;
     }
-  } while (pos < verse_record.length() && i++ < 6);
+  } while (pos < verse_record.length() && i++ < 5);
 
   return "";
 }
 
 bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint) {
-  //if (paint->GetTextWidth(w->c_str(), font) > PANEL_SIZE_X) { // word alone is wider than the display, so split and hyphenate
-    int j = 0;
-    bool bHyphenDone = false;
-    String w_ch;
-    String w_str;
-    String w_str_last;
-    int hyphen_width = paint->GetTextWidth("-", font);
-    int len = w->length();
-    String hyphen = "-";
-    bool bEOL = false;
-    
-    while(!bHyphenDone) {
+  int j = 0;
+  bool bHyphenDone = false;
+  String w_ch;
+  String w_str;
+  String w_str_last;
+  int hyphen_width = paint->GetTextWidth("-", font);
+  int len = w->length();
+  String hyphen = "-";
+  bool bEOL = false;
+  
+  while(!bHyphenDone) {
+    w_str_last = w_str;
+    w_ch = utf8CharAt(*w, j);
+    w_str += w_ch;
+
+    if (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width)) {
+      bEOL = true;
+      bHyphenDone = true;
+    } else {
+      bEOL = false;
       w_str_last = w_str;
-      w_ch = utf8CharAt(*w, j);
-      w_str += w_ch;
+      j += w_ch.length();
 
-      if (paint->GetTextWidth(w_str.c_str(), font) > (PANEL_SIZE_X - hyphen_width)) {
-        bEOL = true;
+      if (w_ch == " " || j >= len) {
+        hyphen = "";
         bHyphenDone = true;
-      } else {
-        bEOL = false;
-        w_str_last = w_str;
-        j += w_ch.length();
-
-        if (w_ch == " " || j >= len) {
-          hyphen = "";
-          bHyphenDone = true;
-        }
       }
     }
-    Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
-    *w = w->substring(w_str_last.length());
-    *word_part = (w_str_last + hyphen);
-    *x_width = paint->GetTextWidth(word_part->c_str(), font);
-    return bEOL;
-  //} else {
-  //  *word_part = *w;
-  //  *w = "";
-  //  *x_width = paint->GetTextWidth(word_part->c_str(), font);
-  //  return false;
-  //}
+  }
+  Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
+  *w = w->substring(w_str_last.length());
+  *word_part = (w_str_last + hyphen);
+  *x_width = paint->GetTextWidth(*word_part, font);
+  return bEOL;
 }
