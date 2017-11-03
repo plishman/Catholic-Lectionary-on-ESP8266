@@ -381,7 +381,7 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
       }
     }
   }
-  Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
+  //Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
   *w = w->substring(w_str_last.length());
   *word_part = (w_str_last + hyphen);
   *x_width = paint->GetTextWidth(*word_part, font);

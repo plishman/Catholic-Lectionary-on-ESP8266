@@ -196,29 +196,29 @@ int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int co
 	if (codepoint == 32) return font->spacePixels; // space character
 
 	int charIndex = codepoint - font->startChar;
-	printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
+	//printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
 
 	uint8_t char_height = font->heightPages;
-	printf("char_height=%d\n", char_height);
+	//printf("char_height=%d\n", char_height);
 
 	uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
-	printf("char_width=%d\n", char_width);
+	//printf("char_width=%d\n", char_width);
 
 	uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
-	printf("char_offset=%d\n", char_offset);
+	//printf("char_offset=%d\n", char_offset);
 	
     int i, j;
     //unsigned int char_offset = (ascii_char - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
     const uint8_t* ptr = &font->data[char_offset];
 	
     for (j = 0; j < char_height; j++) {
-		printf("\n%d:\t|", j);
+		//printf("\n%d:\t|", j);
         for (i = 0; i < char_width; i++) {
             if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
                 DrawPixel(x + i, y + j, colored);
-				printf("#");
+				//printf("#");
             } else {
-				printf(" ");
+				//printf(" ");
 			}
 			
             if (i % 8 == 7) {
@@ -230,7 +230,7 @@ int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int co
         }
     }
 	
-	printf("char width=%d\n", char_width);
+	//printf("char width=%d\n", char_width);
 	
 	return char_width + 1;
 }
@@ -243,11 +243,11 @@ void Paint::DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, 
     unsigned int counter = 0;
     int refcolumn = x;
 
-	printf("text=%s\n", text);
+	//printf("text=%s\n", text);
     
     /* Send the string character by character on EPD */
     while (*p_text != 0) {
-		printf("counter=%d, refcolumn=%d\n", counter, refcolumn);
+		//printf("counter=%d, refcolumn=%d\n", counter, refcolumn);
         /* Display one character on EPD */
         refcolumn += DrawCharAt(refcolumn, y, *p_text, font, colored);
         /* Decrement the column position by 16 */
@@ -265,11 +265,11 @@ void Paint::DrawStringAt(int x, int y, String text, const FONT_INFO* font, int c
     int refcolumn = x;
 	String ch;
 	
-	printf("text=%s\n", text.c_str());
+	//printf("text=%s\n", text.c_str());
     
     /* Send the string character by character on EPD */
     while (charIndex != len) {
-		printf("refcolumn=%d\n", refcolumn);
+		//printf("refcolumn=%d\n", refcolumn);
         /* Display one character on EPD */
 		ch = utf8CharAt(text, charIndex);
         refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), font, colored);

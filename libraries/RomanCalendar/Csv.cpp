@@ -91,8 +91,8 @@ String Csv::getCsvField(String csvLine, int* ppos) {
 	char currDigit = currChar.charAt(0);
 
 	if (isDigit(currDigit)) {
-		Serial.println("csv: found a digit");
-		Serial.println("getCsvField:csvLine = " + csvLine);
+		//Serial.println("csv: found a digit");
+		//Serial.println("getCsvField:csvLine = " + csvLine);
 		return readCsvNumber(csvLine, ppos);
 	}
 
@@ -111,10 +111,10 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 	bool bGotDecimalPoint = false;
 	char currDigit;
 
-	Serial.println("readCsvNumber()");
+	//Serial.println("readCsvNumber()");
 
-	Serial.println("readCsvNumber: *ppos = " + String(*ppos));
-	Serial.println("readCsvNumber: csvLine, csvLine.length() = " + String(csvLine.length()));
+	//Serial.println("readCsvNumber: *ppos = " + String(*ppos));
+	//Serial.println("readCsvNumber: csvLine, csvLine.length() = " + String(csvLine.length()));
 
 	while (!bDone) {
 		currChar = utf8CharAt(csvLine, *ppos);
@@ -130,7 +130,7 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 			bDone = true;                                                 // at end of string (not line), partial field recovered
 		}
 
-		Serial.println("currChar.length() = " + String(currChar.length()));
+		//Serial.println("currChar.length() = " + String(currChar.length()));
 		
 		if (currChar.length() != 1 || currChar == "") {             // recovered character was a partial utf-8 or a 2, 3 or 4 byte utf8 character, so not a digit
 																	//Serial.print("Character is " + currChar + " length is " + currChar.length());
@@ -141,10 +141,10 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 		}
 
 		currDigit = currChar.charAt(0);
-		Serial.println("currDigit = " + String(currDigit) );
+		//Serial.println("currDigit = " + String(currDigit) );
 
 		if (isDigit(currDigit)) {
-			Serial.println("is a digit");
+			//Serial.println("is a digit");
 			field += currChar;
 			*ppos += currChar.length();
 			continue;
@@ -152,7 +152,7 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 
 		if (currChar == ".") {
 			if (bGotDecimalPoint == false) {
-				Serial.println("is a decimal point");
+				//Serial.println("is a decimal point");
 				bGotDecimalPoint = true;
 				field += currChar;
 				*ppos += currChar.length();
@@ -170,7 +170,7 @@ String Csv::readCsvNumber(String csvLine, int* ppos) {
 		}
 	}
 
-	Serial.println("number field=" + field);
+	//Serial.println("number field=" + field);
 	return field;
 }
 

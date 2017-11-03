@@ -4,7 +4,7 @@
 #include "BibleVerse.h"
 #include "LinkedList.h"
 
-const char* const Bible::books_no_apocrypha[66] = {
+const char* const Bible::books[73] = {
 	"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
 	"1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", /*"Tobit", "Judith",*/ "Esther", /*"1 Maccabees", "2 Maccabees" */ "Job", "Psalm", "Proverbs", 
 	"Ecclesiastes", "Song of Solomon", /*"Wisdom", "Sirach",*/ "Isaiah", "Jeremiah", "Lamentations", /*"Baruch",*/ "Ezekiel", "Daniel", "Hosea", "Joel", 
@@ -17,7 +17,7 @@ const char* const Bible::books_no_apocrypha[66] = {
 
 //"Tob", "Judith"|"1 Macc", "2 Macc", | "Wis", "Sir", | "Bar",
 
-const char* const Bible::books_shortnames_no_apocrypha[66] = {
+const char* const Bible::books_shortnames[73] = {
 	"Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1 Sam", "2 Sam",
 	"1 Kgs", "2 Kgs", "1 Chr", "2 Chr", "Ezra", "Neh", "Esth", "Job", "Ps", "Prov", 
 	"Eccl", "Cant"/*Song of Songs (canticles)*/, "Isa", "Jer", "Lam", "Ezek", "Dan", "Hos", "Joel", 
@@ -28,13 +28,14 @@ const char* const Bible::books_shortnames_no_apocrypha[66] = {
 	"Judith", "Wis", "Tob", "Sir", "Bar", "1 Macc", "2 Macc"
 };
 
-const int Bible::books_chaptercounts_no_apocrypha[66] = {
+const int Bible::books_chaptercounts[73] = {
 	50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 10, 42, 150, 
 	31, 12, 8, 66, 52, 5, 48, 12, 14, 3, 9, 1, 4, 7, 3, 3, 3, 2, 14, 4, 28, 16, 24,
-	21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22
+	21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22,
+	16, 19, 14, 51, 6, 16, 15
 };
 
-
+/*
 const char* const Bible::books_with_apocrypha[73] = {
 	"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
 	"1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Tobit", "Judith", "Esther", "1 Maccabees", 
@@ -45,24 +46,25 @@ const char* const Bible::books_with_apocrypha[73] = {
 	"1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", 
 	"Revelation"
 };
-
-const char* const Bible::books_shortnames_with_apocrypha[73] = {
-	"Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1 Sam", "2 Sam",
-	"1 Kgs", "2 Kgs", "1 Chr", "2 Chr", "Ezra", "Neh", "Tob", "Judith", "Esth", "1 Macc",
-	"2 Macc", "Job", "Ps", "Prov", "Eccl", "Cant"/*Song of Songs (canticles)*/, "Wis", "Sir", "Isa", "Jer",
-	"Lam", "Bar", "Ezek", "Dan", "Hos", "Joel", "Amos", "Obad", "Jon", "Mic", "Nah", "Hab",
-	"Zeph", "Hag", "Zech", "Mal", "Matt", "Mark", "Luke", "John", "Acts", "Rom",
-	"1 Cor", "2 Cor", "Gal", "Eph", "Phil", "Col", "1 Thess", "2 Thess",
-	"1 Tim", "2 Tim", "Titus", "Phlm", "Heb", "Jas", "1 Pet", "2 Pet", "1 John", "2 John", "3 John", "Jude",
-	"Rev"
-};
-
+*/
+//const char* const Bible::books_shortnames_with_apocrypha[73] = {
+//	"Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1 Sam", "2 Sam",
+//	"1 Kgs", "2 Kgs", "1 Chr", "2 Chr", "Ezra", "Neh", "Tob", "Judith", "Esth", "1 Macc",
+//	"2 Macc", "Job", "Ps", "Prov", "Eccl", "Cant"/*Song of Songs (canticles)*/, "Wis", "Sir", "Isa", "Jer",
+//	"Lam", "Bar", "Ezek", "Dan", "Hos", "Joel", "Amos", "Obad", "Jon", "Mic", "Nah", "Hab",
+//	"Zeph", "Hag", "Zech", "Mal", "Matt", "Mark", "Luke", "John", "Acts", "Rom",
+//	"1 Cor", "2 Cor", "Gal", "Eph", "Phil", "Col", "1 Thess", "2 Thess",
+//	"1 Tim", "2 Tim", "Titus", "Phlm", "Heb", "Jas", "1 Pet", "2 Pet", "1 John", "2 John", "3 John", "Jude",
+//	"Rev"
+//};
+/*
 const int Bible::books_chaptercounts_with_apocrypha[73] = {
 	50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 14, 16, 10, 16,
 	15, 42, 150, 31, 12, 8, 19, 51, 66, 52, 5, 6, 48, 14, 14, 4, 9, 1, 4, 7, 3, 3,
 	3, 2, 14, 3, 28, 16, 24, 21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13,
 	5, 5, 3, 5, 1, 1, 1, 22
 };
+*/
 
 Bible::Bible(I18n* i)
 {
@@ -73,16 +75,16 @@ Bible::Bible(I18n* i)
 	
 	Serial.println("book count is " + String(_book_count));
 	
-	if (_book_count == 66) {
-		books = books_no_apocrypha;
-		books_shortnames = books_shortnames_no_apocrypha;
-		books_chaptercounts = books_chaptercounts_no_apocrypha;
-	} 
-	else {
-		books = books_with_apocrypha;	// has apocrypha
-		books_shortnames = books_shortnames_with_apocrypha;	
-		books_chaptercounts = books_chaptercounts_with_apocrypha;
-	}
+	//if (_book_count == 66) {
+	//	books = books_no_apocrypha;
+	//	books_shortnames = books_shortnames_no_apocrypha;
+	//	books_chaptercounts = books_chaptercounts_no_apocrypha;
+	//} 
+	//else {
+	//	books = books_with_apocrypha;	// has apocrypha
+	//	books_shortnames = books_shortnames_with_apocrypha;	
+	//	books_chaptercounts = books_chaptercounts_with_apocrypha;
+	//}
 }
 
 Bible::~Bible(void)
