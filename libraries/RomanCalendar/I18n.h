@@ -19,6 +19,12 @@ class I18n
 public:
 	bool _suppress_output = false;
 	
+	String _lang = "";
+	String _yml_filename = "";
+	String _sanctorale_filename = "";
+	String _bible_filename = "";
+	bool _have_config = false;
+	
 	Enums::I18nLanguages _locale;
 	static const char* const I18n_LANGUAGES[5];
 	static const char* const I18n_SANCTORALE[5];
@@ -31,15 +37,16 @@ public:
 #ifndef _WIN32
 	int _CS_PIN = 10;
 
-	I18n(Enums::I18nLanguages l, int CS_PIN);
+	I18n(int CS_PIN);
 	void suppress_output(bool s);
 	bool initializeSD();
 	String readLine(File file);
 	File openFile(String filename, uint8_t mode);
 	void closeFile(File file);
 #else
-	I18n(Enums::I18nLanguages l);
+	I18n( void );
 #endif
+	bool get_config( void );
 	String get(String I18nPath);
 	~I18n();
 };

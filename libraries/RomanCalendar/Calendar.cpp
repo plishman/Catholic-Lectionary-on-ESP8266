@@ -45,14 +45,12 @@ const char* const Calendar::LITURGICAL_YEARS[3] = { "A", "B", "C" };
 const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 #ifndef _WIN32
-Calendar::Calendar(bool transfer_to_sunday, Enums::I18nLanguages l, int CS_PIN) {
-	_locale = l;
+Calendar::Calendar(bool transfer_to_sunday, int CS_PIN) {
 	_CS_PIN = CS_PIN;
-	_I18n = new I18n(_locale, _CS_PIN);
+	_I18n = new I18n(_CS_PIN);
 #else
-Calendar::Calendar(bool transfer_to_sunday, Enums::I18nLanguages l) {	
-	_locale = l;
-	_I18n = new I18n(_locale);
+Calendar::Calendar(bool transfer_to_sunday) {	
+	_I18n = new I18n();
 #endif
 	_date = (time_t)-1;
 	_transfer_to_sunday = transfer_to_sunday;

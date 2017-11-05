@@ -7,9 +7,13 @@
 
 #ifdef _WIN32
 	#include "WString.h"
+#else
+	#include <SPI.h>
+	#include <SD.h>
 #endif
 
 #include "I18n.h"
+#include "Csv.h"
 
 class BibleVerse
 {
@@ -18,7 +22,7 @@ public:
 	int _book_count = 73;
 	BibleVerse(I18n* i);
 	~BibleVerse();
-	bool get_bible_filename(String* filename);
+	//bool get_bible_filename(String* filename);
 	bool get(int book, int chapter, int verse, String* verse_text);
 	//bool initializeSD();
 	//void closeFile();

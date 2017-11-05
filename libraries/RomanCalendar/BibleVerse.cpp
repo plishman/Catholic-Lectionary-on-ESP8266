@@ -1,15 +1,12 @@
 #include "Arduino.h"
-#include <SPI.h>
-#include <SD.h>
-#include "Csv.h"
 #include "BibleVerse.h"
 
 BibleVerse::BibleVerse(I18n* i)
 {
-	//Serial.println("BibleVerse::BibleVerse()");
+	Serial.println("BibleVerse::BibleVerse()");
 	_I18n = i;
-	String filename;
-	get_bible_filename(&filename); // populates the _book_count variable when the bible filename has been determined from the locale
+	//String filename;
+	//get_bible_filename(&filename); // populates the _book_count variable when the bible filename has been determined from the locale
 	//Serial.println("+");
 }
 
@@ -17,6 +14,7 @@ BibleVerse::~BibleVerse()
 {
 }
 
+/*
 bool BibleVerse::get_bible_filename(String* filename) {
 	Csv csv;
 
@@ -47,46 +45,65 @@ bool BibleVerse::get_bible_filename(String* filename) {
 	if (lang == _I18n->I18n_LANGUAGES[_I18n->_locale]) {
 		*filename = "/Bibles/" + csv.getCsvField(csv_record, &pos);
 		Serial.println("filename=" + *filename);
-		String book_count = csv.getCsvField(csv_record, &pos);
-		_book_count = book_count.toInt();
-		Serial.println("book count=" + book_count + " int is " + String(_book_count));
+		//String book_count = csv.getCsvField(csv_record, &pos);
+		//_book_count = book_count.toInt();
+		//Serial.println("book count=" + book_count + " int is " + String(_book_count));
 		return true;
 	}
 	
 	return false;
 }
+*/
 
 bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
+	Csv csv;
 	//Serial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
 	
 	//if (!initializeSD()) return String("");
 
 	book++;
 
-	if (_I18n == NULL) return false;
+	if (_I18n == NULL) {
+		Serial.println("BibleVerse::get(): _I18n is null");
+		return false;
+	} 
 
-	String index_filename = String("/Bibles/") + String(_I18n->I18n_LANGUAGES[_I18n->_locale]) + "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
-
-	Serial.println("Index filename is " + index_filename);
+	if (!(_I18n->_have_config)) {
+		Serial.println("BibleVerse::get(): No config");
+		return false;
+	}
+	
+	//String index_filename = String("/Bibles/") + String(_I18n->I18n_LANGUAGES[_I18n->_locale]) + "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
+	String index_filename = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
+	index_filename += "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
+	
+	//Serial.println("Index filename is " + index_filename);
 	
 	File file = _I18n->openFile(index_filename, FILE_READ);
 
 	if (!file.available()) return false;
-
-	String fileOffsetStr = _I18n->readLine(file);
 	
-	long fileOffset = atol(fileOffsetStr.c_str());	// first line must contain a 32 bit number, the offset into the bible csv file containing the record of the verse
-
-	Serial.println("file offset string is " + fileOffsetStr);
-	Serial.println("file offset = " + String(fileOffset));
+	String fileOffsetStr;
+	
+	while(file.available()) {
+		fileOffsetStr += _I18n->readLine(file);
+		fileOffsetStr.trim();
+		if (file.available()) {
+			fileOffsetStr += ",";
+		}
+	}
+	
+	//String fileOffsetStr = _I18n->readLine(file);
+	
+	//long fileOffset = atol(fileOffsetStr.c_str());	// first line must contain a 32 bit number, the offset into the bible csv file containing the record of the verse
 	
 	_I18n->closeFile(file);
 
-	String bible_filename;
+	String bible_filename = _I18n->_bible_filename;
 	
-	if (!get_bible_filename(&bible_filename)) return false;
+	//if (!get_bible_filename(&bible_filename)) return false;
 
-	Serial.println("bible filename is " + bible_filename);
+	//Serial.println("bible filename is " + bible_filename);
 
 	if (book < 1 || book > _book_count) return false; // _book_count is set by get_bible_filename, since it's part of the csv record that associates bible filenames with languages (non-apocrypha versions have 66 books, otherwise 73)
 
@@ -96,13 +113,35 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 		Serial.println("BibleVerse::get() can't open bible");
 		return false;
 	} 
+	wdt_reset();
+	*verse_text = "";
+	int pos = 0;
+	int len = fileOffsetStr.length();
+	String fragment = "";
+	//Serial.println("fileOffsetStr.length() = " + String(len));
+	//Serial.println("fileOffsetStr = " + fileOffsetStr);
+	long fileOffset;
+	
+	while(pos < len) {
+		fileOffset = atol(csv.getCsvField(fileOffsetStr, &pos).c_str());
+		
+		//Serial.print("file offset string is " + fileOffsetStr);
+		//Serial.println("\t file offset = " + String(fileOffset));
 
-	file.seek(fileOffset);
-	
-	*verse_text = _I18n->readLine(file);
-	
-	_I18n->closeFile(file);
-	
+		file.seek(fileOffset);
+		
+		if (file.available()) {
+			(*verse_text) += _I18n->readLine(file) + "\n";
+			
+		} else {
+			_I18n->closeFile(file);
+			Serial.println("BibleVerse::get() verse text not found at file offset " + String(fileOffset) + " for Bible filename " + bible_filename);
+			return false;
+		}
+		
+	}
+	Serial.println("verse_text=" + *verse_text);
+	_I18n->closeFile(file);	
 	return true;
 }
 /*

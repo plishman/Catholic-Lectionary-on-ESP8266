@@ -14,6 +14,16 @@ Sanctorale::~Sanctorale() {
 bool Sanctorale::get(time_t date) { // in lent and advent, solemnities falling on a sunday are moved to monday.
 									// On mondays in lent and advent, need to look back and check if there was a
 									// solemnity the previous sunday.
+	if (_I18n == NULL) {
+		Serial.println("Sanctorale::get(): _I18n is null");
+		return false;
+	} 
+
+	if (!(_I18n->_have_config)) {
+		Serial.println("Sanctorale::get(): No config");
+		return false;
+	}
+
 	//Serial.println("Sanctorale::get()");
 #ifndef _WIN32
 	//if (!_I18n->initializeSD()) return String("");
@@ -25,16 +35,13 @@ bool Sanctorale::get(time_t date) { // in lent and advent, solemnities falling o
 	String readtoken;
 	String readtokendata;
 
-	//if (!_temporale->get(date)) return false;
-
 	int m = Temporale::month(date);
 	int d = Temporale::dayofmonth(date);
 
 	String month_token = "= " + String(m);
 	String readLine;
 
-	//I18nPath = I18n_LANGUAGES[_locale] + String(".") + I18nPath;
-	String I18nFilename = "data/" + String(_I18n->I18n_SANCTORALE[_locale]);
+	String I18nFilename = _I18n->_sanctorale_filename; //"data/" + String(_I18n->I18n_SANCTORALE[_locale]);
 
 #ifndef _WIN32
 	File file = _I18n->openFile(I18nFilename, FILE_READ);

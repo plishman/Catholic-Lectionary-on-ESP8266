@@ -1,4 +1,5 @@
 //#include "stdafx.h"
+#include "Csv.h"
 #include "I18n.h"
 
 const char* const I18n::I18n_LANGUAGES[5] = {
@@ -70,17 +71,16 @@ const char* const I18n::I18n_SOLEMNITIES[17] = {
 };
 
 #ifndef _WIN32
-I18n::I18n(Enums::I18nLanguages l, int CS_PIN) {
-	_locale = l;
+I18n::I18n(int CS_PIN) {
 	_CS_PIN = CS_PIN;
 
 	initializeSD();
-	
-	//Serial.println("I18n::I18n() _locale = " + String(_locale));
+
+	get_config();	
 }
 #else
-I18n::I18n(Enums::I18nLanguages l) {
-	_locale = l;
+I18n::I18n( void ) {
+	get_config();
 }
 #endif
 
@@ -92,8 +92,80 @@ void I18n::suppress_output(bool s) {
 	_suppress_output = s;
 }
 
+bool I18n::get_config( void ) {
+	Csv csv;
+
+	String config_filename = String("/config.csv");	
+#ifndef _WIN32	
+	File file = openFile(config_filename, FILE_READ);
+	if (!file.available()) return false;
+#else
+	FILE* fpi = fopen(config_filename.c_str(), "r");
+	if (fpi == NULL) return false; 
+	char* filestr;
+	char buf[1024];
+#endif
+
+	String csv_record;
+	bool bFoundSelection = false;
+	String lang;
+	String yml_filename;
+	String sanctorale_filename;
+	String bible_filename;
+	int pos = 0;
+	
+	do {
+	#ifndef _WIN32
+		csv_record = readLine(file);
+	#else
+		filestr = fgets(buf, 1024, fpi);
+		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
+		readLine = String(buf);
+	#endif
+		pos = 0;
+		Serial.println("csv_record: " + csv_record);
+		lang = csv.getCsvField(csv_record, &pos);
+		Serial.println("\tlang=" + lang + " pos=" + String(pos));
+		yml_filename = csv.getCsvField(csv_record, &pos);
+		Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
+		sanctorale_filename = csv.getCsvField(csv_record, &pos);
+		Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
+		bible_filename = csv.getCsvField(csv_record, &pos);
+		Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
+		if (csv.getCsvField(csv_record, &pos) == "selected") {
+			bFoundSelection = true;
+			Serial.println("* selected");
+			break;
+		} 
+		else {
+			Serial.println("Not selected");
+		}
+#ifndef _WIN32
+	} while (file.available());
+	closeFile(file);
+#else
+	} while (filestr != NULL);
+	fclose(fpi);
+#endif
+
+	if (!bFoundSelection) return false;
+	
+	_lang = lang;
+	_yml_filename = yml_filename;
+	_sanctorale_filename = sanctorale_filename;
+	_bible_filename = bible_filename;
+	_have_config = true;
+	
+	return true;
+}
+
 String I18n::get(String I18nPath) {
 	//Serial.println("I18n::get()");
+	
+	if (!_have_config) {
+		Serial.println("I18n::get(): No config");
+		return "";
+	}
 	
 	if (_suppress_output == true) return "";
 	
@@ -103,8 +175,8 @@ String I18n::get(String I18nPath) {
 	char* filestr;
 #endif
 
-	I18nPath = I18n_LANGUAGES[_locale] + String(".") + I18nPath;
-	String I18nFilename = "locales/" + String(I18n_LANGUAGES[_locale]) + ".yml";
+	I18nPath = _lang + String(".") + I18nPath;
+	String I18nFilename = _yml_filename; //"locales/" + String(I18n_LANGUAGES[_locale]) + ".yml";
 
 #ifndef _WIN32
 	File file = openFile(I18nFilename, FILE_READ);
@@ -246,7 +318,7 @@ bool I18n::initializeSD() {
 }
 
 String I18n::readLine(File file) {
-  //Serial.println("readLine()");
+  //Serial.println("readLine(): position=" + String(file.position()));
   String received = "";
   char ch;
   
@@ -275,6 +347,7 @@ String I18n::readLine(File file) {
 		return received;
 	} 
   }
+  //Serial.println("dropped through");
   return "";
 }
 

@@ -56,6 +56,7 @@ bool Transfers::do_transfers(time_t date) {
 					bool bFound = false;
 					int i = 365;
 					do {
+						wdt_reset();
 						transfer_to = next_day(transfer_to);
 						if (i-- < 0)
 						{

@@ -1,3 +1,6 @@
+//ESP8266---
+#include "ESP8266WiFi.h"
+//----------
 #include <pins_arduino.h>
 #include <TimeLib.h>
 #include <Enums.h>
@@ -12,6 +15,7 @@
 #include <epd2in7b.h>
 #include <epdpaint.h>
 #include <calibri8pt.h>
+//#include <calibri8ptbold.h>
 #include <pgmspace.h>
 
 #define COLORED     1
@@ -42,7 +46,13 @@ char dec[] PROGMEM = "Dec";
 PGM_P months[] PROGMEM = {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec};
 
 void setup() {
-
+  //ESP8266------
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+  WiFi.forceSleepBegin();
+  delay(1);
+  //-------------
+  
   Serial.begin(115200);
 
   while(!Serial) {
@@ -53,13 +63,16 @@ void setup() {
 
 void loop(void) {
   /************************************************/ 
+  wdt_reset();
   Serial.println("*1*\n");
-  Calendar c(true, Enums::LANGUAGE_FR, D1);
+  Calendar c(true, D1);
   Serial.println("*2*\n");
+  wdt_reset();
   Lectionary l(c._I18n);
   Serial.println("*3*\n");
 
-  time_t date = c.temporale->date(30,3,2018);
+  wdt_reset();
+  time_t date = c.temporale->date(5,11,2017);
   c.get(date);
   Serial.println("*4*\n");
 
@@ -88,7 +101,7 @@ void loop(void) {
   Serial.println("*8*\n");
   
   while(1) {
-    delay(2000);
+    delay(15000);
     //ESP.deepSleep(20e6); //20 seconds
   }
 }
@@ -110,7 +123,7 @@ void init_panel() {
 
 void display_calendar(String date, Calendar* c, String refs) {
   FONT_INFO* font = &calibri_8pt;
-  
+  //FONT_INFO* font_bold = &calibri_8ptBold;
   init_panel();
   Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
   paint.SetRotate(ROTATE_90);
@@ -134,6 +147,7 @@ void display_calendar(String date, Calendar* c, String refs) {
 
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
+  Serial.println("Displaying calendar");
   if (c->day.is_sanctorale) {
     display_day(c->day.sanctorale, &paint, &paint_red, font, bRed);
     if (c->day.sanctorale == c->day.day) {
@@ -145,7 +159,8 @@ void display_calendar(String date, Calendar* c, String refs) {
     display_day(c->day.day, &paint, &paint_red, font, bRed);    
     display_date(date, "", &paint, font);
   }
-  
+
+  Serial.println("Displaying verses");
   display_verses(c, refs, &paint, font);
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
@@ -191,7 +206,7 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
 
 void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
   Bible b(c->_I18n);
-  b.get(refs);
+  if (!b.get(refs)) return;
   Serial.println("*7*\n");
     
   b.dump_refs();
@@ -283,9 +298,10 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
       if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
     }
     
+    wdt_reset();
     paint->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
     (*xpos) += width;
-    ESP.wdtFeed();
+    wdt_reset();
   }
   
   return false;
@@ -333,22 +349,31 @@ int charLenBytesUTF8(char s) {
   return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
 
-String get_verse(String verse_record) {
+String get_verse(String verse_record) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
+  Serial.println(verse_record);
   Csv csv;
 
   int pos = 0;
-  int i = 0;
 
-  String f;
+  String fragment = "";
+  String verse = "";
+  bool more_than_one = false;
+  
   do {
-    //Serial.println("pos = " + String(pos));
-    f = csv.getCsvField(verse_record, &pos);
-    if (i == 4) {
-      return f;
-    }
-  } while (pos < verse_record.length() && i++ < 5);
-
-  return "";
+    int i = 0;
+    do {
+      //Serial.println("pos = " + String(pos));
+      fragment = csv.getCsvField(verse_record, &pos);
+      if (i == 4) {
+        verse+=((more_than_one?" ":"") + fragment);
+        //return f;
+      }
+    } while (pos < verse_record.length() && i++ != 4);
+    //Serial.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
+    more_than_one = true;
+  } while (pos < verse_record.length());
+  
+  return verse;
 }
 
 bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint) {

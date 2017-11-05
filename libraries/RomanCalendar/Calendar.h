@@ -56,9 +56,9 @@ public:
 
 #ifndef _WIN32
 	int _CS_PIN = 10;
-	Calendar(bool transfer_to_sunday, Enums::I18nLanguages l, int CS_PIN);
+	Calendar(bool transfer_to_sunday, int CS_PIN);
 #else
-	Calendar(bool transfer_to_sunday, Enums::I18nLanguages l);
+	Calendar(bool transfer_to_sunday);
 #endif
 	~Calendar();
 	bool get(time_t date);
