@@ -1,5 +1,8 @@
 #include "Arduino.h"
 #include "BibleVerse.h"
+extern "C" {
+#include "user_interface.h"
+}
 
 BibleVerse::BibleVerse(I18n* i)
 {
@@ -56,11 +59,10 @@ bool BibleVerse::get_bible_filename(String* filename) {
 */
 
 bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
+    File file;
 	Csv csv;
-	//Serial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
+	Serial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
 	
-	//if (!initializeSD()) return String("");
-
 	book++;
 
 	if (_I18n == NULL) {
@@ -77,39 +79,46 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 	String index_filename = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
 	index_filename += "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
 	
-	//Serial.println("Index filename is " + index_filename);
+	Serial.println("Index filename is " + index_filename);
 	
-	File file = _I18n->openFile(index_filename, FILE_READ);
+	file = _I18n->openFile(index_filename, FILE_READ);
 
-	if (!file.available()) return false;
+	if (!file) {
+		Serial.println("could not open index file");
+		return false;
+	}
 	
 	String fileOffsetStr;
 	
 	while(file.available()) {
-		fileOffsetStr += _I18n->readLine(file);
+		String f = _I18n->readLine(file);
+		if (f.length() == 0) break;
+		fileOffsetStr += f;
 		fileOffsetStr.trim();
 		if (file.available()) {
 			fileOffsetStr += ",";
 		}
+		//Serial.print("fileOffsetStr=" + fileOffsetStr);
 	}
-	
-	//String fileOffsetStr = _I18n->readLine(file);
-	
-	//long fileOffset = atol(fileOffsetStr.c_str());	// first line must contain a 32 bit number, the offset into the bible csv file containing the record of the verse
-	
+		
 	_I18n->closeFile(file);
 
+	if (fileOffsetStr.length() == 0) {
+		Serial.println("fileOffset not found");
+		return false;
+	}
+	
 	String bible_filename = _I18n->_bible_filename;
 	
 	//if (!get_bible_filename(&bible_filename)) return false;
 
-	//Serial.println("bible filename is " + bible_filename);
+	Serial.println("bible filename is " + bible_filename);
 
 	if (book < 1 || book > _book_count) return false; // _book_count is set by get_bible_filename, since it's part of the csv record that associates bible filenames with languages (non-apocrypha versions have 66 books, otherwise 73)
 
 	file = _I18n->openFile(bible_filename, FILE_READ);
 
-	if (!file.available()){
+	if (!file){
 		Serial.println("BibleVerse::get() can't open bible");
 		return false;
 	} 
@@ -118,15 +127,15 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 	int pos = 0;
 	int len = fileOffsetStr.length();
 	String fragment = "";
-	//Serial.println("fileOffsetStr.length() = " + String(len));
-	//Serial.println("fileOffsetStr = " + fileOffsetStr);
+	Serial.println("fileOffsetStr.length() = " + String(len));
+	Serial.println("fileOffsetStr = " + fileOffsetStr);
 	long fileOffset;
 	
 	while(pos < len) {
 		fileOffset = atol(csv.getCsvField(fileOffsetStr, &pos).c_str());
 		
-		//Serial.print("file offset string is " + fileOffsetStr);
-		//Serial.println("\t file offset = " + String(fileOffset));
+		Serial.print("file offset string is " + fileOffsetStr);
+		Serial.println("\t file offset = " + String(fileOffset));
 
 		file.seek(fileOffset);
 		

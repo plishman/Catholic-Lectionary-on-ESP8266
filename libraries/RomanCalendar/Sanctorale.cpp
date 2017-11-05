@@ -45,7 +45,7 @@ bool Sanctorale::get(time_t date) { // in lent and advent, solemnities falling o
 
 #ifndef _WIN32
 	File file = _I18n->openFile(I18nFilename, FILE_READ);
-	if (file == NULL) {
+	if (!file) {
 		Serial.println("Sanctorale::get() couldn't open file " + I18nFilename);
 		return false;
 	} 

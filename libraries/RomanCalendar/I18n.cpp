@@ -180,7 +180,7 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 	File file = openFile(I18nFilename, FILE_READ);
-	if (file == NULL) return "";
+	if (!file) return "";
 #else
 	FILE* fpi = fopen(I18nFilename.c_str(), "r");
 	char buf[1024];
@@ -317,27 +317,26 @@ bool I18n::initializeSD() {
   return SD.begin(_CS_PIN, SPI_HALF_SPEED);
 }
 
-String I18n::readLine(File file) {
+String I18n::readLine(File file) { 
   //Serial.println("readLine(): position=" + String(file.position()));
   String received = "";
   char ch;
   
-  if (file == NULL) {
-	  //Serial.println("file ptr is null");
-	  return "";
+  if (!file) {
+    Serial.println("file is not available");
+	return "";
   }
   
   while (file.available()) {
     ch = file.read();
     
-	//Serial.print(ch);
-	
 	if (ch == '\r' && file.available()) { // skip over windows line ending 
 		ch = file.read();		
 	}
 	
 	if (ch == '\n') {
-      return received;
+	  //Serial.println("received lf len=" + String(received.length()));
+	  return received;
     } else {
       received += ch;
     }
@@ -359,7 +358,7 @@ File I18n::openFile(String filename, uint8_t mode) {
     //Serial.println("File opened with success!");
     return file;
   } else {
-    //Serial.println("Error opening file...");
+    Serial.println("Error opening file...");
     return file;
   }
 }
