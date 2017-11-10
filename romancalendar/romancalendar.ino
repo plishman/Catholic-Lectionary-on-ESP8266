@@ -17,6 +17,7 @@
 #include <calibri8pt.h>
 //#include <calibri8ptbold.h>
 #include <pgmspace.h>
+#include <TimeServer.h>
 
 #define COLORED     1
 #define UNCOLORED   0
@@ -53,7 +54,7 @@ void setup() {
   delay(1);
   //-------------
   
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   while(!Serial) {
   }
@@ -61,9 +62,13 @@ void setup() {
   Serial.println("Running");
 }
 
+TimeServer timeserver;
+
 void loop(void) {
   /************************************************/ 
   wdt_reset();
+  timeserver.gps_wake();
+  
   Serial.println("*1*\n");
   Calendar c(true, D1);
   Serial.println("*2*\n");
@@ -72,7 +77,10 @@ void loop(void) {
   Serial.println("*3*\n");
 
   wdt_reset();
-  time_t date = c.temporale->date(5,11,2017);
+  //time_t date = c.temporale->date(7,11,2017);
+  Serial.println("Getting local datetime...");
+  time_t date = timeserver.local_datetime();
+  Serial.println("Got local datetime.");
   c.get(date);
   Serial.println("*4*\n");
 
@@ -99,6 +107,8 @@ void loop(void) {
   display_calendar(datetime, &c, refs);
 
   Serial.println("*8*\n");
+
+  timeserver.gps_sleep();
   
   while(1) {
     delay(15000);
@@ -412,3 +422,5 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   *x_width = paint->GetTextWidth(*word_part, font);
   return bEOL;
 }
+
+

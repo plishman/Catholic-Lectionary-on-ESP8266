@@ -358,7 +358,7 @@ File I18n::openFile(String filename, uint8_t mode) {
     //Serial.println("File opened with success!");
     return file;
   } else {
-    Serial.println("Error opening file...");
+    Serial.println("Error opening file " + filename);
     return file;
   }
 }
