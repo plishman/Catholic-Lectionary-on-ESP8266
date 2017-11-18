@@ -581,6 +581,8 @@ Enums::Ranks Temporale::getRank(void) {
 }
 
 int Temporale::season_week(Enums::Season seasonn, time_t date) {
+	date = Temporale::date(dayofmonth(date), month(date), year(date)); // midnight, morning of (date)
+	
 	int year = Temporale::year(date);
 
 	time_t week1_beginning = season_beginning(seasonn, date);

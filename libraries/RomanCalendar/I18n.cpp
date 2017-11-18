@@ -74,7 +74,9 @@ const char* const I18n::I18n_SOLEMNITIES[17] = {
 I18n::I18n(int CS_PIN) {
 	_CS_PIN = CS_PIN;
 
-	initializeSD();
+	if (!initializeSD()) {
+		Serial.println("Failed to initialize SD card");
+	}
 
 	get_config();	
 }

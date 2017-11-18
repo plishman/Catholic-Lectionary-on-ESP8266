@@ -18,12 +18,16 @@
 //#include <calibri8ptbold.h>
 #include <pgmspace.h>
 #include <TimeServer.h>
+#include <Battery.h>
+#include <images.h>
 
 #define COLORED     1
 #define UNCOLORED   0
 
 #define PANEL_SIZE_X 264
 #define PANEL_SIZE_Y 176
+
+#define SLEEP_HOUR 60*60e6
 
 Epd epd;
 
@@ -46,28 +50,115 @@ char dec[] PROGMEM = "Dec";
 
 PGM_P months[] PROGMEM = {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec};
 
-void setup() {
-  //ESP8266------
-  WiFi.disconnect();
-  WiFi.mode(WIFI_OFF);
-  WiFi.forceSleepBegin();
-  delay(1);
-  //-------------
-  
+Battery battery;
+TimeServer timeserver;
+
+void setup() { 
   Serial.begin(9600);
 
   while(!Serial) {
   }
   
   Serial.println("Running");
+
+  //WiFi.disconnect(); // testing - so have to connect to a network each reboot
+
+  battery_test();
+//  display_image(battery_recharge_image); // testing
+
+//  while(1){
+//    delay(5000);
+//    Serial.print(".");
+//  }
+
+  if (!timeserver.connect()){
+    Serial.println("Need to configure Wifi with WPS for time service");
+    if (battery.power_connected()) {
+      Serial.println("On USB power and no network configured: Prompting user to connect using WPS button");
+      if (!connect_wps()) {
+        Serial.println("Failed to configure Wifi network via WPS - sleeping until USB power is connected");
+        display_image(connect_power_image);
+        ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
+      } else {
+        ESP.reset();
+      }
+    } 
+    else {
+      Serial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
+      display_image(connect_power_image);
+      //while(1) {
+      //  delay(5000);
+      //}
+      ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
+    }
+  }
 }
 
-TimeServer timeserver;
+void battery_test() {
+  if (!battery.power_connected()) {
+    if (battery.recharge_level_reached()) {
+      Serial.println("Battery recharge level reached - sleeping until power is connected");
+      display_image(battery_recharge_image);
+      //while(!battery.power_connected()) {
+      //  wdt_reset();
+      //  delay(2000); // testing - when finished, will be sleep (indefinite, wakes when charger is connected through reset pulse)
+      //}
+      ESP.deepSleep(SLEEP_HOUR); // sleep for an hour or until power is connected
+    }
+  }
+  else {
+    Serial.println("Battery is charging");
+  }
+}
+
+bool connect_wps(){
+  Serial.println("Please press WPS button on your router.\n Press any key to continue...");
+  display_image(wps_connect_image);
+  wdt_reset();
+  delay(10000);
+  bool connected = timeserver.startWPSPBC();      
+    
+  if (!connected) {
+    Serial.println("Failed to connect with WPS :-(");  
+    return false;
+  }
+  
+  return true;
+}
+
+void display_image(EPD_DISPLAY_IMAGE i) {
+  if (i.bitmap_black != NULL) {
+    memcpy(image, i.bitmap_black, i.bitmap_bytecount);
+  }
+  
+  if (i.bitmap_red != NULL) {
+    memcpy(image_red, i.bitmap_red, i.bitmap_bytecount);
+  }
+  
+  init_panel();
+  Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
+  if (i.bitmap_black == NULL) {
+    paint.Clear(UNCOLORED);
+  }
+  
+  Paint paint_red(image_red, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
+  if (i.bitmap_red == NULL) {
+    paint_red.Clear(UNCOLORED);    
+  }
+
+  epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
+  epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
+
+  epd.DisplayFrame();
+  epd.Sleep();
+}
+
+
 
 void loop(void) {
   /************************************************/ 
   wdt_reset();
-  timeserver.gps_wake();
+  //timeserver.gps_wake();
   
   Serial.println("*1*\n");
   Calendar c(true, D1);
@@ -77,10 +168,17 @@ void loop(void) {
   Serial.println("*3*\n");
 
   wdt_reset();
-  //time_t date = c.temporale->date(7,11,2017);
-  Serial.println("Getting local datetime...");
-  time_t date = timeserver.local_datetime();
-  Serial.println("Got local datetime.");
+  //time_t date = c.temporale->date(12,11,2017);
+  Serial.println("Getting datetime...");
+  //time_t date = timeserver.local_datetime();
+  time_t date;
+  while (!timeserver.get_ntp_time(&date)) {
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println("Got datetime.");
+  timeserver.wifi_sleep(); // no longer needed, sleep wifi to save power
+
   c.get(date);
   Serial.println("*4*\n");
 
@@ -108,11 +206,11 @@ void loop(void) {
 
   Serial.println("*8*\n");
 
-  timeserver.gps_sleep();
+  //timeserver.gps_sleep();
   
   while(1) {
     delay(15000);
-    //ESP.deepSleep(20e6); //20 seconds
+    ESP.deepSleep(60e6); //20 seconds
   }
 }
 
