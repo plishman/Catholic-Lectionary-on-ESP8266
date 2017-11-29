@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<script type="text/javascript">
+			// ref: http://stackoverflow.com/a/1293163/2343
+			// This will parse a delimited string into an array of
+			// arrays. The default delimiter is the comma, but this
+			// can be overriden in the second argument.
+			function CSVToArray( strData, strDelimiter ){
+				// Check to see if the delimiter is defined. If not,
+				// then default to comma.
+				strDelimiter = (strDelimiter || ",");
+
+				// Create a regular expression to parse the CSV values.
+				var objPattern = new RegExp(
+					(
+						// Delimiters.
+						"(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+						// Quoted fields.
+						"(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+						// Standard fields.
+						"([^\"\\" + strDelimiter + "\\r\\n]*))"
+					),
+					"gi"
+					);
+
+
+				// Create an array to hold our data. Give the array
+				// a default empty first row.
+				var arrData = [[]];
+
+				// Create an array to hold our individual pattern
+				// matching groups.
+				var arrMatches = null;
+
+
+				// Keep looping over the regular expression matches
+				// until we can no longer find a match.
+				while (arrMatches = objPattern.exec( strData )){
+
+					// Get the delimiter that was found.
+					var strMatchedDelimiter = arrMatches[ 1 ];
+
+					// Check to see if the given delimiter has a length
+					// (is not the start of string) and if it matches
+					// field delimiter. If id does not, then we know
+					// that this delimiter is a row delimiter.
+					if (
+						strMatchedDelimiter.length &&
+						strMatchedDelimiter !== strDelimiter
+						){
+
+						// Since we have reached a new row of data,
+						// add an empty row to our data array.
+						arrData.push( [] );
+
+					}
+
+					var strMatchedValue;
+
+					// Now that we have our delimiter out of the way,
+					// let's check to see which kind of value we
+					// captured (quoted or unquoted).
+					if (arrMatches[ 2 ]){
+
+						// We found a quoted value. When we capture
+						// this value, unescape any double quotes.
+						strMatchedValue = arrMatches[ 2 ].replace(
+							new RegExp( "\"\"", "g" ),
+							"\""
+							);
+
+					} else {
+
+						// We found a non-quoted value.
+						strMatchedValue = arrMatches[ 3 ];
+
+					}
+
+
+					// Now that we have our value string, let's add
+					// it to the data array.
+					arrData[ arrData.length - 1 ].push( strMatchedValue );
+				}
+
+				// Return the parsed data.
+				return( arrData );
+			}
+		</script>
+		<script type="text/javascript">
+			function MakeConfigOpt(config) {
+				var optlist = "";
+				var i = 0;
+				
+				while (i < config.length) {
+					if (config[i] != "") {
+						var opttext = ''; 
+						var selected = '';
+						
+						if (config[i].length >= 1) {
+							opttext = config[i][0]; //+ ' | ' + config[i][1] + ' | ' + config[i][2] + ' | ' + config[i][3];
+						}
+						
+						//if (config[i].length >= 6) {
+						//	selected = config[i][5] == 'selected' ? 'selected="1"' : '';
+						//}
+						
+						optlist += '<option class="optconfig" ' + selected + ' value="' + i + '">' + opttext + '</option>\r\n';
+					}
+					i++;
+				}
+				optlist = '<select name="lectionary" id="SelectConfig">\r\n' + optlist + "</select>\r\n";
+				return optlist;
+			}
+			
+			function LoadConfigOpt() {
+				var config;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						//document.getElementById("config").innerHTML = xhttp.responseText;
+						config = CSVToArray(xhttp.responseText);
+						document.getElementById("config").innerHTML = MakeConfigOpt(config);
+						LoadConfigState();
+					}
+				};
+				xhttp.open("GET", "config.csv", true);
+				xhttp.send();
+			}
+			
+			function LoadConfigState() {
+				var configstate;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						//document.getElementById("config").innerHTML = xhttp.responseText;
+						configstate = JSON.parse(xhttp.responseText);
+						var lectionaryselect = document.getElementById('SelectConfig');
+
+						if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
+							lectionaryselect[configstate.lectionary_config_number].selected = 1;
+						}
+						
+						var timezonesselect = document.getElementById('DropDownTimezone');
+
+						if (configstate.tz_offset && configstate.tz_offset >= -12 && configstate.tz_offset <= 12) {
+							var i = 0;
+							var bDone = false;
+							var offset = configstate.tz_offset * 60;
+							
+							while(!bDone && i < timezonesselect.length) {
+								if ((timezonesselect[i].value * 60) == offset) {
+									timezonesselect[i].selected = 1;
+									bDone = true;
+								} else {
+									i++;
+								}
+							}
+						}
+						else {
+							SetTimeZoneOpt();
+						}
+
+					}
+				};
+				xhttp.open("GET", "settings.json", true);
+				xhttp.send();
+			}
+			
+			function SetTimeZoneOpt() {
+				var offset = new Date().getTimezoneOffset();
+				var timezonesselect = document.getElementById('DropDownTimezone');
+				var timezone;
+				var i;
+
+				for(i = 0; i < timezonesselect.length; i++) {
+					timezone = timezonesselect[i];
+					if ((timezone.value * 60) == offset) {
+						timezone.selected = 1;
+						//alert(timezone.value);
+					}
+				}
+			}
+						
+			function InitOpts() {
+				SetTimeZoneOpt();
+				LoadConfigOpt();
+			}
+		</script>
+		
+		<style>
+			body {
+				background-color: linen;
+			}
+
+			#inner_div {
+				margin: 30px;
+			}
+
+			#container_div {
+				font-size: 28px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -95px;
+				margin-left: -250px;
+				width: 500px;
+				height: 190px;
+				background: rgba(0,0,0,0.1);
+			}​
+		</style>
+	</head>
+	<body onload="InitOpts();">
+		<div id="container_div">
+			<div id="inner_div">
+				<div>Configure Catholic Lectionary</div>
+				<form action="/setconf.htm" method="GET" id="config_form">
+					<select name="timezone" id="DropDownTimezone">
+						  <option value="-12.0">(GMT -12:00) Eniwetok, Kwajalein</option>
+						  <option value="-11.0">(GMT -11:00) Midway Island, Samoa</option>
+						  <option value="-10.0">(GMT -10:00) Hawaii</option>
+						  <option value="-9.0">(GMT -9:00) Alaska</option>
+						  <option value="-8.0">(GMT -8:00) Pacific Time (US &amp; Canada)</option>
+						  <option value="-7.0">(GMT -7:00) Mountain Time (US &amp; Canada)</option>
+						  <option value="-6.0">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
+						  <option value="-5.0">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
+						  <option value="-4.0">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
+						  <option value="-3.5">(GMT -3:30) Newfoundland</option>
+						  <option value="-3.0">(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
+						  <option value="-2.0">(GMT -2:00) Mid-Atlantic</option>
+						  <option value="-1.0">(GMT -1:00 hour) Azores, Cape Verde Islands</option>
+						  <option value="0.0">(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
+						  <option value="1.0">(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
+						  <option value="2.0">(GMT +2:00) Kaliningrad, South Africa</option>
+						  <option value="3.0">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+						  <option value="3.5">(GMT +3:30) Tehran</option>
+						  <option value="4.0">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+						  <option value="4.5">(GMT +4:30) Kabul</option>
+						  <option value="5.0">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+						  <option value="5.5">(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</option>
+						  <option value="5.75">(GMT +5:45) Kathmandu</option>
+						  <option value="6.0">(GMT +6:00) Almaty, Dhaka, Colombo</option>
+						  <option value="7.0">(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
+						  <option value="8.0">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
+						  <option value="9.0">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+						  <option value="9.5">(GMT +9:30) Adelaide, Darwin</option>
+						  <option value="10.0">(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
+						  <option value="11.0">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
+						  <option value="12.0">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+					</select>
+					<div id="config"></div>
+					<input id="update" type="submit" value=" Update Settings " />
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

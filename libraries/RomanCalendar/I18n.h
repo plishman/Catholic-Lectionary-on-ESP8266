@@ -7,6 +7,7 @@
 	#include "Arduino.h"
 	#include <SPI.h>
 	#include <SD.h>
+	#include <pins_arduino.h>
 #else
 	#include "WString.h"
 #endif
@@ -35,9 +36,10 @@ public:
 
 	int _callcount = 0;
 #ifndef _WIN32
-	int _CS_PIN = 10;
+	int _CS_PIN = D1;
 
 	I18n(int CS_PIN);
+	I18n( void );
 	void suppress_output(bool s);
 	bool initializeSD();
 	String readLine(File file);

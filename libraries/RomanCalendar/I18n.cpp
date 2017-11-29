@@ -80,6 +80,16 @@ I18n::I18n(int CS_PIN) {
 
 	get_config();	
 }
+
+I18n::I18n( void ) {
+//	I18n(_CS_PIN);
+	if (!initializeSD()) {
+		Serial.println("Failed to initialize SD card");
+	}
+
+	get_config();
+}
+
 #else
 I18n::I18n( void ) {
 	get_config();
@@ -110,6 +120,7 @@ bool I18n::get_config( void ) {
 
 	String csv_record;
 	bool bFoundSelection = false;
+	String desc;
 	String lang;
 	String yml_filename;
 	String sanctorale_filename;
@@ -126,6 +137,8 @@ bool I18n::get_config( void ) {
 	#endif
 		pos = 0;
 		Serial.println("csv_record: " + csv_record);
+		desc = csv.getCsvField(csv_record, &pos);
+		Serial.println("\tdesc=" + desc + " pos=" + String(pos));
 		lang = csv.getCsvField(csv_record, &pos);
 		Serial.println("\tlang=" + lang + " pos=" + String(pos));
 		yml_filename = csv.getCsvField(csv_record, &pos);

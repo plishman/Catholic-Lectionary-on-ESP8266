@@ -1,11 +1,11 @@
-#ifndef _TIMESERVER_H
-#define _TIMESERVER_H
+#ifndef _NETWORK_H
+#define _NETWORK_H
 
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <TimeLib.h>
 
-class TimeServer {
+class Network {
 public:
 	unsigned int localPort = 123;      // local port to listen for UDP packets
 

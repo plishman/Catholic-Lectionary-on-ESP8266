@@ -1,6 +1,6 @@
-#include "TimeServer.h"
+#include "Network.h"
 
-bool TimeServer::connect() {
+bool Network::connect() {
 	Serial.printf("\nTry connecting to WiFi with SSID '%s'\n", WiFi.SSID().c_str());
 
 	WiFi.mode(WIFI_STA);
@@ -31,7 +31,7 @@ bool TimeServer::connect() {
 	return true;
 }
 
-bool TimeServer::startWPSPBC() {
+bool Network::startWPSPBC() {
   Serial.println("WPS config start");
   bool wpsSuccess = WiFi.beginWPSConfig();
   if(wpsSuccess) {
@@ -47,7 +47,7 @@ bool TimeServer::startWPSPBC() {
   return wpsSuccess; 
 }
 
-bool TimeServer::get_ntp_time(time_t* t)
+bool Network::get_ntp_time(time_t* t)
 {
 	wl_status_t status = WiFi.status();
 	if(status != WL_CONNECTED) {
@@ -114,7 +114,7 @@ bool TimeServer::get_ntp_time(time_t* t)
 }
 
 // send an NTP request to the time server at the given address
-unsigned long TimeServer::sendNTPpacket(IPAddress& address)
+unsigned long Network::sendNTPpacket(IPAddress& address)
 {
   Serial.println("sending NTP packet...");
   // set all bytes in the buffer to 0
@@ -138,7 +138,7 @@ unsigned long TimeServer::sendNTPpacket(IPAddress& address)
   udp.endPacket();
 }
 
-void TimeServer::wifi_sleep( void ) {
+void Network::wifi_sleep( void ) {
 	//ESP8266------
 	//WiFi.disconnect();
 	WiFi.mode(WIFI_OFF);
