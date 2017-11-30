@@ -57,8 +57,10 @@ Config::~Config() {
   //delete p_server;
 }
 
-bool Config::ServeClient(void)
+bool Config::ServeClient(bool* bSettingsUpdated)
 {
+	*bSettingsUpdated = false;
+	
 	if (_I18n == NULL) {
 		return false;
 	}
@@ -146,6 +148,7 @@ bool Config::ServeClient(void)
     GetConfig(&c);
     Serial.println("timezone = " + String(c.timezone_offset));
     Serial.println("lectionary = " + String(c.lectionary_config_number));
+	*bSettingsUpdated = true;
 
     b404 = !sendHttpFile(&client, "/html/setconf.htm");
   }

@@ -26,7 +26,7 @@ public:
 	~Config();
 	bool StartServer( I18n* i );
 	void StopServer( void );
-	bool ServeClient( void );
+	bool ServeClient( bool* bSettingsUpdated );
 	String getQueryStringParam(String param, String querystring);
 	bool sendHttpFile(WiFiClient* client, String filename);
 	bool SaveConfig(String tz, String lect_num);

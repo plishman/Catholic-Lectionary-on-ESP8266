@@ -1160,3 +1160,24 @@ void Temporale::print_date(time_t t) {
 	Serial.print(ts.Year + BEGIN_EPOCH);
 #endif
 }
+
+void Temporale::print_time(time_t t) {
+#ifdef _WIN32
+	struct tm* ts;
+
+	char buffer[128];
+
+	ts = gmtime(&t);
+	strftime(buffer, 128, "%H:%M:%S", ts);
+	printf("%s ", buffer);
+#else
+	::tmElements_t ts;						// for arduino
+	::breakTime(t, ts);
+
+	Serial.print(ts.Hour);
+	Serial.print(":");
+	Serial.print(ts.Minute);
+	Serial.print(":");
+	Serial.print(ts.Second);
+#endif
+}

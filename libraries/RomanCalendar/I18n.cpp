@@ -106,12 +106,17 @@ void I18n::suppress_output(bool s) {
 }
 
 bool I18n::get_config( void ) {
+	Serial.println("I18n::get_config() lectionary_config_number = " + String(_lectionary_config_number));
+
 	Csv csv;
 
 	String config_filename = String("/config.csv");	
 #ifndef _WIN32	
 	File file = openFile(config_filename, FILE_READ);
-	if (!file.available()) return false;
+	if (!file.available()) {
+		Serial.println("Couldn't open config file");
+		return false;
+	}
 #else
 	FILE* fpi = fopen(config_filename.c_str(), "r");
 	if (fpi == NULL) return false; 
@@ -127,7 +132,7 @@ bool I18n::get_config( void ) {
 	String sanctorale_filename;
 	String bible_filename;
 	int pos = 0;
-	int i = 1;
+	int i = 0;
 	
 	do {
 	#ifndef _WIN32
@@ -137,20 +142,20 @@ bool I18n::get_config( void ) {
 		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
 		readLine = String(buf);
 	#endif		
-		if (_lectionary_config_number == i) {
-			pos = 0;
-			Serial.println("csv_record: " + csv_record);
-			desc = csv.getCsvField(csv_record, &pos);
-			Serial.println("\tdesc=" + desc + " pos=" + String(pos));
-			lang = csv.getCsvField(csv_record, &pos);
-			Serial.println("\tlang=" + lang + " pos=" + String(pos));
-			yml_filename = csv.getCsvField(csv_record, &pos);
-			Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
-			sanctorale_filename = csv.getCsvField(csv_record, &pos);
-			Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
-			bible_filename = csv.getCsvField(csv_record, &pos);
-			Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
+		pos = 0;
+		Serial.println("csv_record: " + csv_record);
+		desc = csv.getCsvField(csv_record, &pos);
+		lang = csv.getCsvField(csv_record, &pos);
+		yml_filename = csv.getCsvField(csv_record, &pos);
+		sanctorale_filename = csv.getCsvField(csv_record, &pos);
+		bible_filename = csv.getCsvField(csv_record, &pos);
 
+		if (_lectionary_config_number == i) {
+			Serial.println("\tdesc=" + desc + " pos=" + String(pos));
+			Serial.println("\tlang=" + lang + " pos=" + String(pos));
+			Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
+			Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
+			Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
 			bFoundSelection = true;
 			Serial.println("* selected");
 			break;
@@ -168,20 +173,24 @@ bool I18n::get_config( void ) {
 		//	Serial.println("Not selected");
 		//}
 #ifndef _WIN32
-	} while (file.available());
+	} while (file.available() && !bFoundSelection);
 	closeFile(file);
 #else
 	} while (filestr != NULL);
 	fclose(fpi);
 #endif
 
-	if (!bFoundSelection) return false;
 	
 	_lang = lang;
 	_yml_filename = yml_filename;
 	_sanctorale_filename = sanctorale_filename;
 	_bible_filename = bible_filename;
 	_have_config = true;
+
+	if (!bFoundSelection) {
+		Serial.println("Can't find lectionary config entry number " +  String(_lectionary_config_number));
+		return false; // will simply use the last entry in the file if not found
+	}
 	
 	return true;
 }

@@ -1,3 +1,6 @@
+// Catholic Lectionary on ESP
+// Copyright (c) 2017 Philip Lishman, All rights reserved.
+
 //ESP8266---
 #include "ESP8266WiFi.h"
 //----------
@@ -85,7 +88,8 @@ void setup() {
         display_image(connect_power_image);
         ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
       } else {
-        ESP.reset();
+        ESP.deepSleep(1e6);
+        //ESP.reset();
       }
     } 
     else {
@@ -210,6 +214,8 @@ void loop(void) {
 
   //timeserver.gps_sleep();
 
+  bool bSettingsUpdated = false;
+
   if (battery.power_connected()) {
     Serial.println("Power is connected, starting config web server");
     //if (!network.connect()) {
@@ -223,13 +229,23 @@ void loop(void) {
    
     if (c._config->StartServer(c._I18n)) {
       Serial.println("Config web server started, listening for requests...");
-      while(battery.power_connected()) {
+      while(battery.power_connected() && !bSettingsUpdated) {
         wdt_reset();
-        c._config->ServeClient();
+        c._config->ServeClient(&bSettingsUpdated);
         delay(250);
       }
-      Serial.println("Power disconnected, stopping web server and going to sleep");
+
       c._config->StopServer();
+
+      if (bSettingsUpdated) {
+        Serial.println("Settings updated, resetting lectionary...");
+        Serial.flush();
+        ESP.deepSleep(1e6);
+        //ESP.reset();
+      }
+      else {
+        Serial.println("Power disconnected, stopping web server and going to sleep");
+      }
       
       free = system_get_free_heap_size();
       Serial.println("free memory = " + String(free));

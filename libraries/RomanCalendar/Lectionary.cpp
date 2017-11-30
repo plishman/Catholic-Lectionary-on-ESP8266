@@ -47,11 +47,20 @@ bool Lectionary::get(String liturgical_year, String liturgical_cycle, Lectionary
 
 	File file;
 	
+	Serial.print("Looking for entry for liturgical year...");
 	file = _I18n->openFile(filename + "/" + liturgical_year, FILE_READ);
 
-	if (!file.available()) file = _I18n->openFile(filename + "/" + liturgical_cycle, FILE_READ);
+	if (!file.available()) {
+		Serial.print("not found. Looking for entry for liturgical cycle...");
+		file = _I18n->openFile(filename + "/" + liturgical_cycle, FILE_READ);
+	}
 
-	if (!file.available()) return false;
+	if (!file.available()) {
+		Serial.println("not found - Error: failed to get lectionary entry");
+		return false;
+	} else {
+		Serial.println("done.");
+	}
 	
 	*refs_text = _I18n->readLine(file);
 	

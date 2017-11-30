@@ -10,8 +10,8 @@ Transfers::Transfers(bool transfer_to_sunday, I18n* i) {
 
 Transfers::~Transfers() {
 	transfersList.clear();
-	if (_tc) { delete _tc; Serial.println("Transfers:~Transfers: deleted _tc"); }
-	if (_sc) { delete _sc; Serial.println("Transfers:~Transfers: deleted _sc"); }
+	if (_tc != NULL ) { delete _tc; Serial.println("Transfers:~Transfers: deleted _tc"); }
+	if (_sc != NULL ) { delete _sc; Serial.println("Transfers:~Transfers: deleted _sc"); }
 	_year = 0;
 }
 

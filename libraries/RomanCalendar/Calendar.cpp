@@ -72,20 +72,32 @@ Calendar::Calendar(bool transfer_to_sunday) {
 }
 
 Calendar::~Calendar() {
-	if (_I18n) delete _I18n;
+	if (_I18n != NULL) delete _I18n;
 #ifndef _WIN32
-	if (_config) delete _config;
+	if (_config != NULL) delete _config;
 #endif
-	if (transfers) delete transfers;
-	if (temporale) delete temporale;
-	if (sanctorale) delete sanctorale;
+	if (transfers != NULL) delete transfers;
+	if (temporale != NULL) delete temporale;
+	if (sanctorale != NULL) delete sanctorale;
 }
 
 bool Calendar::get(time_t date) {
 	int tz_offset = (int) (_timezone_offset * 3600);
 	Serial.println("Timezone offset is " + String(_timezone_offset));
+
+	Serial.print("The UTC datetime is ");
+	temporale->print_date(date);
+	Serial.print(" ");
+	temporale->print_time(date);
+	Serial.println();
 	
 	date += tz_offset; // quick and dirty - if bug occurs, need to split the time_t value into a TMelements_t struct, and perform the arithmetic.
+	
+	Serial.print("The local time is ");
+	temporale->print_date(date);
+	Serial.print(" ");
+	temporale->print_time(date);
+	Serial.println();
 
 	//bool bTransfersSuccess = transfers->get(date);
 	

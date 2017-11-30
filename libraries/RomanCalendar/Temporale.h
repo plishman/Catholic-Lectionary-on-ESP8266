@@ -162,5 +162,6 @@ public:
 	void easter_tests();
 	void epiphany_tests(void);
 	static void print_date(time_t t);
+	static void print_time(time_t t);
 };
 #endif
