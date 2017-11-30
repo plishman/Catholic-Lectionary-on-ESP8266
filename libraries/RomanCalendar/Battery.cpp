@@ -4,6 +4,8 @@ Battery::Battery() {
 }
 
 bool Battery::power_connected( void ) {
+	Serial.println("battery voltage is " + String(battery_voltage()));
+	Serial.println("min charging voltage is " + String(MIN_CHARGING_VOLTAGE));
 	return (battery_voltage() > MIN_CHARGING_VOLTAGE);
 }
 

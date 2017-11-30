@@ -35,10 +35,11 @@ public:
 	static const char* const I18n_SOLEMNITIES[17];
 
 	int _callcount = 0;
+	int _lectionary_config_number = 1;
 #ifndef _WIN32
 	int _CS_PIN = D1;
-
-	I18n(int CS_PIN);
+	
+	I18n(int CS_PIN, int lectionary_config_number);
 	I18n( void );
 	void suppress_output(bool s);
 	bool initializeSD();

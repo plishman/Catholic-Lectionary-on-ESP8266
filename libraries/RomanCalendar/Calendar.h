@@ -6,6 +6,7 @@
 #ifndef _WIN32
 	#include "Arduino.h"
 	#include "../Time/TimeLib.h"
+	#include "Config.h"
 #else
 	#include <time.h>
 	#include "WString.h"
@@ -37,6 +38,9 @@ public:
 	Day day;
 
 	I18n* _I18n;
+	float _timezone_offset = 0.0;
+	int _lectionary_config_number = 1;
+	
 	Temporale* temporale;
 	Sanctorale* sanctorale;
 	Transfers* transfers;
@@ -57,6 +61,7 @@ public:
 #ifndef _WIN32
 	int _CS_PIN = 10;
 	Calendar(bool transfer_to_sunday, int CS_PIN);
+	Config* _config;
 #else
 	Calendar(bool transfer_to_sunday);
 #endif

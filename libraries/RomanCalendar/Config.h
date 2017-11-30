@@ -1,8 +1,11 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+//#include <ESP8266WebServer.h>
+//#include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <EEPROM.h>
 #include <pins_arduino.h>
@@ -14,12 +17,16 @@ typedef struct {
 } config_t __attribute__ ((packed));
 
 class Config {
-	I18n* p_i18n;
-	WiFiServer* p_server;
+public:
+	I18n* _I18n;
+	//WiFiServer* p_server;
+	WiFiServer server;
 	
-	Config(I18n* i);
+	Config();
 	~Config();
-	bool ServeClient(void);
+	bool StartServer( I18n* i );
+	void StopServer( void );
+	bool ServeClient( void );
 	String getQueryStringParam(String param, String querystring);
 	bool sendHttpFile(WiFiClient* client, String filename);
 	bool SaveConfig(String tz, String lect_num);

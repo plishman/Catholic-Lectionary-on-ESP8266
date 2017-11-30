@@ -17,9 +17,14 @@
 #include <calibri8pt.h>
 //#include <calibri8ptbold.h>
 #include <pgmspace.h>
-#include <TimeServer.h>
+#include <Network.h>
 #include <Battery.h>
+#include <Config.h>
 #include <images.h>
+
+extern "C" {
+#include "user_interface.h"
+}
 
 #define COLORED     1
 #define UNCOLORED   0
@@ -51,7 +56,7 @@ char dec[] PROGMEM = "Dec";
 PGM_P months[] PROGMEM = {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec};
 
 Battery battery;
-TimeServer timeserver;
+Network network;
 
 void setup() { 
   Serial.begin(9600);
@@ -71,7 +76,7 @@ void setup() {
 //    Serial.print(".");
 //  }
 
-  if (!timeserver.connect()){
+  if (!network.connect()){
     Serial.println("Need to configure Wifi with WPS for time service");
     if (battery.power_connected()) {
       Serial.println("On USB power and no network configured: Prompting user to connect using WPS button");
@@ -116,7 +121,7 @@ bool connect_wps(){
   display_image(wps_connect_image);
   wdt_reset();
   delay(10000);
-  bool connected = timeserver.startWPSPBC();      
+  bool connected = network.startWPSPBC();      
     
   if (!connected) {
     Serial.println("Failed to connect with WPS :-(");  
@@ -153,13 +158,10 @@ void display_image(EPD_DISPLAY_IMAGE i) {
   epd.Sleep();
 }
 
-
-
 void loop(void) {
   /************************************************/ 
   wdt_reset();
   //timeserver.gps_wake();
-  
   Serial.println("*1*\n");
   Calendar c(true, D1);
   Serial.println("*2*\n");
@@ -172,12 +174,12 @@ void loop(void) {
   Serial.println("Getting datetime...");
   //time_t date = timeserver.local_datetime();
   time_t date;
-  while (!timeserver.get_ntp_time(&date)) {
+  while (!network.get_ntp_time(&date)) {
     Serial.print(".");
     delay(1000);
   }
   Serial.println("Got datetime.");
-  timeserver.wifi_sleep(); // no longer needed, sleep wifi to save power
+  //network.wifi_sleep(); // no longer needed, sleep wifi to save power
 
   c.get(date);
   Serial.println("*4*\n");
@@ -207,6 +209,32 @@ void loop(void) {
   Serial.println("*8*\n");
 
   //timeserver.gps_sleep();
+
+  if (battery.power_connected()) {
+    Serial.println("Power is connected, starting config web server");
+    //if (!network.connect()) {
+    //  Serial.println("Network is not configured, starting WPS setup");
+    //  connect_wps();
+    //  ESP.reset();
+    //}
+    
+    uint32_t free = system_get_free_heap_size();
+    Serial.println("free memory = " + String(free));
+   
+    if (c._config->StartServer(c._I18n)) {
+      Serial.println("Config web server started, listening for requests...");
+      while(battery.power_connected()) {
+        wdt_reset();
+        c._config->ServeClient();
+        delay(250);
+      }
+      Serial.println("Power disconnected, stopping web server and going to sleep");
+      c._config->StopServer();
+      
+      free = system_get_free_heap_size();
+      Serial.println("free memory = " + String(free));
+    }
+  }
   
   while(1) {
     delay(15000);

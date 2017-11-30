@@ -1,6 +1,6 @@
-"en","/locales/en.yml","/sanct/un-en.txt","/Bibles/njb.csv",
-"en","/locales/en.yml","/sanct/un-en.txt","/Bibles/eng_kjv.csv",
-"fr","/locales/fr.yml","/sanct/un-fr.txt","/Bibles/njb_fr.csv",
-"cs","/locales/cs.yml","/sanct/czech-cs.txt","/Bibles/czeczbkr.csv",
-"it","/locales/it.yml","/sanct/un-it.txt","/Bibles/cei_it.csv","selected"
-"la","/locales/la.yml","/sanct/un-la.txt","/Bibles/lat_v.csv",
+"en","/locales/en.yml","/sanct/un-en.txt","/Bibles/njb.csv"
+"en","/locales/en.yml","/sanct/un-en.txt","/Bibles/eng_kjv.csv","selected"
+"fr","/locales/fr.yml","/sanct/un-fr.txt","/Bibles/njb_fr.csv"
+"cs","/locales/cs.yml","/sanct/czech-cs.txt","/Bibles/czeczbkr.csv"
+"it","/locales/it.yml","/sanct/un-it.txt","/Bibles/cei_it.csv"
+"la","/locales/la.yml","/sanct/un-la.txt","/Bibles/lat_v.csv"

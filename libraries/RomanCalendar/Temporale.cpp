@@ -148,7 +148,7 @@ time_t Temporale::weekday_before(int weekdayBefore, time_t date) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(date, ts);
 	int currentWeekday = ts.Wday - 1;
-#endif`
+#endif
 	//	s->tm_isdst = -1; // set is dst to auto
 
 

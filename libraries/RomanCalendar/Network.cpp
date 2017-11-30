@@ -1,6 +1,12 @@
 #include "Network.h"
 
 bool Network::connect() {
+	wl_status_t status = WiFi.status();
+
+	if(status == WL_CONNECTED) {
+		WiFi.disconnect(false);
+	} 
+
 	Serial.printf("\nTry connecting to WiFi with SSID '%s'\n", WiFi.SSID().c_str());
 
 	WiFi.mode(WIFI_STA);
@@ -10,7 +16,7 @@ bool Network::connect() {
 		Serial.print(".");
 	}
 
-	wl_status_t status = WiFi.status();
+	status = WiFi.status();
 	if(status == WL_CONNECTED) {
 		Serial.printf("\nConnected successfull to SSID '%s'\n", WiFi.SSID().c_str());
 	} 
@@ -110,6 +116,8 @@ bool Network::get_ntp_time(time_t* t)
 	}
 	Serial.println(epoch % 60); // print the second
 
+	udp.stop();
+	
 	return true;
 }
 

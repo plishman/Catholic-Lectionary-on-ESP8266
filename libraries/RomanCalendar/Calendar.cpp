@@ -46,8 +46,17 @@ const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 #ifndef _WIN32
 Calendar::Calendar(bool transfer_to_sunday, int CS_PIN) {
+	_config = new Config();	
+	config_t c;
+	_config->GetConfig(&c);
+	
+	_timezone_offset = c.timezone_offset;
+	_lectionary_config_number = c.lectionary_config_number; // is the line number of the entry in config.csv, specifies the Bible, language and sanctorale files to use
+
 	_CS_PIN = CS_PIN;
-	_I18n = new I18n(_CS_PIN);
+	_I18n = new I18n(_CS_PIN, _lectionary_config_number);
+	
+	_config->_I18n = _I18n;
 #else
 Calendar::Calendar(bool transfer_to_sunday) {	
 	_I18n = new I18n();
@@ -63,12 +72,21 @@ Calendar::Calendar(bool transfer_to_sunday) {
 }
 
 Calendar::~Calendar() {
+	if (_I18n) delete _I18n;
+#ifndef _WIN32
+	if (_config) delete _config;
+#endif
 	if (transfers) delete transfers;
 	if (temporale) delete temporale;
 	if (sanctorale) delete sanctorale;
 }
 
 bool Calendar::get(time_t date) {
+	int tz_offset = (int) (_timezone_offset * 3600);
+	Serial.println("Timezone offset is " + String(_timezone_offset));
+	
+	date += tz_offset; // quick and dirty - if bug occurs, need to split the time_t value into a TMelements_t struct, and perform the arithmetic.
+
 	//bool bTransfersSuccess = transfers->get(date);
 	
 	//Serial.println("Calendar::get()");

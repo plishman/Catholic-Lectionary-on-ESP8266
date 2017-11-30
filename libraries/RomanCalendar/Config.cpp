@@ -1,20 +1,25 @@
 #include "config.h"
 
-Config::Config(I18n* i)
-{    
-	p_i18n = i; // for file handling
+Config::Config() : server(80) {}
 
+bool Config::StartServer( I18n* i ) {
+	if (i == NULL) return false;
+	
+	_I18n = i;
+	
 	wl_status_t status = WiFi.status();
 	if(status == WL_CONNECTED) {
 		Serial.printf("Config: Network '%s' is connected, starting mDNS responder\n", WiFi.SSID().c_str());
 	} 
 	else {
 		Serial.printf("\nCould not connect to WiFi. state='%d'", status); 
-		return;
+		return false;
 	}
 
   // TCP server at port 80 will respond to HTTP requests
-  p_server = new WifiServer(80);
+//  if (p_server == NULL) {
+//	  p_server = new WiFiServer(80);
+//  }
   
   // Set up mDNS responder:
   // - first argument is the domain name, in this example
@@ -23,25 +28,41 @@ Config::Config(I18n* i)
   //   we send our IP address on the WiFi network
   if (!MDNS.begin("lectionary")) {
     Serial.println("Error setting up MDNS responder!");
-	return;
+	return false;
   }
   Serial.println("mDNS responder started");
   
+//  if (p_server == NULL) {
+//	  Serial.println("p_server is null!");
+//  }
+  
   // Start TCP (HTTP) server
-  p_server->begin();
+//  p_server->begin();
+  server.begin();
   Serial.println("TCP server started");
   
   // Add service to MDNS-SD
-  MDNS.addService("http", "tcp", 80);
-  return;
+  //MDNS.addService("http", "tcp", 80);
+  return true;	
+}
+
+void Config::StopServer( void ) {
+	server.close();
+//  if (p_server != NULL) {
+//	  p_server->close();
+//  }	
 }
 
 Config::~Config() {
-  delete p_server;
+  //delete p_server;
 }
 
 bool Config::ServeClient(void)
 {
+	if (_I18n == NULL) {
+		return false;
+	}
+	
 	wl_status_t status = WiFi.status();
 	if(status != WL_CONNECTED) {
 		Serial.printf("Network is not connected. state='%d'", status); 
@@ -49,7 +70,8 @@ bool Config::ServeClient(void)
 	}
 
   // Check if a client has connected
-  WiFiClient client = p_server->available();
+  //WiFiClient client = p_server->available();
+  WiFiClient client = server.available();
   if (!client) {
     return true;
   }
@@ -151,7 +173,7 @@ String Config::getQueryStringParam(String param, String querystring) {
 }
 
 bool Config::sendHttpFile(WiFiClient* client, String filename) {
-  File file = p_i18n->openFile(filename, FILE_READ);
+  File file = _I18n->openFile(filename, FILE_READ);
   if (!file.available()) {
     return false;
   } else {
@@ -159,10 +181,10 @@ bool Config::sendHttpFile(WiFiClient* client, String filename) {
     client->print(header);
     String line;
     do {
-      line = p_i18n->readLine(file) + "\r\n";
+      line = _I18n->readLine(file) + "\r\n";
       client->print(line);
     } while (file.available());
-    p_i18n->closeFile(file);
+    _I18n->closeFile(file);
   }
   return true;
 }

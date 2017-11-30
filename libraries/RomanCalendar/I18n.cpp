@@ -71,13 +71,14 @@ const char* const I18n::I18n_SOLEMNITIES[17] = {
 };
 
 #ifndef _WIN32
-I18n::I18n(int CS_PIN) {
+I18n::I18n(int CS_PIN, int lectionary_config_number) {
 	_CS_PIN = CS_PIN;
-
+	_lectionary_config_number = lectionary_config_number;
+	
 	if (!initializeSD()) {
 		Serial.println("Failed to initialize SD card");
 	}
-
+	
 	get_config();	
 }
 
@@ -86,7 +87,7 @@ I18n::I18n( void ) {
 	if (!initializeSD()) {
 		Serial.println("Failed to initialize SD card");
 	}
-
+	
 	get_config();
 }
 
@@ -126,6 +127,7 @@ bool I18n::get_config( void ) {
 	String sanctorale_filename;
 	String bible_filename;
 	int pos = 0;
+	int i = 1;
 	
 	do {
 	#ifndef _WIN32
@@ -134,27 +136,37 @@ bool I18n::get_config( void ) {
 		filestr = fgets(buf, 1024, fpi);
 		if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
 		readLine = String(buf);
-	#endif
-		pos = 0;
-		Serial.println("csv_record: " + csv_record);
-		desc = csv.getCsvField(csv_record, &pos);
-		Serial.println("\tdesc=" + desc + " pos=" + String(pos));
-		lang = csv.getCsvField(csv_record, &pos);
-		Serial.println("\tlang=" + lang + " pos=" + String(pos));
-		yml_filename = csv.getCsvField(csv_record, &pos);
-		Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
-		sanctorale_filename = csv.getCsvField(csv_record, &pos);
-		Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
-		bible_filename = csv.getCsvField(csv_record, &pos);
-		Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
-		if (csv.getCsvField(csv_record, &pos) == "selected") {
+	#endif		
+		if (_lectionary_config_number == i) {
+			pos = 0;
+			Serial.println("csv_record: " + csv_record);
+			desc = csv.getCsvField(csv_record, &pos);
+			Serial.println("\tdesc=" + desc + " pos=" + String(pos));
+			lang = csv.getCsvField(csv_record, &pos);
+			Serial.println("\tlang=" + lang + " pos=" + String(pos));
+			yml_filename = csv.getCsvField(csv_record, &pos);
+			Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
+			sanctorale_filename = csv.getCsvField(csv_record, &pos);
+			Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
+			bible_filename = csv.getCsvField(csv_record, &pos);
+			Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
+
 			bFoundSelection = true;
 			Serial.println("* selected");
 			break;
 		} 
 		else {
-			Serial.println("Not selected");
+			//Serial.println("Not selected");	
+			i++;
 		}
+		//if (csv.getCsvField(csv_record, &pos) == "selected") {
+		//	bFoundSelection = true;
+		//	Serial.println("* selected");
+		//	break;
+		//} 
+		//else {
+		//	Serial.println("Not selected");
+		//}
 #ifndef _WIN32
 	} while (file.available());
 	closeFile(file);
