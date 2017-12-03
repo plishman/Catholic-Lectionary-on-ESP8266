@@ -14,6 +14,7 @@
 
 #include "I18n.h"
 #include "Csv.h"
+#include "I2CSerialPort.h"
 
 class BibleVerse
 {

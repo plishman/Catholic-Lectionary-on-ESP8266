@@ -68,7 +68,7 @@ Calendar::Calendar(bool transfer_to_sunday) {
 	temporale = new Temporale(_transfer_to_sunday, _I18n);
 	sanctorale = new Sanctorale(_transfer_to_sunday, _I18n);
 	
-	Serial.println("Created new calendar object");
+	I2CSerial.println("Created new calendar object");
 }
 
 Calendar::~Calendar() {
@@ -83,25 +83,25 @@ Calendar::~Calendar() {
 
 bool Calendar::get(time_t date) {
 	int tz_offset = (int) (_timezone_offset * 3600);
-	Serial.println("Timezone offset is " + String(_timezone_offset));
+	I2CSerial.println("Timezone offset is " + String(_timezone_offset));
 
-	Serial.print("The UTC datetime is ");
+	I2CSerial.print("The UTC datetime is ");
 	temporale->print_date(date);
-	Serial.print(" ");
+	I2CSerial.print(" ");
 	temporale->print_time(date);
-	Serial.println();
+	I2CSerial.println();
 	
 	date += tz_offset; // quick and dirty - if bug occurs, need to split the time_t value into a TMelements_t struct, and perform the arithmetic.
 	
-	Serial.print("The local time is ");
+	I2CSerial.print("The local time is ");
 	temporale->print_date(date);
-	Serial.print(" ");
+	I2CSerial.print(" ");
 	temporale->print_time(date);
-	Serial.println();
+	I2CSerial.println();
 
 	//bool bTransfersSuccess = transfers->get(date);
 	
-	//Serial.println("Calendar::get()");
+	//I2CSerial.println("Calendar::get()");
 	
 	//bool bTransfersSuccess = transfers->get(date);
 	bool bTemporaleSuccess = temporale->get(date);
@@ -130,7 +130,7 @@ bool Calendar::get(time_t date) {
 	Enums::Ranks rank_s = sanctorale->getRank();
 	Enums::Season seas = temporale->season(date);
 
-	//Serial.println("Checking day");
+	//I2CSerial.println("Checking day");
 	
 	if (bIsSanctorale) { // there is a sanctorale for this day. All conflicting Solemnities will already have been moved
 		if (rank_s > rank_t) { // sanctorale's rank is above temporale's rank

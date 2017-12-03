@@ -9,6 +9,7 @@ bool Battery::power_connected( void ) {
 
 float Battery::battery_voltage( void ) {
 	int sensorValue = analogRead(A0);		
+	//I2CSerial.println("battery_voltage = " + String (sensorValue * (3.3 / 1024.00) * 2));
 	return sensorValue * (3.3 / 1024.00) * 2;
 }
 

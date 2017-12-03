@@ -986,10 +986,10 @@ void RomanCalendar::print_date(time_t t) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(t, ts);
 
-	Serial.print(ts.Day);
-	Serial.print("-");
-	Serial.print(ts.Month);
-	Serial.print("-");
-	Serial.print(ts.Year);
+	I2CSerial.print(ts.Day);
+	I2CSerial.print("-");
+	I2CSerial.print(ts.Month);
+	I2CSerial.print("-");
+	I2CSerial.print(ts.Year);
 #endif
 }

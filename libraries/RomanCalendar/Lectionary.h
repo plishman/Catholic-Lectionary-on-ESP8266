@@ -8,6 +8,7 @@
 #endif
 
 #include <I18n.h>
+#include "I2CSerialPort.h"
 
 class Lectionary {
 public:

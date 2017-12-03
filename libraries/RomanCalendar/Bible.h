@@ -9,6 +9,7 @@
 #else
 	#include "Arduino.h"
 	#include "LinkedList.h"
+	#include "I2CSerialPort.h"
 #endif
 
 #include "I18n.h"

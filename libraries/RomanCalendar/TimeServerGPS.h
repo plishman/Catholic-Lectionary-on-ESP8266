@@ -4,6 +4,7 @@
 #include <TimeLib.h>
 #include <TinyGPS++.h>
 #include "arduino.h"
+#include "I2CSerialPort.h"
 
 class TimeServerGPS {
 public:

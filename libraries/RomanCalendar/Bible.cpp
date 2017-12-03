@@ -68,14 +68,14 @@ const int Bible::books_chaptercounts_with_apocrypha[73] = {
 
 Bible::Bible(I18n* i)
 {
-	Serial.println("Bible::Bible()");
+	I2CSerial.println("Bible::Bible()");
 	
 	_I18n = i;
 	_bibleverse = new BibleVerse(_I18n);
 	
 	_book_count = 73; //_bibleverse->_book_count;
 	
-	//Serial.println("book count is " + String(_book_count));
+	//I2CSerial.println("book count is " + String(_book_count));
 	
 	//if (_book_count == 66) {
 	//	books = books_no_apocrypha;
@@ -96,7 +96,7 @@ Bible::~Bible(void)
 
 bool Bible::get(String refs) {
 	if (refs == NULL) {
-		Serial.println("Bible::get() refs is null");
+		I2CSerial.println("Bible::get() refs is null");
 		return false;
 	}
 	
@@ -197,9 +197,9 @@ void Bible::dump_refs() {
 
 		i++;
 		r = refsList.get(i);
-		//Serial.println(".");
+		//I2CSerial.println(".");
 	} 
-	//Serial.println("finished");
+	//I2CSerial.println("finished");
 }
 
 String Bible::sentence_ref(int from, int to) {

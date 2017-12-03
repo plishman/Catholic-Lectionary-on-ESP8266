@@ -76,7 +76,7 @@ I18n::I18n(int CS_PIN, int lectionary_config_number) {
 	_lectionary_config_number = lectionary_config_number;
 	
 	if (!initializeSD()) {
-		Serial.println("Failed to initialize SD card");
+		I2CSerial.println("Failed to initialize SD card");
 	}
 	
 	get_config();	
@@ -85,7 +85,7 @@ I18n::I18n(int CS_PIN, int lectionary_config_number) {
 I18n::I18n( void ) {
 //	I18n(_CS_PIN);
 	if (!initializeSD()) {
-		Serial.println("Failed to initialize SD card");
+		I2CSerial.println("Failed to initialize SD card");
 	}
 	
 	get_config();
@@ -106,7 +106,7 @@ void I18n::suppress_output(bool s) {
 }
 
 bool I18n::get_config( void ) {
-	Serial.println("I18n::get_config() lectionary_config_number = " + String(_lectionary_config_number));
+	I2CSerial.println("I18n::get_config() lectionary_config_number = " + String(_lectionary_config_number));
 
 	Csv csv;
 
@@ -114,7 +114,7 @@ bool I18n::get_config( void ) {
 #ifndef _WIN32	
 	File file = openFile(config_filename, FILE_READ);
 	if (!file.available()) {
-		Serial.println("Couldn't open config file");
+		I2CSerial.println("Couldn't open config file");
 		return false;
 	}
 #else
@@ -143,7 +143,7 @@ bool I18n::get_config( void ) {
 		readLine = String(buf);
 	#endif		
 		pos = 0;
-		Serial.println("csv_record: " + csv_record);
+		I2CSerial.println("csv_record: " + csv_record);
 		desc = csv.getCsvField(csv_record, &pos);
 		lang = csv.getCsvField(csv_record, &pos);
 		yml_filename = csv.getCsvField(csv_record, &pos);
@@ -151,26 +151,26 @@ bool I18n::get_config( void ) {
 		bible_filename = csv.getCsvField(csv_record, &pos);
 
 		if (_lectionary_config_number == i) {
-			Serial.println("\tdesc=" + desc + " pos=" + String(pos));
-			Serial.println("\tlang=" + lang + " pos=" + String(pos));
-			Serial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
-			Serial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
-			Serial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
+			I2CSerial.println("\tdesc=" + desc + " pos=" + String(pos));
+			I2CSerial.println("\tlang=" + lang + " pos=" + String(pos));
+			I2CSerial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
+			I2CSerial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
+			I2CSerial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
 			bFoundSelection = true;
-			Serial.println("* selected");
+			I2CSerial.println("* selected");
 			break;
 		} 
 		else {
-			//Serial.println("Not selected");	
+			//I2CSerial.println("Not selected");	
 			i++;
 		}
 		//if (csv.getCsvField(csv_record, &pos) == "selected") {
 		//	bFoundSelection = true;
-		//	Serial.println("* selected");
+		//	I2CSerial.println("* selected");
 		//	break;
 		//} 
 		//else {
-		//	Serial.println("Not selected");
+		//	I2CSerial.println("Not selected");
 		//}
 #ifndef _WIN32
 	} while (file.available() && !bFoundSelection);
@@ -188,7 +188,7 @@ bool I18n::get_config( void ) {
 	_have_config = true;
 
 	if (!bFoundSelection) {
-		Serial.println("Can't find lectionary config entry number " +  String(_lectionary_config_number));
+		I2CSerial.println("Can't find lectionary config entry number " +  String(_lectionary_config_number));
 		return false; // will simply use the last entry in the file if not found
 	}
 	
@@ -196,10 +196,10 @@ bool I18n::get_config( void ) {
 }
 
 String I18n::get(String I18nPath) {
-	//Serial.println("I18n::get()");
+	//I2CSerial.println("I18n::get()");
 	
 	if (!_have_config) {
-		Serial.println("I18n::get(): No config");
+		I2CSerial.println("I18n::get(): No config");
 		return "";
 	}
 	
@@ -315,7 +315,7 @@ String I18n::get(String I18nPath) {
 	
 	if (!bTokenMatched) { // reached end of file without finding the token
 		#ifndef _WIN32
-			Serial.println("token " + lookingforToken + " not found (EOF)\n");
+			I2CSerial.println("token " + lookingforToken + " not found (EOF)\n");
 			closeFile(file);
 		#else
 			printf("token %s not found (EOF)\n", lookingforToken.c_str());
@@ -344,8 +344,8 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 bool I18n::initializeSD() {
- //Serial.println("Initializing SD card...");
- //Serial.println("_CS_PIN is " + String(_CS_PIN));
+ //I2CSerial.println("Initializing SD card...");
+ //I2CSerial.println("_CS_PIN is " + String(_CS_PIN));
   
   pinMode(_CS_PIN, OUTPUT);
   digitalWrite(_CS_PIN, HIGH);
@@ -354,12 +354,12 @@ bool I18n::initializeSD() {
 }
 
 String I18n::readLine(File file) { 
-  //Serial.println("readLine(): position=" + String(file.position()));
+  //I2CSerial.println("readLine(): position=" + String(file.position()));
   String received = "";
   char ch;
   
   if (!file) {
-    Serial.println("file is not available");
+    I2CSerial.println("file is not available");
 	return "";
   }
   
@@ -371,18 +371,18 @@ String I18n::readLine(File file) {
 	}
 	
 	if (ch == '\n') {
-	  //Serial.println("received lf len=" + String(received.length()));
+	  //I2CSerial.println("received lf len=" + String(received.length()));
 	  return received;
     } else {
       received += ch;
     }
 	
 	if (file.position() == file.size()) {
-		//Serial.println("EOF");
+		//I2CSerial.println("EOF");
 		return received;
 	} 
   }
-  //Serial.println("dropped through");
+  //I2CSerial.println("dropped through");
   return "";
 }
 
@@ -391,10 +391,10 @@ File I18n::openFile(String filename, uint8_t mode) {
   
   File file = SD.open(filename.c_str(), mode);
   if (file) {
-    //Serial.println("File opened with success!");
+    //I2CSerial.println("File opened with success!");
     return file;
   } else {
-    Serial.println("Error opening file " + filename);
+    I2CSerial.println("Error opening file " + filename);
     return file;
   }
 }
@@ -402,7 +402,7 @@ File I18n::openFile(String filename, uint8_t mode) {
 void I18n::closeFile(File file) {
   if (file) {
     file.close();
-    //Serial.println("File closed");
+    //I2CSerial.println("File closed");
   }
 }
 #endif

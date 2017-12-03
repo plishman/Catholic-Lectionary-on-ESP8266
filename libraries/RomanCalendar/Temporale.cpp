@@ -680,7 +680,7 @@ String Temporale::sunday_temporale(time_t date) {
 	switch (seas)
 	{
 	case Enums::SEASON_ADVENT:
-		_Lectionary = (3 * (week - 1)) + lit_year;
+		_Lectionary = (3 * (week - 1)) + lit_year + 1; 
 		christmas_vigil(date); // check to see if after 6pm on Christmas eve
 		break;
 
@@ -1033,8 +1033,8 @@ bool Temporale::includes(const char* s, const char* const strarray[]) {
 }
 
 void Temporale::temporaletests() {
-#ifdef _WIN32
-	printf("\n\ntemporaletests()\n");
+//#ifdef _WIN32
+	//printf("\n\ntemporaletests()\n");
 	//printf("epiphany is in SUNDAY_TRANSFERABLE_SOLEMNITIES[]: %s\n", includes("epiphany", SUNDAY_TRANSFERABLE_SOLEMNITIES) ? "true" : "false");
 	//printf("christmas is in SUNDAY_TRANSFERABLE_SOLEMNITIES[]: %s\n", includes("christmas", SUNDAY_TRANSFERABLE_SOLEMNITIES) ? "true" : "false");
 
@@ -1076,8 +1076,8 @@ void Temporale::temporaletests() {
 	fclose(fpo);
 	printf("wrote csv\n");
 */
-#else
-#endif
+//#else
+//#endif
 }
 
 int Temporale::get_monthdays(int mon, int year) {
@@ -1153,11 +1153,11 @@ void Temporale::print_date(time_t t) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(t, ts);
 
-	Serial.print(ts.Day);
-	Serial.print("-");
-	Serial.print(ts.Month);
-	Serial.print("-");
-	Serial.print(ts.Year + BEGIN_EPOCH);
+	I2CSerial.print(ts.Day);
+	I2CSerial.print("-");
+	I2CSerial.print(ts.Month);
+	I2CSerial.print("-");
+	I2CSerial.print(ts.Year + BEGIN_EPOCH);
 #endif
 }
 
@@ -1174,10 +1174,10 @@ void Temporale::print_time(time_t t) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(t, ts);
 
-	Serial.print(ts.Hour);
-	Serial.print(":");
-	Serial.print(ts.Minute);
-	Serial.print(":");
-	Serial.print(ts.Second);
+	I2CSerial.print(ts.Hour);
+	I2CSerial.print(":");
+	I2CSerial.print(ts.Minute);
+	I2CSerial.print(":");
+	I2CSerial.print(ts.Second);
 #endif
 }

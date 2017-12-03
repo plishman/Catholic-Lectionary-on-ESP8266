@@ -4,6 +4,7 @@
 #include "I18n.h"
 #include <SD.h>
 #include "arduino.h"
+#include "I2CSerialPort.h"
 
 #define DIODE_DROP 0.7
 #define MARGIN 0.5

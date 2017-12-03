@@ -7,6 +7,7 @@
 	#include "WString.h"
 #else
 	#include "Arduino.h"
+	#include "I2CSerialPort.h"
 #endif
 
 class Csv

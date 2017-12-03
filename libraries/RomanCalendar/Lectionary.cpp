@@ -40,26 +40,26 @@ bool Lectionary::get(String liturgical_year, String liturgical_cycle, Lectionary
 	if(liturgical_cycle == "I") liturgical_cycle = "1";
 	if(liturgical_cycle == "II") liturgical_cycle = "2"; // just to be sure, so that information is not returned if the value is neither I nor II
 	
-	//printf("\nLectionary::get() ly = %s, lc = %s, filename = %s\n", liturgical_year.c_str(), liturgical_cycle.c_str(), filename.c_str());
+	I2CSerial.printf("\nLectionary::get() ly = %s, lc = %s, filename = %s\n", liturgical_year.c_str(), liturgical_cycle.c_str(), filename.c_str());
 	
 	// don't know if the requested lectionary number will be for a liturgical cycle or a liturgical year
 	// so will try liturgical year first, then liturgical cycle. Both should never be present in the same directory in Lectionary directory Lect/
 
 	File file;
 	
-	Serial.print("Looking for entry for liturgical year...");
+	I2CSerial.print("Looking for entry for liturgical year...");
 	file = _I18n->openFile(filename + "/" + liturgical_year, FILE_READ);
 
 	if (!file.available()) {
-		Serial.print("not found. Looking for entry for liturgical cycle...");
+		I2CSerial.print("not found. Looking for entry for liturgical cycle...");
 		file = _I18n->openFile(filename + "/" + liturgical_cycle, FILE_READ);
 	}
 
 	if (!file.available()) {
-		Serial.println("not found - Error: failed to get lectionary entry");
+		I2CSerial.println("not found - Error: failed to get lectionary entry");
 		return false;
 	} else {
-		Serial.println("done.");
+		I2CSerial.println("done.");
 	}
 	
 	*refs_text = _I18n->readLine(file);

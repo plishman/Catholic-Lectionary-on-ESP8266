@@ -8,6 +8,7 @@
 	#include <SPI.h>
 	#include <SD.h>
 	#include <pins_arduino.h>
+	#include "I2CSerialPort.h"
 #else
 	#include "WString.h"
 #endif
