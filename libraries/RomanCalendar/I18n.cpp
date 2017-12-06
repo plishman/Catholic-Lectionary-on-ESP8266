@@ -301,7 +301,8 @@ String I18n::get(String I18nPath) {
 
 		currenttokendepth = readtokendepth;
 
-		if ((I18nPath.indexOf(I18nCurrentPath) == 0) && numtokensinI18nCurrentPath == numtokensinI18nPath) { // found our key
+		//if ((I18nPath.indexOf(I18nCurrentPath) == 0) && numtokensinI18nCurrentPath == numtokensinI18nPath) { // found our key
+		if (I18nPath == I18nCurrentPath) { // found our key
 			readData = readLine.substring(readLine.indexOf(":") + 1);
 			readData.trim();
 			bTokenMatched = true;

@@ -42,7 +42,7 @@ bool Config::StartServer( I18n* i ) {
   I2CSerial.println("TCP server started");
   
   // Add service to MDNS-SD
-  //MDNS.addService("http", "tcp", 80);
+  MDNS.addService("http", "tcp", 80);
   return true;	
 }
 
