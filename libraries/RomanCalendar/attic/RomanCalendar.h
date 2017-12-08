@@ -3,9 +3,9 @@
 #define RomanCalendar_h
 
 #ifdef _WIN32
-	const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time_t, sometimes 1970 (may be on embedded system)
+	const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
 #else
-	const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time_t, sometimes 1970 (may be on embedded system)
+	const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
 #endif
 
 const int WEEK = 7;
@@ -126,72 +126,72 @@ public:
 
 	void datestests();
 	bool getTm(int day, int month, int year, int hours, int minutes, int seconds, struct tm* ts);
-	time_t date(int day, int month, int year);
+	time64_t date(int day, int month, int year);
 
-	time_t weekday_before(int weekdayBefore, time_t date);
-	time_t sunday_before(time_t date);
-	time_t monday_before(time_t date);
-	time_t tuesday_before(time_t date);
-	time_t wednesday_before(time_t date);
-	time_t thursday_before(time_t date);
-	time_t friday_before(time_t date);
-	time_t saturday_before(time_t date);
+	time64_t weekday_before(int weekdayBefore, time64_t date);
+	time64_t sunday_before(time64_t date);
+	time64_t monday_before(time64_t date);
+	time64_t tuesday_before(time64_t date);
+	time64_t wednesday_before(time64_t date);
+	time64_t thursday_before(time64_t date);
+	time64_t friday_before(time64_t date);
+	time64_t saturday_before(time64_t date);
 
-	time_t weekday_after(int weekdayAfter, time_t date);
-	time_t sunday_after(time_t date);
-	time_t monday_after(time_t date);
-	time_t tuesday_after(time_t date);
-	time_t wednesday_after(time_t date);
-	time_t thursday_after(time_t date);
-	time_t friday_after(time_t date);
-	time_t saturday_after(time_t date);
+	time64_t weekday_after(int weekdayAfter, time64_t date);
+	time64_t sunday_after(time64_t date);
+	time64_t monday_after(time64_t date);
+	time64_t tuesday_after(time64_t date);
+	time64_t wednesday_after(time64_t date);
+	time64_t thursday_after(time64_t date);
+	time64_t friday_after(time64_t date);
+	time64_t saturday_after(time64_t date);
 
-	int dayofweek(time_t date);
-	bool sunday(time_t date);
-	bool monday(time_t date);
-	bool tuesday(time_t date);
-	bool wednesday(time_t date);
-	bool thursday(time_t date);
-	bool friday(time_t date);
-	bool saturday(time_t date);
+	int dayofweek(time64_t date);
+	bool sunday(time64_t date);
+	bool monday(time64_t date);
+	bool tuesday(time64_t date);
+	bool wednesday(time64_t date);
+	bool thursday(time64_t date);
+	bool friday(time64_t date);
+	bool saturday(time64_t date);
 
-	int date_difference(time_t date1, time_t date2);
-	int year(time_t date);
-	int dayofmonth(time_t date);
-	bool issameday(time_t date1, time_t date2);
+	int date_difference(time64_t date1, time64_t date2);
+	int year(time64_t date);
+	int dayofmonth(time64_t date);
+	bool issameday(time64_t date1, time64_t date2);
 
-	time_t start_date(int year);
-	time_t end_date(int year);
-	time_t first_advent_sunday(int year);
-	time_t nativity(int year);
-	time_t holy_family(int year);
-	time_t mother_of_god(int year);
-	time_t epiphany(int year);
-	time_t baptism_of_lord(int year);
-	time_t ash_wednesday(int year);
-	time_t easter_sunday(int year);
-	time_t palm_sunday(int year);
-	time_t good_friday(int year);
-	time_t holy_saturday(int year);
-	time_t ascension(int year);
-	time_t pentecost(int year);
-	time_t holy_trinity(int year);
-	time_t corpus_christi(int year);
-	time_t sacred_heart(int year);
-	time_t immaculate_heart(int year);
-	time_t christ_king(int year);
-	time_t octave_of(time_t date);
+	time64_t start_date(int year);
+	time64_t end_date(int year);
+	time64_t first_advent_sunday(int year);
+	time64_t nativity(int year);
+	time64_t holy_family(int year);
+	time64_t mother_of_god(int year);
+	time64_t epiphany(int year);
+	time64_t baptism_of_lord(int year);
+	time64_t ash_wednesday(int year);
+	time64_t easter_sunday(int year);
+	time64_t palm_sunday(int year);
+	time64_t good_friday(int year);
+	time64_t holy_saturday(int year);
+	time64_t ascension(int year);
+	time64_t pentecost(int year);
+	time64_t holy_trinity(int year);
+	time64_t corpus_christi(int year);
+	time64_t sacred_heart(int year);
+	time64_t immaculate_heart(int year);
+	time64_t christ_king(int year);
+	time64_t octave_of(time64_t date);
 
-	int liturgical_year(time_t date);
-	int for_day(time_t date);
-	Season season(time_t date);
-	time_t season_beginning(Season s, time_t date);
-	int season_week(Season seasonn, time_t date);
+	int liturgical_year(time64_t date);
+	int for_day(time64_t date);
+	Season season(time64_t date);
+	time64_t season_beginning(Season s, time64_t date);
+	int season_week(Season seasonn, time64_t date);
 
 	static const Season SEASONS_SUNDAY_PRIMARY[3];
-	char* sunday_temporale(time_t date);
-	char* ferial_temporale(time_t date);
-	char* liturgical_day(time_t date);
+	char* sunday_temporale(time64_t date);
+	char* ferial_temporale(time64_t date);
+	char* liturgical_day(time64_t date);
 
 	char* ordinalize(int number);
 	bool includes(const char* s, const char* const strarray[]);
@@ -201,7 +201,7 @@ public:
 
 	void easter_tests();
 	void epiphany_tests(void);
-	void print_date(time_t t);
+	void print_date(time64_t t);
 };
 
 #endif

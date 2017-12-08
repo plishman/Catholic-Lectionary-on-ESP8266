@@ -46,7 +46,7 @@ const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 Calendar::Calendar(bool transfer_to_sunday, Enums::I18nLanguages l) {
 	_locale = l;
-	_date = (time_t)-1;
+	_date = (time64_t)-1;
 	_transfer_to_sunday = transfer_to_sunday;
 	_I18n = new I18n(_locale);
 
@@ -61,15 +61,15 @@ Calendar::~Calendar() {
 	if (sanctorale) delete sanctorale;
 }
 
-bool Calendar::get(time_t date) {
+bool Calendar::get(time64_t date) {
 	//bool bTransfersSuccess = transfers->get(date);
 	bool bTemporaleSuccess = temporale->get(date);
 	if (!bTemporaleSuccess) return false;
 
-	time_t transferred_from = transfers->transferred_to(date);
+	time64_t transferred_from = transfers->transferred_to(date);
 
 	bool bIsSanctorale = false;
-	if (transferred_from == (time_t)-1) {
+	if (transferred_from == (time64_t)-1) {
 		bIsSanctorale = sanctorale->get(date);
 	}
 	else {

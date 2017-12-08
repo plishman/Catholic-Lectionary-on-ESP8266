@@ -156,7 +156,7 @@ void RomanCalendar::datestests() {
 	printf("\n\ndatestests()\n");
 
 	struct tm ts;
-	time_t t;
+	time64_t t;
 
 	bool bResult = getTm(29, 10, 2017, 2, 30, 0, &ts);
 
@@ -177,8 +177,8 @@ bool RomanCalendar::getTm(int day, int month, int year, int hours, int minutes, 
 	ts->tm_year = year - BEGIN_EPOCH;		/* The number of years since 1900   */
 	ts->tm_isdst = -1;
 
-	time_t checkValid = mktime(ts);
-	if (checkValid == ((time_t)-1))
+	time64_t checkValid = mktime(ts);
+	if (checkValid == ((time64_t)-1))
 	{
 		return false;
 	}
@@ -186,7 +186,7 @@ bool RomanCalendar::getTm(int day, int month, int year, int hours, int minutes, 
 	return true;
 }
 
-time_t RomanCalendar::date(int day, int month, int year) {
+time64_t RomanCalendar::date(int day, int month, int year) {
 #ifdef _WIN32
 	struct tm ts;
 	ts.tm_sec = 0;							/* seconds,  range 0 to 59          */
@@ -211,8 +211,8 @@ time_t RomanCalendar::date(int day, int month, int year) {
 #endif
 }
 
-time_t RomanCalendar::weekday_before(int weekdayBefore, time_t date) {
-	if (weekdayBefore < 0 || weekdayBefore > 6) return (time_t)-1;
+time64_t RomanCalendar::weekday_before(int weekdayBefore, time64_t date) {
+	if (weekdayBefore < 0 || weekdayBefore > 6) return (time64_t)-1;
 
 #ifdef _WIN32
 	struct tm* ts = gmtime(&date);
@@ -232,7 +232,7 @@ time_t RomanCalendar::weekday_before(int weekdayBefore, time_t date) {
 		if (daysBefore < 0) daysBefore += WEEK;
 	}
 
-	time_t outputDate = date - (daysBefore * DAY); // subtract number of days (in seconds) from date
+	time64_t outputDate = date - (daysBefore * DAY); // subtract number of days (in seconds) from date
 
 												   /*
 												   char inDateStr[100];
@@ -247,16 +247,16 @@ time_t RomanCalendar::weekday_before(int weekdayBefore, time_t date) {
 	// bug: when crossing dst, may be ahead or behind by one hour - will not affect actual date.
 }
 
-time_t RomanCalendar::sunday_before(time_t date) { return weekday_before(0, date); }
-time_t RomanCalendar::monday_before(time_t date) { return weekday_before(1, date); }
-time_t RomanCalendar::tuesday_before(time_t date) { return weekday_before(2, date); }
-time_t RomanCalendar::wednesday_before(time_t date) { return weekday_before(3, date); }
-time_t RomanCalendar::thursday_before(time_t date) { return weekday_before(4, date); }
-time_t RomanCalendar::friday_before(time_t date) { return weekday_before(5, date); }
-time_t RomanCalendar::saturday_before(time_t date) { return weekday_before(6, date); }
+time64_t RomanCalendar::sunday_before(time64_t date) { return weekday_before(0, date); }
+time64_t RomanCalendar::monday_before(time64_t date) { return weekday_before(1, date); }
+time64_t RomanCalendar::tuesday_before(time64_t date) { return weekday_before(2, date); }
+time64_t RomanCalendar::wednesday_before(time64_t date) { return weekday_before(3, date); }
+time64_t RomanCalendar::thursday_before(time64_t date) { return weekday_before(4, date); }
+time64_t RomanCalendar::friday_before(time64_t date) { return weekday_before(5, date); }
+time64_t RomanCalendar::saturday_before(time64_t date) { return weekday_before(6, date); }
 
-time_t RomanCalendar::weekday_after(int weekdayAfter, time_t date) {
-	if (weekdayAfter < 0 || weekdayAfter > 6) return (time_t)-1;
+time64_t RomanCalendar::weekday_after(int weekdayAfter, time64_t date) {
+	if (weekdayAfter < 0 || weekdayAfter > 6) return (time64_t)-1;
 
 #ifdef _WIN32
 	struct tm* ts = gmtime(&date);
@@ -274,7 +274,7 @@ time_t RomanCalendar::weekday_after(int weekdayAfter, time_t date) {
 		if (daysAfter < 0) daysAfter += WEEK;
 	}
 
-	time_t outputDate = date + (daysAfter * DAY);  // add number of days (in seconds) from date
+	time64_t outputDate = date + (daysAfter * DAY);  // add number of days (in seconds) from date
 
 												   /*
 												   char inDateStr[100];
@@ -288,15 +288,15 @@ time_t RomanCalendar::weekday_after(int weekdayAfter, time_t date) {
 	// bug: when crossing dst, may be ahead or behind by one hour - will not affect actual date.
 }
 
-time_t RomanCalendar::sunday_after(time_t date) { return weekday_after(0, date); }
-time_t RomanCalendar::monday_after(time_t date) { return weekday_after(1, date); }
-time_t RomanCalendar::tuesday_after(time_t date) { return weekday_after(2, date); }
-time_t RomanCalendar::wednesday_after(time_t date) { return weekday_after(3, date); }
-time_t RomanCalendar::thursday_after(time_t date) { return weekday_after(4, date); }
-time_t RomanCalendar::friday_after(time_t date) { return weekday_after(5, date); }
-time_t RomanCalendar::saturday_after(time_t date) { return weekday_after(6, date); }
+time64_t RomanCalendar::sunday_after(time64_t date) { return weekday_after(0, date); }
+time64_t RomanCalendar::monday_after(time64_t date) { return weekday_after(1, date); }
+time64_t RomanCalendar::tuesday_after(time64_t date) { return weekday_after(2, date); }
+time64_t RomanCalendar::wednesday_after(time64_t date) { return weekday_after(3, date); }
+time64_t RomanCalendar::thursday_after(time64_t date) { return weekday_after(4, date); }
+time64_t RomanCalendar::friday_after(time64_t date) { return weekday_after(5, date); }
+time64_t RomanCalendar::saturday_after(time64_t date) { return weekday_after(6, date); }
 
-int RomanCalendar::dayofweek(time_t date) {
+int RomanCalendar::dayofweek(time64_t date) {
 #ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_wday;
@@ -307,15 +307,15 @@ int RomanCalendar::dayofweek(time_t date) {
 #endif
 }
 
-bool RomanCalendar::sunday(time_t date) { return (dayofweek(date) == 0); }
-bool RomanCalendar::monday(time_t date) { return (dayofweek(date) == 1); }
-bool RomanCalendar::tuesday(time_t date) { return (dayofweek(date) == 2); }
-bool RomanCalendar::wednesday(time_t date) { return (dayofweek(date) == 3); }
-bool RomanCalendar::thursday(time_t date) { return (dayofweek(date) == 4); }
-bool RomanCalendar::friday(time_t date) { return (dayofweek(date) == 5); }
-bool RomanCalendar::saturday(time_t date) { return (dayofweek(date) == 6); }
+bool RomanCalendar::sunday(time64_t date) { return (dayofweek(date) == 0); }
+bool RomanCalendar::monday(time64_t date) { return (dayofweek(date) == 1); }
+bool RomanCalendar::tuesday(time64_t date) { return (dayofweek(date) == 2); }
+bool RomanCalendar::wednesday(time64_t date) { return (dayofweek(date) == 3); }
+bool RomanCalendar::thursday(time64_t date) { return (dayofweek(date) == 4); }
+bool RomanCalendar::friday(time64_t date) { return (dayofweek(date) == 5); }
+bool RomanCalendar::saturday(time64_t date) { return (dayofweek(date) == 6); }
 
-int RomanCalendar::year(time_t date) {
+int RomanCalendar::year(time64_t date) {
 #ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_year + BEGIN_EPOCH;
@@ -324,7 +324,7 @@ int RomanCalendar::year(time_t date) {
 #endif
 }
 
-int RomanCalendar::dayofmonth(time_t date) {
+int RomanCalendar::dayofmonth(time64_t date) {
 #ifdef _WIN32
 	struct tm* ts = gmtime(&date);
 	return ts->tm_mday;
@@ -335,7 +335,7 @@ int RomanCalendar::dayofmonth(time_t date) {
 #endif
 }
 
-bool RomanCalendar::issameday(time_t date1, time_t date2) {
+bool RomanCalendar::issameday(time64_t date1, time64_t date2) {
 	/*
 	printf("date1:");
 	print_date(date1);
@@ -369,7 +369,7 @@ bool RomanCalendar::issameday(time_t date1, time_t date2) {
 
 }
 
-int RomanCalendar::date_difference(time_t date1, time_t date2) { // assumes that time_t values are seconds since 1970 or 1900, and can have arithmetic
+int RomanCalendar::date_difference(time64_t date1, time64_t date2) { // assumes that time64_t values are seconds since 1970 or 1900, and can have arithmetic
 																 //if (date1 >= date2) {								 // performed on them. Not guaranteed on all systems, but should work on arduino embedded.
 																 //	return (int)(date1 - date2);
 																 //}
@@ -378,24 +378,24 @@ int RomanCalendar::date_difference(time_t date1, time_t date2) { // assumes that
 	//}
 }
 
-time_t RomanCalendar::start_date(int year) {
+time64_t RomanCalendar::start_date(int year) {
 	return first_advent_sunday(year);
 }
 
-time_t RomanCalendar::end_date(int year) {
+time64_t RomanCalendar::end_date(int year) {
 	return first_advent_sunday(year + 1) - DAY;
 }
 
-time_t RomanCalendar::first_advent_sunday(int year) {
+time64_t RomanCalendar::first_advent_sunday(int year) {
 	return sunday_before(nativity(year)) - (3 * WEEK * DAY);
 }
 
-time_t RomanCalendar::nativity(int year) {
+time64_t RomanCalendar::nativity(int year) {
 	return date(25, 12, year);
 }
 
-time_t RomanCalendar::holy_family(int year) {
-	time_t xmas = nativity(year);
+time64_t RomanCalendar::holy_family(int year) {
+	time64_t xmas = nativity(year);
 
 	if (sunday(xmas)) {
 		return date(30, 12, year);
@@ -405,11 +405,11 @@ time_t RomanCalendar::holy_family(int year) {
 	}
 }
 
-time_t RomanCalendar::mother_of_god(int year) {
+time64_t RomanCalendar::mother_of_god(int year) {
 	return octave_of(nativity(year));
 }
 
-time_t RomanCalendar::epiphany(int year) {
+time64_t RomanCalendar::epiphany(int year) {
 	if (_transfer_to_sunday) {
 		return sunday_after(date(1, 1, year + 1));
 	}
@@ -417,8 +417,8 @@ time_t RomanCalendar::epiphany(int year) {
 	return date(6, 1, year + 1);
 }
 
-time_t RomanCalendar::baptism_of_lord(int year) { // maybe watch this, since its had the most modding from the ruby version
-	time_t e = epiphany(year);
+time64_t RomanCalendar::baptism_of_lord(int year) { // maybe watch this, since its had the most modding from the ruby version
+	time64_t e = epiphany(year);
 	if (_transfer_to_sunday) {
 		e += DAY;
 	}
@@ -433,11 +433,11 @@ time_t RomanCalendar::baptism_of_lord(int year) { // maybe watch this, since its
 	return e;
 }
 
-time_t RomanCalendar::ash_wednesday(int year) {
+time64_t RomanCalendar::ash_wednesday(int year) {
 	return easter_sunday(year) - (((6 * WEEK) + 4) * DAY);
 }
 
-time_t RomanCalendar::easter_sunday(int year) {
+time64_t RomanCalendar::easter_sunday(int year) {
 	year += 1;
 
 	//# algorithm below taken from the 'easter' gem:
@@ -475,19 +475,19 @@ time_t RomanCalendar::easter_sunday(int year) {
 	}
 }
 
-time_t RomanCalendar::palm_sunday(int year) {
+time64_t RomanCalendar::palm_sunday(int year) {
 	return easter_sunday(year) - (7 * DAY);
 }
 
-time_t RomanCalendar::good_friday(int year) {
+time64_t RomanCalendar::good_friday(int year) {
 	return easter_sunday(year) - (2 * DAY);
 }
 
-time_t RomanCalendar::holy_saturday(int year) {
+time64_t RomanCalendar::holy_saturday(int year) {
 	return easter_sunday(year) - (1 * DAY);
 }
 
-time_t RomanCalendar::ascension(int year) {
+time64_t RomanCalendar::ascension(int year) {
 	if (_transfer_to_sunday) {
 		return easter_sunday(year) + ((6 * WEEK) * DAY); // return 42 days after Easter sunday
 	}
@@ -495,38 +495,38 @@ time_t RomanCalendar::ascension(int year) {
 	return pentecost(year) - (10 * DAY); // return ascension Thursday (40 days after Easter sunday)
 }
 
-time_t RomanCalendar::pentecost(int year) {
+time64_t RomanCalendar::pentecost(int year) {
 	return easter_sunday(year) + ((7 * WEEK) * DAY);
 }
 
-time_t RomanCalendar::holy_trinity(int year) {
+time64_t RomanCalendar::holy_trinity(int year) {
 	return octave_of(pentecost(year));
 }
 
-time_t RomanCalendar::corpus_christi(int year) {
+time64_t RomanCalendar::corpus_christi(int year) {
 	if (_transfer_to_sunday) {
 		return holy_trinity(year) + (WEEK * DAY); // should be 60 days after Easter Sunday if on a Thursday, or 63 days after if transferred to Sunday
 	}
 	return holy_trinity(year) + (4 * DAY);
 }
 
-time_t RomanCalendar::sacred_heart(int year) {
+time64_t RomanCalendar::sacred_heart(int year) {
 	return corpus_christi(year) + (8 * DAY);
 }
 
-time_t RomanCalendar::immaculate_heart(int year) {
+time64_t RomanCalendar::immaculate_heart(int year) {
 	return pentecost(year) + (20 * DAY);
 }
 
-time_t RomanCalendar::christ_king(int year) {
+time64_t RomanCalendar::christ_king(int year) {
 	return first_advent_sunday(year) - (7 * DAY);
 }
 
-time_t RomanCalendar::octave_of(time_t date) {
+time64_t RomanCalendar::octave_of(time64_t date) {
 	return date + (WEEK * DAY);
 }
 
-int RomanCalendar::liturgical_year(time_t date) {
+int RomanCalendar::liturgical_year(time64_t date) {
 	int _year = year(date);
 	if (date < first_advent_sunday(_year)) {
 		return _year - 1;
@@ -535,12 +535,12 @@ int RomanCalendar::liturgical_year(time_t date) {
 	return _year;
 }
 
-int RomanCalendar::for_day(time_t date) {
+int RomanCalendar::for_day(time64_t date) {
 	return liturgical_year(date);
 }
 
 //# which liturgical season is it ? (returns a 'Season' enum)
-RomanCalendar::Season RomanCalendar::season(time_t date) {
+RomanCalendar::Season RomanCalendar::season(time64_t date) {
 	int year = RomanCalendar::year(date);
 
 	//printf("season: year is %d\n", year);
@@ -570,7 +570,7 @@ RomanCalendar::Season RomanCalendar::season(time_t date) {
 	return SEASON_ORDINARY;
 }
 
-time_t RomanCalendar::season_beginning(RomanCalendar::Season s, time_t date) {
+time64_t RomanCalendar::season_beginning(RomanCalendar::Season s, time64_t date) {
 	int year = liturgical_year(date);
 
 	if (s == SEASON_ADVENT) return first_advent_sunday(year);
@@ -579,13 +579,13 @@ time_t RomanCalendar::season_beginning(RomanCalendar::Season s, time_t date) {
 	if (s == SEASON_EASTER) return easter_sunday(year);
 	if (s == SEASON_ORDINARY) return baptism_of_lord(year) + DAY;
 
-	return (time_t)-1;
+	return (time64_t)-1;
 }
 
-int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
+int RomanCalendar::season_week(RomanCalendar::Season seasonn, time64_t date) {
 	int year = RomanCalendar::year(date);
 
-	time_t week1_beginning = season_beginning(seasonn, date);
+	time64_t week1_beginning = season_beginning(seasonn, date);
 	int week = 0;
 
 	/*
@@ -657,7 +657,7 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 
 	/*
 	int year = RomanCalendar::year(date);
-	time_t week1_beginning = season_beginning(seasonn, date);
+	time64_t week1_beginning = season_beginning(seasonn, date);
 
 	if (!sunday(week1_beginning)) { // Lent begins on Ash Wednesday, this will set the starting week to the following sunday
 	week1_beginning = sunday_after(week1_beginning);
@@ -681,7 +681,7 @@ int RomanCalendar::season_week(RomanCalendar::Season seasonn, time_t date) {
 }
 
 const RomanCalendar::Season SEASONS_SUNDAY_PRIMARY[3] = { RomanCalendar::SEASON_ADVENT, RomanCalendar::SEASON_LENT, RomanCalendar::SEASON_EASTER };
-char* RomanCalendar::sunday_temporale(time_t date) {
+char* RomanCalendar::sunday_temporale(time64_t date) {
 	if (!(sunday(date))) return NULL;
 
 	Season seas = season(date);
@@ -719,7 +719,7 @@ char* RomanCalendar::sunday_temporale(time_t date) {
 	return _buffer;
 }
 
-char* RomanCalendar::ferial_temporale(time_t date) {
+char* RomanCalendar::ferial_temporale(time64_t date) {
 	Season seas = season(date);
 	int week = season_week(seas, date);
 	Ranks rank = RANKS_FERIAL;
@@ -812,7 +812,7 @@ char* RomanCalendar::ferial_temporale(time_t date) {
 	return _buffer;
 }
 
-char* RomanCalendar::liturgical_day(time_t date) {
+char* RomanCalendar::liturgical_day(time64_t date) {
 	int year = liturgical_year(date);
 	bool bIsSolemnity = false;
 	Solemnities s;
@@ -877,7 +877,7 @@ void RomanCalendar::temporaletests() {
 	//return;
 	//epiphany_tests();
 	
-	time_t t;
+	time64_t t;
 	struct tm* ts;
 
 	char datetime[128];
@@ -896,7 +896,7 @@ void RomanCalendar::temporaletests() {
 
 		for (int d = 1; d <= days; d++) {
 			t = date(d, m, y);
-			if (t != (time_t)-1) {
+			if (t != (time64_t)-1) {
 				ts = gmtime(&t);
 				strftime(datetime, 128, "%d/%m/%Y", ts);
 				liturgical_day(t);
@@ -924,7 +924,7 @@ bool RomanCalendar::yisleap(int year) {
 }
 
 void RomanCalendar::easter_tests() {
-	time_t t;
+	time64_t t;
 
 	for (int y = 1970; y < 2038; y++) {
 		t = date(1, 8, y);
@@ -937,7 +937,7 @@ void RomanCalendar::easter_tests() {
 }
 
 void RomanCalendar::epiphany_tests(void) {
-	time_t t;
+	time64_t t;
 	for (int y = 1970; y < 2038; y++) {
 		t = epiphany(y);
 		print_date(t);
@@ -973,7 +973,7 @@ char* RomanCalendar::ordinalize(int number) {
 	return _ordinal;
 }
 
-void RomanCalendar::print_date(time_t t) {
+void RomanCalendar::print_date(time64_t t) {
 #ifdef _WIN32
 	struct tm* ts;
 

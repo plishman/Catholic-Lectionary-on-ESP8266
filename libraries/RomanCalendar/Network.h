@@ -23,7 +23,7 @@ public:
 
 	bool connect();
 	bool startWPSPBC();
-	bool get_ntp_time(time_t* t);
+	bool get_ntp_time(time64_t* t);
 	unsigned long sendNTPpacket(IPAddress& address);
 	void wifi_sleep( void );
 };

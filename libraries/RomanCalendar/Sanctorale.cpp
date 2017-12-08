@@ -11,7 +11,7 @@ Sanctorale::Sanctorale(bool transfer_to_sunday, I18n* i) {
 Sanctorale::~Sanctorale() {
 }
 
-bool Sanctorale::get(time_t date) { // in lent and advent, solemnities falling on a sunday are moved to monday.
+bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling on a sunday are moved to monday.
 									// On mondays in lent and advent, need to look back and check if there was a
 									// solemnity the previous sunday.
 	if (_I18n == NULL) {

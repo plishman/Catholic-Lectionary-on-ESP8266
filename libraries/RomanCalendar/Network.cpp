@@ -53,7 +53,7 @@ bool Network::startWPSPBC() {
   return wpsSuccess; 
 }
 
-bool Network::get_ntp_time(time_t* t)
+bool Network::get_ntp_time(time64_t* t)
 {
 	wl_status_t status = WiFi.status();
 	if(status != WL_CONNECTED) {
@@ -98,7 +98,7 @@ bool Network::get_ntp_time(time_t* t)
 	unsigned long epoch = secsSince1900 - seventyYears;
 	// print Unix time:
 	I2CSerial.println(epoch);
-	*t = (time_t)epoch;
+	*t = (time64_t)epoch;
 
 	// print the hour, minute and second:
 	I2CSerial.print("The UTC time is ");       // UTC is the time at Greenwich Meridian (GMT)

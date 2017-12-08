@@ -19,9 +19,10 @@
 
 
 #if !defined(__time_t_defined) // avoid conflict with newlib or other posix libc
-typedef uint64_t time_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
+typedef unsigned long time_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
 #endif
 
+typedef unsigned long long time64_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
 
 // This ugly hack allows us to define C++ overloaded functions, when included
 // from within an extern "C", as newlib's sys/stat.h does.  Actually it is
@@ -142,10 +143,10 @@ void    setSyncProvider( getExternalTime getTimeFunction); // identify the exter
 void    setSyncInterval(time_t interval); // set the number of seconds between re-sync
 
 /* low level functions to convert to and from system time                     */
-void breakTime(time_t time, tmElements_t &tm);  // break time_t into elements
-time_t makeTime(tmElements_t &tm);  // convert time elements into time_t
-void breakTime(T64 &timeInput, tmElements_t &tm);
-void makeTime(tmElements_t &tm, T64 &t64); // fixed for 64 bit time_t values
+void breakTime(time64_t time, tmElements_t &tm);  // break time_t into elements
+time64_t makeTime(tmElements_t &tm);  // convert time elements into time_t
+//void breakTime(T64 &timeInput, tmElements_t &tm);
+//void makeTime(tmElements_t &tm, T64 &t64); // fixed for 64 bit time_t values
 } // extern "C++"
 #endif // __cplusplus
 #endif /* _Time_h */

@@ -61,7 +61,7 @@ Calendar::Calendar(bool transfer_to_sunday, int CS_PIN) {
 Calendar::Calendar(bool transfer_to_sunday) {	
 	_I18n = new I18n();
 #endif
-	_date = (time_t)-1;
+	_date = (time64_t)-1;
 	_transfer_to_sunday = transfer_to_sunday;
 
 	transfers = new Transfers(_transfer_to_sunday, _I18n);
@@ -81,7 +81,7 @@ Calendar::~Calendar() {
 	if (sanctorale != NULL) delete sanctorale;
 }
 
-bool Calendar::get(time_t date) {
+bool Calendar::get(time64_t date) {
 	int tz_offset = (int) (_timezone_offset * 3600);
 	I2CSerial.println("Timezone offset is " + String(_timezone_offset));
 
@@ -91,7 +91,7 @@ bool Calendar::get(time_t date) {
 	temporale->print_time(date);
 	I2CSerial.println();
 	
-	date += tz_offset; // quick and dirty - if bug occurs, need to split the time_t value into a TMelements_t struct, and perform the arithmetic.
+	date += tz_offset; // quick and dirty - if bug occurs, need to split the time64_t value into a TMelements_t struct, and perform the arithmetic.
 	
 	I2CSerial.print("The local time is ");
 	temporale->print_date(date);
@@ -107,7 +107,7 @@ bool Calendar::get(time_t date) {
 	bool bTemporaleSuccess = temporale->get(date);
 	if (!bTemporaleSuccess) return false;
 
-	time_t transferred_from;
+	time64_t transferred_from;
 	bool bWasTransferred = transfers->transferred_to(date, &transferred_from);
 
 	bool bIsSanctorale = false;

@@ -34,7 +34,7 @@ public:
 
 	Sanctorale(bool transfer_to_sunday, I18n* i);
 	~Sanctorale();
-	bool get(time_t date);
+	bool get(time64_t date);
 	void setColour(Enums::Colours c);
 	Enums::Colours getColour(void);
 	void setRank(Enums::Ranks r);

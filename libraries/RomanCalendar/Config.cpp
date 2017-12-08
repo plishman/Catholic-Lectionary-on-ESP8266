@@ -135,14 +135,36 @@ bool Config::ServeClient(bool* bSettingsUpdated)
   }
   else if (filename == "/setconf.htm") {
     String tz = getQueryStringParam("timezone", querystring);
-    String lect = getQueryStringParam("lectionary", querystring);
+    String lect = getQueryStringParam("lectionary", querystring);	
 
     I2CSerial.println("timezone = " + tz);
     I2CSerial.println("lectionary = " + lect);
-
+	
     bool bresult = SaveConfig(tz, lect);
 
     I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
+		
+	int hh, mm, ss, day, mon, year;
+
+	if (testArg(getQueryStringParam("hh", querystring), 0, 23, &hh) &&
+		testArg(getQueryStringParam("mm", querystring), 0, 59, &mm) &&
+		testArg(getQueryStringParam("ss", querystring), 0, 59, &ss) &&
+		testArg(getQueryStringParam("day", querystring), 1, 31, &day) &&
+		testArg(getQueryStringParam("mon", querystring), 1, 12, &mon) &&
+		testArg(getQueryStringParam("year", querystring), 1970, 65535, &year)) {
+			
+		tmElements_t tm;
+		
+		tm.Hour = hh;
+		tm.Minute = mm;
+		tm.Second = ss;
+		tm.Day = day;
+		tm.Month = mon;
+		tm.Year = year - 1970;
+		
+		time64_t t = makeTime(tm);
+		setDS3231DateTime(t);
+	}
 
     config_t c;
     GetConfig(&c);
@@ -227,6 +249,10 @@ bool Config::SaveConfig(String tz, String lect_num) {
   return true;
 }
 
+void Config::SaveConfig(config_t* c) {
+  storeStruct(c, sizeof(config_t));
+}
+
 void Config::GetConfig(config_t* c) {
   loadStruct(c, sizeof(config_t));
 }
@@ -283,4 +309,119 @@ void Config::loadStruct(void *data_dest, size_t size)
         char data = EEPROM.read(i);
         ((char *)data_dest)[i] = data;
     }
+}
+
+bool Config::getDS3231DateTime(time64_t* t) {
+  uint8_t buf[7];
+  uint8_t bcode = 0; 
+  
+  buf[0] = 0; // start at register 0 in the ds3231
+  
+  brzo_i2c_start_transaction(DS3231_I2C_ADDRESS, I2CSerial.SCL_speed); // 104 is DS3231 device address
+    brzo_i2c_write(buf, 1, true);
+    brzo_i2c_read(buf, 7, true);
+    //delay(1);
+  bcode = brzo_i2c_end_transaction();
+
+  if (bcode != 0) {
+    I2CSerial.soft_reset();
+    return false;
+  }
+
+  uint8_t second, minute, hour, day, date, month, year;
+ 
+  second = bcd2dec(buf[0]); 		//(((buf[0] & B11110000)>>4)*10 + (buf[0] & B00001111)); // convert BCD to decimal
+  minute = bcd2dec(buf[1]); 		//(((buf[1] & B11110000)>>4)*10 + (buf[1] & B00001111)); // convert BCD to decimal
+  hour   = bcd2dec(buf[2] & 0x3f); 	//(((buf[2] & B00110000)>>4)*10 + (buf[2] & B00001111)); // convert BCD to decimal (assume 24 hour mode)
+  day    = buf[3] & 0x7; 			//(buf[3] & B00000111); // 1-7
+  date   = bcd2dec(buf[4] & 0x3f); 	//(((buf[4] & B00110000)>>4)*10 + (buf[4] & B00001111)); // 1-31
+  month  = bcd2dec(buf[5] & 0x1f); 	//(((buf[5] & B00010000)>>4)*10 + (buf[5] & B00001111)); //msb7 is century overflow
+  year   = bcd2dec(buf[6]); 		//(((buf[6] & B11110000)>>4)*10 + (buf[6] & B00001111));
+  
+  I2CSerial.printf("DS3231 Datetime = %d/%d/%d %d:%d:%d\n", date, month, year, hour, minute, second);
+
+  I2CSerial.printf("-1-");
+  config_t c;
+  GetConfig(&c);
+  I2CSerial.printf("-2-");
+  
+  tmElements_t tm;
+  
+  tm.Second = second;
+  tm.Minute = minute;
+  tm.Hour = hour;
+  tm.Day = date;
+  tm.Month = month;
+  tm.Year = y2kYearToTm(year + (c.century * 100));
+
+  I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
+  
+  *t = makeTime(tm);
+  
+  I2CSerial.printf("-4-");
+
+  return true;
+}
+
+bool Config::setDS3231DateTime(time64_t t) {
+  tmElements_t tm;
+
+  breakTime(t, tm);
+
+  uint8_t buf[8];
+  uint8_t bcode = 0; 
+
+  buf[0] = 0; // start at register 0 in the ds3231
+  buf[1] = (dec2bcd(tm.Second));
+  buf[2] = (dec2bcd(tm.Minute));
+  buf[3] = (dec2bcd(tm.Hour));      // sets 24 hour format
+  buf[4] = (dec2bcd(tm.Wday));   
+  buf[5] = (dec2bcd(tm.Day));
+  buf[6] = (dec2bcd(tm.Month));
+  buf[7] = (dec2bcd(tmYearToY2k(tm.Year % 100))); 
+  
+  brzo_i2c_start_transaction(DS3231_I2C_ADDRESS, I2CSerial.SCL_speed); // 104 is DS3231 device address
+    brzo_i2c_write(buf, 8, true);
+  bcode = brzo_i2c_end_transaction();
+
+  if (bcode != 0) {
+    I2CSerial.soft_reset();
+    return false;
+  }
+
+  config_t c;
+  
+  GetConfig(&c);
+  c.century = (tmYearToY2k(tm.Year)/100);
+  I2CSerial.printf("setDS3231DateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.century);
+  
+  SaveConfig(&c);
+  GetConfig(&c);
+  I2CSerial.printf("setDS3231DateTime() c.century=%d\n", c.century);
+  
+  return true;
+}
+
+uint8_t Config::dec2bcd(uint8_t num)
+{
+  return ((num/10 * 16) + (num % 10));
+}
+
+// Convert Binary Coded Decimal (BCD) to Decimal
+uint8_t Config::bcd2dec(uint8_t num)
+{
+  return ((num/16 * 10) + (num % 16));
+}
+
+bool Config::testArg(String arg, int min, int max, int* outval) {
+	*outval = 0;
+	if (IsNumeric(arg)) {
+		*outval = arg.toInt();
+		return ((*outval >= min) && (*outval <= max));
+	}
+	else {
+		return false;
+	}
+	
+	return false;
 }

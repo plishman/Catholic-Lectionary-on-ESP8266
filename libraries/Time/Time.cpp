@@ -147,113 +147,46 @@ int year(time_t t) { // the year for the given time
 #define LEAP_YEAR(Y)     ( ((1970+Y)>0) && !((1970+Y)%4) && ( ((1970+Y)%100) || !((1970+Y)%400) ) )
 
 static  const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
- 
-void breakTime(time_t timeInput, tmElements_t &tm){
-// break the given time_t into time components
-// this is a more compact version of the C library localtime function
-// note that year is offset from 1970 !!! 
-  T64 t64;
 
-  uint32_t year; // **** was uint8_t year - fix for y2038 bug
-  uint8_t month, monthLength;
-  uint64_t time; // **** was uint32_t time - fix for y2038 bug changed to uint64_t
-  unsigned long days;
-
-  I2CSerial.print("*1*");
-  
-  time = (uint64_t)timeInput; // **** was (uint32_t)timeInput - fix for y2038 bug changed to uint64_t
-
-  t64.time = time;
-  I2CSerial.printf("\n\n****time=%lx %lx\n", t64.words[1], t64.words[0]);
-
-  tm.Second = time % 60;
-  time /= 60; // now it is minutes
-  tm.Minute = time % 60;
-  time /= 60; // now it is hours
-  tm.Hour = time % 24;
-  time /= 24; // now it is days
-  tm.Wday = ((time + 4) % 7) + 1;  // Sunday is day 1 
-
-  I2CSerial.print("*2*");
-  
-  year = 0;  
-  days = 0;
-  while((unsigned)(days += (LEAP_YEAR(year) ? 366 : 365)) <= time) {
-    year++;
-    I2CSerial.printf("year=%lu", year);
-  }
-  I2CSerial.println("-");
-  tm.Year = year; // year is offset from 1970 
-  
-  days -= LEAP_YEAR(year) ? 366 : 365;
-  time  -= days; // now it is days in this year, starting at 0
-
-  I2CSerial.print("*3*");
-  
-  days=0;
-  month=0;
-  monthLength=0;
-  for (month=0; month<12; month++) {
-    if (month==1) { // february
-      if (LEAP_YEAR(year)) {
-        monthLength=29;
-      } else {
-        monthLength=28;
-      }
-    } else {
-      monthLength = monthDays[month];
-    }
-    
-    if (time >= monthLength) {
-      time -= monthLength;
-    } else {
-        break;
-    }
-  }
-  tm.Month = month + 1;  // jan is month 1  
-  tm.Day = time + 1;     // day of month
-
-  I2CSerial.print("*4*");
-}
-
-time_t makeTime(tmElements_t &tm){   
+//void makeTime(tmElements_t &tm, T64 &t64){   
+time64_t makeTime(tmElements_t &tm){   
 // assemble time elements into time_t 
 // note year argument is offset from 1970 (see macros in time.h to convert to other formats)
 // previous version used full four digit year (or digits since 2000),i.e. 2009 was 2009 or 9
   
+  //T64 t64;
+  
   int i;
-  uint64_t seconds; // was uint32_t seconds **** fix for y2038 bug
-
+  time64_t seconds; // was uint32_t seconds **** fix for y2038 bug
+ 
   // seconds from 1970 till 1 jan 00:00:00 of the given year
-  seconds= tm.Year*(SECS_PER_DAY * 365);
+  seconds= (unsigned long long)tm.Year*(SECS_PER_DAY * 365);
   for (i = 0; i < tm.Year; i++) {
     if (LEAP_YEAR(i)) {
-      seconds +=  SECS_PER_DAY;   // add extra days for leap years
+      seconds += (unsigned long long)SECS_PER_DAY;   // add extra days for leap years
     }
   }
   
   // add days for this year, months start from 1
   for (i = 1; i < tm.Month; i++) {
     if ( (i == 2) && LEAP_YEAR(tm.Year)) { 
-      seconds += SECS_PER_DAY * 29;
+      seconds += (unsigned long long)SECS_PER_DAY * 29;
     } else {
-      seconds += SECS_PER_DAY * monthDays[i-1];  //monthDay array starts from 0
+      seconds += (unsigned long long)SECS_PER_DAY * monthDays[i-1];  //monthDay array starts from 0
     }
   }
-  seconds+= (tm.Day-1) * SECS_PER_DAY;
-  seconds+= tm.Hour * SECS_PER_HOUR;
-  seconds+= tm.Minute * SECS_PER_MIN;
-  seconds+= tm.Second;
+  seconds+= (unsigned long long)(tm.Day-1) * SECS_PER_DAY;
+  seconds+= (unsigned long long)tm.Hour * SECS_PER_HOUR;
+  seconds+= (unsigned long long)tm.Minute * SECS_PER_MIN;
+  seconds+= (unsigned long long)tm.Second;
 
-  T64 t64;
+  //t64.time = seconds; I2CSerial.printf("\n\nmakeTime() seconds=%lx %lx\n", t64.words[1], t64.words[0]);
 
-  t64.time = seconds;
-  I2CSerial.printf("\n\nmakeTime()****seconds=%lx %lx\n", t64.words[1], t64.words[0]);
-  
-  return (time_t)seconds; 
+  return seconds;
 }
-
-void breakTime(T64 &timeInput, tmElements_t &tm){
+ 
+//void breakTime(T64 &timeInput, tmElements_t &tm){
+void breakTime(time64_t timeInput, tmElements_t &tm){
 // break the given time_t into time components
 // this is a more compact version of the C library localtime function
 // note that year is offset from 1970 !!! 
@@ -264,22 +197,18 @@ void breakTime(T64 &timeInput, tmElements_t &tm){
   uint64_t sixty_ll = 60;
   uint64_t twentyfour_ll = 24;
   
-  T64 t64;
+  //T64 t64;
+  //t64.time = timeInput; I2CSerial.printf("\n\nbreakTime() seconds=%lx %lx\n", t64.words[1], t64.words[0]);
     
   //time = (uint64_t)timeInput; // **** was (uint32_t)timeInput - fix for y2038 bug changed to uint64_t
-  time = (uint64_t)timeInput.words[1] << 32 | (uint64_t)timeInput.words[0];
+  time = timeInput; //(uint64_t)timeInput.words[1] << 32 | (uint64_t)timeInput.words[0];
   
-  t64.time = time;
-
   tm.Second = time % 60;
   time = time / 60; // now it is minutes
-  
   tm.Minute = time % 60;
   time = time / 60; // now it is hours
-
   tm.Hour = time % 24;
   time = time / 24; // now it is days
-  
   tm.Wday = ((time + 4) % 7) + 1;  // Sunday is day 1 
  
   year = 0;  
@@ -315,39 +244,6 @@ void breakTime(T64 &timeInput, tmElements_t &tm){
   }
   tm.Month = month + 1;  // jan is month 1  
   tm.Day = time + 1;     // day of month
-}
-
-void makeTime(tmElements_t &tm, T64 &t64){   
-// assemble time elements into time_t 
-// note year argument is offset from 1970 (see macros in time.h to convert to other formats)
-// previous version used full four digit year (or digits since 2000),i.e. 2009 was 2009 or 9
-  
-  int i;
-  uint64_t seconds; // was uint32_t seconds **** fix for y2038 bug
- 
-  // seconds from 1970 till 1 jan 00:00:00 of the given year
-  seconds= (uint64_t)tm.Year*(SECS_PER_DAY * 365);
-  for (i = 0; i < tm.Year; i++) {
-    if (LEAP_YEAR(i)) {
-      seconds +=  (uint64_t)SECS_PER_DAY;   // add extra days for leap years
-    }
-  }
-  
-  // add days for this year, months start from 1
-  for (i = 1; i < tm.Month; i++) {
-    if ( (i == 2) && LEAP_YEAR(tm.Year)) { 
-      seconds += (uint64_t)SECS_PER_DAY * 29;
-    } else {
-      seconds += (uint64_t)SECS_PER_DAY * monthDays[i-1];  //monthDay array starts from 0
-    }
-  }
-  seconds+= (uint64_t)(tm.Day-1) * SECS_PER_DAY;
-  seconds+= (uint64_t)tm.Hour * SECS_PER_HOUR;
-  seconds+= (uint64_t)tm.Minute * SECS_PER_MIN;
-  seconds+= (uint64_t)tm.Second;
-
-  t64.time = seconds;
-  I2CSerial.printf("\n\nmakeTime() seconds=%lx %lx\n", t64.words[1], t64.words[0]);
 }
 
 /*=====================================================*/	

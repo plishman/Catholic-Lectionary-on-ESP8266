@@ -1,6 +1,6 @@
 #include "TimeServerGPS.h"
 
-time_t TimeServerGPS::local_datetime( void ) {
+time64_t TimeServerGPS::local_datetime( void ) {
   I2CSerial.println("local_datetime()");
   
   // need to add a timeout

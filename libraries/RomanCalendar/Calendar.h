@@ -22,7 +22,7 @@
 class Calendar {
 public:
 	typedef struct Day {
-		time_t date;
+		time64_t date;
 		String liturgical_year;
 		String liturgical_cycle;
 		String season;
@@ -57,7 +57,7 @@ public:
 	Enums::I18nLanguages _locale;
 
 	bool _transfer_to_sunday;
-	time_t _date;
+	time64_t _date;
 
 #ifndef _WIN32
 	int _CS_PIN = 10;
@@ -67,7 +67,7 @@ public:
 	Calendar(bool transfer_to_sunday);
 #endif
 	~Calendar();
-	bool get(time_t date);
+	bool get(time64_t date);
 	//String I18n(String I18nPath);
 	Enums::Liturgical_Year liturgical_year_letter(int year);
 	Enums::Liturgical_Cycle liturgical_cycle(int year);

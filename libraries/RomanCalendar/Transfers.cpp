@@ -15,7 +15,7 @@ Transfers::~Transfers() {
 	_year = 0;
 }
 
-bool Transfers::do_transfers(time_t date) {
+bool Transfers::do_transfers(time64_t date) {
 	//I2CSerial.println("Transfers::do_transfers()");
 	
 	int year = _tc->liturgical_year(date);
@@ -26,14 +26,14 @@ bool Transfers::do_transfers(time_t date) {
 
 	transfers_lent(year, _tc);
 	
-	time_t startDate = _tc->start_date(_year);
-	time_t endDate = _tc->end_date(_year);
+	time64_t startDate = _tc->start_date(_year);
+	time64_t endDate = _tc->end_date(_year);
 
 	//tc.print_date(startDate);
 	//tc.print_date(endDate);
 
-	time_t currDate = startDate;
-	time_t to;
+	time64_t currDate = startDate;
+	time64_t to;
 	
 	do {
 		if (do_transferred_from(currDate, &to)) {
@@ -52,7 +52,7 @@ bool Transfers::do_transfers(time_t date) {
 			bool bIsSanctorale = _sc->get(currDate);
 			if (bIsSanctorale && _sc->_rank_e == Enums::RANKS_SOLEMNITY_GENERAL) {
 				if (_tc->_rank_e >= _sc->_rank_e) {
-					time_t transfer_to = currDate;
+					time64_t transfer_to = currDate;
 					bool bFound = false;
 					int i = 365;
 					do {
@@ -98,11 +98,11 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 	// This was first addressed in the Decree Cum Proximo Anno issued in 1966. Versions of ROMCAL prior to version 4 incorrectly moved 
 	// it to the Monday of the Second Week of Easter, where it was overwritten by the Annunciation.
 
-	time_t palm_sunday = tc->palm_sunday(year);
-	time_t annunciation = tc->date(25, 3, year + 1);
+	time64_t palm_sunday = tc->palm_sunday(year);
+	time64_t annunciation = tc->date(25, 3, year + 1);
 
-	time_t start_holy_week = next_day(palm_sunday);
-	time_t end_easter_octave = tc->sunday_after(tc->easter_sunday(year));
+	time64_t start_holy_week = next_day(palm_sunday);
+	time64_t end_easter_octave = tc->sunday_after(tc->easter_sunday(year));
 
 	I2CSerial.printf("year = %d", year);
 	I2CSerial.printf("\tPalm Sunday:");
@@ -141,7 +141,7 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 		I2CSerial.printf("\n");
 	}
 
-	time_t joseph_hom = tc->date(19, 3, year + 1);
+	time64_t joseph_hom = tc->date(19, 3, year + 1);
 
 	I2CSerial.printf("Joseph Husband of Mary: ");
 	tc->print_date(joseph_hom);
@@ -161,7 +161,7 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 	}											  
 }
 
-bool Transfers::get(time_t date) {
+bool Transfers::get(time64_t date) {
 	_I18n->suppress_output(true);
 	
 	bool bResult = do_transfers(date);
@@ -171,7 +171,7 @@ bool Transfers::get(time_t date) {
 	return bResult;
 }
 
-bool Transfers::do_transferred_from(time_t date, time_t* to) {
+bool Transfers::do_transferred_from(time64_t date, time64_t* to) {
 	Transfer* t;
 	for (int i = 0; i < transfersList.size(); i++) {
 		t = transfersList.get(i);
@@ -183,7 +183,7 @@ bool Transfers::do_transferred_from(time_t date, time_t* to) {
 	return false; // not transferred
 }
 
-bool Transfers::do_transferred_to(time_t date, time_t* from) {	// returns date from which the date 'date' has been transferred
+bool Transfers::do_transferred_to(time64_t date, time64_t* from) {	// returns date from which the date 'date' has been transferred
 	Transfer* t;
 	for (int i = 0; i < transfersList.size(); i++) {
 		t = transfersList.get(i);
@@ -195,21 +195,21 @@ bool Transfers::do_transferred_to(time_t date, time_t* from) {	// returns date f
 	return false; // not transferred
 }
 
-bool Transfers::transferred_from(time_t date, time_t* to) { // returns date to which the date 'date' is to be transferred
+bool Transfers::transferred_from(time64_t date, time64_t* to) { // returns date to which the date 'date' is to be transferred
 	if (get(date)) {
 		return do_transferred_from(date, to);
 	}
 	return false;
 }
 
-bool Transfers::transferred_to(time_t date, time_t* from) {	// returns date from which the date 'date' has been transferred
+bool Transfers::transferred_to(time64_t date, time64_t* from) {	// returns date from which the date 'date' has been transferred
 	if (get(date)) {
 		return do_transferred_to(date, from);
 	}
 	return false;
 }
 
-bool Transfers::valid_destination(time_t day, Temporale* tc, Sanctorale* sc) {
+bool Transfers::valid_destination(time64_t day, Temporale* tc, Sanctorale* sc) {
 	tc->get(day);
 	if (tc->_rank_e >= Enums::RANKS_FEAST_PROPER) return false;
 
@@ -220,7 +220,7 @@ bool Transfers::valid_destination(time_t day, Temporale* tc, Sanctorale* sc) {
 	return true;
 }
 
-time_t Transfers::next_day(time_t day) {
+time64_t Transfers::next_day(time64_t day) {
 #ifndef _WIN32
 	::tmElements_t ts;						// for arduino
 	::breakTime(day, ts);

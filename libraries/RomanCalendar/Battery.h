@@ -1,8 +1,6 @@
 #ifndef _BATTERY_H
 #define _BATTERY_H
 
-#include "I18n.h"
-#include <SD.h>
 #include "arduino.h"
 #include "I2CSerialPort.h"
 
