@@ -66,6 +66,7 @@ const Enums::Colours Temporale::SOLEMNITIES_COLOURS[17] = {	// the colours of th
 Temporale::Temporale(bool transfer_to_sunday, I18n* i ) {
 	_transfer_to_sunday = transfer_to_sunday;
 	_I18n = i;
+	_ordinalizer = new Ordinalizer(_I18n->get("ordinals"));
 	return;
 }
 
@@ -668,10 +669,10 @@ String Temporale::sunday_temporale(time64_t date) {
 	}
 
 	int week = season_week(seas, date);
-	ordinalize(week);
+	_ordinalizer->ordinalize(week);
 
 	_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".sunday");
-	_day.replace("%{week}", ordinalize(week));
+	_day.replace("%{week}", _ordinalizer->ordinalize(week));
 	_rank_e = rank;
 	
 	int lit_year = liturgical_year(date) % 3;
@@ -726,7 +727,7 @@ String Temporale::ferial_temporale(time64_t date) {
 			rank = Enums::RANKS_FERIAL_PRIVILEGED;
 
 			_day = _I18n->get("temporale.advent.before_christmas");
-			_day.replace("%{day}", ordinalize(dayofmonth(date)));
+			_day.replace("%{day}", _ordinalizer->ordinalize(dayofmonth(date)));
 			bIsSet = true;
 
 			_Lectionary = dayofmonth(date) + 176;
@@ -750,7 +751,7 @@ String Temporale::ferial_temporale(time64_t date) {
 			//printf("*\n");
 
 			_day = _I18n->get("temporale.christmas.nativity_octave.ferial");
-			_day.replace("%{day}", ordinalize(dayofmonth(date) - dayofmonth(nativity(Temporale::year(date))) + 1));
+			_day.replace("%{day}", _ordinalizer->ordinalize(dayofmonth(date) - dayofmonth(nativity(Temporale::year(date))) + 1));
 			bIsSet = true;
 		}
 		else if (date > epiphany(Temporale::year(date))) {
@@ -825,7 +826,7 @@ String Temporale::ferial_temporale(time64_t date) {
 
 	_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".ferial");
 	_day.replace("%{weekday}", weekday);
-	_day.replace("%{week}", ordinalize(week));
+	_day.replace("%{week}", _ordinalizer->ordinalize(week));
 	
 	return _day;
 }
@@ -853,15 +854,15 @@ void Temporale::christmas_lectionary(time64_t date) {
 		//Christmas day
 		int hour = hour_of_day(date);
 
-		if (hour >= 0 && hour < 3) { // midnight mass
+		if (hour >= 0 && hour < 4) { // midnight mass
 			_Lectionary = 14;
 		}
 
-		if (hour >= 3 && hour < 6) { // dawn mass
+		if (hour >= 4 && hour < 8) { // dawn mass
 			_Lectionary = 15;
 		}
 
-		if (hour >= 6) { // mass during the day 
+		if (hour >= 8) { // mass during the day 
 			_Lectionary = 16;
 		}
 

@@ -242,10 +242,12 @@ bool Config::SaveConfig(String tz, String lect_num) {
   }
 
   config_t c;
+  GetConfig(&c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
+  
   c.timezone_offset = timezone_offset;
   c.lectionary_config_number = lectionary_config_number;
 
-  storeStruct(&c, sizeof(config_t));
+  SaveConfig(&c);
   return true;
 }
 
@@ -361,6 +363,19 @@ bool Config::getDS3231DateTime(time64_t* t) {
   I2CSerial.printf("-4-");
 
   return true;
+}
+
+bool Config::getLocalDS3231DateTime(time64_t* t) {
+  config_t c;
+  GetConfig(&c);
+  
+  bool bResult = getDS3231DateTime(t);
+  
+  if (bResult) {
+	  *t = *t + (time64_t)(c.timezone_offset * 3600);
+  }
+  
+  return bResult;
 }
 
 bool Config::setDS3231DateTime(time64_t t) {

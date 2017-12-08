@@ -22,7 +22,7 @@
 typedef unsigned long time_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
 #endif
 
-typedef unsigned long long time64_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
+typedef long long time64_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
 
 // This ugly hack allows us to define C++ overloaded functions, when included
 // from within an extern "C", as newlib's sys/stat.h does.  Actually it is

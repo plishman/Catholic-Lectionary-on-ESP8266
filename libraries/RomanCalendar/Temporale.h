@@ -8,6 +8,7 @@
 #include "WString.h"
 #include "Enums.h"
 #include "I18n.h"
+#include "Ordinalizer.h"
 
 #ifndef _WIN32
 	#include "Arduino.h"
@@ -29,7 +30,8 @@ const int DAY = 24 * 3600;
 class Temporale {
 public:
 	I18n* _I18n;
-
+	Ordinalizer* _ordinalizer;
+	
 	String _day;
 	String _rank;
 	String _season;

@@ -42,6 +42,7 @@ public:
 		
 	bool getDS3231DateTime(time64_t* t);
 	bool setDS3231DateTime(time64_t t);
+	bool getLocalDS3231DateTime(time64_t* t);
 	uint8_t dec2bcd(uint8_t num);
 	uint8_t bcd2dec(uint8_t num);
 	bool testArg(String arg, int min, int max, int* outval);

@@ -5,6 +5,7 @@
 #include "ESP8266WiFi.h"
 //----------
 #include <pins_arduino.h>
+#include <I2CSerialPort.h>
 #include <TimeLib.h>
 #include <Enums.h>
 #include <I18n.h>
@@ -37,12 +38,14 @@ extern "C" {
 
 #define SLEEP_HOUR 60*60e6
 
+I2CSerialPort I2CSerial;
+
 Epd epd;
 
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 
-
+/*
 char jan[] PROGMEM = "Jan";
 char feb[] PROGMEM = "Feb";
 char mar[] PROGMEM = "Mar";
@@ -57,17 +60,25 @@ char nov[] PROGMEM = "Nov";
 char dec[] PROGMEM = "Dec";
 
 PGM_P months[] PROGMEM = {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec};
+*/
 
 Battery battery;
 Network network;
 
 void setup() { 
-  Serial.begin(9600);
+  //Serial.begin(9600);
+  I2CSerial.begin(1,3,8);
 
-  while(!Serial) {
-  }
+  I2CSerial.println("--------------------------");
+  I2CSerial.println("abcdefghijklmnopqrstuvwxyz");
+  I2CSerial.println("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  I2CSerial.println("0123456789");
+  I2CSerial.println("--------------------------");
+
+  //while(!Serial) {
+  //}
   
-  Serial.println("Running");
+  I2CSerial.println("Running");
 
   //WiFi.disconnect(); // testing - so have to connect to a network each reboot
 
@@ -80,33 +91,37 @@ void setup() {
 //  }
 
   if (!network.connect()){
-    Serial.println("Need to configure Wifi with WPS for time service");
+    //I2CSerial.println("Need to configure Wifi with WPS for time service");
+    I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
     if (battery.power_connected()) {
-      Serial.println("On USB power and no network configured: Prompting user to connect using WPS button");
+      I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
       if (!connect_wps()) {
-        Serial.println("Failed to configure Wifi network via WPS - sleeping until USB power is connected");
+        I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
         display_image(connect_power_image);
         ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
       } else {
-        ESP.deepSleep(1e6);
+        ESP.deepSleep(1e6); // reset esp, network is configured
         //ESP.reset();
       }
     } 
     else {
-      Serial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
-      display_image(connect_power_image);
+      I2CSerial.println("On battery power and no network configured - will not be able to use web interface until network is connected. Connect power to start setup.");
+      //I2CSerial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
+      //display_image(connect_power_image);
       //while(1) {
       //  delay(5000);
       //}
-      ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
+      //ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
     }
   }
 }
 
 void battery_test() {
+  I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
   if (!battery.power_connected()) {
     if (battery.recharge_level_reached()) {
-      Serial.println("Battery recharge level reached - sleeping until power is connected");
+      I2CSerial.println("Battery recharge level is " + String(MIN_BATT_VOLTAGE));
+      I2CSerial.println("Battery recharge level reached - sleeping until power is connected");
       display_image(battery_recharge_image);
       //while(!battery.power_connected()) {
       //  wdt_reset();
@@ -116,19 +131,19 @@ void battery_test() {
     }
   }
   else {
-    Serial.println("Battery is charging");
+    I2CSerial.println("Battery is charging");
   }
 }
 
 bool connect_wps(){
-  Serial.println("Please press WPS button on your router.\n Press any key to continue...");
+  I2CSerial.println("Please press WPS button on your router.\n Press any key to continue...");
   display_image(wps_connect_image);
   wdt_reset();
   delay(10000);
   bool connected = network.startWPSPBC();      
     
   if (!connected) {
-    Serial.println("Failed to connect with WPS :-(");  
+    I2CSerial.println("Failed to connect with WPS :-(");  
     return false;
   }
   
@@ -164,71 +179,113 @@ void display_image(EPD_DISPLAY_IMAGE i) {
 
 void loop(void) {
   /************************************************/ 
+  // *1* Create calendar object and load config.csv
   wdt_reset();
+  I2CSerial.println("*1*\n");
   //timeserver.gps_wake();
-  Serial.println("*1*\n");
   Calendar c(true, D1);
-  Serial.println("*2*\n");
-  wdt_reset();
-  Lectionary l(c._I18n);
-  Serial.println("*3*\n");
 
-  wdt_reset();
-  //time_t date = c.temporale->date(12,11,2017);
-  Serial.println("Getting datetime...");
-  //time_t date = timeserver.local_datetime();
-  time_t date;
-  while (!network.get_ntp_time(&date)) {
-    Serial.print(".");
-    delay(1000);
+  if (!c._I18n->_have_config) {
+    I2CSerial.println("Error: Failed to get config: will reboot after 30 seconds...");
+    ESP.deepSleep(30e6);    
   }
-  Serial.println("Got datetime.");
-  //network.wifi_sleep(); // no longer needed, sleep wifi to save power
 
-  c.get(date);
-  Serial.println("*4*\n");
 
+
+  /************************************************/ 
+  // *2* Get date and time from DS3231 
+  wdt_reset();
+  I2CSerial.println("*2*\n");
+  //time64_t date = c.temporale->date(12,11,2017);
+  I2CSerial.println("Getting datetime...");
+  //time64_t date = timeserver.local_datetime();
+  time64_t date;
+  c._config->getDS3231DateTime(&date);
   tmElements_t ts;
   breakTime(date, ts);
 
-  char m[16];
-  strcpy_P(m, (const char*)pgm_read_ptr(&(months[ts.Month - 1])));
+  //while (!network.get_ntp_time(&date)) {
+  //  Serial.print(".");
+  //  delay(1000);
+  //}
+  I2CSerial.println("Got datetime.");
+  //network.wifi_sleep(); // no longer needed, sleep wifi to save power
 
-  String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
-  Serial.println("*5*\n");
 
-  Serial.print(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
+
+  /************************************************/ 
+  // *3* get Bible reference for date (largest task)
+  wdt_reset();
+  I2CSerial.println("*3*\n");
+  c.get(date);
+
+
+
+  /************************************************/ 
+  // *4* Make calendar entry text string for day
+  I2CSerial.println("*4*\n");
+  String mth = c._I18n->get("month." + String(ts.Month));
+  //String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
+  String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
+  I2CSerial.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
   if (c.day.is_sanctorale) {
-    Serial.print("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
+    I2CSerial.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
   }
-  Serial.println("*6*\n");
+  
 
-  Serial.println();
-
+  
+  /************************************************/ 
+  // *5* Get lectionary (readings) for this date
+  I2CSerial.println("*5*\n");
   String refs;
-  l.get(c.day.liturgical_year, c.day.liturgical_cycle, Lectionary::READINGS_G, c.day.lectionary, &refs);
+  wdt_reset();
+  Lectionary l(c._I18n);
+  
+  Lectionary::ReadingsFromEnum r;
 
+  if (tm.Hour >= 8 && tm.Hour < 12) {
+    r=Lectionary::READINGS_OT;
+  }
+  else if (tm.Hour >= 12 && tm.Hour < 16) {
+    r=Lectionary::READINGS_NT;
+  }
+  else if (tm.Hour >= 16 && tm.Hour < 20) {
+    r=Lectionary::READINGS_PS;
+  }
+  else {
+    r=Lectionary::READINGS_G;
+  }
+  l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+
+
+  
+  /************************************************/ 
+  // *6* Update epaper display with reading
+  I2CSerial.println("*6*\n");
   display_calendar(datetime, &c, refs);
 
-  Serial.println("*8*\n");
 
+
+  /************************************************/ 
+  // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+  I2CSerial.println("*7*\n");
   //timeserver.gps_sleep();
-
   bool bSettingsUpdated = false;
 
   if (battery.power_connected()) {
-    Serial.println("Power is connected, starting config web server");
+    I2CSerial.println("Power is connected, starting config web server");
+    I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
     //if (!network.connect()) {
-    //  Serial.println("Network is not configured, starting WPS setup");
+    //  I2CSerial.println("Network is not configured, starting WPS setup");
     //  connect_wps();
     //  ESP.reset();
     //}
     
     uint32_t free = system_get_free_heap_size();
-    Serial.println("free memory = " + String(free));
+    I2CSerial.println("free memory = " + String(free));
    
     if (c._config->StartServer(c._I18n)) {
-      Serial.println("Config web server started, listening for requests...");
+      I2CSerial.println("Config web server started, listening for requests...");
       while(battery.power_connected() && !bSettingsUpdated) {
         wdt_reset();
         c._config->ServeClient(&bSettingsUpdated);
@@ -238,22 +295,31 @@ void loop(void) {
       c._config->StopServer();
 
       if (bSettingsUpdated) {
-        Serial.println("Settings updated, resetting lectionary...");
+        I2CSerial.println("Settings updated, resetting lectionary...");
         Serial.flush();
         ESP.deepSleep(1e6);
         //ESP.reset();
       }
       else {
-        Serial.println("Power disconnected, stopping web server and going to sleep");
+        I2CSerial.println("Power disconnected, stopping web server and going to sleep");
       }
+  
+      I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
       
       free = system_get_free_heap_size();
-      Serial.println("free memory = " + String(free));
+      I2CSerial.println("free memory = " + String(free));
     }
   }
+
+
+  
+  /************************************************/ 
+  // *8* completed all tasks, go to sleep
+  I2CSerial.println("*8*\n");
   
   while(1) {
     delay(15000);
+    I2CSerial.println("Going to sleep");
     ESP.deepSleep(60e6); //20 seconds
   }
 }
@@ -293,13 +359,13 @@ void display_calendar(String date, Calendar* c, String refs) {
 //  while(w.length() != 0) {
 //    bEOL = hyphenate_word(&w, &word_part, &width, font, &paint);
 //    Serial.print(word_part);
-//    if (bEOL) Serial.println();
+//    if (bEOL) I2CSerial.println();
 //  }
 //  return;
 
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
-  Serial.println("Displaying calendar");
+  I2CSerial.println("Displaying calendar");
   if (c->day.is_sanctorale) {
     display_day(c->day.sanctorale, &paint, &paint_red, font, bRed);
     if (c->day.sanctorale == c->day.day) {
@@ -312,7 +378,7 @@ void display_calendar(String date, Calendar* c, String refs) {
     display_date(date, "", &paint, font);
   }
 
-  Serial.println("Displaying verses");
+  I2CSerial.println("Displaying verses");
   display_verses(c, refs, &paint, font);
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
@@ -320,11 +386,11 @@ void display_calendar(String date, Calendar* c, String refs) {
 
   epd.DisplayFrame();
   epd.Sleep();
-  Serial.println("done");  
+  I2CSerial.println("done");  
 }
 
 void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, bool bRed) {
-  //Serial.println("display_day() d=" + d);
+  I2CSerial.println("display_day() d=" + d);
   
   //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
   //paint.SetRotate(ROTATE_90);
@@ -341,7 +407,7 @@ void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, bool
 }
 
 void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
-  Serial.println("\ndisplay_date: s=" + date);
+  I2CSerial.println("\ndisplay_date: s=" + date);
 
   //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
   //paint.SetRotate(ROTATE_90);
@@ -359,7 +425,7 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
 void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
   Bible b(c->_I18n);
   if (!b.get(refs)) return;
-  Serial.println("*7*\n");
+  I2CSerial.println("*7*\n");
     
   b.dump_refs();
 
@@ -389,7 +455,7 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
     String output;
 
     for (int c = start_chapter; c <= end_chapter; c++) {
-      printf("\n%d:", c);
+      I2CSerial.printf("\n%d:", c);
       if (c < end_chapter) {
         end_verse = b.books_chaptercounts[r->book_index]; // -1 -> output until last verse
       }
@@ -409,17 +475,17 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
     
       while (!bDone && !bEndOfScreen) {
         if (b._bibleverse->get(r->book_index, c, v, &verse_record)) {
-          printf(" %d ", v);
+          I2CSerial.printf(" %d ", v);
           verse_text = get_verse(verse_record);
 
           bEndOfScreen = epd_verse(verse_text, paint, &xpos, &ypos, font); // returns false if at end of screen
-          Serial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
-          printf("\n");
+          I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
+          I2CSerial.printf("\n");
           v++;
           if (v > end_verse) bDone = true; // end_verse will be set to -1 if all verses up to the end of the chapter are to be returned.
         }
         else {
-          printf("Error\n");
+          I2CSerial.printf("Error\n");
           bDone = true;
         }
       }
@@ -430,7 +496,7 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
 }
 
 bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
-  Serial.println("epd_verse() verse=" + verse);
+  I2CSerial.println("epd_verse() verse=" + verse);
 
   String word_part = "";
   bool bEOL = false;
@@ -460,16 +526,16 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
 }
 
 String utf8CharAt(String s, int pos) { 
-  //Serial.println("String=" + s);
+  //I2CSerial.println("String=" + s);
   
   if (pos >= s.length()) {
-    //Serial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
+    //I2CSerial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
     return String("");
   }
   
   int charLen = charLenBytesUTF8(s.charAt(pos));
 
-  //Serial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
+  //I2CSerial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
 
   if (charLen == 0) {
     return String("");
@@ -482,7 +548,7 @@ String utf8CharAt(String s, int pos) {
 
 int charLenBytesUTF8(char s) {
   byte ch = (byte) s;
-  //Serial.println(String(ch)+ ";");
+  //I2CSerial.println(String(ch)+ ";");
 
   byte b;
  
@@ -502,7 +568,7 @@ int charLenBytesUTF8(char s) {
 }
 
 String get_verse(String verse_record) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
-  Serial.println(verse_record);
+  I2CSerial.println(verse_record);
   Csv csv;
 
   int pos = 0;
@@ -514,14 +580,14 @@ String get_verse(String verse_record) { // a bit naughty, verse_record strings c
   do {
     int i = 0;
     do {
-      //Serial.println("pos = " + String(pos));
+      //I2CSerial.println("pos = " + String(pos));
       fragment = csv.getCsvField(verse_record, &pos);
       if (i == 4) {
         verse+=((more_than_one?" ":"") + fragment);
         //return f;
       }
     } while (pos < verse_record.length() && i++ != 4);
-    //Serial.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
+    //I2CSerial.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
     more_than_one = true;
   } while (pos < verse_record.length());
   
@@ -564,5 +630,3 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   *x_width = paint->GetTextWidth(*word_part, font);
   return bEOL;
 }
-
-
