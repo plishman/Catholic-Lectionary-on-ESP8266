@@ -835,6 +835,7 @@ void Temporale::christmas_vigil(time64_t date) {
 	if (month(date) == 12 && dayofmonth(date) == 24) { // Christmas eve
 		if (hour_of_day(date) >= 18) { // after 6pm
 			_Lectionary = 13; // Christmas eve, vigil mass
+			_day = _I18n->get("temporale.advent.vigil");
 		}
 	}
 }

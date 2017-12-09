@@ -31,6 +31,7 @@ it:
       sunday: '%{week} Domenica Avvento'
       ferial: '%{weekday}, %{week} Avvento'
       before_christmas: '%{day} dicembre'
+      vigil: vigilia di Natale
     christmas:
       nativity_octave:
         ferial: '%{day}, Ottava di Natale'
@@ -82,6 +83,20 @@ it:
     '4': Giovedì
     '5': Venerdì
     '6': Sabato
+  month:
+    '1': genn.
+    '2': febbr.
+    '3': mar.
+    '4': apr.
+    '5': magg.
+    '6': guigno
+    '7': luglio
+    '8': ag.
+    '9': sett.
+    '10': ott.
+    '11': nov.
+    '12': dic.
+  ordinals: latin
   colour:
     violet: viola
     white: bianco

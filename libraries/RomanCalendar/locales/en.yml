@@ -31,6 +31,7 @@ en:
       sunday: '%{week} Sunday of Advent'
       ferial: '%{weekday}, %{week} week of Advent'
       before_christmas: '%{day} December'
+      vigil: Christmas Eve
     christmas:
       nativity_octave:
         ferial: '%{day} day of Christmas Octave'
@@ -82,6 +83,20 @@ en:
     '4': Thursday
     '5': Friday
     '6': Saturday
+  month:
+    '1': Jan
+    '2': Feb
+    '3': Mar
+    '4': Apr
+    '5': May
+    '6': Jun
+    '7': Jul
+    '8': Aug
+    '9': Sep
+    '10': Oct
+    '11': Nov
+    '12': Dec
+  ordinals: english
   colour:
     violet: violet
     white: white

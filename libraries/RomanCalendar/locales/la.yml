@@ -31,6 +31,7 @@ la:
       sunday: 'Dominica %{week} Adventus'
       ferial: '%{weekday}, hebdomada %{week} Adventus'
       before_christmas: 'Die %{day} decembris'
+      vigil: vigilia Nativitatis Domini
     christmas:
       nativity_octave:
         ferial: 'De die %{day} infra octavam Nativitatis'
@@ -82,6 +83,20 @@ la:
     '4': Feria quinta
     '5': Feria sexta
     '6': Sabbato
+  month:
+    '1': Ian.
+    '2': Febr.
+    '3': Mart.
+    '4': Apr.
+    '5': Mai.
+    '6': Iun.
+    '7': Iul.
+    '8': Aug.
+    '9': Sept.
+    '10': Oct.
+    '11': Nov.
+    '12': Dec.
+  ordinals: latin
   colour:
     violet: violaceus # sc. color
     white: albus

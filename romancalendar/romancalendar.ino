@@ -90,10 +90,10 @@ void setup() {
 //    Serial.print(".");
 //  }
 
-  if (!network.connect()){
-    //I2CSerial.println("Need to configure Wifi with WPS for time service");
-    I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
-    if (battery.power_connected()) {
+  if (battery.power_connected()) {
+    if (!network.connect()){
+      //I2CSerial.println("Need to configure Wifi with WPS for time service");
+      I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
       I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
       if (!connect_wps()) {
         I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
@@ -103,16 +103,16 @@ void setup() {
         ESP.deepSleep(1e6); // reset esp, network is configured
         //ESP.reset();
       }
-    } 
-    else {
-      I2CSerial.println("On battery power and no network configured - will not be able to use web interface until network is connected. Connect power to start setup.");
-      //I2CSerial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
-      //display_image(connect_power_image);
-      //while(1) {
-      //  delay(5000);
-      //}
-      //ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
     }
+  }
+  else {
+    I2CSerial.println("On battery power and no network configured - will not be able to use web interface until network is connected. Connect power to start setup.");
+    //I2CSerial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
+    //display_image(connect_power_image);
+    //while(1) {
+    //  delay(5000);
+    //}
+    //ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
   }
 }
 
@@ -241,20 +241,7 @@ void loop(void) {
   wdt_reset();
   Lectionary l(c._I18n);
   
-  Lectionary::ReadingsFromEnum r;
-
-  if (tm.Hour >= 8 && tm.Hour < 12) {
-    r=Lectionary::READINGS_OT;
-  }
-  else if (tm.Hour >= 12 && tm.Hour < 16) {
-    r=Lectionary::READINGS_NT;
-  }
-  else if (tm.Hour >= 16 && tm.Hour < 20) {
-    r=Lectionary::READINGS_PS;
-  }
-  else {
-    r=Lectionary::READINGS_G;
-  }
+  Lectionary::ReadingsFromEnum r = getLectionaryReading(date);  
   l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
 
 
@@ -275,6 +262,8 @@ void loop(void) {
   if (battery.power_connected()) {
     I2CSerial.println("Power is connected, starting config web server");
     I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+
+    // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
     //if (!network.connect()) {
     //  I2CSerial.println("Network is not configured, starting WPS setup");
     //  connect_wps();
@@ -283,22 +272,29 @@ void loop(void) {
     
     uint32_t free = system_get_free_heap_size();
     I2CSerial.println("free memory = " + String(free));
+
+    unsigned long server_start_time = millis();
+    bool bTimeUp = false;
    
     if (c._config->StartServer(c._I18n)) {
       I2CSerial.println("Config web server started, listening for requests...");
-      while(battery.power_connected() && !bSettingsUpdated) {
+      while(battery.power_connected() && !bSettingsUpdated && !bTimeUp) {
         wdt_reset();
         c._config->ServeClient(&bSettingsUpdated);
         delay(250);
+        if (millis() > (server_start_time + 1000*3600*3)) bTimeUp = true; // run the server for an 3 hours max, then reboot. If still on usb power, the web server will run again.
       }
 
       c._config->StopServer();
 
       if (bSettingsUpdated) {
         I2CSerial.println("Settings updated, resetting lectionary...");
-        Serial.flush();
         ESP.deepSleep(1e6);
         //ESP.reset();
+      }
+      else if (bTimeUp) {
+        I2CSerial.println("Server timed out, stopping web server restarting lectionary...");
+        ESP.deepSleep(1e6);
       }
       else {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
@@ -318,11 +314,94 @@ void loop(void) {
   I2CSerial.println("*8*\n");
   
   while(1) {
-    delay(15000);
     I2CSerial.println("Going to sleep");
-    ESP.deepSleep(60e6); //20 seconds
+    ESP.deepSleep(SLEEP_HOUR); //1 hour
   }
 }
+
+
+Lectionary::ReadingsFromEnum getLectionaryReading(time64_t date) {
+  Lectionary::ReadingsFromEnum r;
+  tmElements_t tm;
+  breakTime(date, tm);
+
+  bool bHaveLectionaryValue = false;
+
+  if(tm.Day == 24 && tm.Month == 12 && tm.Hour >= 18) { // Christmas Eve Vigil Mass
+    bHaveLectionaryValue = true;
+    
+    switch(tm.Hour) { // covers hours 18:00 - 23:59
+    case 18:
+      r=Lectionary::READINGS_OT;    
+      break;
+    
+    case 19:
+      r=Lectionary::READINGS_NT;    
+      break;
+      
+    case 20:
+      r=Lectionary::READINGS_PS;    
+      break;
+
+    case 21:
+    case 22:
+    case 23:
+      r=Lectionary::READINGS_G;
+      break;
+          
+    default:
+      break;
+    }
+  } 
+  
+  if(tm.Day == 25 && tm.Month == 12) { // Christmas Day: Midnight Mass, Mass at Dawn
+    bHaveLectionaryValue = true;
+    switch(tm.Hour) { // covers hours 00:00 - 07:59
+    case 0: // mass at midnight
+    case 4: // mass at dawn
+      r=Lectionary::READINGS_OT;
+      break;
+      
+    case 1: // mass at midnight
+    case 5: // mass at dawn
+      r=Lectionary::READINGS_NT;
+      break;
+      
+    case 2: // mass at midnight
+    case 6: // mass at dawn
+      r=Lectionary::READINGS_PS;
+      break;
+      
+    case 3: // mass at midnight
+    case 7: // mass at dawn
+      r=Lectionary::READINGS_G;
+      break;
+    
+    default:
+      bHaveLectionaryValue = false;
+      break;
+    }
+  } 
+  
+  if (!bHaveLectionaryValue) {
+    // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
+    if (tm.Hour == 8) {
+      r=Lectionary::READINGS_OT;
+    }
+    else if (tm.Hour == 12) {
+      r=Lectionary::READINGS_NT;
+    }
+    else if (tm.Hour == 16) {
+      r=Lectionary::READINGS_PS;
+    }
+    else {
+      r=Lectionary::READINGS_G;
+    }
+  }
+
+  return r;
+}
+
 
 
 //---------------------------------------------------------------------------calendar

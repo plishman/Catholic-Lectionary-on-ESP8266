@@ -33,6 +33,7 @@ cs:
       sunday: '%{week} neděle adventní'
       ferial: '%{weekday} po %{week} neděli adventní'
       before_christmas: '%{day} prosince'
+      vigil: Štědrý večer
     christmas:
       nativity_octave:
         ferial: '%{day} den v oktávu Narození Páně'
@@ -84,6 +85,20 @@ cs:
     '4': Čtvrtek
     '5': Pátek
     '6': Sobota
+  month:
+    '1': led.
+    '2': ún.
+    '3': brez.
+    '4': dub.
+    '5': kvet.
+    '6': cerv.
+    '7': cerven.
+    '8': srp.
+    '9': zár.
+    '10': ríj.
+    '11': list.
+    '12': pros.
+  ordinals: period
   colour:
     violet: fialová
     white: bílá
