@@ -241,18 +241,19 @@ void loop(void) {
   wdt_reset();
   Lectionary l(c._I18n);
   
-  Lectionary::ReadingsFromEnum r = getLectionaryReading(date);  
-  l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+  Lectionary::ReadingsFromEnum r;
+  if (getLectionaryReading(date, &r, battery.power_connected())) {  
+    l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+    
+    /************************************************/ 
+    // *6* Update epaper display with reading
+    display_calendar(datetime, &c, refs);
+  }
+  else {
+    I2CSerial.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
+  }
 
-
-  
-  /************************************************/ 
-  // *6* Update epaper display with reading
   I2CSerial.println("*6*\n");
-  display_calendar(datetime, &c, refs);
-
-
-
   /************************************************/ 
   // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   I2CSerial.println("*7*\n");
@@ -320,8 +321,8 @@ void loop(void) {
 }
 
 
-Lectionary::ReadingsFromEnum getLectionaryReading(time64_t date) {
-  Lectionary::ReadingsFromEnum r;
+bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours) {
+  //Lectionary::ReadingsFromEnum r;
   tmElements_t tm;
   breakTime(date, tm);
 
@@ -332,49 +333,50 @@ Lectionary::ReadingsFromEnum getLectionaryReading(time64_t date) {
     
     switch(tm.Hour) { // covers hours 18:00 - 23:59
     case 18:
-      r=Lectionary::READINGS_OT;    
+      *r=Lectionary::READINGS_OT;    
       break;
     
     case 19:
-      r=Lectionary::READINGS_NT;    
+      *r=Lectionary::READINGS_NT;    
       break;
       
     case 20:
-      r=Lectionary::READINGS_PS;    
+      *r=Lectionary::READINGS_PS;    
       break;
 
     case 21:
     case 22:
     case 23:
-      r=Lectionary::READINGS_G;
+      *r=Lectionary::READINGS_G;
       break;
           
     default:
+      bHaveLectionaryValue = false;
       break;
     }
   } 
   
   if(tm.Day == 25 && tm.Month == 12) { // Christmas Day: Midnight Mass, Mass at Dawn
     bHaveLectionaryValue = true;
-    switch(tm.Hour) { // covers hours 00:00 - 07:59
+    switch(tm.Hour) { // covers hours 00:00 - 07:59. Later hours (Mass during the day) are handled by the last switch statement (used for all other days also).
     case 0: // mass at midnight
     case 4: // mass at dawn
-      r=Lectionary::READINGS_OT;
+      *r=Lectionary::READINGS_OT;
       break;
       
     case 1: // mass at midnight
     case 5: // mass at dawn
-      r=Lectionary::READINGS_NT;
+      *r=Lectionary::READINGS_NT;
       break;
       
     case 2: // mass at midnight
     case 6: // mass at dawn
-      r=Lectionary::READINGS_PS;
+      *r=Lectionary::READINGS_PS;
       break;
       
     case 3: // mass at midnight
     case 7: // mass at dawn
-      r=Lectionary::READINGS_G;
+      *r=Lectionary::READINGS_G;
       break;
     
     default:
@@ -385,21 +387,77 @@ Lectionary::ReadingsFromEnum getLectionaryReading(time64_t date) {
   
   if (!bHaveLectionaryValue) {
     // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
-    if (tm.Hour == 8) {
-      r=Lectionary::READINGS_OT;
-    }
-    else if (tm.Hour == 12) {
-      r=Lectionary::READINGS_NT;
-    }
-    else if (tm.Hour == 16) {
-      r=Lectionary::READINGS_PS;
+    bHaveLectionaryValue = true;
+    if (!bReturnReadingForAllHours) {
+      switch(tm.Hour) {
+      case 8:
+        *r=Lectionary::READINGS_OT;
+        break;
+        
+      case 12:
+        *r=Lectionary::READINGS_NT;
+        break;
+  
+      case 16:
+        *r=Lectionary::READINGS_PS;
+        break;
+  
+      case 0:
+      case 20:
+        *r=Lectionary::READINGS_G;
+        break;
+      
+      default:
+        bHaveLectionaryValue = false;
+        break;
+      }
     }
     else {
-      r=Lectionary::READINGS_G;
+      switch(tm.Hour) {
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+        *r=Lectionary::READINGS_OT;
+        break;
+        
+      case 12:
+      case 13:
+      case 14:
+      case 15:
+        *r=Lectionary::READINGS_NT;
+        break;
+  
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+        *r=Lectionary::READINGS_PS;
+        break;
+  
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+      case 20:
+      case 21:
+      case 22:
+      case 23:
+        *r=Lectionary::READINGS_G;
+        break;
+      
+      default:
+        bHaveLectionaryValue = false; // shouldn't happen
+        break;
+      }      
     }
   }
 
-  return r;
+  return bHaveLectionaryValue;
 }
 
 
@@ -458,12 +516,12 @@ void display_calendar(String date, Calendar* c, String refs) {
   }
 
   I2CSerial.println("Displaying verses");
-  display_verses(c, refs, &paint, font);
+  display_verses(c, refs, &paint, &paint_red, font);
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
   epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
-
   epd.DisplayFrame();
+
   epd.Sleep();
   I2CSerial.println("done");  
 }
@@ -501,10 +559,9 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
   //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 }
 
-void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
+bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font) {
   Bible b(c->_I18n);
-  if (!b.get(refs)) return;
-  I2CSerial.println("*7*\n");
+  if (!b.get(refs)) return false;
     
   b.dump_refs();
 
@@ -520,6 +577,7 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
   int ypos = font->heightPages;
 
   String line_above = "";
+  bool bDisplayRefs = true;
 
   while (r != NULL && !bEndOfScreen) {     
     int start_chapter = r->start_chapter;
@@ -551,13 +609,24 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
 
       int v = start_verse;
       bool bDone = false;
+
+      String book_name;
     
       while (!bDone && !bEndOfScreen) {
         if (b._bibleverse->get(r->book_index, c, v, &verse_record)) {
           I2CSerial.printf(" %d ", v);
-          verse_text = get_verse(verse_record);
+          verse_text = get_verse(verse_record, &book_name);
 
-          bEndOfScreen = epd_verse(verse_text, paint, &xpos, &ypos, font); // returns false if at end of screen
+          if (bDisplayRefs) {
+            String refs_i18n = refs;
+            if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
+            I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
+            bEndOfScreen = epd_verse(refs_i18n, paint_red, &xpos, &ypos, font); // returns false if at end of screen
+            bDisplayRefs = false;
+          }
+          //
+          //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, &xpos, &ypos, font); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -572,6 +641,8 @@ void display_verses(Calendar* c, String refs, Paint* paint, FONT_INFO* font) {
     }
     r = b.refsList.get(i++);
   }
+
+  return true;
 }
 
 bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
@@ -646,7 +717,7 @@ int charLenBytesUTF8(char s) {
   return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
 
-String get_verse(String verse_record) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
+String get_verse(String verse_record, String* book_name) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
   I2CSerial.println(verse_record);
   Csv csv;
 
@@ -661,9 +732,12 @@ String get_verse(String verse_record) { // a bit naughty, verse_record strings c
     do {
       //I2CSerial.println("pos = " + String(pos));
       fragment = csv.getCsvField(verse_record, &pos);
+      if (i == 0 && !more_than_one) {
+        *book_name = fragment;
+      }
+
       if (i == 4) {
         verse+=((more_than_one?" ":"") + fragment);
-        //return f;
       }
     } while (pos < verse_record.length() && i++ != 4);
     //I2CSerial.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
