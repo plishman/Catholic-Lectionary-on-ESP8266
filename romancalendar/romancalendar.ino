@@ -45,23 +45,6 @@ Epd epd;
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 
-/*
-char jan[] PROGMEM = "Jan";
-char feb[] PROGMEM = "Feb";
-char mar[] PROGMEM = "Mar";
-char apr[] PROGMEM = "Apr";
-char may[] PROGMEM = "May";
-char jun[] PROGMEM = "Jun";
-char jul[] PROGMEM = "Jul";
-char aug[] PROGMEM = "Aug";
-char sep[] PROGMEM = "Sep";
-char oct[] PROGMEM = "Oct";
-char nov[] PROGMEM = "Nov";
-char dec[] PROGMEM = "Dec";
-
-PGM_P months[] PROGMEM = {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec};
-*/
-
 Battery battery;
 Network network;
 
@@ -106,7 +89,7 @@ void setup() {
     }
   }
   else {
-    I2CSerial.println("On battery power and no network configured - will not be able to use web interface until network is connected. Connect power to start setup.");
+    I2CSerial.println("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/).");
     //I2CSerial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
     //display_image(connect_power_image);
     //while(1) {
@@ -242,7 +225,8 @@ void loop(void) {
   Lectionary l(c._I18n);
   
   Lectionary::ReadingsFromEnum r;
-  if (getLectionaryReading(date, &r, battery.power_connected())) {  
+  
+  if (getLectionaryReading(date, &r, battery.power_connected(), c.temporale->season(date))) {  
     l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
     
     /************************************************/ 
@@ -282,8 +266,9 @@ void loop(void) {
       while(battery.power_connected() && !bSettingsUpdated && !bTimeUp) {
         wdt_reset();
         c._config->ServeClient(&bSettingsUpdated);
-        delay(250);
-        if (millis() > (server_start_time + 1000*3600*3)) bTimeUp = true; // run the server for an 3 hours max, then reboot. If still on usb power, the web server will run again.
+        delay(1000);
+        I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+        if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
       }
 
       c._config->StopServer();
@@ -294,8 +279,8 @@ void loop(void) {
         //ESP.reset();
       }
       else if (bTimeUp) {
-        I2CSerial.println("Server timed out, stopping web server restarting lectionary...");
-        ESP.deepSleep(1e6);
+        I2CSerial.println("Server timed out, stopping web server and going to sleep");
+        ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
       }
       else {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
@@ -321,7 +306,7 @@ void loop(void) {
 }
 
 
-bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours) {
+bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, Enums::Season season) {
   //Lectionary::ReadingsFromEnum r;
   tmElements_t tm;
   breakTime(date, tm);
@@ -386,77 +371,153 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   } 
   
   if (!bHaveLectionaryValue) {
-    // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
-    bHaveLectionaryValue = true;
-    if (!bReturnReadingForAllHours) {
-      switch(tm.Hour) {
-      case 8:
-        *r=Lectionary::READINGS_OT;
-        break;
+    if (season == Enums::SEASON_ADVENT || season == Enums::SEASON_EASTER && tm.Wday > 1) {
+      // 3 readings on weekdays of Advent: OT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and OT between 8am and 2pm, and PS between 2pm and 8pm
+      // 3 readings on weekdays of Easter: NT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and NT between 8am and 2pm, and PS between 2pm and 8pm
+      bHaveLectionaryValue = true;
+      if (!bReturnReadingForAllHours) {
+        switch(tm.Hour) {
+        case 8:
+          if (season == Enums::SEASON_ADVENT) {
+            *r=Lectionary::READINGS_OT;
+          }
+          else {
+            *r=Lectionary::READINGS_NT; // Easter
+          }
+          break;
+          
+        case 14:
+          *r=Lectionary::READINGS_PS;
+          break;
         
-      case 12:
-        *r=Lectionary::READINGS_NT;
-        break;
-  
-      case 16:
-        *r=Lectionary::READINGS_PS;
-        break;
-  
-      case 0:
-      case 20:
-        *r=Lectionary::READINGS_G;
-        break;
-      
-      default:
-        bHaveLectionaryValue = false;
-        break;
+        case 0:
+        case 20:
+          *r=Lectionary::READINGS_G;
+          break;
+        
+        default:
+          bHaveLectionaryValue = false;
+          break;
+        }
+      }
+      else {
+        switch(tm.Hour) {
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 13:
+        case 14:
+          if (season == Enums::SEASON_ADVENT) {
+            *r=Lectionary::READINGS_OT;
+          }
+          else {
+            *r=Lectionary::READINGS_NT; // Easter
+          }
+          break;
+          
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+          *r=Lectionary::READINGS_PS;
+          break;
+    
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+          *r=Lectionary::READINGS_G;
+          break;
+        
+        default:
+          bHaveLectionaryValue = false; // shouldn't happen
+          break;
+        }      
       }
     }
-    else {
-      switch(tm.Hour) {
-      case 8:
-      case 9:
-      case 10:
-      case 11:
-        *r=Lectionary::READINGS_OT;
-        break;
+
+    // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
+    if (!bHaveLectionaryValue && !(season == Enums::SEASON_ADVENT || season == Enums::SEASON_EASTER && tm.Wday > 1)) {
+      bHaveLectionaryValue = true;
+      if (!bReturnReadingForAllHours) {
+        switch(tm.Hour) {
+        case 8:
+          *r=Lectionary::READINGS_OT;
+          break;
+          
+        case 12:
+          *r=Lectionary::READINGS_NT;
+          break;
+    
+        case 16:
+          *r=Lectionary::READINGS_PS;
+          break;
+    
+        case 0:
+        case 20:
+          *r=Lectionary::READINGS_G;
+          break;
         
-      case 12:
-      case 13:
-      case 14:
-      case 15:
-        *r=Lectionary::READINGS_NT;
-        break;
-  
-      case 16:
-      case 17:
-      case 18:
-      case 19:
-        *r=Lectionary::READINGS_PS;
-        break;
-  
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-      case 7:
-      case 20:
-      case 21:
-      case 22:
-      case 23:
-        *r=Lectionary::READINGS_G;
-        break;
-      
-      default:
-        bHaveLectionaryValue = false; // shouldn't happen
-        break;
-      }      
+        default:
+          bHaveLectionaryValue = false;
+          break;
+        }
+      }
+      else {
+        switch(tm.Hour) {
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+          *r=Lectionary::READINGS_OT;
+          break;
+          
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+          *r=Lectionary::READINGS_NT;
+          break;
+    
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+          *r=Lectionary::READINGS_PS;
+          break;
+    
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+          *r=Lectionary::READINGS_G;
+          break;
+        
+        default:
+          bHaveLectionaryValue = false; // shouldn't happen
+          break;
+        }      
+      }
     }
   }
-
   return bHaveLectionaryValue;
 }
 
