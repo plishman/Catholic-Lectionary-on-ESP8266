@@ -371,7 +371,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   } 
   
   if (!bHaveLectionaryValue) {
-    if (season == Enums::SEASON_ADVENT || season == Enums::SEASON_EASTER && tm.Wday > 1) {
+    if ((season == Enums::SEASON_ADVENT && tm.Wday > 1) || season == Enums::SEASON_EASTER ) {
       // 3 readings on weekdays of Advent: OT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and OT between 8am and 2pm, and PS between 2pm and 8pm
       // 3 readings on weekdays of Easter: NT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and NT between 8am and 2pm, and PS between 2pm and 8pm
       bHaveLectionaryValue = true;
@@ -447,7 +447,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
     }
 
     // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
-    if (!bHaveLectionaryValue && !(season == Enums::SEASON_ADVENT || season == Enums::SEASON_EASTER && tm.Wday > 1)) {
+    if (!bHaveLectionaryValue && !((season == Enums::SEASON_ADVENT && tm.Wday > 1) || season == Enums::SEASON_EASTER)) {
       bHaveLectionaryValue = true;
       if (!bReturnReadingForAllHours) {
         switch(tm.Hour) {
