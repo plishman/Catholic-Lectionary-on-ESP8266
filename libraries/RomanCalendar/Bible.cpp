@@ -171,13 +171,13 @@ void Bible::dump_refs() {
 
 	while (r != NULL) {
 
-		printf("%s", r->refs.c_str());
+		I2CSerial.printf("%s", r->refs.c_str());
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
-			printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str());
+			I2CSerial.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str());
 		}
 		else {
 			if (r->start_chapter == r->end_chapter) {
-				printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
+				I2CSerial.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str(),
@@ -185,7 +185,7 @@ void Bible::dump_refs() {
 					sentence_ref(r->end_first_sentence, r->end_last_sentence).c_str());
 			}
 			else {
-				printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
+				I2CSerial.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str(),
@@ -203,7 +203,7 @@ void Bible::dump_refs() {
 }
 
 String Bible::sentence_ref(int from, int to) {
-	String s = "abcdefghijklmn";
+	String s = "abcdefghijklmnopqrstuvwxyz";
 
 	if (from == -1 && to == -1) return "";
 
@@ -366,7 +366,7 @@ bool Bible::expect(String s, String c, int* pos) {
 }
 
 bool Bible::get_sentences(String s, int* startpos, int* start_sentence, int* end_sentence) { 
-	String letters = "abcdefghi";												// *end_sentence == -1 for all sentences from *start_sentence
+	String letters = "abcdefghijklmnopqrstuvwxyz";										// *end_sentence == -1 for all sentences from *start_sentence
 	int pos = *startpos;
 
 	*start_sentence = -1; // -1 means "use all sentences in this verse" (sentence references abc etc. are not specified)
@@ -396,6 +396,8 @@ bool Bible::get_sentences(String s, int* startpos, int* start_sentence, int* end
 
 	*startpos = pos;
 
+	//I2CSerial.printf("Bible::get_sentences() start_sentence=%d, end_sentence=%d\n", *start_sentence, *end_sentence);
+	
 	return true;
 }
 

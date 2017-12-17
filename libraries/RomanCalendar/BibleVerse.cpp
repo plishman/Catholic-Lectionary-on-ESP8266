@@ -58,7 +58,7 @@ bool BibleVerse::get_bible_filename(String* filename) {
 }
 */
 
-bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
+bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* numRecords) {
     File file;
 	Csv csv;
 	I2CSerial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
@@ -124,6 +124,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 	} 
 	wdt_reset();
 	*verse_text = "";
+	*numRecords = 0;
 	int pos = 0;
 	int len = fileOffsetStr.length();
 	String fragment = "";
@@ -141,6 +142,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text) {
 		
 		if (file.available()) {
 			(*verse_text) += _I18n->readLine(file) + "\n";
+			(*numRecords)++;
 			
 		} else {
 			_I18n->closeFile(file);
