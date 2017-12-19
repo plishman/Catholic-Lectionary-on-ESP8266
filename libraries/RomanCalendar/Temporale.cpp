@@ -874,15 +874,15 @@ void Temporale::christmas_lectionary(time64_t date) {
 	if (mon == 12 && day_of_month >= 26 && day_of_month <= 28) { // 29th Dec to 31st Dec
 		switch (day_of_month) {
 		case 26:
-			_Lectionary = 696; // Feast of St. Stephen - should be handled in Sanctorale
+			_Lectionary = 696; // Feast of St. Stephen - should be handled in Sanctorale *now is*
 			break;
 
 		case 27:
-			_Lectionary = 697; // Feast of St. John - should be handled in Sanctorale
+			_Lectionary = 697; // Feast of St. John - should be handled in Sanctorale *now is*
 			break;
 
 		case 28:
-			_Lectionary = 698; // Feast of Holy Innocents - should be handled in Sanctorale
+			_Lectionary = 698; // Feast of Holy Innocents - should be handled in Sanctorale *now is*
 			break;
 		}
 		

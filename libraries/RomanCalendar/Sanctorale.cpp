@@ -6,6 +6,7 @@ Sanctorale::Sanctorale(bool transfer_to_sunday, I18n* i) {
 	_locale = i->_locale;
 	_I18n = i;
 	_transfer_to_sunday = transfer_to_sunday;
+	_Lectionary = 0;
 }
 
 Sanctorale::~Sanctorale() {
@@ -24,6 +25,8 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 		return false;
 	}
 
+	_Lectionary = 0;
+	
 	//I2CSerial.println("Sanctorale::get()");
 #ifndef _WIN32
 	//if (!_I18n->initializeSD()) return String("");
@@ -112,6 +115,8 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 	if (!bFound || bEndOfMonth) return false; // got to the end of the file without finding it
 	
 	String monthdayandflags = readLine.substring(0, readLine.indexOf(":"));
+	
+	setLectionaryNumber(monthdayandflags);
 	//Enums::Season seas = _temporale->season(date);
 	//Enums::Ranks rank; //= _temporale->_rank_e;
 	//Enums::Colours colour; //= _temporale->_colour_e;
@@ -181,6 +186,23 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 
 	//_sanctorale = "";
 	//return false;
+}
+
+void Sanctorale::setLectionaryNumber(String s) {
+	_Lectionary = 0;
+	String digits = "0123456789";
+	String n;
+	
+	// look for "L" followed immediately by an integer giving the lectionary number, e.g. L697
+	int pos = s.indexOf("L");
+	if (pos != -1) {
+		pos++;
+		while (pos < s.length() && digits.indexOf(s.charAt(pos)) != -1) {
+			n += s.charAt(pos);
+		}
+
+		_Lectionary = n.toInt();
+	}
 }
 
 void Sanctorale::setColour(Enums::Colours c) {

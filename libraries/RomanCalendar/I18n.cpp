@@ -131,6 +131,8 @@ bool I18n::get_config( void ) {
 	String yml_filename;
 	String sanctorale_filename;
 	String bible_filename;
+	String s_transfer_to_sunday;
+	bool transfer_to_sunday;
 	int pos = 0;
 	int i = 0;
 	
@@ -149,13 +151,16 @@ bool I18n::get_config( void ) {
 		yml_filename = csv.getCsvField(csv_record, &pos);
 		sanctorale_filename = csv.getCsvField(csv_record, &pos);
 		bible_filename = csv.getCsvField(csv_record, &pos);
-
+		s_transfer_to_sunday = csv.getCsvField(csv_record, &pos);
+		transfer_to_sunday = (s_transfer_to_sunday.indexOf("true") != -1);
+		
 		if (_lectionary_config_number == i) {
-			I2CSerial.println("\tdesc=" + desc + " pos=" + String(pos));
-			I2CSerial.println("\tlang=" + lang + " pos=" + String(pos));
-			I2CSerial.println("\tyml_filename=" + yml_filename + " pos=" + String(pos));
-			I2CSerial.println("\tsanctorale_filename=" + sanctorale_filename + " pos=" + String(pos));
-			I2CSerial.println("\tbible_filename=" + bible_filename + " pos=" + String(pos));		
+			I2CSerial.println("\tdesc=" + desc);
+			I2CSerial.println("\tlang=" + lang);
+			I2CSerial.println("\tyml_filename=" + yml_filename);
+			I2CSerial.println("\tsanctorale_filename=" + sanctorale_filename);
+			I2CSerial.println("\tbible_filename=" + bible_filename);
+			I2CSerial.println("\ttransfer_to_sunday=" + String(transfer_to_sunday));
 			bFoundSelection = true;
 			I2CSerial.println("* selected");
 			break;
@@ -185,6 +190,7 @@ bool I18n::get_config( void ) {
 	_yml_filename = yml_filename;
 	_sanctorale_filename = sanctorale_filename;
 	_bible_filename = bible_filename;
+	_transfer_to_sunday = transfer_to_sunday;
 	_have_config = true;
 
 	if (!bFoundSelection) {

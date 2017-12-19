@@ -61,10 +61,10 @@ public:
 
 #ifndef _WIN32
 	int _CS_PIN = 10;
-	Calendar(bool transfer_to_sunday, int CS_PIN);
+	Calendar(int CS_PIN);
 	Config* _config;
 #else
-	Calendar(bool transfer_to_sunday);
+	Calendar();
 #endif
 	~Calendar();
 	bool get(time64_t date);

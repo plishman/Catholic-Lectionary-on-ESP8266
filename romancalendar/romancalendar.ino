@@ -166,7 +166,7 @@ void loop(void) {
   wdt_reset();
   I2CSerial.println("*1*\n");
   //timeserver.gps_wake();
-  Calendar c(true, D1);
+  Calendar c(D1);
 
   if (!c._I18n->_have_config) {
     I2CSerial.println("Error: Failed to get config: will reboot after 30 seconds...");
@@ -815,7 +815,7 @@ String get_verse(String verse_record, String* book_name, int start_sentence, int
   bool more_than_one = false;
 
   
-  bool bReturnAll = (end_sentence <= numRecords);
+  bool bReturnAll = ((start_sentence == -1 && end_sentence == -1) || (end_sentence > (numRecords - 1))); // numRecords should be a minimum of 1 here
   
   do {
     int i = 0;

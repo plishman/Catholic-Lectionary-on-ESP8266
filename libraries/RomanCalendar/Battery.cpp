@@ -4,6 +4,7 @@ Battery::Battery() {
 }
 
 bool Battery::power_connected( void ) {
+	return true; 														// debugging
 	return (battery_voltage() > MIN_CHARGING_VOLTAGE);
 }
 

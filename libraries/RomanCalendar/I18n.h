@@ -25,6 +25,7 @@ public:
 	String _yml_filename = "";
 	String _sanctorale_filename = "";
 	String _bible_filename = "";
+	bool _transfer_to_sunday = true;
 	bool _have_config = false;
 	
 	Enums::I18nLanguages _locale;

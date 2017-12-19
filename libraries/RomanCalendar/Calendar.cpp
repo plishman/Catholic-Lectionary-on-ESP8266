@@ -45,7 +45,7 @@ const char* const Calendar::LITURGICAL_YEARS[3] = { "A", "B", "C" };
 const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 #ifndef _WIN32
-Calendar::Calendar(bool transfer_to_sunday, int CS_PIN) {
+Calendar::Calendar(int CS_PIN) {
 	_config = new Config();	
 	config_t c;
 	_config->GetConfig(&c);
@@ -58,11 +58,11 @@ Calendar::Calendar(bool transfer_to_sunday, int CS_PIN) {
 	
 	_config->_I18n = _I18n;
 #else
-Calendar::Calendar(bool transfer_to_sunday) {	
+Calendar::Calendar() {	
 	_I18n = new I18n();
 #endif
 	_date = (time64_t)-1;
-	_transfer_to_sunday = transfer_to_sunday;
+	_transfer_to_sunday = _I18n->_transfer_to_sunday;
 
 	transfers = new Transfers(_transfer_to_sunday, _I18n);
 	temporale = new Temporale(_transfer_to_sunday, _I18n);
@@ -177,8 +177,16 @@ bool Calendar::get(time64_t date) {
 	day.day = temporale->_day;
 	day.rank = temporale->_rank;
 	day.season = temporale->_season;
-	day.lectionary = temporale->_Lectionary;									 
-
+	
+	if (sanctorale->_Lectionary == 0) {
+		day.lectionary = temporale->_Lectionary;
+		I2CSerial.printf("Lectionary number is from temporale, L");
+	} else {
+		day.lectionary = sanctorale->_Lectionary;
+		I2CSerial.printf("Lectionary number is from sanctorale, L");
+	}
+	I2CSerial.printf("%d\n", day.lectionary);
+	
 	return true;
 }
 
