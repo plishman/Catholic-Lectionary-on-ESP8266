@@ -994,8 +994,21 @@ bool Temporale::get(time64_t date) {
 
 	switch (seas) {
 	case Enums::SEASON_ADVENT:
+		_colour_e = Enums::COLOURS_VIOLET;
+		
+		//TODO
+		//if (((season_week(Enums::SEASON_ADVENT, date)) == 3) && sunday(date)) { // Gaudete Sunday, 3rd Sunday in Advent - Rose vestments
+		//	_colour_e = Enums::COLOURS_ROSE;			
+		//}
+		break;		
+	
 	case Enums::SEASON_LENT:
 		_colour_e = Enums::COLOURS_VIOLET;
+
+		//TODO
+		//if (((season_week(Enums::SEASON_LENT, date)) == 4) && sunday(date)) { // Laetare Sunday Sunday, 4th Sunday in Lent - Rose vestments
+		//	_colour_e = Enums::COLOURS_ROSE;			
+		//}
 		break;
 
 	case Enums::SEASON_CHRISTMAS:

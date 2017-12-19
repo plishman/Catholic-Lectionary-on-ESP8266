@@ -191,14 +191,14 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 void Sanctorale::setLectionaryNumber(String s) {
 	_Lectionary = 0;
 	String digits = "0123456789";
-	String n;
+	String n = "";
 	
 	// look for "L" followed immediately by an integer giving the lectionary number, e.g. L697
 	int pos = s.indexOf("L");
 	if (pos != -1) {
 		pos++;
 		while (pos < s.length() && digits.indexOf(s.charAt(pos)) != -1) {
-			n += s.charAt(pos);
+			n += s.charAt(pos++);
 		}
 
 		_Lectionary = n.toInt();
