@@ -20,12 +20,10 @@ public:
 	int book_index;
 	int start_chapter;
 	int start_verse;
-	int start_first_sentence; // eg a
-	int start_last_sentence;
+	String start_verse_sentence_range; // eg a
 	int end_chapter;
 	int end_verse;
-	int end_first_sentence; // eg c
-	int end_last_sentence;
+	String end_verse_sentence_range; // eg c
 	String refs;
 	int book_count;
 };
@@ -59,8 +57,7 @@ public:
 	void add_reference(String refs, int book_index, 
 		int start_chapter, int end_chapter,
 		int start_verse, int end_verse,
-		int start_first_sentence, int start_last_sentence,
-		int end_first_sentence, int end_last_sentence);
+		String start_verse_sentence_range, String end_verse_sentence_range);
 
 	bool is_book(String refs, int startpos);
 
@@ -73,10 +70,10 @@ public:
 	bool parse_verse_range(String refs, int* startpos, 
 		int* start_chapter, int* end_chapter,
 		int* start_verse, int* end_verse,
-		int* start_first_sentence, int* start_last_sentence,
-		int* end_first_sentence, int* end_last_sentence);
+		String* start_verse_sentence_range,
+		String* end_verse_sentence_range);
 
-	bool parse_verse(String refs, int* startpos, int* chapter, int* verse, int* start_sentence, int* end_sentence);
+	bool parse_verse(String refs, int* startpos, int* chapter, int* verse, String* sentence_range);
 
 	bool expect(String s, String c, int * pos);
 

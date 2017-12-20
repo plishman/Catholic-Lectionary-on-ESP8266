@@ -106,10 +106,8 @@ bool Bible::get(String refs) {
 	int startpos = 0;
 	int start_verse;
 	int end_verse;
-	int start_first_sentence;
-	int start_last_sentence;
-	int end_first_sentence;
-	int end_last_sentence;
+	String start_verse_sentence_range;
+	String end_verse_sentence_range;
 	// need to handle: Matt >>9:35-10:1<<, 5a, 6-8
 	refsList.clear();
 
@@ -135,13 +133,13 @@ bool Bible::get(String refs) {
 		return false;
 	}
 
-	bResult = parse_verse_range(refs, &startpos, &start_chapter, &end_chapter, &start_verse, &end_verse, &start_first_sentence, &start_last_sentence, &end_first_sentence, &end_last_sentence);
+	bResult = parse_verse_range(refs, &startpos, &start_chapter, &end_chapter, &start_verse, &end_verse, &start_verse_sentence_range, &end_verse_sentence_range);
 
 	if (!bResult) {
 		return false;
 	}
 	else {
-		add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_first_sentence, start_last_sentence, end_first_sentence, end_last_sentence);
+		add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range);
 	}
 
 	while (startpos < len && bResult && (expect(refs, ",", &startpos) || 
@@ -154,15 +152,54 @@ bool Bible::get(String refs) {
 
 		expect_chapter(refs, &startpos, &start_chapter); // if no chapter specified, assume refers to the same chapter
 
-		bResult = parse_verse_range(refs, &startpos, &start_chapter, &end_chapter, &start_verse, &end_verse, &start_first_sentence, &start_last_sentence, &end_first_sentence, &end_last_sentence);
+		bResult = parse_verse_range(refs, &startpos, &start_chapter, &end_chapter, &start_verse, &end_verse, &start_verse_sentence_range, &end_verse_sentence_range);
 		if (bResult) {
-			add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_first_sentence, start_last_sentence, end_first_sentence, end_last_sentence);
+			add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range);
 		}
 	}
 
 	return true;
 }
+void Bible::dump_refs() {
+	Ref* r;
+	
+	int i = 0;
+	r = refsList.get(i);
 
+	while (r != NULL) {
+
+		I2CSerial.printf("%s", r->refs.c_str());
+		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
+			I2CSerial.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
+		}
+		else {
+			if (r->start_chapter == r->end_chapter) {
+				I2CSerial.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
+					r->start_chapter,
+					r->start_verse,
+					r->start_verse_sentence_range.c_str(),
+					r->end_verse,
+					r->end_verse_sentence_range.c_str());
+			}
+			else {
+				I2CSerial.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
+					r->start_chapter,
+					r->start_verse,
+					r->start_verse_sentence_range.c_str(),
+					r->end_chapter,
+					r->end_verse,
+					r->end_verse_sentence_range.c_str());
+			}
+		}
+
+		i++;
+		r = refsList.get(i);
+		//I2CSerial.println(".");
+	} 
+	//I2CSerial.println("finished");
+}
+
+/*
 void Bible::dump_refs() {
 	Ref* r;
 	
@@ -201,6 +238,7 @@ void Bible::dump_refs() {
 	} 
 	//I2CSerial.println("finished");
 }
+*/
 
 String Bible::sentence_ref(int from, int to) {
 	String s = "abcdefghijklmnopqrstuvwxyz";
@@ -227,19 +265,16 @@ String Bible::sentence_ref(int from, int to) {
 void Bible::add_reference(String refs, int book_index, 
 	int start_chapter, int end_chapter,
 	int start_verse, int end_verse,
-	int start_first_sentence, int start_last_sentence,
-	int end_first_sentence, int end_last_sentence) {
+	String start_verse_sentence_range, String end_verse_sentence_range) {
 
 	Ref* r = new Ref();
 	r->book_index = book_index;
 	r->start_chapter = start_chapter;
 	r->end_chapter = end_chapter;
 	r->start_verse = start_verse;
-	r->start_first_sentence = start_first_sentence;
-	r->start_last_sentence = start_last_sentence;
+	r->start_verse_sentence_range = start_verse_sentence_range;
 	r->end_verse = end_verse;
-	r->end_first_sentence = end_first_sentence;
-	r->end_last_sentence = end_last_sentence;
+	r->end_verse_sentence_range = end_verse_sentence_range;
 	r->refs = refs;
 	r->book_count = _book_count;
 	refsList.add(r);
@@ -308,7 +343,7 @@ bool Bible::expect_chapter(String refs, int* startpos, int* chapter) {
 	
 	return bResult;
 }
-
+/*
 bool Bible::parse_verse_range(String refs, int* startpos, 
 				  int* start_chapter, int* end_chapter,
 				  int* start_verse, int* end_verse, 
@@ -354,6 +389,59 @@ bool Bible::parse_verse(String refs, int* startpos, int* chapter, int* verse, in
 
 	get_sentences(refs, startpos, start_sentence, end_sentence); // sentence references are optional, if not present, no problem - though it does not distinguish malformed references at this point
 
+	return true;
+}
+*/
+
+bool Bible::parse_verse_range(String refs, int* startpos, 
+				  int* start_chapter, int* end_chapter,
+				  int* start_verse, int* end_verse, 
+				  String* start_verse_sentence_range,
+				  String* end_verse_sentence_range) {
+	// on entry, start_chapter is expected to have been read and set by the Bible::get function.
+	bool bResult;
+	*start_verse_sentence_range = "";
+	*end_verse_sentence_range = "";
+	
+	*end_chapter = *start_chapter; // make sure end_chapter is initialized. If it is not found in the end reference, it will be assumed to be the same as the start chapter
+
+	bResult = parse_verse(refs, startpos, start_chapter, start_verse, start_verse_sentence_range);  // followed by either one or more letters, in order (eg. abc)
+	
+	if (!bResult) return false; // need at least one verse, or <start verse>-<end-verse>
+
+	bResult = expect(refs, "-", startpos); // looking to see if it specifies a verse range separated by -
+			
+	if (bResult) {
+		(*start_verse_sentence_range) += "-"; // indicates from start verse sentence range to end of verse
+		(*end_verse_sentence_range) = "-"; // indicates from start of last verse to fragment indicated by letter
+		
+		bResult = parse_verse(refs, startpos, end_chapter, end_verse, end_verse_sentence_range); // verse range, look for end verse in range		
+		return true;
+	} 
+	//otherwise
+	*end_verse = *start_verse; // otherwise set end verse to be the same as start verse
+	*end_verse_sentence_range = *start_verse_sentence_range;
+	return true;
+}
+
+bool Bible::parse_verse(String refs, int* startpos, int* chapter, int* verse, String* sentence_range) {
+	bool bResult= true;
+
+	expect_chapter(refs, startpos, chapter); // optional chapter ref
+
+	*verse = readnumber(refs, startpos);
+
+	if (*verse == 0) return false;
+
+	String letters = "abcdefghijklmnopqrstuvwxyz";
+	
+	char letter = refs.charAt(*startpos);
+	while (letter != '\0' && letters.indexOf(letter) != -1) {
+		(*sentence_range) += letter;
+		(*startpos)++;
+		letter = refs.charAt(*startpos);
+	}
+	
 	return true;
 }
 

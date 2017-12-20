@@ -577,7 +577,8 @@ void display_calendar(String date, Calendar* c, String refs) {
   }
 
   I2CSerial.println("Displaying verses");
-  //refs = "Ps 85:9ab+10, 11-12, 13-14";                                                          //debugging
+  //refs = "Ps 85:9ab+10, 11-12, 13-14";        //debugging
+  //refs="1 Chr 29:9-10bc";           //debugging
   display_verses(c, refs, &paint, &paint_red, font);
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
@@ -647,8 +648,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
     int verse = r->start_verse;
     int start_verse;
     int end_verse;
-    int start_sentence;
-    int end_sentence;
+    String sentence_range;
     String verse_record;
     String verse_text;
     String output;
@@ -676,26 +676,18 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
     
       while (!bDone && !bEndOfScreen) {
         int numRecords = 0;
+        sentence_range = "";
         if (v == r->start_verse && c == r->start_chapter) {
-          //I2CSerial.printf("first verse: start_sentence=%d, end_sentence=%d",r->start_first_sentence, r->start_last_sentence);
-          start_sentence = r->start_first_sentence;
-          end_sentence = r->start_last_sentence;
+          sentence_range = r->start_verse_sentence_range;
         } 
         else if (v == r->end_verse && c == r->end_chapter) {
-          //I2CSerial.printf("last verse: start_sentence=%d, end_sentence=%d",r->start_first_sentence, r->start_last_sentence);
-          start_sentence = r->end_first_sentence;
-          end_sentence = r->end_last_sentence;
-        }
-        else {
-          //I2CSerial.printf(".");
-          start_sentence = -1;
-          end_sentence = -1;          
+          sentence_range = r->end_verse_sentence_range;
         }
             
         if (b._bibleverse->get(r->book_index, c, v, &verse_record, &numRecords)) {
           I2CSerial.printf(" %d ", v);
-          I2CSerial.printf("start_sentence=%d, end_sentence=%d, numRecords=%d\n", start_sentence, end_sentence, numRecords);
-          verse_text = get_verse(verse_record, &book_name, start_sentence, end_sentence, numRecords);
+          I2CSerial.printf("sentence_range=%s, numRecords=%d\n", sentence_range == "" ? "[All]" : sentence_range.c_str(), numRecords);
+          verse_text = get_verse(verse_record, &book_name, sentence_range, numRecords);
 
           if (bDisplayRefs) {
             String refs_i18n = refs;
@@ -801,9 +793,9 @@ int lines(String s) {
   
 }
 
-String get_verse(String verse_record, String* book_name, int start_sentence, int end_sentence, int numRecords) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
+String get_verse(String verse_record, String* book_name, String sentence_range, int numRecords) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
   I2CSerial.printf("get_verse() %s", verse_record.c_str());
-  I2CSerial.printf("get_verse() start_sentence=%d, end_sentence=%d, numRecords=%d\n", start_sentence, end_sentence, numRecords);
+  I2CSerial.printf("get_verse() sentence_range=%s, numRecords=%d\n", sentence_range == "" ? "[All]" : sentence_range.c_str(), numRecords);
   Csv csv;
 
   int pos = 0;
@@ -814,40 +806,104 @@ String get_verse(String verse_record, String* book_name, int start_sentence, int
   String verse = "";
   bool more_than_one = false;
 
-  
-  bool bReturnAll = ((start_sentence == -1 && end_sentence == -1) || (end_sentence > (numRecords - 1))); // numRecords should be a minimum of 1 here
-  
+  String verse_fragment_array[26];
+  int verse_fragment_array_index = 0;
+
+  for (int i = 0; i<26; i++) {
+    verse_fragment_array[i] = ""; // intialize array
+  }
+
+  I2CSerial.printf("get_verse() *1*");      
   do {
     int i = 0;
     do {
-      //I2CSerial.println("pos = " + String(pos));
+      I2CSerial.println("pos = " + String(pos));
       fragment = csv.getCsvField(verse_record, &pos);
+      I2CSerial.printf("fragment=%s\n", fragment.c_str());
       
       if (i == 0 && !more_than_one) {
         *book_name = fragment;
       }
 
       if (i == 4) {
-        if (!bReturnAll) {
-          if ((start_sentence == -1 && end_sentence <= sentence_count) || 
-              (end_sentence == -1 && sentence_count >= start_sentence) || 
-              (sentence_count >= start_sentence && sentence_count <= end_sentence)) {
-            // this will check to see if the verse is split into lines (a single verse may be broken into one or more lines in the Bible CSV file, to allow a,b,c etc. type references.
-            // If they're not used (most source Bible XML files do not have them), then they can be put in later by modifying the CSV file on the sd card - the firmware should not need to be 
-            // changed
-            verse+=((more_than_one?" ":"") + fragment); // only add this fragment to the output verse if the record number is between start_sentence and end_sentence inclusive
-            I2CSerial.printf("Added verse fragment %d\n", sentence_count);
-          }
-        } else {
-          verse+=((more_than_one?" ":"") + fragment);
-        }
+        I2CSerial.printf("fragment=%s\n", fragment.c_str());
+        verse += ((more_than_one?" ":"") + fragment);
+        verse_fragment_array[verse_fragment_array_index++] = ((more_than_one?" ":"") + fragment);
+        if (verse_fragment_array_index == 26) return ("verse fragment array index out of range");
       }
     } while (pos < verse_record.length() && i++ != 4);
     //I2CSerial.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
     more_than_one = true;
     sentence_count++;
   } while (pos < verse_record.length());
+
+  I2CSerial.printf("get_verse() *2*");      
+
+  String letters = "abcdefghijklmnopqrstuvwxyz";
+
+  int max_fragment_number = 0;
+  for (int i = 0; i < sentence_range.length(); i++) {
+    int fragment_number = letters.indexOf(sentence_range.charAt(i));
+
+    if (fragment_number > max_fragment_number) max_fragment_number = fragment_number;
+  }
+  I2CSerial.printf("get_verse() *3*");      
+
+  if (sentence_range == "" || max_fragment_number > (numRecords - 1)) {
+    I2CSerial.println("Sentence range is empty or max fragment number > numRecords: returning whole verse");
+    return verse;  
+  }
+  else {
+    I2CSerial.println("parsing subrange reference");
+    int charpos = 0;
+    int fragment_number = 0;
+    String output = "";
+    
+    char c = sentence_range.charAt(charpos);
+    if (c == '-') {
+      charpos++;
+
+      if (charpos >= sentence_range.length()) return verse; // return whole verse if only the - is present (malformed subrange)
+      
+      fragment_number = letters.indexOf(sentence_range.charAt(charpos));
+
+      I2CSerial.printf("adding all fragments up to %d\n", fragment_number);
+
+      if (fragment_number == -1) return verse; // next character is not a letter - return whole verse (malformed subrange)
+
+      for (int i = 0; i <= fragment_number; i++) { // if the subrange starts with a '-', add all verse fragments up to the first lettered verse fragment
+        output += verse_fragment_array[i];
+      }
+      charpos++;
+    }
+
+    I2CSerial.printf("get_verse() *4*");      
   
+    c = sentence_range.charAt(charpos);
+    while (c != '-' && charpos < sentence_range.length()) {
+      fragment_number = letters.indexOf(sentence_range.charAt(charpos));
+      I2CSerial.printf("adding fragment %d(%c)\n", fragment_number, c);
+      output += verse_fragment_array[fragment_number];      
+      charpos++;
+      c = sentence_range.charAt(charpos);
+    }
+
+    I2CSerial.printf("get_verse() *5*");      
+
+    if (c == '-') {
+      I2CSerial.printf("adding fragments at end from %d to %d\n", fragment_number + 1, verse_fragment_array_index - 1);
+      for (int i = fragment_number + 1; i < verse_fragment_array_index; i++) {
+        output += verse_fragment_array[i];
+      }
+    }
+
+    I2CSerial.printf("get_verse() *6*");      
+
+    return output;
+  }
+
+  I2CSerial.printf("get_verse() *7*");      
+
   return verse;
 }
 
