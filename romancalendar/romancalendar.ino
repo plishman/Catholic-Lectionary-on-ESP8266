@@ -267,7 +267,7 @@ void loop(void) {
         wdt_reset();
         c._config->ServeClient(&bSettingsUpdated);
         delay(1000);
-        I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+        //I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
         if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
       }
 
@@ -286,7 +286,7 @@ void loop(void) {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
       }
   
-      I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+      //I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
       
       free = system_get_free_heap_size();
       I2CSerial.println("free memory = " + String(free));
@@ -307,6 +307,7 @@ void loop(void) {
 
 
 bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, Enums::Season season) {
+  I2CSerial.printf("getLectionaryReading() bReturnReadingFromAllHours=%s\n", bReturnReadingForAllHours?"true":"false");
   //Lectionary::ReadingsFromEnum r;
   tmElements_t tm;
   breakTime(date, tm);
@@ -314,6 +315,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   bool bHaveLectionaryValue = false;
 
   if(tm.Day == 24 && tm.Month == 12 && tm.Hour >= 18) { // Christmas Eve Vigil Mass
+    I2CSerial.printf("Christmas Eve vigil Mass\n");
     bHaveLectionaryValue = true;
     
     switch(tm.Hour) { // covers hours 18:00 - 23:59
@@ -342,6 +344,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   } 
   
   if(tm.Day == 25 && tm.Month == 12) { // Christmas Day: Midnight Mass, Mass at Dawn
+    I2CSerial.printf("Christmas Day\n");
     bHaveLectionaryValue = true;
     switch(tm.Hour) { // covers hours 00:00 - 07:59. Later hours (Mass during the day) are handled by the last switch statement (used for all other days also).
     case 0: // mass at midnight
@@ -406,6 +409,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 9:
         case 10:
         case 11:
+        case 12:
         case 13:
         case 14:
           if (season == Enums::SEASON_ADVENT) {
