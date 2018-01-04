@@ -220,14 +220,22 @@ void loop(void) {
   /************************************************/ 
   // *5* Get lectionary (readings) for this date
   I2CSerial.println("*5*\n");
-  String refs;
+  String refs = "";
   wdt_reset();
   Lectionary l(c._I18n);
   
   Lectionary::ReadingsFromEnum r;
   
-  if (getLectionaryReading(date, &r, battery.power_connected(), c.temporale->season(date))) {  
+  if (getLectionaryReading(date, &r, battery.power_connected(), c.temporale->season(date))) {      
     l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+
+    if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
+      r=Lectionary::READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
+                                // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
+                                // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
+                                // returned on Saints days (apart from those following Christmas day, which I did have).
+      l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+    }
     
     /************************************************/ 
     // *6* Update epaper display with reading
