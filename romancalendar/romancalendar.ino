@@ -223,10 +223,17 @@ void loop(void) {
   String refs = "";
   wdt_reset();
   Lectionary l(c._I18n);
+
+  bool b_OT = false;
+  bool b_NT = false; 
+  bool b_PS = false; 
+  bool b_G = false;
+
+  l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
   
   Lectionary::ReadingsFromEnum r;
   
-  if (getLectionaryReading(date, &r, battery.power_connected(), c.temporale->season(date))) {      
+  if (getLectionaryReading(date, &r, battery.power_connected(), b_OT, b_NT, b_PS, b_G)) {      
     l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
 
     if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
@@ -314,7 +321,7 @@ void loop(void) {
 }
 
 
-bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, Enums::Season season) {
+bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, bool b_OT, bool b_NT, bool b_PS, bool b_G) {
   I2CSerial.printf("getLectionaryReading() bReturnReadingFromAllHours=%s\n", bReturnReadingForAllHours?"true":"false");
   //Lectionary::ReadingsFromEnum r;
   tmElements_t tm;
@@ -382,18 +389,21 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   } 
   
   if (!bHaveLectionaryValue) {
-    if ((season == Enums::SEASON_ADVENT && tm.Wday > 1) || season == Enums::SEASON_EASTER ) {
+    if (!b_OT || !b_NT) {
       // 3 readings on weekdays of Advent: OT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and OT between 8am and 2pm, and PS between 2pm and 8pm
-      // 3 readings on weekdays of Easter: NT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and NT between 8am and 2pm, and PS between 2pm and 8pm
+      // 3 readings on weekdays of Easter and Christmas: NT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and NT between 8am and 2pm, and PS between 2pm and 8pm
       bHaveLectionaryValue = true;
       if (!bReturnReadingForAllHours) {
         switch(tm.Hour) {
         case 8:
-          if (season == Enums::SEASON_ADVENT) {
-            *r=Lectionary::READINGS_OT;
+          *r=Lectionary::READINGS_G;
+
+          if (!b_OT) {
+            *r=Lectionary::READINGS_NT;
           }
-          else {
-            *r=Lectionary::READINGS_NT; // Easter
+          
+          if (!b_NT) {
+            *r=Lectionary::READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
           }
           break;
           
@@ -420,11 +430,14 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 12:
         case 13:
         case 14:
-          if (season == Enums::SEASON_ADVENT) {
-            *r=Lectionary::READINGS_OT;
+          *r=Lectionary::READINGS_G;
+
+          if (!b_OT) {
+            *r=Lectionary::READINGS_NT;
           }
-          else {
-            *r=Lectionary::READINGS_NT; // Easter
+          
+          if (!b_NT) {
+            *r=Lectionary::READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
           }
           break;
           
@@ -459,7 +472,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
     }
 
     // this will show the Gospel reading between the hours of midnight and 8am, and 8pm and midnight
-    if (!bHaveLectionaryValue && !((season == Enums::SEASON_ADVENT && tm.Wday > 1) || season == Enums::SEASON_EASTER)) {
+    if (!bHaveLectionaryValue && b_OT && b_NT) {
       bHaveLectionaryValue = true;
       if (!bReturnReadingForAllHours) {
         switch(tm.Hour) {
@@ -530,7 +543,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
       }
     }
   }
-  return bHaveLectionaryValue;
+  return bHaveLectionaryValue; // will be false when on battery power, if the hour is not the specific hour that an update is to occur. On battery, updates are repeated every hour
 }
 
 

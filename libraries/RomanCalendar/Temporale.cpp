@@ -937,7 +937,7 @@ bool Temporale::do_solemnities(time64_t date) {
 	if (issameday(date, holy_family(lit_year))) { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; _Lectionary = 17; }
 	if (issameday(date, mother_of_god(lit_year))) { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true;  _Lectionary = 18; }
 	if (issameday(date, epiphany(lit_year))) { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true;  _Lectionary = 20; }
-	if (issameday(date, baptism_of_lord(lit_year + 1))) { s = Enums::SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; _Lectionary = 21; }
+	if (issameday(date, baptism_of_lord(lit_year))) { s = Enums::SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; _Lectionary = 21; }
 	if (issameday(date, ash_wednesday(lit_year))) { s = Enums::SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; _Lectionary = 219; }
 	if (issameday(date, palm_sunday(lit_year))) { s = Enums::SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; _Lectionary = 38; }
 	if (issameday(date, good_friday(lit_year))) { s = Enums::SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; _Lectionary = 40; }
