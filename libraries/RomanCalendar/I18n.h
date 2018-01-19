@@ -26,6 +26,7 @@ public:
 	String _sanctorale_filename = "";
 	String _bible_filename = "";
 	bool _transfer_to_sunday = true;
+	bool _celebrate_feast_of_christ_priest = true;
 	bool _have_config = false;
 	
 	Enums::I18nLanguages _locale;
@@ -34,7 +35,7 @@ public:
 	static const char* const I18n_SEASONS[5];
 	static const char* const I18n_COLOURS[4];
 	static const char* const I18n_RANK_NAMES[14];
-	static const char* const I18n_SOLEMNITIES[17];
+	static const char* const I18n_SOLEMNITIES[18];
 
 	int _callcount = 0;
 	int _lectionary_config_number = 1;

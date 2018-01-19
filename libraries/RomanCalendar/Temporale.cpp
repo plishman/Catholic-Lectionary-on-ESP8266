@@ -23,7 +23,7 @@ const char* const RomanCalendar::SOLEMNITIES[17] = {
 };
 */
 
-const Enums::Ranks Temporale::SOLEMNITIES_RANKS[17] = {		// the ranks of the solemnities, in the same order as in solemnities[17]
+const Enums::Ranks Temporale::SOLEMNITIES_RANKS[18] = {		// the ranks of the solemnities, in the same order as in solemnities[17]
 	Enums::RANKS_PRIMARY,										//nativity
 	Enums::RANKS_FEAST_LORD_GENERAL,							//holy_family
 	Enums::RANKS_SOLEMNITY_GENERAL,							//mother_of_god
@@ -36,6 +36,7 @@ const Enums::Ranks Temporale::SOLEMNITIES_RANKS[17] = {		// the ranks of the sol
 	Enums::RANKS_TRIDUUM,										//easter_sunday
 	Enums::RANKS_PRIMARY,										//ascension
 	Enums::RANKS_PRIMARY,										//pentecost
+	Enums::RANKS_FEAST_PROPER,									//Christ the Priest (optional in some areas)
 	Enums::RANKS_SOLEMNITY_GENERAL,							//holy_trinity
 	Enums::RANKS_SOLEMNITY_GENERAL,							//corpus_christi
 	Enums::RANKS_SOLEMNITY_GENERAL,							//sacred_heart
@@ -43,7 +44,7 @@ const Enums::Ranks Temporale::SOLEMNITIES_RANKS[17] = {		// the ranks of the sol
 	Enums::RANKS_SOLEMNITY_GENERAL								//christ_king
 };
 
-const Enums::Colours Temporale::SOLEMNITIES_COLOURS[17] = {	// the colours of the solemnities, in the same order as in solemnities[17]
+const Enums::Colours Temporale::SOLEMNITIES_COLOURS[18] = {	// the colours of the solemnities, in the same order as in solemnities[17]
 	Enums::COLOURS_WHITE,										//nativity
 	Enums::COLOURS_WHITE,										//holy_family
 	Enums::COLOURS_WHITE,										//mother_of_god
@@ -56,6 +57,7 @@ const Enums::Colours Temporale::SOLEMNITIES_COLOURS[17] = {	// the colours of th
 	Enums::COLOURS_WHITE,										//easter_sunday
 	Enums::COLOURS_WHITE,										//ascension
 	Enums::COLOURS_RED,											//pentecost
+	Enums::COLOURS_WHITE,										//Christ the Priest (optional in some areas)
 	Enums::COLOURS_WHITE,										//holy_trinity
 	Enums::COLOURS_WHITE,										//corpus_christi
 	Enums::COLOURS_WHITE,										//sacred_heart
@@ -446,6 +448,10 @@ time64_t Temporale::ascension(int year) {
 
 time64_t Temporale::pentecost(int year) {
 	return easter_sunday(year) + ((7 * WEEK) * DAY);
+}
+
+time64_t Temporale::christ_eternal_priest(int year) {
+	return thursday_after(pentecost(year)); // Feast of Christ the Eternal Priest (Optional in some areas)
 }
 
 time64_t Temporale::holy_trinity(int year) {
@@ -945,6 +951,11 @@ bool Temporale::do_solemnities(time64_t date) {
 	if (issameday(date, easter_sunday(lit_year))) { s = Enums::SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; _Lectionary = 42; }
 	if (issameday(date, ascension(lit_year))) { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; _Lectionary = 58; }
 	if (issameday(date, pentecost(lit_year))) { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; _Lectionary = 62; }
+
+	if (_I18n->_celebrate_feast_of_christ_priest) {
+		if (issameday(date, christ_eternal_priest(lit_year))) { s = Enums::SOLEMNITIES_CHRIST_PRIEST;  bIsSolemnity = true; _Lectionary = 982; }		
+	}
+
 	if (issameday(date, holy_trinity(lit_year))) { s = Enums::SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 164; } //check lectionary
 	if (issameday(date, corpus_christi(lit_year))) { s = Enums::SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 167; }
 	if (issameday(date, sacred_heart(lit_year))) { s = Enums::SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 170; }

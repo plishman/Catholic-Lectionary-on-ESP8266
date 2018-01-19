@@ -50,19 +50,19 @@ public:
 		Enums::Ranks r;
 	} Solemnity;
 
-	char* DAYS_OF_WEEK[7];
-	char* RANK_NAME[14];
-	char* RANK_TYPES[9];
-	char* COLOURS[4];
-	char* SEASONS[5];
-	char* SOLEMNITIES[17];
-	char* SUNDAYS_AND_FERIALS[16];
+	//char* DAYS_OF_WEEK[7];
+	//char* RANK_NAME[14];
+	//char* RANK_TYPES[9];
+	//char* COLOURS[4];
+	//char* SEASONS[5];
+	//char* SOLEMNITIES[17];
+	//char* SUNDAYS_AND_FERIALS[16];
 
 	static const char* const RANK_PRIORITY[14];
 	static const char* const SUNDAY_TRANSFERABLE_SOLEMNITIES[3];
 	//static const Enums::Ranks SOLEMNITIES[17];
-	static const Enums::Colours SOLEMNITIES_COLOURS[17];
-	static const Enums::Ranks SOLEMNITIES_RANKS[17];
+	static const Enums::Colours SOLEMNITIES_COLOURS[18];
+	static const Enums::Ranks SOLEMNITIES_RANKS[18];
 
 	bool _transfer_to_sunday; // flag determines whether epiphany, ascension and corpus Christi should be transferred to sunday (us, uk etc)
 
@@ -125,6 +125,7 @@ public:
 	time64_t holy_saturday(int year);
 	time64_t ascension(int year);
 	time64_t pentecost(int year);
+	time64_t christ_eternal_priest(int year);
 	time64_t holy_trinity(int year);
 	time64_t corpus_christi(int year);
 	time64_t sacred_heart(int year);

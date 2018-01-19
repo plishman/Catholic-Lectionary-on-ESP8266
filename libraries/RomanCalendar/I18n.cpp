@@ -50,7 +50,7 @@ const char* const I18n::I18n_RANK_NAMES[14] = {
 	"rank.1_1"
 };
 
-const char* const I18n::I18n_SOLEMNITIES[17] = {
+const char* const I18n::I18n_SOLEMNITIES[18] = {
 	"temporale.solemnity.nativity",						//nativity
 	"temporale.solemnity.holy_family",					//holy_family
 	"temporale.solemnity.mother_of_god",				//mother_of_god
@@ -63,6 +63,7 @@ const char* const I18n::I18n_SOLEMNITIES[17] = {
 	"temporale.solemnity.easter_sunday",				//easter_sunday
 	"temporale.solemnity.ascension",					//ascension
 	"temporale.solemnity.pentecost",					//pentecost
+	"temporale.solemnity.christ_priest",				//christ_priest (optional in some areas)
 	"temporale.solemnity.holy_trinity",					//holy_trinity
 	"temporale.solemnity.corpus_christi",				//corpus_christi
 	"temporale.solemnity.sacred_heart",					//sacred_heart
@@ -124,15 +125,17 @@ bool I18n::get_config( void ) {
 	char buf[1024];
 #endif
 
-	String csv_record;
+	String csv_record = "";
 	bool bFoundSelection = false;
-	String desc;
-	String lang;
-	String yml_filename;
-	String sanctorale_filename;
-	String bible_filename;
-	String s_transfer_to_sunday;
-	bool transfer_to_sunday;
+	String desc = "";
+	String lang = "";
+	String yml_filename = "";
+	String sanctorale_filename = "";
+	String bible_filename = "";
+	String s_transfer_to_sunday = "";
+	String s_celebrate_feast_of_christ_priest = "";
+	bool transfer_to_sunday = false;
+	bool celebrate_feast_of_christ_priest = false;
 	int pos = 0;
 	int i = 0;
 	
@@ -153,6 +156,8 @@ bool I18n::get_config( void ) {
 		bible_filename = csv.getCsvField(csv_record, &pos);
 		s_transfer_to_sunday = csv.getCsvField(csv_record, &pos);
 		transfer_to_sunday = (s_transfer_to_sunday.indexOf("true") != -1);
+		s_celebrate_feast_of_christ_priest = csv.getCsvField(csv_record, &pos);
+		celebrate_feast_of_christ_priest = (s_celebrate_feast_of_christ_priest.indexOf("true") != -1);
 		
 		if (_lectionary_config_number == i) {
 			I2CSerial.println("\tdesc=" + desc);
@@ -161,6 +166,7 @@ bool I18n::get_config( void ) {
 			I2CSerial.println("\tsanctorale_filename=" + sanctorale_filename);
 			I2CSerial.println("\tbible_filename=" + bible_filename);
 			I2CSerial.println("\ttransfer_to_sunday=" + String(transfer_to_sunday));
+			I2CSerial.println("\tcelebrate_feast_of_christ_eternal_priest=" + String(celebrate_feast_of_christ_priest));
 			bFoundSelection = true;
 			I2CSerial.println("* selected");
 			break;
@@ -191,6 +197,7 @@ bool I18n::get_config( void ) {
 	_sanctorale_filename = sanctorale_filename;
 	_bible_filename = bible_filename;
 	_transfer_to_sunday = transfer_to_sunday;
+	_celebrate_feast_of_christ_priest = celebrate_feast_of_christ_priest;
 	_have_config = true;
 
 	if (!bFoundSelection) {
