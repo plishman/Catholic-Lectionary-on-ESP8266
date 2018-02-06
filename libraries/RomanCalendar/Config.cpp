@@ -252,11 +252,24 @@ bool Config::SaveConfig(String tz, String lect_num) {
 }
 
 void Config::SaveConfig(config_t* c) {
+  c->checksum = CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century);
   storeStruct(c, sizeof(config_t));
 }
 
-void Config::GetConfig(config_t* c) {
+bool Config::GetConfig(config_t* c) {
   loadStruct(c, sizeof(config_t));
+
+  if (c->checksum == (CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century))) {
+	  return true;
+  }
+  
+  I2CSerial.printf("Config: EEPROM checksum wrong or uninitialized\n");
+  return false;
+}
+
+bool Config::EEPROMChecksumValid() {
+	config_t c;
+	return GetConfig(&c);
 }
 
 bool Config::IsNumeric(String str) {

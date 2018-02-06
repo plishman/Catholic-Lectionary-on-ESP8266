@@ -48,6 +48,8 @@ unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 Battery battery;
 Network network;
 
+bool bEEPROM_checksum_good = false;
+
 void setup() { 
   //Serial.begin(9600);
   I2CSerial.begin(1,3,8);
@@ -96,6 +98,17 @@ void setup() {
     //  delay(5000);
     //}
     //ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
+  }
+
+  // Check if EEPROM checksum is good
+
+  Config c;
+  bEEPROM_checksum_good = c.EEPROMChecksumValid();
+
+  if (!bEEPROM_checksum_good && !battery.power_connected()) {
+    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
+    display_image(connect_power_image);
+    ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
   }
 }
 
@@ -160,103 +173,116 @@ void display_image(EPD_DISPLAY_IMAGE i) {
   epd.Sleep();
 }
 
-void loop(void) {
+void loop(void) { 
   /************************************************/ 
   // *1* Create calendar object and load config.csv
   wdt_reset();
+
   I2CSerial.println("*1*\n");
   //timeserver.gps_wake();
   Calendar c(D1);
 
-  if (!c._I18n->_have_config) {
-    I2CSerial.println("Error: Failed to get config: will reboot after 30 seconds...");
-    ESP.deepSleep(30e6);    
-  }
+  if (bEEPROM_checksum_good) {  
+    if (!c._I18n->_have_config) {
+      I2CSerial.println("Error: Failed to get config: will reboot after 30 seconds...");
+      ESP.deepSleep(30e6);    
+    }
 
 
-
-  /************************************************/ 
-  // *2* Get date and time from DS3231 
-  wdt_reset();
-  I2CSerial.println("*2*\n");
-  //time64_t date = c.temporale->date(12,11,2017);
-  I2CSerial.println("Getting datetime...");
-  //time64_t date = timeserver.local_datetime();
-  time64_t date;
-  c._config->getDS3231DateTime(&date);
-  tmElements_t ts;
-  breakTime(date, ts);
-
-  //while (!network.get_ntp_time(&date)) {
-  //  Serial.print(".");
-  //  delay(1000);
-  //}
-  I2CSerial.println("Got datetime.");
-  //network.wifi_sleep(); // no longer needed, sleep wifi to save power
-
-
-
-  /************************************************/ 
-  // *3* get Bible reference for date (largest task)
-  wdt_reset();
-  I2CSerial.println("*3*\n");
-  c.get(date);
-
-
-
-  /************************************************/ 
-  // *4* Make calendar entry text string for day
-  I2CSerial.println("*4*\n");
-  String mth = c._I18n->get("month." + String(ts.Month));
-  //String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
-  String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
-  I2CSerial.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
-  if (c.day.is_sanctorale) {
-    I2CSerial.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
-  }
+    /************************************************/ 
+    // *2* Get date and time from DS3231 
+    wdt_reset();
+    I2CSerial.println("*2*\n");
+    //time64_t date = c.temporale->date(12,11,2017);
+    I2CSerial.println("Getting datetime...");
+    //time64_t date = timeserver.local_datetime();
+    time64_t date;
+    c._config->getDS3231DateTime(&date);
+    tmElements_t ts;
+    breakTime(date, ts);
   
-
+    //while (!network.get_ntp_time(&date)) {
+    //  Serial.print(".");
+    //  delay(1000);
+    //}
+    I2CSerial.println("Got datetime.");
+    //network.wifi_sleep(); // no longer needed, sleep wifi to save power
   
-  /************************************************/ 
-  // *5* Get lectionary (readings) for this date
-  I2CSerial.println("*5*\n");
-  String refs = "";
-  wdt_reset();
-  Lectionary l(c._I18n);
-
-  bool b_OT = false;
-  bool b_NT = false; 
-  bool b_PS = false; 
-  bool b_G = false;
-
-  l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
   
-  Lectionary::ReadingsFromEnum r;
   
-  if (getLectionaryReading(date, &r, battery.power_connected(), b_OT, b_NT, b_PS, b_G)) {      
-    l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
-
-    if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
-      r=Lectionary::READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
-                                // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
-                                // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
-                                // returned on Saints days (apart from those following Christmas day, which I did have).
-      l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+    /************************************************/ 
+    // *3* get Bible reference for date (largest task)
+    wdt_reset();
+    I2CSerial.println("*3*\n");
+    c.get(date);
+  
+  
+  
+    /************************************************/ 
+    // *4* Make calendar entry text string for day
+    I2CSerial.println("*4*\n");
+    String mth = c._I18n->get("month." + String(ts.Month));
+    //String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
+    String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
+    I2CSerial.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
+    if (c.day.is_sanctorale) {
+      I2CSerial.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
     }
     
+  
+    
     /************************************************/ 
-    // *6* Update epaper display with reading
-    display_calendar(datetime, &c, refs);
-  }
-  else {
-    I2CSerial.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
-  }
-
-  I2CSerial.println("*6*\n");
+    // *5* Get lectionary (readings) for this date
+    I2CSerial.println("*5*\n");
+    String refs = "";
+    wdt_reset();
+    Lectionary l(c._I18n);
+  
+    bool b_OT = false;
+    bool b_NT = false; 
+    bool b_PS = false; 
+    bool b_G = false;
+  
+    l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
+    
+    Lectionary::ReadingsFromEnum r;
+    
+    if (getLectionaryReading(date, &r, battery.power_connected(), b_OT, b_NT, b_PS, b_G)) {      
+      l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+  
+      if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
+        r=Lectionary::READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
+                                  // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
+                                  // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
+                                  // returned on Saints days (apart from those following Christmas day, which I did have).
+        l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+      }
+      
+      /************************************************/ 
+      // *6* Update epaper display with reading
+      display_calendar(datetime, &c, refs);
+    }
+    else {
+      I2CSerial.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
+    }
+  
+    I2CSerial.println("*6*\n");
+  } // if(bEEPROM_checksum_good)
+  
+  
   /************************************************/ 
   // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   I2CSerial.println("*7*\n");
   //timeserver.gps_sleep();
+
+  if (!bEEPROM_checksum_good) {
+    if (battery.power_connected()) {
+      display_image(clock_not_set_image);
+    } else {
+      display_image(connect_power_image);
+    }
+  }
+
   bool bSettingsUpdated = false;
 
   if (battery.power_connected()) {

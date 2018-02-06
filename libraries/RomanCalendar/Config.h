@@ -14,11 +14,21 @@
 #include <I18n.h>
 
 #define DS3231_I2C_ADDRESS 104
+// https://stackoverflow.com/questions/30223983/c-add-up-all-bytes-in-a-structure
+template<typename T> int CountBytes(const T & t)
+{
+   int count = 0;
+   const unsigned char * p = reinterpret_cast<const unsigned char *>(&t);
+   for (int i=0; i<sizeof(t); i++) count += p[i];
+   return count;
+}
+//////
 
 typedef struct {
   float timezone_offset;
   int lectionary_config_number;
   int century;
+  int checksum;
 } config_t __attribute__ ((packed));
 
 class Config {
@@ -35,7 +45,8 @@ public:
 	bool sendHttpFile(WiFiClient* client, String filename);
 	bool SaveConfig(String tz, String lect_num);
 	void SaveConfig(config_t* c);
-	void GetConfig(config_t* c);
+	bool GetConfig(config_t* c);
+	bool EEPROMChecksumValid();
 	bool IsNumeric(String str);
 	void storeStruct(void *data_source, size_t size);
 	void loadStruct(void *data_dest, size_t size);

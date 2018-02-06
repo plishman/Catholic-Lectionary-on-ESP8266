@@ -10,3 +10,5 @@ extern EPD_DISPLAY_IMAGE battery_recharge_image;
 extern EPD_DISPLAY_IMAGE connect_power_image;
 
 extern EPD_DISPLAY_IMAGE wps_connect_image;
+
+extern EPD_DISPLAY_IMAGE clock_not_set_image;
