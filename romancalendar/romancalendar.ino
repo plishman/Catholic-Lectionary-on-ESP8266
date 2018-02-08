@@ -355,9 +355,9 @@ void SleepUntilStartOfHour() {
     tmElements_t ts;
     breakTime(date, ts);
 
-    uint32_t sleepduration_minutes = (60 - ts.Minute + 1); // should wake up at one minute past the hour
+    uint32_t sleepduration_minutes = (60 - ts.Minute + 10); // should wake up at around 10 minutes past the hour (the sleep timer is not terribly accurate!)
     
-    I2CSerial.printf("Sleeping %d minutes: Will wake at 1 minute past the hour\n", sleepduration_minutes);
+    I2CSerial.printf("Sleeping %d minutes: Will wake at around 10 minutes past the hour\n", sleepduration_minutes);
     ESP.deepSleep(sleepduration_minutes * 60e6);
     return; // should never return because ESP should be asleep!
 }
