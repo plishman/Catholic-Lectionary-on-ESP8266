@@ -6,6 +6,7 @@
 
 class I2CSerialPort : public Print {
 public:
+	bool _b_enable = false; // controls whether backchannel debug is enabled. Defaults to false.
 	virtual size_t write(uint8_t);
 	virtual size_t write(char *str);
 	virtual size_t write(uint8_t *buffer, size_t size);

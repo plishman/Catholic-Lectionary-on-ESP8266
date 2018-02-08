@@ -81,7 +81,7 @@ void setup() {
       I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
       I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
       if (!connect_wps()) {
-        I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
+        I2CSerial.println("Failed to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    configure Wifi network via WPS - sleeping until USB power is reconnected");
         display_image(connect_power_image);
         ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
       } else {
@@ -316,12 +316,13 @@ void loop(void) {
 
       if (bSettingsUpdated) {
         I2CSerial.println("Settings updated, resetting lectionary...");
-        ESP.deepSleep(1e6);
+        ESP.deepSleep(1e6); //reboot after 1 second
         //ESP.reset();
       }
       else if (bTimeUp) {
         I2CSerial.println("Server timed out, stopping web server and going to sleep");
-        ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
+        //ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
+        SleepUntilStartOfHour();
       }
       else {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
@@ -342,8 +343,23 @@ void loop(void) {
   
   while(1) {
     I2CSerial.println("Going to sleep");
-    ESP.deepSleep(SLEEP_HOUR); //1 hour
+    //ESP.deepSleep(SLEEP_HOUR); //1 hour
+    SleepUntilStartOfHour();
   }
+}
+
+void SleepUntilStartOfHour() {
+    Config conf;
+    time64_t date;
+    conf.getDS3231DateTime(&date);
+    tmElements_t ts;
+    breakTime(date, ts);
+
+    uint32_t sleepduration_minutes = (60 - ts.Minute + 1); // should wake up at one minute past the hour
+    
+    I2CSerial.printf("Sleeping %d minutes: Will wake at 1 minute past the hour\n", sleepduration_minutes);
+    ESP.deepSleep(sleepduration_minutes * 60e6);
+    return; // should never return because ESP should be asleep!
 }
 
 

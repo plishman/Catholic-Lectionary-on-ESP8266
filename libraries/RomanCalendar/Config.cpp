@@ -134,24 +134,30 @@ bool Config::ServeClient(bool* bSettingsUpdated)
     client.print(line);
   }
   else if (filename == "/setconf.htm") {
-    String tz = getQueryStringParam("timezone", querystring);
-    String lect = getQueryStringParam("lectionary", querystring);	
+    String tz = getQueryStringParam("timezone", querystring, "0");
+    String lect = getQueryStringParam("lectionary", querystring, "0");	
 
+	String debug_mode = getQueryStringParam("debug", querystring, "0");
+	
     I2CSerial.println("timezone = " + tz);
     I2CSerial.println("lectionary = " + lect);
+    
+	if (debug_mode != "") {
+		I2CSerial.println("debug = " + debug_mode);
+	}
 	
-    bool bresult = SaveConfig(tz, lect);
+    bool bresult = SaveConfig(tz, lect, debug_mode);
 
     I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
 		
 	int hh, mm, ss, day, mon, year;
 
-	if (testArg(getQueryStringParam("hh", querystring), 0, 23, &hh) &&
-		testArg(getQueryStringParam("mm", querystring), 0, 59, &mm) &&
-		testArg(getQueryStringParam("ss", querystring), 0, 59, &ss) &&
-		testArg(getQueryStringParam("day", querystring), 1, 31, &day) &&
-		testArg(getQueryStringParam("mon", querystring), 1, 12, &mon) &&
-		testArg(getQueryStringParam("year", querystring), 1970, 65535, &year)) {
+	if (testArg(getQueryStringParam("hh", querystring, ""), 0, 23, &hh) &&
+		testArg(getQueryStringParam("mm", querystring, ""), 0, 59, &mm) &&
+		testArg(getQueryStringParam("ss", querystring, ""), 0, 59, &ss) &&
+		testArg(getQueryStringParam("day", querystring, ""), 1, 31, &day) &&
+		testArg(getQueryStringParam("mon", querystring, ""), 1, 12, &mon) &&
+		testArg(getQueryStringParam("year", querystring, ""), 1970, 65535, &year)) {
 			
 		tmElements_t tm;
 		
@@ -190,8 +196,15 @@ bool Config::ServeClient(bool* bSettingsUpdated)
   return true;
 }
 
-String Config::getQueryStringParam(String param, String querystring) {
-  int param_offset = querystring.indexOf(param) + param.length() + 1; // include the = after the variable name
+String Config::getQueryStringParam(String param, String querystring, String default_value) {
+  int param_offset = querystring.indexOf(param);
+  
+  if (param_offset == -1) {
+	  return default_value;
+  }
+  
+  param_offset += param.length() + 1; // add the length of the param name to the start position to get the start of the param value. Include the = after the variable name (+1)
+
   int param_end = querystring.indexOf("&", param_offset);
   if (param_end == -1) param_end = querystring.length();
   return querystring.substring(param_offset, param_end);  
@@ -214,9 +227,10 @@ bool Config::sendHttpFile(WiFiClient* client, String filename) {
   return true;
 }
 
-bool Config::SaveConfig(String tz, String lect_num) {
+bool Config::SaveConfig(String tz, String lect_num, String debug_mode) {
   float timezone_offset;
   int lectionary_config_number;
+  bool debug_on = false;
   
   if (IsNumeric(tz)) {
     timezone_offset = atof(tz.c_str());
@@ -241,25 +255,32 @@ bool Config::SaveConfig(String tz, String lect_num) {
     return false;
   }
 
+  if (debug_mode == "1" || debug_mode == "true") {
+	  debug_on = true;
+  } else {
+	  debug_on = false;
+  }
+  
   config_t c;
   GetConfig(&c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
   
   c.timezone_offset = timezone_offset;
   c.lectionary_config_number = lectionary_config_number;
-
+  c.debug_on = debug_on;
+  
   SaveConfig(&c);
   return true;
 }
 
 void Config::SaveConfig(config_t* c) {
-  c->checksum = CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century);
+  c->checksum = CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on);
   storeStruct(c, sizeof(config_t));
 }
 
 bool Config::GetConfig(config_t* c) {
   loadStruct(c, sizeof(config_t));
 
-  if (c->checksum == (CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century))) {
+  if (c->checksum == (CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on))) {
 	  return true;
   }
   
@@ -355,10 +376,10 @@ bool Config::getDS3231DateTime(time64_t* t) {
   
   I2CSerial.printf("DS3231 Datetime = %d/%d/%d %d:%d:%d\n", date, month, year, hour, minute, second);
 
-  I2CSerial.printf("-1-");
+  //I2CSerial.printf("-1-");
   config_t c;
   GetConfig(&c);
-  I2CSerial.printf("-2-");
+  //I2CSerial.printf("-2-");
   
   tmElements_t tm;
   
@@ -369,11 +390,11 @@ bool Config::getDS3231DateTime(time64_t* t) {
   tm.Month = month;
   tm.Year = y2kYearToTm(year + (c.century * 100));
 
-  I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
+  //I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
   
   *t = makeTime(tm);
   
-  I2CSerial.printf("-4-");
+  //I2CSerial.printf("-4-");
 
   return true;
 }

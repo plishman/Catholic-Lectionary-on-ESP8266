@@ -1,6 +1,18 @@
 #include "I2CSerialPort.h"
+#include "Config.h"
 
-I2CSerialPort::I2CSerialPort() {	
+I2CSerialPort::I2CSerialPort() {
+	config_t c;
+	
+	Config conf;
+	
+	
+	if (conf.GetConfig(&c)) {
+		_b_enable = c.debug_on;
+	} 
+	else {
+		_b_enable = true; // turn on debug output if the EEPROM settings are corrupt or invalid.
+	}
 }
 
 I2CSerialPort::~I2CSerialPort() {
@@ -29,6 +41,8 @@ void I2CSerialPort::begin(uint8_t sda, uint8_t scl, uint8_t address) {
 }
 
 size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your class*/
+	if (!_b_enable) return 0;
+	
 	uint8_t	bcode = 0;
 	uint8_t buffer[1];
 	
@@ -50,6 +64,8 @@ size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your 
 }
 
 size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
+	if (!_b_enable) return 0;
+
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;
 	brzo_i2c_start_transaction(_sp_address, SCL_speed);
@@ -70,6 +86,8 @@ size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
 }
 
 size_t I2CSerialPort::write(uint8_t *buffer, size_t size) { /*blahblah is the name of your class*/
+	if (!_b_enable) return 0;
+
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;
 	brzo_i2c_start_transaction(_sp_address, SCL_speed);

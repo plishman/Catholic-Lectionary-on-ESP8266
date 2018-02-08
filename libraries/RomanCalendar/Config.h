@@ -28,6 +28,7 @@ typedef struct {
   float timezone_offset;
   int lectionary_config_number;
   int century;
+  bool debug_on;
   int checksum;
 } config_t __attribute__ ((packed));
 
@@ -41,9 +42,9 @@ public:
 	bool StartServer( I18n* i );
 	void StopServer( void );
 	bool ServeClient( bool* bSettingsUpdated );
-	String getQueryStringParam(String param, String querystring);
+	String getQueryStringParam(String param, String querystring, String default_value);
 	bool sendHttpFile(WiFiClient* client, String filename);
-	bool SaveConfig(String tz, String lect_num);
+	bool SaveConfig(String tz, String lect_num, String debug_mode);
 	void SaveConfig(config_t* c);
 	bool GetConfig(config_t* c);
 	bool EEPROMChecksumValid();
