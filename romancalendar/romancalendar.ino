@@ -81,7 +81,7 @@ void setup() {
       I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
       I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
       if (!connect_wps()) {
-        I2CSerial.println("Failed to                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    configure Wifi network via WPS - sleeping until USB power is reconnected");
+        I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
         display_image(connect_power_image);
         ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
       } else {
@@ -184,8 +184,9 @@ void loop(void) {
 
   if (bEEPROM_checksum_good) {  
     if (!c._I18n->_have_config) {
-      I2CSerial.println("Error: Failed to get config: will reboot after 30 seconds...");
-      ESP.deepSleep(30e6);    
+      I2CSerial.println("Error: Failed to get config: config.csv is missing or bad or no SD card inserted");
+      display_image(sd_card_not_inserted_image);
+      ESP.deepSleep(SLEEP_HOUR);    
     }
 
 
