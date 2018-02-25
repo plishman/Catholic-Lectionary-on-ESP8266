@@ -14,12 +14,12 @@
 #include <Temporale.h>
 #include <Lectionary.h>
 #include <Bible.h>
-#include <BibleVerse.h>
 #include <SPI.h>
 #include <epd2in7b.h>
 #include <epdpaint.h>
 #include <calibri8pt.h>
 //#include <calibri8ptbold.h>
+#include <edb.h>
 #include <pgmspace.h>
 #include <Network.h>
 #include <Battery.h>
@@ -44,6 +44,12 @@ Epd epd;
 
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
+
+//-- for EDB
+File dbFile;
+EDB db(&writer, &reader);
+#include <BibleVerse.h>
+//--
 
 Battery battery;
 Network network;
@@ -433,7 +439,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   
   if (!bHaveLectionaryValue) {
     if (!b_OT || !b_NT) {
-      // 3 readings on weekdays of Advent: OT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and OT between 8am and 2pm, and PS between 2pm and 8pm
+      // 3 readings on weekdays of Advent and Lent: OT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and OT between 8am and 2pm, and PS between 2pm and 8pm
       // 3 readings on weekdays of Easter and Christmas: NT, PS, G. Will show Gospel reading between midnight and 8am, and 8pm and midnight, and NT between 8am and 2pm, and PS between 2pm and 8pm
       bHaveLectionaryValue = true;
       if (!bReturnReadingForAllHours) {
@@ -690,6 +696,11 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
   //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 }
 
+#define FORMAT_EMPHASIS_ON String("on")
+#define FORMAT_EMPHASIS_OFF String("off")
+#define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
+#define FORMAT_LINEBREAK String("br")
+
 bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font) {
   Bible b(c->_I18n);
   if (!b.get(refs)) return false;
@@ -741,6 +752,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
       bool bDone = false;
 
       String book_name;
+
+      String format_state = FORMAT_DEFAULT;
     
       while (!bDone && !bEndOfScreen) {
         int numRecords = 0;
@@ -761,12 +774,14 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
             String refs_i18n = refs;
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
-            bEndOfScreen = epd_verse(refs_i18n, paint_red, &xpos, &ypos, font); // returns false if at end of screen
+            format_state = FORMAT_EMPHASIS_ON;
+            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, &format_state); // returns false if at end of screen
             bDisplayRefs = false;
+            format_state = FORMAT_EMPHASIS_OFF;
           }
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, paint_black, &xpos, &ypos, font); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, &format_state); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -785,7 +800,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   return true;
 }
 
-bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font) {
+
+bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, String* format_state) {
   I2CSerial.println("epd_verse() verse=" + verse);
 
   String word_part = "";
@@ -797,19 +813,56 @@ bool epd_verse(String verse, Paint* paint, int* xpos, int* ypos, FONT_INFO* font
   
   if (*ypos > (PANEL_SIZE_Y + line_height)) return true;
   
-  while(verse.length() > 0) {
-    bEOL = hyphenate_word(&verse, &word_part, &width, font, paint);
+  bool b_emphasis_on = false; // <i> or <b> italic/bold enclosing tags in the text will cause text to be output in red
+  bool b_linebreak = false; // will be set by hyphenate_word if it encounters a <br> tag
 
-    if (*xpos + width > PANEL_SIZE_X) {
+  if (*format_state == FORMAT_EMPHASIS_ON) {
+    b_emphasis_on = true;
+  }
+  else if (*format_state == FORMAT_EMPHASIS_OFF) {
+    b_emphasis_on = false;
+  }
+  else if (*format_state == FORMAT_LINEBREAK) {
+    b_linebreak = true;
+  }
+
+  while(verse.length() > 0) {    
+    bEOL = hyphenate_word(&verse, &word_part, &width, font, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
+                                                                                         // "off" when a closing </i> or </b> tag is found, or "" otherwise.
+                                                                                         // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
+                                                                                         // paint_black or paint_red could be used for this, since it is a nonprinting call.
+    if (*format_state == FORMAT_EMPHASIS_ON) {
+      b_emphasis_on = true;
+    }
+    else if (*format_state == FORMAT_EMPHASIS_OFF) {
+      b_emphasis_on = false;
+    }
+    else if (*format_state == FORMAT_LINEBREAK) {
+      b_linebreak = true;
+    }
+
+    // if display_verses() called this function with format_state set to something other than FORMAT_DEFAULT (e.g. for printing the Bible reference at the top of the reading), then this 
+    // selection will be left unchanged and will be acted upon, unless it is cancelled by tags in the verse text parsed by the call to hyphenate_word() (mostly it will not be). This should 
+    // allow emphasised text to continue over more than one call to this function from display_verses().
+
+    if (*xpos + width > PANEL_SIZE_X || b_linebreak == true) {
       *xpos = 0;
       (*ypos)+= font->heightPages;      
       if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+      b_linebreak = false; // reset linebreak flag
     }
     
     wdt_reset();
-    paint->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
-    (*xpos) += width;
-    wdt_reset();
+    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases
+      if (!b_emphasis_on) {
+        paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);    
+      } 
+      else {
+        paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);          
+      }
+      (*xpos) += width;
+      wdt_reset();
+    }
   }
   
   return false;
@@ -975,7 +1028,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   return verse;
 }
 
-bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint) {
+bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint, String* format_state) {
   int j = 0;
   bool bHyphenDone = false;
   String w_ch;
@@ -985,12 +1038,41 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   int len = w->length();
   String hyphen = "-";
   bool bEOL = false;
+  bool bExpectingTag = false;
+
+  *format_state = FORMAT_DEFAULT;
   
   while(!bHyphenDone) {
     w_str_last = w_str;
     w_ch = utf8CharAt(*w, j);
     w_str += w_ch;
 
+    if (w_ch == "<" && bExpectingTag == false) {
+      bExpectingTag = true;
+    }
+
+    if (w_ch == ">") {         
+      if (w_str == "<br>") {
+        *format_state = FORMAT_LINEBREAK;
+        *x_width = 0;
+      }
+  
+      if (w_str == "<i>" || w_str == "<b>") {
+        *format_state = FORMAT_EMPHASIS_ON;
+        *x_width = 0;
+      }
+  
+      if (w_str == "</i>" || w_str == "</b>") {
+        *format_state = FORMAT_EMPHASIS_ON;
+      }
+    }
+
+    if (bExpectingTag && w_ch == ">") {
+      *w = w->substring(w_str.length());
+      *x_width = 0;
+      return false;
+    }
+    
     if (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width)) {
       bEOL = true;
       bHyphenDone = true;
@@ -1010,4 +1092,34 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   *word_part = (w_str_last + hyphen);
   *x_width = paint->GetTextWidth(*word_part, font);
   return bEOL;
+}
+
+// EDB SD card reader/writer functions
+void writer (unsigned long address, const byte* data, unsigned int recsize) {
+    dbFile.seek(address);
+    dbFile.write(data,recsize);
+    dbFile.flush();
+}
+
+void reader (unsigned long address, byte* data, unsigned int recsize) {
+    dbFile.seek(address);
+    dbFile.read(data,recsize);
+}
+
+void printDbError(EDB_Status err)
+{
+    Serial.print("ERROR: ");
+    switch (err)
+    {
+        case EDB_OUT_OF_RANGE:
+            Serial.println("Recno out of range");
+            break;
+        case EDB_TABLE_FULL:
+            Serial.println("Table full");
+            break;
+        case EDB_OK:
+        default:
+            Serial.println("OK");
+            break;
+    }
 }

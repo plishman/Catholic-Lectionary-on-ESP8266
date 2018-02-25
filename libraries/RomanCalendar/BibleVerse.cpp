@@ -61,6 +61,7 @@ bool BibleVerse::get_bible_filename(String* filename) {
 bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* numRecords) {
     File file;
 	Csv csv;
+	
 	I2CSerial.println("BibleVerse::get() " + String(book) + " " + String(chapter) + ":" + String(verse));
 	
 	book++;
@@ -74,22 +75,68 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 		I2CSerial.println("BibleVerse::get(): No config");
 		return false;
 	}
+
+	String bookstr = book < 10 ? "0" + String(book) : String(book);
 	
+	String chapterstr = chapter < 10 ? "0" + String(chapter) : String(chapter);
+	chapterstr = chapter < 100 ? "0" + chapterstr : chapterstr;
+
+	String edb_filename = bookstr + "_" + chapterstr + ".edb";
+	String edb_filedir = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
+
+	String index_filename = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
+	index_filename += "/Bible/" + edb_filename;
+/*	
 	//String index_filename = String("/Bibles/") + String(_I18n->I18n_LANGUAGES[_I18n->_locale]) + "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
 	String index_filename = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
 	index_filename += "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
-	
+*/	
 	I2CSerial.println("Index filename is " + index_filename);
 	
-	file = _I18n->openFile(index_filename, FILE_READ);
+	::dbFile = _I18n->openFile(index_filename, FILE_READ);
 
-	if (!file) {
-		I2CSerial.println("could not open index file");
+	if (!::dbFile) {
+		I2CSerial.println("could not open " + index_filename);
 		return false;
 	}
 	
 	String fileOffsetStr;
 	
+	Serial.print("Opening verse offset table... ");
+	EDB_Status result = EDB_OK;
+	
+	result = ::db.open(0);
+	if (result != EDB_OK) {
+		I2CSerial.println("ERROR");
+		I2CSerial.println("Did not find database in the file " + edb_filename);
+		_I18n->closeFile(::dbFile);		
+		return false;
+	}
+
+	VerseEntry verseentry = { 0 };
+	
+	result = EDB_OK;
+	result = ::db.readRec(verse, EDB_REC verseentry);
+	if (result != EDB_OK)
+	{
+		::printDbError(result);
+		_I18n->closeFile(::dbFile);		
+		return false;
+	}
+
+	if (verseentry.fragment_count > 31) {
+		_I18n->closeFile(::dbFile);
+		I2CSerial.println("Malformed database record: fragment_count for verse > 31");
+		return false;
+	}	
+	
+	for (int i = 0; i < verseentry.fragment_count; i++) {
+		fileOffsetStr += String(verseentry.csv_offsets[i]);
+		if (i < (verseentry.fragment_count - 1)) fileOffsetStr += ",";		
+	}
+
+
+/*	
 	while(file.available()) {
 		String f = _I18n->readLine(file);
 		if (f.length() == 0) break;
@@ -100,8 +147,8 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 		}
 		//I2CSerial.print("fileOffsetStr=" + fileOffsetStr);
 	}
-		
-	_I18n->closeFile(file);
+*/		
+	_I18n->closeFile(::dbFile);
 
 	if (fileOffsetStr.length() == 0) {
 		I2CSerial.println("fileOffset not found");
@@ -155,55 +202,3 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	_I18n->closeFile(file);	
 	return true;
 }
-/*
-bool BibleVerse::initializeSD() {
-  I2CSerial.println("Initializing SD card...");
-  pinMode(_CS_PIN, OUTPUT);
-
-  bool bResult = SD.begin();
-   
-  if (bResult) {
-    I2CSerial.println("SD card is ready to use.");
-  } else {
-    I2CSerial.println("SD card initialization failed");
-  }
-  
-  return bResult;
-}
-
-void BibleVerse::closeFile() {
-  if (_file) {
-    _file.close();
-    I2CSerial.println("File closed");
-  }
-}
-
-int BibleVerse::openFile(String filename, uint8_t mode) {
-  _file = SD.open(filename.c_str(), mode);
-  if (_file) {
-    I2CSerial.println("File opened with success!");
-    return 1;
-  } else {
-    I2CSerial.println("Error opening file...");
-    return 0;
-  }
-}
-
-String BibleVerse::readLine() {
-  String received = "";
-  char ch;
-  while (_file.available()) {
-    ch = _file.read();
-    if (ch == '\n') {
-      return String(received);
-    } else {
-      received += ch;
-    }
-	if (_file.position() == _file.size()) {
-		return String(received);
-	} 
-  }
-  return "";
-}
-
-*/

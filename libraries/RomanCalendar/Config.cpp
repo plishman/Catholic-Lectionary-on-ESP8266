@@ -150,22 +150,22 @@ bool Config::ServeClient(bool* bSettingsUpdated)
 
     I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
 		
-	int hh, mm, ss, day, mon, year;
+	uint32_t hh, mm, ss, day, mon, year;
 
 	if (testArg(getQueryStringParam("hh", querystring, ""), 0, 23, &hh) &&
 		testArg(getQueryStringParam("mm", querystring, ""), 0, 59, &mm) &&
 		testArg(getQueryStringParam("ss", querystring, ""), 0, 59, &ss) &&
 		testArg(getQueryStringParam("day", querystring, ""), 1, 31, &day) &&
 		testArg(getQueryStringParam("mon", querystring, ""), 1, 12, &mon) &&
-		testArg(getQueryStringParam("year", querystring, ""), 1970, 65535, &year)) {
+		testArg(getQueryStringParam("year", querystring, ""), 1970, 0xFFFFFFFF, &year)) { // was max range was 65535
 			
 		tmElements_t tm;
 		
-		tm.Hour = hh;
-		tm.Minute = mm;
-		tm.Second = ss;
-		tm.Day = day;
-		tm.Month = mon;
+		tm.Hour = (uint8_t)hh;
+		tm.Minute = (uint8_t)mm;
+		tm.Second = (uint8_t)ss;
+		tm.Day = (uint8_t)day;
+		tm.Month = (uint8_t)mon;
 		tm.Year = year - 1970;
 		
 		time64_t t = makeTime(tm);
@@ -462,7 +462,7 @@ uint8_t Config::bcd2dec(uint8_t num)
   return ((num/16 * 10) + (num % 16));
 }
 
-bool Config::testArg(String arg, int min, int max, int* outval) {
+bool Config::testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 	*outval = 0;
 	if (IsNumeric(arg)) {
 		*outval = arg.toInt();

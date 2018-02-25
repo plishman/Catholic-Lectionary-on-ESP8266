@@ -57,7 +57,7 @@ public:
 	bool getLocalDS3231DateTime(time64_t* t);
 	uint8_t dec2bcd(uint8_t num);
 	uint8_t bcd2dec(uint8_t num);
-	bool testArg(String arg, int min, int max, int* outval);
+	bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
 };
 
 //extern Config Conf;
