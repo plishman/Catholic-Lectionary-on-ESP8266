@@ -55,13 +55,15 @@ public:
     void DrawCharAt(int x, int y, char ascii_char, sFONT* font, int colored);
     void DrawStringAt(int x, int y, const char* text, sFONT* font, int colored);
 	
-	int DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int colored);
-	int DrawCharAt(int x, int y, int utf8_char, const FONT_INFO* font, int colored);
+	int DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
 
-	void DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, int colored);
-	void DrawStringAt(int x, int y, String text, const FONT_INFO* font, int colored);
-	int GetTextWidth(const char* text, const FONT_INFO* font);
-	int GetTextWidth(String text, const FONT_INFO* font);
+	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored);
+	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored);
+	int GetTextWidth(const char* text, FONT_INFO* font);
+	int GetTextWidth(String text, FONT_INFO* font);
+	
+	const FONT_CHAR_INFO* getCharInfo(int codepoint, FONT_INFO* font, uint16_t* blockToCheckFirst);
 	
 	int codepointUtf8(String c);
 	String utf8fromCodepoint(int c);

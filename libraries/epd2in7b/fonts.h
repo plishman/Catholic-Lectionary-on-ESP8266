@@ -64,6 +64,13 @@ typedef struct
 	
 } FONT_CHAR_INFO;	
 
+typedef struct 
+{
+	const uint32_t startChar;
+	const uint32_t endChar;
+	FONT_CHAR_INFO* fontcharinfoBlock;
+} FONT_CHAR_INFO_LOOKUP;
+
 // Describes a single font
 typedef struct
 {
@@ -71,7 +78,9 @@ typedef struct
 	const uint32_t 			startChar;		// the first character in the font (e.g. in charInfo and data)
 	const uint32_t 			endChar;		// the last character in the font
 	const uint8_t			spacePixels;	// number of pixels that a space character takes up
-	const FONT_CHAR_INFO*	charInfo;		// pointer to array of char information
+	FONT_CHAR_INFO_LOOKUP*	fontcharinfoBlockLookup; // points to array of fontcharinfo lookup entries
+	const uint16_t			blockCount;		// number of blocks in font (set to 0 if a single-block font)
+	const FONT_CHAR_INFO*	charInfo;		// pointer to array of char information (NULL if multiple blocks are used in the font, in which case FONT_CHAR_INFO_LOOKUP* will be used)
 	const uint8_t*			data;			// pointer to generated array of character visual representation
 		
 } FONT_INFO;	

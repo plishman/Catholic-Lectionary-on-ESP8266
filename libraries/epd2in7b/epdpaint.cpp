@@ -29,13 +29,13 @@
 #include "epdpaint.h"
 
 Paint::Paint(unsigned char* image, int width, int height) {
-    Serial.println("paint constructor");
+    //Serial.println("paint constructor");
 	this->rotate = ROTATE_0;
     this->image = image;
     /* 1 byte = 8 pixels, so the width should be the multiple of 8 */
     this->width = width % 8 ? width + 8 - (width % 8) : width;
     this->height = height;
-    Serial.println("done");
+    //Serial.println("done");
 }
 
 Paint::~Paint() {
@@ -188,23 +188,37 @@ void Paint::DrawStringAt(int x, int y, const char* text, sFONT* font, int colore
 /**
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
-int Paint::DrawCharAt(int x, int y, char ascii_char, const FONT_INFO* font, int colored) {	
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), font, colored);
+int Paint::DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), font, colored, blockToCheckFirst);
 }
  
-int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int colored) {	
+int Paint::DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
 	if (codepoint == 32) return font->spacePixels; // space character
 
-	int charIndex = codepoint - font->startChar;
+	const FONT_CHAR_INFO* fci = getCharInfo(codepoint, font, blockToCheckFirst);
+	
+	if (fci == NULL) {
+		//Serial.printf("DrawCharAt fci is NULL\n");
+		return 0;
+	}
+	//else {
+		//refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;
+	//}
+
+
+
+	////int charIndex = codepoint - font->startChar;
 	//printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
 
 	uint8_t char_height = font->heightPages;
 	//printf("char_height=%d\n", char_height);
 
-	uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
+	////uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
+	uint8_t char_width = pgm_read_byte(&(fci->widthBits));
 	//printf("char_width=%d\n", char_width);
 
-	uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
+	////uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
+	uint32_t char_offset = pgm_read_dword(&(fci->offset));
 	//printf("char_offset=%d\n", char_offset);
 	
     int i, j;
@@ -216,9 +230,9 @@ int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int co
         for (i = 0; i < char_width; i++) {
             if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
                 DrawPixel(x + i, y + j, colored);
-				//printf("#");
+				//Serial.printf("#");
             } else {
-				//printf(" ");
+				//Serial.printf(" ");
 			}
 			
             if (i % 8 == 7) {
@@ -238,10 +252,12 @@ int Paint::DrawCharAt(int x, int y, int codepoint, const FONT_INFO* font, int co
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void Paint::DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, int colored) {
+void Paint::DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored) {
     const char* p_text = text;
     unsigned int counter = 0;
     int refcolumn = x;
+
+	uint16_t blockToCheckFirst = 0;
 
 	//printf("text=%s\n", text);
     
@@ -249,7 +265,7 @@ void Paint::DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, 
     while (*p_text != 0) {
 		//printf("counter=%d, refcolumn=%d\n", counter, refcolumn);
         /* Display one character on EPD */
-        refcolumn += DrawCharAt(refcolumn, y, *p_text, font, colored);
+        refcolumn += DrawCharAt(refcolumn, y, *p_text, font, colored, &blockToCheckFirst);
         /* Decrement the column position by 16 */
         //refcolumn += font->Width;
         /* Point on the next character */
@@ -258,12 +274,14 @@ void Paint::DrawStringAt(int x, int y, const char* text, const FONT_INFO* font, 
     }
 }
 
-void Paint::DrawStringAt(int x, int y, String text, const FONT_INFO* font, int colored) {
+void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored) {
 	int charIndex = 0;
 	int len = text.length();
 	
     int refcolumn = x;
 	String ch;
+	
+	uint16_t blockToCheckFirst = 0;
 	
 	//printf("text=%s\n", text.c_str());
     
@@ -272,7 +290,7 @@ void Paint::DrawStringAt(int x, int y, String text, const FONT_INFO* font, int c
 		//printf("refcolumn=%d\n", refcolumn);
         /* Display one character on EPD */
 		ch = utf8CharAt(text, charIndex);
-        refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), font, colored);
+        refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), font, colored, &blockToCheckFirst);
         /* Decrement the column position by 16 */
         //refcolumn += font->Width;
         /* Point on the next character */
@@ -280,18 +298,29 @@ void Paint::DrawStringAt(int x, int y, String text, const FONT_INFO* font, int c
     }
 }
 
-int Paint::GetTextWidth(const char* text, const FONT_INFO* font) {
+int Paint::GetTextWidth(const char* text, FONT_INFO* font) {
     const char* p_text = text;
     unsigned int counter = 0;
     int refcolumn = 0;
 	int charIndex;
 
+	uint16_t blockToCheckFirst = 0;
+	
     while (*p_text != 0) {
 		if (*p_text == 32) {
 			refcolumn += font->spacePixels;
 		} else {
-			charIndex = (int)(*p_text - font->startChar);
-			refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+			//charIndex = (int)(*p_text - font->startChar);
+			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+			
+			const FONT_CHAR_INFO* fci = getCharInfo((int)*p_text, font, &blockToCheckFirst);
+			
+			if (fci != NULL) {
+				refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;
+			}
+			else {
+				refcolumn += 0;
+			}
 		}
 
         p_text++;
@@ -300,25 +329,74 @@ int Paint::GetTextWidth(const char* text, const FONT_INFO* font) {
 	return refcolumn;
 }
 
-int Paint::GetTextWidth(String text, const FONT_INFO* font) {
+int Paint::GetTextWidth(String text, FONT_INFO* font) {
+
 	int charIndex = 0;
 	int i = 0;
 	int len = text.length();
     int refcolumn = 0;
 	String ch;
 
-    while (i < len) {
+	uint16_t blockToCheckFirst = 0;
+	
+	while (i < len) {
 		ch = utf8CharAt(text, i);
 		if (ch == " ") {
 			refcolumn += font->spacePixels;
 		} else {
-			charIndex = (int)(codepointUtf8(ch) - font->startChar);
-			refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+			//charIndex = (int)(codepointUtf8(ch) - font->startChar);
+			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+			const FONT_CHAR_INFO* fci = getCharInfo(codepointUtf8(ch), font, &blockToCheckFirst);
+			
+			if (fci != NULL) {
+				refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;
+			}
+			else {
+				refcolumn += 0;
+			}
 		}
 
 		i += ch.length();
 	}
-	return refcolumn;
+	return refcolumn;		
+}
+
+const FONT_CHAR_INFO* Paint::getCharInfo(int codepoint, FONT_INFO* font, uint16_t* blockToCheckFirst) {
+	if (font->charInfo != NULL) {
+		return &font->charInfo[codepoint - font->startChar];
+	} 
+	else {
+		if (font->blockCount > 0 && font->fontcharinfoBlockLookup != NULL) {
+			if (*blockToCheckFirst < font->blockCount) {
+				if ((font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar <= codepoint) && (font->fontcharinfoBlockLookup[*blockToCheckFirst].endChar >= codepoint)) {
+					//Serial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
+					return &font->fontcharinfoBlockLookup[*blockToCheckFirst].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar];
+				}
+				else {
+					uint16_t blockIndex = 0;
+					bool bFound = false;
+					
+					while (!bFound && blockIndex < font->blockCount) {
+						if ((font->fontcharinfoBlockLookup[blockIndex].startChar <= codepoint) && (font->fontcharinfoBlockLookup[blockIndex].endChar >= codepoint)) {
+							bFound = true;
+						} else {
+							blockIndex++;
+						}
+					}
+					
+					if (!bFound) return NULL;
+					
+					*blockToCheckFirst = blockIndex;
+					
+					//Serial.printf("BlockIndex = %d\n", blockIndex);
+					
+					return &font->fontcharinfoBlockLookup[blockIndex].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[blockIndex].startChar];
+				}
+			}
+		}
+	}
+	
+	return NULL;
 }
 
 
