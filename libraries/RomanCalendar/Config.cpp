@@ -392,7 +392,20 @@ bool Config::getDS3231DateTime(time64_t* t) {
 
   //I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
   
+  bool b_incorrectleapyear = false;
+  
+  if (tm.Year % 100 == 0 && tm.Year % 400 != 0 && tm.Month == 2 && tm.Day == 29) { // DS3231 is not designed to handle leap years correctly from 2100 (inclusive).
+	tm.Day = 1;																	   // Guessing this is because it doesn't know that leap years occur on century boundaries 
+	tm.Month = 3;																   // if the year is divisible by 400 as well as 100
+	b_incorrectleapyear = true;	 												   // So it will incorrectly treat 2100 as a leap year, when it is not (2400 will be)
+ }
+  
   *t = makeTime(tm);
+  
+  if (b_incorrectleapyear) {
+	  I2CSerial.printf("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March %d\n", tm.Year);
+	  setDS3231DateTime(*t);
+  }
   
   //I2CSerial.printf("-4-");
 

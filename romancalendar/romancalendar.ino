@@ -89,7 +89,7 @@ void setup() {
       if (!connect_wps()) {
         I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
         display_image(connect_power_image);
-        ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
+        ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
       } else {
         ESP.deepSleep(1e6); // reset esp, network is configured
         //ESP.reset();
@@ -114,7 +114,7 @@ void setup() {
   if (!bEEPROM_checksum_good && !battery.power_connected()) {
     I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
     display_image(connect_power_image);
-    ESP.deepSleep(SLEEP_HOUR); // sleep for an hour (71minutes is the maximum!), or until power is connected
+    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
   }
 }
 
@@ -129,7 +129,7 @@ void battery_test() {
       //  wdt_reset();
       //  delay(2000); // testing - when finished, will be sleep (indefinite, wakes when charger is connected through reset pulse)
       //}
-      ESP.deepSleep(SLEEP_HOUR); // sleep for an hour or until power is connected
+      ESP.deepSleep(0); // sleep indefinitely (will wake when the power is connected, which applies a reset pulse) //sleep for an hour or until power is connected SLEEP_HOUR
     }
   }
   else {
