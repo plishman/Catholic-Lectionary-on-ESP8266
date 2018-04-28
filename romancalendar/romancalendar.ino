@@ -812,7 +812,8 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   int line_height = font->heightPages;
   
   if (*ypos > (PANEL_SIZE_Y + line_height)) return true;
-  
+
+  // Defaults to FORMAT_DEFAULT
   bool b_emphasis_on = false; // <i> or <b> italic/bold enclosing tags in the text will cause text to be output in red
   bool b_linebreak = false; // will be set by hyphenate_word if it encounters a <br> tag
 
@@ -1039,6 +1040,7 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   String hyphen = "-";
   bool bEOL = false;
   bool bExpectingTag = false;
+  bool bIsWordNotTag = false;
 
   *format_state = FORMAT_DEFAULT;
   
@@ -1047,41 +1049,51 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
     w_ch = utf8CharAt(*w, j);
     w_str += w_ch;
 
-    if (w_ch == "<" && bExpectingTag == false) {
-      bExpectingTag = true;
-    }
+    if ((j==0) && (w_ch != "<")) {
+      bIsWordNotTag = true; //some tags may be added after a word, but with no space inbetween. Must return a word to print when either a space, an eol or a start tag "<" is found.
+    }                       //then the tag will be processed on the next call to the function.
 
-    if (w_ch == ">") {         
-      if (w_str == "<br>") {
-        *format_state = FORMAT_LINEBREAK;
-        *x_width = 0;
+    if (!bIsWordNotTag) {
+      if (w_ch == "<" && bExpectingTag == false) {
+        bExpectingTag = true;
       }
   
-      if (w_str == "<i>" || w_str == "<b>") {
-        *format_state = FORMAT_EMPHASIS_ON;
-        *x_width = 0;
-      }
-  
-      if (w_str == "</i>" || w_str == "</b>") {
-        *format_state = FORMAT_EMPHASIS_ON;
-      }
-    }
-
-    if (bExpectingTag && w_ch == ">") {
-      *w = w->substring(w_str.length());
-      *x_width = 0;
-      return false;
-    }
+      if (w_ch == ">") {         
+        if (w_str == "<br>") {
+          *format_state = FORMAT_LINEBREAK;
+          *x_width = 0;
+        }
     
+        if (w_str == "<i>" || w_str == "<b>") {
+          *format_state = FORMAT_EMPHASIS_ON;
+          *x_width = 0;
+        }
+    
+        if (w_str == "</i>" || w_str == "</b>") {
+          *format_state = FORMAT_EMPHASIS_OFF;
+        }
+      }
+  
+      if (bExpectingTag && w_ch == ">") {
+        *w = w->substring(w_str.length());
+        *x_width = 0;
+        return false;
+      }
+    }
+        
     if (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width)) {
       bEOL = true;
       bHyphenDone = true;
     } else {
       bEOL = false;
-      w_str_last = w_str;
+      
+      if (w_ch != "<" && bIsWordNotTag) {
+        w_str_last = w_str;
+      }
+      
       j += w_ch.length();
 
-      if (w_ch == " " || j >= len) {
+      if (w_ch == " " || (w_ch == "<" && bIsWordNotTag) || j >= len) {
         hyphen = "";
         bHyphenDone = true;
       }
