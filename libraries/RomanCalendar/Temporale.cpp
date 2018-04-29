@@ -233,7 +233,7 @@ int Temporale::dayofweek(time64_t date) {
 #else
 	::tmElements_t ts;						// for arduino
 	::breakTime(date, ts);
-	return ts.Wday - 1;
+	return ts.Wday - 1;		// weekday sunday=0, mon=1, sat=6
 #endif
 }
 
@@ -681,7 +681,7 @@ String Temporale::sunday_temporale(time64_t date) {
 	_day.replace("%{week}", _ordinalizer->ordinalize(week));
 	_rank_e = rank;
 	
-	int lit_year = liturgical_year(date) % 3;
+	int lit_year = liturgical_year(date) % 3; // 0 == A, 1 == B, 2 == C
 	//printf("Lit_year=%d", lit_year);
 
 	switch (seas)
@@ -701,10 +701,10 @@ String Temporale::sunday_temporale(time64_t date) {
 
 	case Enums::SEASON_EASTER:
 		if (week > 1 && week < 7) { // weeks 2-6
-			_Lectionary = (3 * (week - 1)) + lit_year + 43;
+			_Lectionary = (3 * (week - 2)) + lit_year + 43; // was week - 1
 		}
 		if (week == 7) {
-			_Lectionary = 58 + lit_year;
+			_Lectionary = 59 + lit_year;
 		}
 		break;
 
