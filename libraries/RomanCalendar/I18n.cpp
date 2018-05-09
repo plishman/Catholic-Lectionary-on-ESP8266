@@ -132,6 +132,7 @@ bool I18n::get_config( void ) {
 	String yml_filename = "";
 	String sanctorale_filename = "";
 	String bible_filename = "";
+	String font_filename = "builtin";
 	String s_transfer_to_sunday = "";
 	String s_celebrate_feast_of_christ_priest = "";
 	bool transfer_to_sunday = false;
@@ -158,6 +159,7 @@ bool I18n::get_config( void ) {
 		transfer_to_sunday = (s_transfer_to_sunday.indexOf("true") != -1);
 		s_celebrate_feast_of_christ_priest = csv.getCsvField(csv_record, &pos);
 		celebrate_feast_of_christ_priest = (s_celebrate_feast_of_christ_priest.indexOf("true") != -1);
+		font_filename = csv.getCsvField(csv_record, &pos);
 		
 		if (_lectionary_config_number == i) {
 			I2CSerial.println("\tdesc=" + desc);
@@ -167,6 +169,7 @@ bool I18n::get_config( void ) {
 			I2CSerial.println("\tbible_filename=" + bible_filename);
 			I2CSerial.println("\ttransfer_to_sunday=" + String(transfer_to_sunday));
 			I2CSerial.println("\tcelebrate_feast_of_christ_eternal_priest=" + String(celebrate_feast_of_christ_priest));
+			I2CSerial.println("\tfont filename=" + font_filename);
 			bFoundSelection = true;
 			I2CSerial.println("* selected");
 			break;
@@ -198,6 +201,7 @@ bool I18n::get_config( void ) {
 	_bible_filename = bible_filename;
 	_transfer_to_sunday = transfer_to_sunday;
 	_celebrate_feast_of_christ_priest = celebrate_feast_of_christ_priest;
+	_font_filename = font_filename;
 	_have_config = true;
 
 	if (!bFoundSelection) {

@@ -1,3 +1,5 @@
+#include <LiquidCrystal.h>
+
 // Catholic Lectionary on ESP
 // Copyright (c) 2017 Philip Lishman, All rights reserved.
 
@@ -25,6 +27,7 @@
 #include <Battery.h>
 #include <Config.h>
 #include <images.h>
+#include <DiskFont.h>
 
 extern "C" {
 #include "user_interface.h"
@@ -41,6 +44,7 @@ extern "C" {
 I2CSerialPort I2CSerial;
 
 Epd epd;
+//DiskFont diskfont;
 
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
 unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
@@ -195,7 +199,6 @@ void loop(void) {
       ESP.deepSleep(SLEEP_HOUR);    
     }
 
-
     /************************************************/ 
     // *2* Get date and time from DS3231 
     wdt_reset();
@@ -264,9 +267,9 @@ void loop(void) {
                                   // returned on Saints days (apart from those following Christmas day, which I did have).
         l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
       }
-      
+            
       /************************************************/ 
-      // *6* Update epaper display with reading
+      // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
       display_calendar(datetime, &c, refs);
     }
     else {
@@ -611,8 +614,19 @@ void init_panel() {
   epd.ClearFrame();  
 }
 
-void display_calendar(String date, Calendar* c, String refs) {
+void display_calendar(String date, Calendar* c, String refs) {  
+  DiskFont diskfont;
+  
+  if ((c->_I18n->_font_filename) != "builtin" && (c->_I18n->_font_filename) != "") {
+    I2CSerial.printf("Using disk font\n");
+    diskfont.begin(c->_I18n->_font_filename);
+  }
+  else {
+    I2CSerial.printf("Using internal font\n");    
+  }
+  
   FONT_INFO* font = &calibri_8pt;
+  
   //FONT_INFO* font_bold = &calibri_8ptBold;
   init_panel();
   Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
@@ -622,78 +636,94 @@ void display_calendar(String date, Calendar* c, String refs) {
   Paint paint_red(image_red, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
   paint_red.SetRotate(ROTATE_90);
   paint_red.Clear(UNCOLORED);
-
-//  String w = "abcdefghijklmnop qrstuvw xyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrs tuvwxyzABCDE FGHIJKLMNOPQRSTU VWXYZ0123456789";
-//  String word_part = "";
-//  int width = 0;
-//  bool bEOL = false;
-//  
-//  while(w.length() != 0) {
-//    bEOL = hyphenate_word(&w, &word_part, &width, font, &paint);
-//    Serial.print(word_part);
-//    if (bEOL) I2CSerial.println();
-//  }
-//  return;
-
+  
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
   I2CSerial.println("Displaying calendar");
   if (c->day.is_sanctorale) {
-    display_day(c->day.sanctorale, &paint, &paint_red, font, bRed);
-    if (c->day.sanctorale == c->day.day) {
-      display_date(date, "", &paint, font);  
-    } else {
-      display_date(date, c->day.day, &paint, font);
+    display_day(c->day.sanctorale, &paint, &paint_red, font, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
+    if (c->day.sanctorale == c->day.day) {                                     // otherwise the liturgical day is shown at the top of the screen.
+      //display_date(date, "", &paint, font, &diskfont);                       // If it is a feast day, the liturgical day is displayed at the bottom left. Otherwise the bottom left
+    } else {                                                                   // is left blank.
+      display_date(date, c->day.day, &paint, font, &diskfont); // "day" in struct day is the liturgical day
     }
   } else {
-    display_day(c->day.day, &paint, &paint_red, font, bRed);    
-    display_date(date, "", &paint, font);
+    display_day(c->day.day, &paint, &paint_red, font, &diskfont, bRed);    
+    display_date(date, "", &paint, font, &diskfont);
   }
 
   I2CSerial.println("Displaying verses");
-  //refs = "Ps 85:9ab+10, 11-12, 13-14";        //debugging
-  //refs="1 Chr 29:9-10bc";           //debugging
-  display_verses(c, refs, &paint, &paint_red, font);
+//  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
+//  //refs="1 Chr 29:9-10bc";              //debugging
+//  refs="John 3:16"; // debugging
+  display_verses(c, refs, &paint, &paint_red, font, &diskfont);
+
+  //diskfont.end();
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
   epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
   epd.DisplayFrame();
 
   epd.Sleep();
+  uint32_t free = system_get_free_heap_size();
+  I2CSerial.println("free memory = " + String(free));
   I2CSerial.println("done");  
 }
 
-void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, bool bRed) {
+void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont, bool bRed) {
   I2CSerial.println("display_day() d=" + d);
   
-  //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-  //paint.SetRotate(ROTATE_90);
+  if (diskfont->available) {
+    int text_xpos = (paint->GetHeight() / 2) - ((diskfont->GetTextWidth(d))/2);
+  
+    if (bRed) {
+      diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED);
+    } else {
+      diskfont->DrawStringAt(text_xpos, 0, d, paint, COLORED);
+    }
 
-  int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
-
-  if (bRed) {
-    paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED);
-  } else {
-    paint->DrawStringAt(text_xpos, 0, d, font, COLORED);
+    int charheight = diskfont->_FontHeader.charheight;
+    
+    paint->DrawLine(0, charheight, 264, charheight, COLORED);
   }
-  paint->DrawLine(0, 15, 264, 15, COLORED);
-  //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
+  else {
+    //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+    //paint.SetRotate(ROTATE_90);
+  
+    int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
+  
+    if (bRed) {
+      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED);
+    } else {
+      paint->DrawStringAt(text_xpos, 0, d, font, COLORED);
+    }
+    paint->DrawLine(0, 15, 264, 15, COLORED);
+    //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
+  }
 }
 
-void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
+void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFont* diskfont) {
   I2CSerial.println("\ndisplay_date: s=" + date);
 
-  //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-  //paint.SetRotate(ROTATE_90);
-
-  int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
- 
-  //paint.Clear(UNCOLORED);
-  paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED);
-  paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED);
+  if (diskfont->available) {
+    int text_xpos = PANEL_SIZE_X - (diskfont->GetTextWidth(date)); // right justified
+   
+    diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED);
+    diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED);
+  }
+  else {
+    //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+    //paint.SetRotate(ROTATE_90);
   
-  //paint.DrawLine(0, 15, 264, 15, COLORED);
-  //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+    int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
+   
+    //paint.Clear(UNCOLORED);
+    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED);
+    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED);
+    
+    //paint.DrawLine(0, 15, 264, 15, COLORED);
+    //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+  }
 }
 
 #define FORMAT_EMPHASIS_ON String("on")
@@ -701,7 +731,7 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font) {
 #define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
 #define FORMAT_LINEBREAK String("br")
 
-bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font) {
+bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont) {
   Bible b(c->_I18n);
   if (!b.get(refs)) return false;
     
@@ -717,6 +747,10 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
 
   int xpos = 0;
   int ypos = font->heightPages;
+
+  if (diskfont->available) {
+    ypos = diskfont->_FontHeader.charheight;
+  }
 
   String line_above = "";
   bool bDisplayRefs = true;
@@ -775,13 +809,13 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
             format_state = FORMAT_EMPHASIS_ON;
-            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, &format_state); // returns false if at end of screen
+            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state); // returns false if at end of screen
             bDisplayRefs = false;
             format_state = FORMAT_EMPHASIS_OFF;
           }
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, &format_state); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -801,7 +835,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
 }
 
 
-bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, String* format_state) {
+bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state) {
   I2CSerial.println("epd_verse() verse=" + verse);
 
   String word_part = "";
@@ -810,8 +844,12 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   int width = 0;
   
   int line_height = font->heightPages;
+
+  if (diskfont->available) {
+    line_height = diskfont->_FontHeader.charheight;
+  } 
   
-  if (*ypos > (PANEL_SIZE_Y + line_height)) return true;
+  if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
 
   // Defaults to FORMAT_DEFAULT
   bool b_emphasis_on = false; // <i> or <b> italic/bold enclosing tags in the text will cause text to be output in red
@@ -828,7 +866,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   }
 
   while(verse.length() > 0) {    
-    bEOL = hyphenate_word(&verse, &word_part, &width, font, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
+    bEOL = hyphenate_word(&verse, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
                                                                                          // "off" when a closing </i> or </b> tag is found, or "" otherwise.
                                                                                          // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
                                                                                          // paint_black or paint_red could be used for this, since it is a nonprinting call.
@@ -848,18 +886,30 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
 
     if (*xpos + width > PANEL_SIZE_X || b_linebreak == true) {
       *xpos = 0;
-      (*ypos)+= font->heightPages;      
-      if (*ypos > (PANEL_SIZE_Y - line_height)) return true;
+      (*ypos)+= line_height;      
+      
+      if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
+      
       b_linebreak = false; // reset linebreak flag
     }
     
     wdt_reset();
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases
       if (!b_emphasis_on) {
-        paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);    
+        if (diskfont->available) {
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED);
+        }
+        else {
+          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
+        }
       } 
       else {
-        paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);          
+        if (diskfont->available) {
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED);
+        }
+        else {
+          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
+        }
       }
       (*xpos) += width;
       wdt_reset();
@@ -1029,13 +1079,21 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   return verse;
 }
 
-bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, Paint* paint, String* format_state) {
+bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, DiskFont* diskfont, Paint* paint, String* format_state) {
   int j = 0;
   bool bHyphenDone = false;
   String w_ch;
   String w_str;
   String w_str_last;
-  int hyphen_width = paint->GetTextWidth("-", font);
+  int hyphen_width;
+  
+  if (diskfont->available) {
+    hyphen_width = diskfont->GetTextWidth("-");
+  }
+  else {
+    hyphen_width = paint->GetTextWidth("-", font);
+  }
+  
   int len = w->length();
   String hyphen = "-";
   bool bEOL = false;
@@ -1080,8 +1138,16 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
         return false;
       }
     }
+
+    bool bTextWidthGtThanPanelWidth = false;
+    if (diskfont->available) {
+      bTextWidthGtThanPanelWidth = (diskfont->GetTextWidth(w_str) > (PANEL_SIZE_X - hyphen_width));
+    }
+    else {
+      bTextWidthGtThanPanelWidth = (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width));
+    }
         
-    if (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width)) {
+    if (bTextWidthGtThanPanelWidth) {
       bEOL = true;
       bHyphenDone = true;
     } else {
@@ -1102,7 +1168,15 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   //Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
   *w = w->substring(w_str_last.length());
   *word_part = (w_str_last + hyphen);
-  *x_width = paint->GetTextWidth(*word_part, font);
+  
+  if (diskfont->available) {
+    *x_width = diskfont->GetTextWidth(*word_part);
+    //I2CSerial.printf("*x_width: %d\n", *x_width);
+  }
+  else {
+    *x_width = paint->GetTextWidth(*word_part, font);  
+  }
+  
   return bEOL;
 }
 

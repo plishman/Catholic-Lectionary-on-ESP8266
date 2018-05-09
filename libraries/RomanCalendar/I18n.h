@@ -25,6 +25,7 @@ public:
 	String _yml_filename = "";
 	String _sanctorale_filename = "";
 	String _bible_filename = "";
+	String _font_filename = "builtin";
 	bool _transfer_to_sunday = true;
 	bool _celebrate_feast_of_christ_priest = true;
 	bool _have_config = false;
