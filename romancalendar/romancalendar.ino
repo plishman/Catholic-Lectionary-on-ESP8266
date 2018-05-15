@@ -1,4 +1,4 @@
-#include <LiquidCrystal.h>
+//#include <LiquidCrystal.h>
 
 // Catholic Lectionary on ESP
 // Copyright (c) 2017 Philip Lishman, All rights reserved.
@@ -839,15 +839,21 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   I2CSerial.println("epd_verse() verse=" + verse);
 
   String word_part = "";
+  String strOverflow = " . . .";
   bool bEOL = false;
   
   int width = 0;
   
+  int ellipsiswidth = 0;
   int line_height = font->heightPages;
 
   if (diskfont->available) {
     line_height = diskfont->_FontHeader.charheight;
-  } 
+    ellipsiswidth = diskfont->GetTextWidth(strOverflow);
+  }
+  else {
+    ellipsiswidth = paint_black->GetTextWidth(strOverflow, font);    
+  }
   
   if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
 
@@ -884,15 +890,23 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     // selection will be left unchanged and will be acted upon, unless it is cancelled by tags in the verse text parsed by the call to hyphenate_word() (mostly it will not be). This should 
     // allow emphasised text to continue over more than one call to this function from display_verses().
 
-    if (*xpos + width > PANEL_SIZE_X || b_linebreak == true) {
-      *xpos = 0;
-      (*ypos)+= line_height;      
-      
-      if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
-      
-      b_linebreak = false; // reset linebreak flag
+    if (((*ypos + line_height) >= (PANEL_SIZE_Y - line_height)) && (*xpos + width >= PANEL_SIZE_X - ellipsiswidth) && (verse.length() > 0)) {
+      //if true, the present line of text is the last to be displayed on the screen (at the bottom right), and there is more text to display
+      //some text left that won't fit on the screen - display ellipsis
+
+      word_part = strOverflow;
     }
-    
+    else {
+      if (*xpos + width > PANEL_SIZE_X || b_linebreak == true) {            
+        *xpos = 0;      
+        (*ypos)+= line_height;      
+        
+        if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
+        
+        b_linebreak = false; // reset linebreak flag
+      }
+    }
+        
     wdt_reset();
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases
       if (!b_emphasis_on) {
