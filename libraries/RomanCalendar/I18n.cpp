@@ -135,8 +135,10 @@ bool I18n::get_config( void ) {
 	String font_filename = "builtin";
 	String s_transfer_to_sunday = "";
 	String s_celebrate_feast_of_christ_priest = "";
+	String s_right_to_left = "";
 	bool transfer_to_sunday = false;
 	bool celebrate_feast_of_christ_priest = false;
+	bool right_to_left = false;
 	int pos = 0;
 	int i = 0;
 	
@@ -160,6 +162,8 @@ bool I18n::get_config( void ) {
 		s_celebrate_feast_of_christ_priest = csv.getCsvField(csv_record, &pos);
 		celebrate_feast_of_christ_priest = (s_celebrate_feast_of_christ_priest.indexOf("true") != -1);
 		font_filename = csv.getCsvField(csv_record, &pos);
+		s_right_to_left = csv.getCsvField(csv_record, &pos);
+		right_to_left = (s_right_to_left.indexOf("true") != -1);		
 		
 		if (_lectionary_config_number == i) {
 			I2CSerial.println("\tdesc=" + desc);
@@ -170,6 +174,7 @@ bool I18n::get_config( void ) {
 			I2CSerial.println("\ttransfer_to_sunday=" + String(transfer_to_sunday));
 			I2CSerial.println("\tcelebrate_feast_of_christ_eternal_priest=" + String(celebrate_feast_of_christ_priest));
 			I2CSerial.println("\tfont filename=" + font_filename);
+			I2CSerial.println("\tright_to_left=" + String(right_to_left));
 			bFoundSelection = true;
 			I2CSerial.println("* selected");
 			break;
@@ -202,6 +207,7 @@ bool I18n::get_config( void ) {
 	_transfer_to_sunday = transfer_to_sunday;
 	_celebrate_feast_of_christ_priest = celebrate_feast_of_christ_priest;
 	_font_filename = font_filename;
+	_right_to_left = right_to_left;
 	_have_config = true;
 
 	if (!bFoundSelection) {

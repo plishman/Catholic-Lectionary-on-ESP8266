@@ -29,6 +29,7 @@ public:
 	bool _transfer_to_sunday = true;
 	bool _celebrate_feast_of_christ_priest = true;
 	bool _have_config = false;
+	bool _right_to_left = false;
 	
 	Enums::I18nLanguages _locale;
 	static const char* const I18n_LANGUAGES[5];

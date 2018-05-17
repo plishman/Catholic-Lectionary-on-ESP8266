@@ -3,6 +3,12 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017 Philip Lishman, All rights reserved.
 
+extern const int COLORED    = 1;
+extern const int UNCOLORED  = 0;
+
+extern const int PANEL_SIZE_X = 264;
+extern const int PANEL_SIZE_Y = 176;
+
 //ESP8266---
 #include "ESP8266WiFi.h"
 //----------
@@ -19,8 +25,7 @@
 #include <SPI.h>
 #include <epd2in7b.h>
 #include <epdpaint.h>
-#include <calibri8pt.h>
-//#include <calibri8ptbold.h>
+#include <calibri10pt.h>
 #include <edb.h>
 #include <pgmspace.h>
 #include <Network.h>
@@ -33,11 +38,11 @@ extern "C" {
 #include "user_interface.h"
 }
 
-#define COLORED     1
-#define UNCOLORED   0
+//#define COLORED     1
+//#define UNCOLORED   0
 
-#define PANEL_SIZE_X 264
-#define PANEL_SIZE_Y 176
+//#define PANEL_SIZE_X 264
+//#define PANEL_SIZE_Y 176
 
 #define SLEEP_HOUR 60*60e6
 
@@ -625,7 +630,7 @@ void display_calendar(String date, Calendar* c, String refs) {
     I2CSerial.printf("Using internal font\n");    
   }
   
-  FONT_INFO* font = &calibri_8pt;
+  FONT_INFO* font = &calibri_10pt;
   
   //FONT_INFO* font_bold = &calibri_8ptBold;
   init_panel();
@@ -656,6 +661,7 @@ void display_calendar(String date, Calendar* c, String refs) {
 //  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
 //  //refs="1 Chr 29:9-10bc";              //debugging
 //  refs="John 3:16"; // debugging
+//  refs="2 John 1:1"; // debugging
   display_verses(c, refs, &paint, &paint_red, font, &diskfont);
 
   //diskfont.end();
@@ -677,9 +683,9 @@ void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, Disk
     int text_xpos = (paint->GetHeight() / 2) - ((diskfont->GetTextWidth(d))/2);
   
     if (bRed) {
-      diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED);
+      diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED, false);
     } else {
-      diskfont->DrawStringAt(text_xpos, 0, d, paint, COLORED);
+      diskfont->DrawStringAt(text_xpos, 0, d, paint, COLORED, false);
     }
 
     int charheight = diskfont->_FontHeader.charheight;
@@ -693,9 +699,9 @@ void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, Disk
     int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
   
     if (bRed) {
-      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED);
+      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
     } else {
-      paint->DrawStringAt(text_xpos, 0, d, font, COLORED);
+      paint->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
     }
     paint->DrawLine(0, 15, 264, 15, COLORED);
     //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
@@ -708,8 +714,8 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFo
   if (diskfont->available) {
     int text_xpos = PANEL_SIZE_X - (diskfont->GetTextWidth(date)); // right justified
    
-    diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED);
-    diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED);
+    diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED, false);
+    diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED, false);
   }
   else {
     //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
@@ -718,8 +724,8 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFo
     int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
    
     //paint.Clear(UNCOLORED);
-    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED);
-    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED);
+    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED, false);
+    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED, false);
     
     //paint.DrawLine(0, 15, 264, 15, COLORED);
     //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
@@ -732,13 +738,16 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFo
 #define FORMAT_LINEBREAK String("br")
 
 bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont) {
+  bool right_to_left = c->_I18n->_right_to_left;
+
+  I2CSerial.printf("refs from lectionary: [%s]\n", refs.c_str());
+  
   Bible b(c->_I18n);
   if (!b.get(refs)) return false;
     
   b.dump_refs();
 
   Ref* r;
-
   int i = 0;
 
   r = b.refsList.get(i++);
@@ -807,15 +816,20 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
           if (bDisplayRefs) {
             String refs_i18n = refs;
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
+            
+            if (diskfont->available) {
+              diskfont->doRtlStrings(&refs_i18n, right_to_left);
+            }
+
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
             format_state = FORMAT_EMPHASIS_ON;
-            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state); // returns false if at end of screen
+            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
             bDisplayRefs = false;
             format_state = FORMAT_EMPHASIS_OFF;
           }
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -835,7 +849,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
 }
 
 
-bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state) {
+bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state, bool right_to_left) {
   I2CSerial.println("epd_verse() verse=" + verse);
 
   String word_part = "";
@@ -890,9 +904,10 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     // selection will be left unchanged and will be acted upon, unless it is cancelled by tags in the verse text parsed by the call to hyphenate_word() (mostly it will not be). This should 
     // allow emphasised text to continue over more than one call to this function from display_verses().
 
-    if (((*ypos + line_height) >= (PANEL_SIZE_Y - line_height)) && (*xpos + width >= PANEL_SIZE_X - ellipsiswidth) && (verse.length() > 0)) {
+    if (((*ypos + (line_height * 2)) >= (PANEL_SIZE_Y - line_height)) && (*xpos + width >= PANEL_SIZE_X - ellipsiswidth) && (verse.length() > 0)) {
       //if true, the present line of text is the last to be displayed on the screen (at the bottom right), and there is more text to display
       //some text left that won't fit on the screen - display ellipsis
+      //line_height * 2 because want to consider if the *bottom* of the *next* line will overflow into the calendar area (the bottom line)
 
       word_part = strOverflow;
     }
@@ -901,28 +916,29 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
         *xpos = 0;      
         (*ypos)+= line_height;      
         
-        if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
+        if (*ypos + line_height >= (PANEL_SIZE_Y - line_height)) return true; // + line_height because want to know if the *bottom* of the character overflows the calendar line (bottom line)
         
         b_linebreak = false; // reset linebreak flag
       }
     }
         
     wdt_reset();
-    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases
+    
+    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases      
       if (!b_emphasis_on) {
         if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED);
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED, right_to_left);
         }
         else {
-          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
+          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, right_to_left);
         }
       } 
       else {
         if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED);
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED, right_to_left);
         }
         else {
-          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED);
+          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, right_to_left);
         }
       }
       (*xpos) += width;

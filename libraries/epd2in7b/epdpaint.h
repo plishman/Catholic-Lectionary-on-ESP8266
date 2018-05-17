@@ -38,6 +38,12 @@
 
 #include "fonts.h"
 
+extern const int COLORED;
+extern const int UNCOLORED;
+
+extern const int PANEL_SIZE_X;
+extern const int PANEL_SIZE_Y;
+
 class Paint {
 public:
     Paint(unsigned char* image, int width, int height);
@@ -58,12 +64,15 @@ public:
 	int DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
 
-	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored);
-	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored);
+	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left);
+	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left);
+
+	bool doRtlStrings(String* s, bool right_to_left);
+
 	int GetTextWidth(const char* text, FONT_INFO* font);
 	int GetTextWidth(String text, FONT_INFO* font);
 	
-	const FONT_CHAR_INFO* getCharInfo(int codepoint, FONT_INFO* font, uint16_t* blockToCheckFirst);
+	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
 	
 	int codepointUtf8(String c);
 	String utf8fromCodepoint(int c);

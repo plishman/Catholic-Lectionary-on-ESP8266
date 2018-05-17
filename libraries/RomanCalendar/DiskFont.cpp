@@ -197,29 +197,31 @@ int DiskFont::DrawCharAt(int x, int y, int codepoint, Paint* paint, int colored,
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int colored) {
-    const char* p_text = text;
-    unsigned int counter = 0;
-    int refcolumn = x;
+void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left) {
+	DrawStringAt(x, y, String(text), paint, colored, right_to_left);
 
-	uint16_t blockToCheckFirst = 0;
-
-	//printf("text=%s\n", text);
-    
-    /* Send the string character by character on EPD */
-    while (*p_text != 0) {
-		//printf("counter=%d, refcolumn=%d\n", counter, refcolumn);
-        /* Display one character on EPD */
-        refcolumn += DrawCharAt(refcolumn, y, *p_text, paint, colored, &blockToCheckFirst);
-        /* Decrement the column position by 16 */
-        //refcolumn += font->Width;
-        /* Point on the next character */
-        p_text++;
-        counter++;
-    }
+//    const char* p_text = text;
+//    unsigned int counter = 0;
+//    int refcolumn = x;
+//
+//	uint16_t blockToCheckFirst = 0;
+//
+//	//printf("text=%s\n", text);
+//    
+//  /* Send the string character by character on EPD */
+//    while (*p_text != 0) {
+//		//printf("counter=%d, refcolumn=%d\n", counter, refcolumn);
+//        /* Display one character on EPD */
+//        refcolumn += DrawCharAt(refcolumn, y, *p_text, paint, colored, &blockToCheckFirst);
+//        /* Decrement the column position by 16 */
+//        //refcolumn += font->Width;
+//        /* Point on the next character */
+//        p_text++;
+//        counter++;
+//    }
 }
 
-void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored) {
+void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
 	int charIndex = 0;
 	int len = text.length();
 	
@@ -230,18 +232,105 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 	
 	//printf("text=%s\n", text.c_str());
     
-    /* Send the string character by character on EPD */
-    while (charIndex != len) {
-		//printf("refcolumn=%d\n", refcolumn);
-        /* Display one character on EPD */
-		ch = utf8CharAt(text, charIndex);
-        refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
-        /* Decrement the column position by 16 */
-        //refcolumn += font->Width;
-        /* Point on the next character */
-        charIndex += ch.length();
-    }
+    /* Send the string character by character on EPD */	
+	if (!right_to_left) {
+		while (charIndex != len) {
+			//printf("refcolumn=%d\n", refcolumn);
+			/* Display one character on EPD */
+			ch = utf8CharAt(text, charIndex);
+			refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
+			/* Point on the next character */
+			charIndex += ch.length();
+		}
+	}
+	else {
+		while (charIndex != len) {
+			//printf("refcolumn=%d\n", refcolumn);
+			/* Display one character on EPD */
+			ch = utf8CharAt(text, charIndex);
+			refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
+			/* Point on the next character */
+			charIndex += ch.length();
+		}		
+	}
 }
+
+bool DiskFont::doRtlStrings(String* s, bool right_to_left) {
+	int i = 0;
+	int strlen = s->length();
+	uint16_t blockToCheckFirst = 0;
+	DiskFont_FontCharInfo fci;
+	String outstr = "";
+	String strtoreverse = "";
+	String ch = "";
+	int chlen = 0;
+	
+	while (i < strlen) {				
+		if (i == 0) {
+			strtoreverse = "";
+			ch = "";
+		}
+				
+		ch = utf8CharAt(*s, i);
+		chlen = ch.length();
+
+		I2CSerial.printf("ch=%s ", ch.c_str());
+		
+		if (codepointUtf8(ch) == 32) { // is space char
+			fci.rtlflag = 0; // fudge the rtl flag, since spaces are not encoded in font bitmaps, so don't have a font char info associated with them
+		} else {			// spaces will not be reversed
+			if (!getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci)) {
+				I2CSerial.printf("returning false\n");
+				return false;
+			}
+		}
+
+		I2CSerial.printf("rtl:%d\n", fci.rtlflag);
+		
+		if ((!right_to_left && fci.rtlflag > 0) || (right_to_left && fci.rtlflag == 0)) {
+			strtoreverse = ch + strtoreverse;
+			I2CSerial.printf(".");
+		}
+		else {
+			if (strtoreverse.length() > 0) {
+				outstr += strtoreverse;
+				strtoreverse = "";
+				I2CSerial.printf("^");
+			}
+			outstr += ch; // ltr char, just add to string in order.
+			I2CSerial.printf("+");
+		}				
+
+		i+= chlen;
+	}
+	
+	if (strtoreverse.length() > 0) {
+		outstr += strtoreverse; // add leftover reverse string or ltr character (if string ends in an rtl char, it drop out of loop before it has been added)
+	} 
+	else {
+		outstr += ch;
+	}
+	
+	*s = outstr;
+	return true;
+}
+
+/*
+String DiskFont::Utf8ReverseString(String instr) {
+	String outstr = "";
+	String c = "";
+	
+	int charpos = 0;
+	
+	while (charpos < instr.length()) {
+		c = utf8CharAt(instr, charpos);
+		outstr = c + outstr;
+		charpos += c.length();
+	}
+	
+	return outstr;
+}
+*/
 
 int DiskFont::GetTextWidth(const char* text) {
     const char* p_text = text;
@@ -292,6 +381,8 @@ int DiskFont::GetTextWidth(String text) {
 		else {
 			//charIndex = (int)(codepointUtf8(ch) - font->startChar);
 			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
+			
+			//I2CSerial.printf(">cp=%x, len(ch)=%d\n", codepointUtf8(ch), ch.length());
 			bresult = getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci);
 			
 			//I2CSerial.printf(bresult ? "getCharInfo returned true\n" : "getCharInfo returned false\n");
@@ -322,10 +413,11 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	
 	if (*blockToCheckFirst < _FontHeader.numlookupblocks) {
 		if ((_Font_BlocktablePtr[*blockToCheckFirst].startchar <= codepoint) && (_Font_BlocktablePtr[*blockToCheckFirst].endchar >= codepoint)) {
-			//Serial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
-			foffset = _Font_BlocktablePtr[*blockToCheckFirst].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * sizeof(DiskFont_FontCharInfo));
+			//I2CSerial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
+			//I2CSerial.printf("sc=%x, ec=%x, cp=%x\n", _Font_BlocktablePtr[*blockToCheckFirst].startchar, _Font_BlocktablePtr[*blockToCheckFirst].endchar, codepoint);
+			foffset = _Font_BlocktablePtr[*blockToCheckFirst].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
 			_file.seek(foffset);			
-			
+						
 			//I2CSerial.printf("# foffset=%x\n", foffset);			
 	
 			bresult = readFontCharInfoEntry(fci);
@@ -337,7 +429,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			bool bFound = false;
 			
 			while (!bFound && blockIndex < _FontHeader.numlookupblocks) {
-				if ((_Font_BlocktablePtr[*blockToCheckFirst].startchar <= codepoint) && (_Font_BlocktablePtr[*blockToCheckFirst].endchar >= codepoint)) {
+				if ((_Font_BlocktablePtr[blockIndex].startchar <= codepoint) && (_Font_BlocktablePtr[blockIndex].endchar >= codepoint)) {
 					bFound = true;
 				} else {
 					blockIndex++;
@@ -348,9 +440,9 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			
 			*blockToCheckFirst = blockIndex;
 			
-			//Serial.printf("BlockIndex = %d\n", blockIndex);
+			//I2CSerial.printf("BlockIndex = %d\n", blockIndex);
 			
-			foffset = _Font_BlocktablePtr[blockIndex].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * sizeof(DiskFont_FontCharInfo));
+			foffset = _Font_BlocktablePtr[blockIndex].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
 			_file.seek(foffset);
 			
 			//I2CSerial.printf("@ foffset=%x\n", foffset);			
@@ -371,9 +463,9 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
 
 	//I2CSerial.printf("pos:%x", _file.position());
 	
-	bresult = ReadUInt16LittleEndian(&(fci->widthbits)) && ReadUInt16LittleEndian(&(fci->heightbits)) && ReadUInt32LittleEndian(&(fci->bitmapfileoffset));
+	bresult = ReadUInt8(&(fci->rtlflag)) && ReadUInt16LittleEndian(&(fci->widthbits)) && ReadUInt16LittleEndian(&(fci->heightbits)) && ReadUInt32LittleEndian(&(fci->bitmapfileoffset));
 
-	//I2CSerial.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
+	//I2CSerial.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	
 	return bresult;
 }

@@ -60,7 +60,9 @@
 typedef struct
 {
 	const uint8_t widthBits;				// width, in bits (or pixels), of the character
+	const uint8_t heightBits;				// height, in bits (or pixels), of the character
 	const uint32_t offset;					// offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
+	const uint8_t rtlflag;	// flags (only bit 0 is used so far, bit0 = 1 -> character is right to left reading)
 	
 } FONT_CHAR_INFO;	
 
