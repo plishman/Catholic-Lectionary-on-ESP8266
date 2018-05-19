@@ -890,7 +890,12 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   
   DiskFont_FontCharInfo fci;
   String rtlreversedpart = "";
-  
+  bool found_word = false;
+  String rtlword = "";
+  int rtlwordwidthpx = 0;
+  int rtlstringwidthpx = 0;
+  int lastrtlstringwidthpx = 0;
+
   while(verse.length() > 0) {    
     I2CSerial.printf(".");
     if (rtlreversedpart.length() == 0) {
@@ -909,12 +914,6 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
         bRtl = false; //placeholder - will use method from epdpaint Paint object.
       }
       
-      String rtlword = "";
-      int rtlwordwidthpx = 0;
-      int rtlstringwidthpx = 0;
-      int lastrtlstringwidthpx = 0;
-      bool found_word = false;
-
       if (bRtl)
       {
         I2CSerial.printf("verse=[%s]\n", verse.c_str());
@@ -925,11 +924,12 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
                 
         do {
           // scan whole rtlword
-          if (!found_word) {
-            rtlwordwidthpx = 0;
-          }
-          else {
+          if (found_word) {
             I2CSerial.printf("overflow word = [%s]\n", rtlword.c_str());
+            rtlstringwidthpx = 0;
+            lastrtlstringwidthpx = 0;
+            rtlpart = "";
+            lastrtlpart = "";
           }
           
           //rtlword = "";
@@ -956,9 +956,9 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
                 bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
               } // otherwise, inherit the rtl state of the space from the last character
               else {
-                rtlwordwidthpx += charwidthpx; // add trailing character (should be a space), since the last character read is appended at the beginning of the while loop above
-                rtlword = ch + rtlword;        // so it won't get done on the last character, when it drops out.
-                //stringpos+= ch.length();
+                //rtlwordwidthpx += charwidthpx; // add trailing character (should be a space), since the last character read is appended at the beginning of the while loop above
+                //rtlword = ch + rtlword;        // so it won't get done on the last character, when it drops out.
+                ////stringpos+= ch.length();
                 found_word = true;
               }
               
@@ -979,47 +979,48 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
           rtlpart = rtlword + rtlpart;
           rtlstringwidthpx += rtlwordwidthpx;
 
-          if ((lastrtlstringwidthpx + rtlwordwidthpx + *xpos) <= PANEL_SIZE_X) {
+          if ((rtlstringwidthpx + *xpos) <= PANEL_SIZE_X) {
             rtlword = ""; // if the word hasn't overflowed the line, then clear it. If it has (will drop out of while loop), save the word found for the next iteration
+            rtlwordwidthpx = 0;
             found_word = false;              // reset found word flag
           }
+
  
           I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
+          I2CSerial.printf("rtlpart=[%s]\n", rtlpart.c_str());
+          I2CSerial.printf("bRtl=[%s], rtlwordwidthpx=[%d], rtlstringwidthpx=[%d], lastrtlstringwidthpx=[%d], stringpos=[%d], verse.length=[%d]\n", bRtl ? "true":"false", rtlwordwidthpx, rtlstringwidthpx, lastrtlstringwidthpx, stringpos, verse.length());
  
           I2CSerial.printf("%"); 
 
         } while ((bRtl) && ((lastrtlstringwidthpx + rtlwordwidthpx + *xpos) <= PANEL_SIZE_X) && (stringpos < verse.length()));
         
-        //stringpos = last_stringpos;      // go back to last word that didn't overflow the line
-
         rtlreversedpart = lastrtlpart;
-        verse = verse.substring(rtlreversedpart.length() - 1);
+        verse = verse.substring(rtlreversedpart.length());
 
         I2CSerial.printf("lastrtlpart.length()=%d\n", lastrtlpart.length());
         I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
 
         I2CSerial.printf("rtlreversedpart.length()=%d\n", rtlreversedpart.length());
         I2CSerial.printf("rtlreversedpart=[%s]\n", rtlreversedpart.c_str());
-        
       }
     }
     
-    if (rtlreversedpart.length() > 0) {
-      I2CSerial.printf("(");
-      bEndOfRtlPart = hyphenate_word(&rtlreversedpart, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
+    //if (rtlreversedpart.length() > 0) {
+    //  I2CSerial.printf("(");
+    //  bEndOfRtlPart = hyphenate_word(&rtlreversedpart, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
                                                                                          // "off" when a closing </i> or </b> tag is found, or "" otherwise.
                                                                                          // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
                                                                                          // paint_black or paint_red could be used for this, since it is a nonprinting call.    
       
-      I2CSerial.printf(")");
-    } else {
+    //  I2CSerial.printf(")");
+    //} else {
       I2CSerial.printf("[");
       bEOL = hyphenate_word(&verse, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
                                                                                          // "off" when a closing </i> or </b> tag is found, or "" otherwise.
                                                                                          // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
                                                                                          // paint_black or paint_red could be used for this, since it is a nonprinting call.    
       I2CSerial.printf("]");
-    }
+    //}
     
     if (*format_state == FORMAT_EMPHASIS_ON) {
       b_emphasis_on = true;
@@ -1054,21 +1055,22 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     }
         
     wdt_reset();
+    bool bDrawingDirection = right_to_left ? !bRtl : bRtl;
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
       if (!b_emphasis_on) {
         if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED, right_to_left);
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED, bDrawingDirection);
         }
         else {
-          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, right_to_left);
+          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, bDrawingDirection);
         }
       } 
       else {
         if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED, right_to_left);
+          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED, bDrawingDirection);
         }
         else {
-          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, right_to_left);
+          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, bDrawingDirection);
         }
       }
       (*xpos) += width;
