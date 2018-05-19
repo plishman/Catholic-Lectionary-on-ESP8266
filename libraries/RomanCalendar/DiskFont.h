@@ -85,7 +85,9 @@ public:
 	String utf8fromCodepoint(int c);
 	String utf8CharAt(String s, int pos);
 	int charLenBytesUTF8(char s);
+	bool isRtlChar(String ch);
 	
+	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
 	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
 	bool ReadUInt32LittleEndian(uint32_t* dword);

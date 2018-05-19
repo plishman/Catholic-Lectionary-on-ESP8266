@@ -196,7 +196,7 @@ int Paint::DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colore
 int Paint::DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
 	if (codepoint == 32) return font->spacePixels; // space character
 
-	const FONT_CHAR_INFO* fci = getCharInfo(codepoint, font, blockToCheckFirst);
+	const FONT_CHAR_INFO* fci = getCharInfo(codepoint, blockToCheckFirst, font);
 	
 	if (fci == NULL) {
 		//Serial.printf("DrawCharAt fci is NULL\n");
@@ -332,6 +332,7 @@ void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored
 	}
 }
 
+/*
 bool Paint::doRtlStrings(String* s, bool right_to_left) {
 	int i = 0;
 	int strlen = s->length();
@@ -391,6 +392,7 @@ bool Paint::doRtlStrings(String* s, bool right_to_left) {
 	*s = outstr;
 	return true;
 }
+*/
 
 int Paint::GetTextWidth(const char* text, FONT_INFO* font) {
     const char* p_text = text;
@@ -407,7 +409,7 @@ int Paint::GetTextWidth(const char* text, FONT_INFO* font) {
 			//charIndex = (int)(*p_text - font->startChar);
 			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
 			
-			const FONT_CHAR_INFO* fci = getCharInfo((int)*p_text, font, &blockToCheckFirst);
+			const FONT_CHAR_INFO* fci = getCharInfo((int)*p_text, &blockToCheckFirst, font);
 			
 			if (fci != NULL) {
 				refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;
@@ -440,7 +442,7 @@ int Paint::GetTextWidth(String text, FONT_INFO* font) {
 		} else {
 			//charIndex = (int)(codepointUtf8(ch) - font->startChar);
 			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
-			const FONT_CHAR_INFO* fci = getCharInfo(codepointUtf8(ch), font, &blockToCheckFirst);
+			const FONT_CHAR_INFO* fci = getCharInfo(codepointUtf8(ch), &blockToCheckFirst, font);
 			
 			if (fci != NULL) {
 				refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;

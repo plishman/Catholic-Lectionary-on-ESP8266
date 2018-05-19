@@ -315,6 +315,15 @@ bool DiskFont::doRtlStrings(String* s, bool right_to_left) {
 	return true;
 }
 
+bool DiskFont::isRtlChar(String ch) {
+	DiskFont_FontCharInfo fci = {0};
+	uint16_t blockToCheckFirst = 0;
+	
+	getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci);
+	
+	return (fci.rtlflag > 0);
+}
+
 /*
 String DiskFont::Utf8ReverseString(String instr) {
 	String outstr = "";
@@ -400,6 +409,14 @@ int DiskFont::GetTextWidth(String text) {
 	
 	//I2CSerial.printf("refcolumn=%d\n", refcolumn);
 	return refcolumn;		
+}
+
+bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* fci) {
+	I2CSerial.printf("@");
+	
+	uint16_t blockToCheckFirst = 0;
+	
+	return getCharInfo(codepointUtf8(ch), &blockToCheckFirst, fci);
 }
 
 bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci) {
