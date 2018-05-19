@@ -816,14 +816,15 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
           if (bDisplayRefs) {
             String refs_i18n = refs;
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
+            verse_text = "<i>" + refs_i18n + "</i> " + verse_text;
             
-            refs_i18n = "The quick brown fox jumps over the lazy dog. Now is the time for all good men to come to the aid of the party. ";
+            verse_text = "The quick brown fox jumps over the lazy dog. Now is the time for all good men to come to the aid of the party. ";
 
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
-            format_state = FORMAT_EMPHASIS_ON;
-            bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
+            //format_state = FORMAT_EMPHASIS_ON;
+            //bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
             bDisplayRefs = false;
-            format_state = FORMAT_EMPHASIS_OFF;
+            //format_state = FORMAT_EMPHASIS_OFF;
           }
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
@@ -887,6 +888,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   int i = 0;
   bool bRtl = false;
   bool bEndOfRtlPart = false;
+  bool bReversed_bidi = false;
   
   DiskFont_FontCharInfo fci;
   String rtlreversedpart = "";
@@ -937,7 +939,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
           
           while (bRtl && !found_word && stringpos < verse.length() && ch.length() != 0) {   // scan rtl word into variable rtlword. On entry, ch and fci have already been set to the first rtl character data
             I2CSerial.printf("%d %s", stringpos, ch.c_str());
-            rtlword = ch + rtlword; // store back to front for easier rendering
+            rtlword = rtlword + ch;
             rtlwordwidthpx += charwidthpx;
             stringpos += ch.length();            
 
@@ -976,7 +978,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
           lastrtlpart = rtlpart;
           lastrtlstringwidthpx = rtlstringwidthpx;
           
-          rtlpart = rtlword + rtlpart;
+          rtlpart = rtlpart + rtlword;
           rtlstringwidthpx += rtlwordwidthpx;
 
           if ((rtlstringwidthpx + *xpos) <= PANEL_SIZE_X) {
@@ -988,7 +990,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
  
           I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
           I2CSerial.printf("rtlpart=[%s]\n", rtlpart.c_str());
-          I2CSerial.printf("bRtl=[%s], rtlwordwidthpx=[%d], rtlstringwidthpx=[%d], lastrtlstringwidthpx=[%d], stringpos=[%d], verse.length=[%d]\n", bRtl ? "true":"false", rtlwordwidthpx, rtlstringwidthpx, lastrtlstringwidthpx, stringpos, verse.length());
+          I2CSerial.printf("bRtl=[%s], rtlwordwidthpx=[%d], rtlstringwidthpx=[%d], lastrtlstringwidthpx=[%d], stringpos=[%d], verse.length=[%d], *xpos=[%d]\n,", bRtl ? "true":"false", rtlwordwidthpx, rtlstringwidthpx, lastrtlstringwidthpx, stringpos, verse.length(), *xpos);
  
           I2CSerial.printf("%"); 
 
@@ -1005,22 +1007,27 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
       }
     }
     
-    //if (rtlreversedpart.length() > 0) {
-    //  I2CSerial.printf("(");
-    //  bEndOfRtlPart = hyphenate_word(&rtlreversedpart, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
+    if (rtlreversedpart.length() > 0) {
+      bReversed_bidi = true;
+      
+      I2CSerial.printf("(");
+      bEndOfRtlPart = hyphenate_word(&rtlreversedpart, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
                                                                                          // "off" when a closing </i> or </b> tag is found, or "" otherwise.
                                                                                          // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
                                                                                          // paint_black or paint_red could be used for this, since it is a nonprinting call.    
       
-    //  I2CSerial.printf(")");
-    //} else {
+      I2CSerial.printf(")");
+    } 
+    else {
+      bReversed_bidi = false;
+      
       I2CSerial.printf("[");
       bEOL = hyphenate_word(&verse, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
                                                                                          // "off" when a closing </i> or </b> tag is found, or "" otherwise.
                                                                                          // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
                                                                                          // paint_black or paint_red could be used for this, since it is a nonprinting call.    
       I2CSerial.printf("]");
-    //}
+    }
     
     if (*format_state == FORMAT_EMPHASIS_ON) {
       b_emphasis_on = true;
@@ -1055,22 +1062,23 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     }
         
     wdt_reset();
-    bool bDrawingDirection = right_to_left ? !bRtl : bRtl;
+    bool bDrawingDirection = right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
+    int xpos_bidi = bDrawingDirection ? *xpos : (PANEL_SIZE_X - *xpos) - width;
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
-      if (!b_emphasis_on) {
-        if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_black, COLORED, bDrawingDirection);
+      if (diskfont->available) {
+        if (!b_emphasis_on) {
+          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_black, COLORED, bDrawingDirection);
         }
         else {
-          paint_black->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, bDrawingDirection);
+          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_red, COLORED, bDrawingDirection);          
         }
-      } 
+      }
       else {
-        if (diskfont->available) {
-          diskfont->DrawStringAt(*xpos, *ypos, word_part, paint_red, COLORED, bDrawingDirection);
+        if (!b_emphasis_on) {
+          paint_black->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, bDrawingDirection);
         }
         else {
-          paint_red->DrawStringAt(*xpos, *ypos, word_part, font, COLORED, bDrawingDirection);
+          paint_red->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, bDrawingDirection);
         }
       }
       (*xpos) += width;
