@@ -197,8 +197,8 @@ int DiskFont::DrawCharAt(int x, int y, int codepoint, Paint* paint, int colored,
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left) {
-	DrawStringAt(x, y, String(text), paint, colored, right_to_left);
+void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
+	DrawStringAt(x, y, String(text), paint, colored, right_to_left, reverse_string);
 
 //    const char* p_text = text;
 //    unsigned int counter = 0;
@@ -221,7 +221,7 @@ void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int co
 //    }
 }
 
-void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
+void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
 	int charIndex = 0;
 	int len = text.length();
 	
@@ -229,6 +229,10 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 	String ch;
 	
 	uint16_t blockToCheckFirst = 0;
+	
+	if (reverse_string) {
+		text = Utf8ReverseString(text);
+	}
 	
 	//printf("text=%s\n", text.c_str());
     
@@ -253,6 +257,10 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 			charIndex += ch.length();
 		}		
 	}
+}
+
+void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
+	DrawStringAt(x, y, text, paint, colored, right_to_left, false);
 }
 
 bool DiskFont::doRtlStrings(String* s, bool right_to_left) {
@@ -324,7 +332,7 @@ bool DiskFont::isRtlChar(String ch) {
 	return (fci.rtlflag > 0);
 }
 
-/*
+
 String DiskFont::Utf8ReverseString(String instr) {
 	String outstr = "";
 	String c = "";
@@ -339,7 +347,7 @@ String DiskFont::Utf8ReverseString(String instr) {
 	
 	return outstr;
 }
-*/
+
 
 int DiskFont::GetTextWidth(const char* text) {
     const char* p_text = text;

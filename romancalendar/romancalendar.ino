@@ -818,7 +818,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
             verse_text = "<i>" + refs_i18n + "</i> " + verse_text;
             
-            verse_text = "The quick brown fox jumps over the lazy dog. Now is the time for all good men to come to the aid of the party. ";
+            verse_text = "The quick brown fox لنور و jumps over the lazy dog. Now is the time for all good men to come to the aid of the party. ";
 
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
             //format_state = FORMAT_EMPHASIS_ON;
@@ -850,6 +850,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
 
 bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state, bool right_to_left) {
   I2CSerial.println("epd_verse() verse=" + verse);
+
+//  right_to_left = false;
 
   String word_part = "";
   String strOverflow = " . . .";
@@ -897,7 +899,11 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   int rtlwordwidthpx = 0;
   int rtlstringwidthpx = 0;
   int lastrtlstringwidthpx = 0;
-
+  int rtlreversedwidthpx = 0;
+  int rtlreversedpospx = 0;
+  int rtlxposoffsetpx = 0;
+  bool bBeginRtlBlock = false;
+  
   while(verse.length() > 0) {    
     I2CSerial.printf(".");
     if (rtlreversedpart.length() == 0) {
@@ -905,12 +911,16 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
             
       int charwidthpx = 0;
       
-      ch = utf8CharAt(verse, 0);
-      
+      ch = utf8CharAt(verse, 0);      
       if (diskfont->available) {
-        diskfont->getCharInfo(ch, &fci);
-        bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
-        charwidthpx = fci.widthbits;
+        if (ch != " ") {
+          diskfont->getCharInfo(ch, &fci);
+          bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
+          //charwidthpx = fci.widthbits + 1;
+        } // otherwise, leave bRtl as it was (from last iteration). Space char inherits rtl/ltr property from characters around it.
+        else {
+          //charwidthpx = diskfont->_FontHeader.spacecharwidth;
+        }
       }
       else {
         bRtl = false; //placeholder - will use method from epdpaint Paint object.
@@ -918,6 +928,13 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
       
       if (bRtl)
       {
+        if (!bBeginRtlBlock) {
+          rtlxposoffsetpx = *xpos;
+          bBeginRtlBlock = true;
+        } else {
+          bBeginRtlBlock = false;
+        }
+        
         I2CSerial.printf("verse=[%s]\n", verse.c_str());
         int stringpos = 0;
         //int last_stringpos = 0;
@@ -926,43 +943,53 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
                 
         do {
           // scan whole rtlword
-          if (found_word) {
-            I2CSerial.printf("overflow word = [%s]\n", rtlword.c_str());
-            rtlstringwidthpx = 0;
-            lastrtlstringwidthpx = 0;
-            rtlpart = "";
-            lastrtlpart = "";
-          }
+          //if (found_word) {
+          //  I2CSerial.printf("overflow word = [%s]\n", rtlword.c_str());
+          //  rtlstringwidthpx = 0;
+          //  lastrtlstringwidthpx = 0;
+          //  rtlpart = "";
+          //  lastrtlpart = "";
+          //}
           
-          //rtlword = "";
-          //last_stringpos = stringpos; // save last scanned word's stringpos, since when the word overflows the line we need to backtrack to the last word which didn't overflow the line
+          rtlword = "";
+          rtlwordwidthpx = 0;
           
           while (bRtl && !found_word && stringpos < verse.length() && ch.length() != 0) {   // scan rtl word into variable rtlword. On entry, ch and fci have already been set to the first rtl character data
             I2CSerial.printf("%d %s", stringpos, ch.c_str());
-            rtlword = rtlword + ch;
-            rtlwordwidthpx += charwidthpx;
-            stringpos += ch.length();            
 
-            if (ch.length() == 0) {
-              I2CSerial.printf("ch.length=0, verse = %s\n", verse.c_str());
-            }
-  
             ch = utf8CharAt(verse, stringpos);
+            
+            //rtlword = rtlword + ch;
+            //rtlwordwidthpx += charwidthpx;
+            //stringpos += ch.length();            
+         
+            //I2CSerial.printf("verse = [%s]\n", verse.c_str());
+  
+            //ch = utf8CharAt(verse, stringpos);
 
             if (diskfont->available) { //
               I2CSerial.printf("<"); 
               diskfont->getCharInfo(ch, &fci);
-              charwidthpx = fci.widthbits;
 
               if (ch != " ") {
+                charwidthpx = fci.widthbits + 1;
                 bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
               } // otherwise, inherit the rtl state of the space from the last character
               else {
                 //rtlwordwidthpx += charwidthpx; // add trailing character (should be a space), since the last character read is appended at the beginning of the while loop above
                 //rtlword = ch + rtlword;        // so it won't get done on the last character, when it drops out.
                 ////stringpos+= ch.length();
+                charwidthpx = diskfont->_FontHeader.spacecharwidth;
+                //rtlwordwidthpx += charwidthpx;
+                //rtlword = rtlword + ch;
                 found_word = true;
               }
+
+              rtlword = rtlword + ch;
+              rtlwordwidthpx += charwidthpx;
+              stringpos += ch.length();
+              
+              //if (!bRtl) bBeginRtlBlock = false;
               
               I2CSerial.printf(">"); 
             }
@@ -981,11 +1008,11 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
           rtlpart = rtlpart + rtlword;
           rtlstringwidthpx += rtlwordwidthpx;
 
-          if ((rtlstringwidthpx + *xpos) <= PANEL_SIZE_X) {
-            rtlword = ""; // if the word hasn't overflowed the line, then clear it. If it has (will drop out of while loop), save the word found for the next iteration
-            rtlwordwidthpx = 0;
+          //if ((rtlstringwidthpx + *xpos) <= PANEL_SIZE_X) {
+          //  rtlword = ""; // if the word hasn't overflowed the line, then clear it. If it has (will drop out of while loop), save the word found for the next iteration
+          //  rtlwordwidthpx = 0;
             found_word = false;              // reset found word flag
-          }
+          //}
 
  
           I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
@@ -995,8 +1022,17 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
           I2CSerial.printf("%"); 
 
         } while ((bRtl) && ((lastrtlstringwidthpx + rtlwordwidthpx + *xpos) <= PANEL_SIZE_X) && (stringpos < verse.length()));
-        
+
+        if (*xpos + rtlstringwidthpx > PANEL_SIZE_X) {
+          lastrtlpart = rtlpart; // occurs at start of newline when embedded reversed reading text overflows a line
+          lastrtlstringwidthpx = rtlstringwidthpx;
+          rtlxposoffsetpx = 0;
+        }
+
         rtlreversedpart = lastrtlpart;
+        rtlreversedwidthpx = lastrtlstringwidthpx;
+        rtlreversedpospx = rtlreversedwidthpx;
+        
         verse = verse.substring(rtlreversedpart.length());
 
         I2CSerial.printf("lastrtlpart.length()=%d\n", lastrtlpart.length());
@@ -1004,6 +1040,11 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
 
         I2CSerial.printf("rtlreversedpart.length()=%d\n", rtlreversedpart.length());
         I2CSerial.printf("rtlreversedpart=[%s]\n", rtlreversedpart.c_str());
+
+        rtlstringwidthpx = 0;
+        lastrtlstringwidthpx = 0;
+        rtlpart = "";
+        lastrtlpart = "";
       }
     }
     
@@ -1020,6 +1061,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     } 
     else {
       bReversed_bidi = false;
+      bBeginRtlBlock = false;
       
       I2CSerial.printf("[");
       bEOL = hyphenate_word(&verse, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
@@ -1062,26 +1104,41 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     }
         
     wdt_reset();
-    bool bDrawingDirection = right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
-    int xpos_bidi = bDrawingDirection ? *xpos : (PANEL_SIZE_X - *xpos) - width;
+
+    I2CSerial.printf("rtlxposoffsetpx = [%d], rtlreversedwidthpx = [%d], rtlreversedpospx = [%d], width = [%d], *xpos = [%d]\n", rtlxposoffsetpx, rtlreversedwidthpx, rtlreversedpospx, width, *xpos);
+
+    if (!bReversed_bidi) rtlxposoffsetpx = *xpos + width;
+    
+    bool bDrawingDirection = false; //right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
+    int xpos_bidi = bReversed_bidi ? *xpos + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
       if (diskfont->available) {
         if (!b_emphasis_on) {
-          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_black, COLORED, bDrawingDirection);
+          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_black, COLORED, right_to_left, bReversed_bidi);
         }
         else {
-          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_red, COLORED, bDrawingDirection);          
+          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_red, COLORED, right_to_left, bReversed_bidi);          
         }
       }
       else {
         if (!b_emphasis_on) {
-          paint_black->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, bDrawingDirection);
+          paint_black->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, right_to_left);
         }
         else {
-          paint_red->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, bDrawingDirection);
+          paint_red->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, right_to_left);
         }
       }
-      (*xpos) += width;
+      
+      if (bReversed_bidi) {
+        rtlreversedpospx -= width;
+      }
+      else {
+        (*xpos) += width;
+      }
+
+      if (rtlreversedpospx == 0) {
+        (*xpos) += rtlreversedwidthpx;
+      }
       wdt_reset();
     }
   }
