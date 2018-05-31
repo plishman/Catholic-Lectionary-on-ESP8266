@@ -295,6 +295,7 @@ void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored
 			//printf("refcolumn=%d\n", refcolumn);
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex);
+			//I2CSerial.printf("%s %d; ", ch.c_str(), codepointUtf8(ch));
 			refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), font, colored, &blockToCheckFirst);
 			/* Decrement the column position by 16 */
 			//refcolumn += font->Width;

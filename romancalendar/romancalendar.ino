@@ -818,7 +818,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
             if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
             verse_text = "<i>" + refs_i18n + "</i> " + verse_text;
             
-            verse_text = "The quick brown fox لنور و jumps over the lazy dog. Now is the time for all good men to come to the aid of the party. ";
+            //verse_text = "The quick brown fox لنور و jumps over the";// lazy dog. Now is the time for all good men to come to the aid of the party. ";
 
             I2CSerial.printf("refs_i18n = %s\n", refs_i18n.c_str());
             //format_state = FORMAT_EMPHASIS_ON;
@@ -985,9 +985,11 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
                 found_word = true;
               }
 
-              rtlword = rtlword + ch;
-              rtlwordwidthpx += charwidthpx;
-              stringpos += ch.length();
+              if (bRtl) {
+                rtlword = rtlword + ch;
+                rtlwordwidthpx += charwidthpx;
+                stringpos += ch.length();
+              }
               
               //if (!bRtl) bBeginRtlBlock = false;
               
@@ -1107,10 +1109,10 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
 
     I2CSerial.printf("rtlxposoffsetpx = [%d], rtlreversedwidthpx = [%d], rtlreversedpospx = [%d], width = [%d], *xpos = [%d]\n", rtlxposoffsetpx, rtlreversedwidthpx, rtlreversedpospx, width, *xpos);
 
-    if (!bReversed_bidi) rtlxposoffsetpx = *xpos + width;
+    //if (!bReversed_bidi) rtlxposoffsetpx = *xpos + width;
     
     bool bDrawingDirection = false; //right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
-    int xpos_bidi = bReversed_bidi ? *xpos + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
+    int xpos_bidi = bReversed_bidi ? /* *xpos*/ rtlxposoffsetpx + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
     if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
       if (diskfont->available) {
         if (!b_emphasis_on) {
@@ -1137,7 +1139,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
       }
 
       if (rtlreversedpospx == 0) {
-        (*xpos) += rtlreversedwidthpx;
+        //(*xpos) += rtlreversedwidthpx;
       }
       wdt_reset();
     }
