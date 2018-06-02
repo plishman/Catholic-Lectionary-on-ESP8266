@@ -616,8 +616,11 @@ bool epd_init(void) {
 }
 
 void init_panel() {
-  epd_init();
-  epd.ClearFrame();  
+  I2CSerial.printf("Initializing panel...");
+  if (epd_init()) {
+    epd.ClearFrame();
+    I2CSerial.printf("done\n");
+  }
 }
 
 void display_calendar(String date, Calendar* c, String refs) {  

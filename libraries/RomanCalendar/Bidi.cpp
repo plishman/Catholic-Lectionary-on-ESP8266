@@ -30,7 +30,7 @@ bool Bidi::ExpectEmphasisTag(String s, int* pos, bool* bEmphasis_On, bool* bLine
 // return true and advance the string index *pos when either <i> <b> </i> or </b> tags are found. *pos will be advanced past the last closing > in the tag
 // *Emphasis_On will be left unchanged if no emphasis tag is found at the string starting in position *pos
 // In this way, Emphasis_On can persist when the closing tag is found in a later call to the function.
-	I2CSerial.printf("ExpectEmphasisTag: str at pos=%s\n", s.substring(*pos, *pos + 5).c_str());
+	//I2CSerial.printf("ExpectEmphasisTag: str at pos=%s\n", s.substring(*pos, *pos + 5).c_str());
 
 	if (s.indexOf("<i>",  *pos) == *pos) { *bEmphasis_On = true;  ExpectStr(s, pos, "<i>");  return true; } // ExpectStr will advance pos to the end of the tag 
 	if (s.indexOf("<b>",  *pos) == *pos) { *bEmphasis_On = true;  ExpectStr(s, pos, "<b>");  return true; } // in string s
@@ -62,7 +62,7 @@ void Bidi::GetString(String s,
 					 FONT_INFO* font,
 					 bool* bEmphasis_On, // this variable stores the emphasis state, bold/italic (which will be shown in red text). It will remain unchanged if no emphasis tag <i>, </i>, <b>, </b> is found in the text
 					 bool* bLineBreak,	 // this variable is set when either a <br> or <br/> tag is encountered, to tell the caller to skip a line before resuming text output
-					 bool* bRTL,
+					 bool* bRTL,		 // this variable allows the state right-to-left or left-to-right to persist between calls to this function.
 					 bool* bNewLine,
 					 int fbwidth, 
 					 int xpos) 
@@ -116,15 +116,17 @@ void Bidi::GetString(String s,
 		//pos += ch.length();
 		//ch = utf8CharAt(s, pos); // get next character
 		
-		if (ch == " ") { // space char is special case, inherits the reading direction of the character preceding it
+		if (ch == " " || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
 		} 
 		else {
 			bCurrCharRightToLeft = IsRightToLeftChar(ch);
-			I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
+			//I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
 		}
-		
+
+		if (bCurrCharRightToLeft != bLookingForRightToLeft) continue; // don't bump string index pos if the reading direction of the text has just changed, so that the first character of the reversed text is not skipped
+
 		currwidth += paint->GetTextWidth(ch, font);
 
 		pos += ch.length();
@@ -156,7 +158,7 @@ void Bidi::GetString(String s,
 					 DiskFont* diskfont, 
 					 bool* bEmphasis_On, // this variable stores the emphasis state, bold/italic (which will be shown in red text). It will remain unchanged if no emphasis tag <i>, </i>, <b>, </b> is found in the text
 					 bool* bLineBreak,	 // this variable is set when either a <br> or <br/> tag is encountered, to tell the caller to skip a line before resuming text output
-					 bool* bRTL,
+					 bool* bRTL,		 // this variable allows the state right-to-left or left-to-right to persist between calls to this function.
 					 bool* bNewLine,
 					 int fbwidth, 
 					 int xpos) 
@@ -189,7 +191,7 @@ void Bidi::GetString(String s,
 	// iv)  the string changes from left to right to right to left reading, or vice versa
 	
 	String ch = ""; //utf8CharAt(s, pos);
-	bool bLookingForRightToLeft = IsRightToLeftChar(ch);
+	bool bLookingForRightToLeft = *bRTL; //IsRightToLeftChar(ch);
 	bool bCurrCharRightToLeft = bLookingForRightToLeft;
 
 	bool bEmphasisTagFound = false;
@@ -210,13 +212,17 @@ void Bidi::GetString(String s,
 		//pos += ch.length();
 		//ch = utf8CharAt(s, pos); // get next character
 	
-		if (ch == " ") { // space char is special case, inherits the reading direction of the character preceding it
+		if (ch == " " || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+			//I2CSerial.printf("*");
 		} 
 		else {
 			bCurrCharRightToLeft = IsRightToLeftChar(ch);
+			//I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
 		}
+		
+		if (bCurrCharRightToLeft != bLookingForRightToLeft) continue; // don't bump string index pos if the reading direction of the text has just changed, so that the first character of the reversed text is not skipped
 		
 		currwidth += diskfont->GetTextWidth(ch);
 
@@ -224,14 +230,19 @@ void Bidi::GetString(String s,
 		//ch = utf8CharAt(s, pos); // get next character
 	}
 
-	if (pos >= s.length()) {
+	//if (bEmphasisTagFound) I2CSerial.printf("Emphasis tag found\n");
+	//if (pos >= s.length()) I2CSerial.printf("pos >= s.length()\n");
+	//if (currwidth >= maxwidth) I2CSerial.printf("currwidth >= maxwidth\n");
+	//if (bCurrCharRightToLeft != bLookingForRightToLeft) I2CSerial.printf("bCurrCharRightToLeft != bLookingForRightToLeft\n");
+	
+	if (pos >= s.length() || bCurrCharRightToLeft != bLookingForRightToLeft) {
 		lastwordendstrpos = pos; // save this position as it is a word boundary
 		lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos		
 	}
 	
 	*endstrpos = lastwordendstrpos;	// make the end pos the index of the last character of the last whole word scanned that fitted on the line
 	*textwidth = lastwordendxwidth;	// make the width of the text to be rendered the width of the whole line up to and including the last whole word scanned which fitted on the line
-	*bRTL = bLookingForRightToLeft;	// save whether this block of text is a rtl or ltr block (maybe less than one whole line of text, if bidi text is embedded).
+	*bRTL = bCurrCharRightToLeft; //;bLookingForRightToLeft;	// save whether this block of text is a rtl or ltr block (maybe less than one whole line of text, if bidi text is embedded).
 
 	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
 		*bNewLine = true;		 // *startstrpos and *endstrpos).
@@ -257,23 +268,29 @@ bool Bidi::RenderText(String s,
 	bool bLineBreak = false;
 
 	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
+	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
+							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	
 	while (*ypos < fbheight && endstrpos < s.length()) {		
 		bLineBreak = false;
-		
+
+		I2CSerial.printf("bRTL = %s\n", bRTL ? "<-" : "->");
+
 		GetString(s, &startstrpos, &endstrpos, &textwidth, paint_black, font, bEmphasisOn, &bLineBreak, &bRTL, &bNewLine, fbwidth, *xpos);
 		I2CSerial.printf("s.length=%d, startstrpos=%d, endstrpos=%d\n", s.length(), startstrpos, endstrpos);
 
 		if (textwidth > 0) {
+			bRTLrender = bRTL;
+						
 			if (render_right_to_left) {
-				bRTL = !bRTL;
-			}
+				bRTLrender = !bRTLrender;
+			} 
 			
 			if (*bEmphasisOn == false) {
-				paint_black->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTL);
+				paint_black->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTLrender);
 			}
 			else {
-				paint_red->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTL);			
+				paint_red->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTLrender);			
 			}
 			
 			*xpos += textwidth;		
@@ -309,28 +326,35 @@ bool Bidi::RenderText(String s,
 	if (diskfont->available == false) return true; // if no diskfont is available, return true to stop caller from trying to output more text (is used to indicate screen full)
 	
 	bool bNewLine = false;
-	bool bRTL = false;
 	int startstrpos = 0;
 	int endstrpos = 0;
 	int textwidth = 0;
 	bool bLineBreak = false;
+
+	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
+	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
+							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	
 	while (*ypos < fbheight && endstrpos < s.length()) {
 		bLineBreak = false;
+
+		I2CSerial.printf("bRTL = %s\n", bRTL ? "<-" : "->");
 
 		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, bEmphasisOn, &bLineBreak, &bRTL, &bNewLine, fbwidth, *xpos);
 		I2CSerial.printf("s.length=%d, startstrpos=%d, endstrpos=%d\n", s.length(), startstrpos, endstrpos);
 
 		if (textwidth > 0) {
+			bRTLrender = bRTL;
+			
 			if (render_right_to_left) {
-				bRTL = !bRTL;
-			}
+				bRTLrender = !bRTLrender;
+			} 
 			
 			if (*bEmphasisOn == false) {
-				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_black, COLORED, render_right_to_left, bRTL);
+				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_black, COLORED, render_right_to_left, bRTLrender);
 			}
 			else {
-				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_red, COLORED, render_right_to_left, bRTL);			
+				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_red, COLORED, render_right_to_left, bRTLrender);			
 			}
 			
 			*xpos += textwidth;		
@@ -365,6 +389,8 @@ bool Bidi::IsRightToLeftChar(String ch) {
 // https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
 bool Bidi::IsRightToLeftChar(uint32_t c)
 {
+	//I2CSerial.printf("{%x}", c);
+	
 	uint8_t hasRandALCat = 0;
 	if (c >= 0x5BE && c <= 0x10B7F)
 	{
