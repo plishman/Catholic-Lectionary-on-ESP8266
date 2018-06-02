@@ -1,8 +1,6 @@
 #include "Bidi.h"	
 	
-Bidi::Bidi(int fbwidth, int fbheight) {
-	_fbwidth = fbwidth;
-	_fbheight = fbheight;
+Bidi::Bidi() {
 }
 	
 bool Bidi::ExpectRTL(String s, int* pos) {
@@ -21,22 +19,25 @@ bool Bidi::ExpectRTL(String s, int* pos) {
 }	
 
 bool Bidi::ExpectStr(String s, int* pos, String strtoexpect) {
-	if (s.indexOf(strtoexpect, *pos) {
+	if (s.indexOf(strtoexpect, *pos) == *pos) {
 		*pos += strtoexpect.length();
 		return true;
 	}
 	return false;
 }
 
-bool Bidi::ExpectEmphasisTag(String s, int* pos, bool* bEmphasis_On) {
+bool Bidi::ExpectEmphasisTag(String s, int* pos, bool* bEmphasis_On, bool* bLineBreak) {
 // return true and advance the string index *pos when either <i> <b> </i> or </b> tags are found. *pos will be advanced past the last closing > in the tag
 // *Emphasis_On will be left unchanged if no emphasis tag is found at the string starting in position *pos
 // In this way, Emphasis_On can persist when the closing tag is found in a later call to the function.
+	I2CSerial.printf("ExpectEmphasisTag: str at pos=%s\n", s.substring(*pos, *pos + 5).c_str());
 
 	if (s.indexOf("<i>",  *pos) == *pos) { *bEmphasis_On = true;  ExpectStr(s, pos, "<i>");  return true; } // ExpectStr will advance pos to the end of the tag 
 	if (s.indexOf("<b>",  *pos) == *pos) { *bEmphasis_On = true;  ExpectStr(s, pos, "<b>");  return true; } // in string s
 	if (s.indexOf("</i>", *pos) == *pos) { *bEmphasis_On = false; ExpectStr(s, pos, "</i>"); return true; } 
 	if (s.indexOf("</b>", *pos) == *pos) { *bEmphasis_On = false; ExpectStr(s, pos, "</b>"); return true; }
+	if (s.indexOf("<br>", *pos) == *pos) { *bLineBreak   = true;  ExpectStr(s, pos, "<br>"); return true; }
+	if (s.indexOf("<br/>",*pos) == *pos) { *bLineBreak   = true;  ExpectStr(s, pos, "<br/>");return true; }
 	
 	return false;
 }
@@ -46,31 +47,132 @@ bool Bidi::ExpectEmphasisTag(String s, int pos) {
 
 	int p = pos;
 	bool e = false;
+	bool b = false;
 	
-	return ExpectEmphasisTag(s, &p, &e);
+	return ExpectEmphasisTag(s, &p, &e, &b);
 }
 
+
+// GetString for internal font
+void Bidi::GetString(String s, 
+					 int* startstrpos, 
+					 int* endstrpos, 
+					 int* textwidth, 
+					 Paint* paint,
+					 FONT_INFO* font,
+					 bool* bEmphasis_On, // this variable stores the emphasis state, bold/italic (which will be shown in red text). It will remain unchanged if no emphasis tag <i>, </i>, <b>, </b> is found in the text
+					 bool* bLineBreak,	 // this variable is set when either a <br> or <br/> tag is encountered, to tell the caller to skip a line before resuming text output
+					 bool* bRTL,
+					 bool* bNewLine,
+					 int fbwidth, 
+					 int xpos) 
+{
+	int pos = *startstrpos; // pos stores the postion in the string of the utf8 character currently being scanned
+	
+	int lastwordendstrpos = *startstrpos; // this variable stores the position of the last space (text word boundary) found 
+	int lastwordendxwidth = 0; // this variable stores the width of the scanned string in pixels up to the last text word boundary 
+	
+	int maxwidth = fbwidth - xpos;
+	
+	int currwidth = 0;
+
+	*bNewLine = false;
+	
+	// check if an emphasis tag is present in the string starting at pos 
+	if (ExpectEmphasisTag(s, startstrpos, bEmphasis_On, bLineBreak)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
+		I2CSerial.printf("found tag\n");
+		
+		*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
+		*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
+								   // The emphasis state will be changed or left unchanged by the call to ExpectEmphasisTag.
+		return;
+	}
+	
+	// scan string s up to the point where either 
+	// i)   the string index pos reaches the end of the string
+	// ii)  the width of the string in pixels exceeds the remaining space on the line
+	// iii) an opening or closing emphasis tag <i>, </i>, <b>, or </b> is found
+	// iv)  the string changes from left to right to right to left reading, or vice versa
+	
+	String ch = ""; //utf8CharAt(s, pos);
+	bool bLookingForRightToLeft = IsRightToLeftChar(ch);
+	bool bCurrCharRightToLeft = bLookingForRightToLeft;
+
+	bool bEmphasisTagFound = false;
+	
+	// now determine the length of the right to left or left to right string from the start character ch found at position pos
+	while (pos < s.length() && currwidth < maxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
+		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis or line break tag is found, and break out of the while loop without changing pos
+		if (bEmphasisTagFound) {
+			I2CSerial.printf("found tag-\n");
+			lastwordendstrpos = pos; // save this position as if it is a word boundary
+			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+			continue; // The tag will be dealt with on the next call to this function.
+		}
+
+		ch = utf8CharAt(s, pos); // get next character
+		I2CSerial.printf("%s", ch.c_str());
+
+		//pos += ch.length();
+		//ch = utf8CharAt(s, pos); // get next character
+		
+		if (ch == " ") { // space char is special case, inherits the reading direction of the character preceding it
+			lastwordendstrpos = pos; // save this position as it is a word boundary
+			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+		} 
+		else {
+			bCurrCharRightToLeft = IsRightToLeftChar(ch);
+		}
+		
+		currwidth += paint->GetTextWidth(ch, font);
+
+		pos += ch.length();
+		//ch = utf8CharAt(s, pos); // get next character
+	}
+	
+	if (pos >= s.length()) {
+		lastwordendstrpos = pos; // save this position as it is a word boundary
+		lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos		
+	}
+	
+	*endstrpos = lastwordendstrpos;
+	*textwidth = lastwordendxwidth;
+	*bRTL = bLookingForRightToLeft;
+
+	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
+		*bNewLine = true;		 // *startstrpos and *endstrpos).
+	}
+	
+	I2CSerial.printf("\n\n");
+}
+
+
+// GetString for disk font
 void Bidi::GetString(String s, 
 					 int* startstrpos, 
 					 int* endstrpos, 
 					 int* textwidth, 
 					 DiskFont* diskfont, 
 					 bool* bEmphasis_On, // this variable stores the emphasis state, bold/italic (which will be shown in red text). It will remain unchanged if no emphasis tag <i>, </i>, <b>, </b> is found in the text
+					 bool* bLineBreak,	 // this variable is set when either a <br> or <br/> tag is encountered, to tell the caller to skip a line before resuming text output
 					 bool* bRTL,
+					 bool* bNewLine,
 					 int fbwidth, 
 					 int xpos) 
 {
-	int pos = startstrpos; // pos stores the postion in the string of the utf8 character currently being scanned
+	int pos = *startstrpos; // pos stores the postion in the string of the utf8 character currently being scanned
 	
-	int lastwordendstrpos = startstrpos; // this variable stores the position of the last space (text word boundary) found 
+	int lastwordendstrpos = *startstrpos; // this variable stores the position of the last space (text word boundary) found 
 	int lastwordendxwidth = 0; // this variable stores the width of the scanned string in pixels up to the last text word boundary 
 	
 	int maxwidth = fbwidth - xpos;
 	
-	int curwidth = 0;
+	int currwidth = 0;
 
+	*bNewLine = false;
+	
 	// check if an emphasis tag is present in the string starting at pos 
-	if (ExpectEmphasisTag(s, startstrpos, bEmphasis_On)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
+	if (ExpectEmphasisTag(s, startstrpos, bEmphasis_On, bLineBreak)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
 		*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
 		*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
 								   // The emphasis state will be changed or left unchanged by the call to ExpectEmphasisTag.
@@ -82,21 +184,33 @@ void Bidi::GetString(String s,
 	// ii)  the width of the string in pixels exceeds the remaining space on the line
 	// iii) an opening or closing emphasis tag <i>, </i>, <b>, or </b> is found
 	
-	String ch = utf8CharAt(pos);
+	String ch = utf8CharAt(s, pos);
 	bool bLookingForRightToLeft = IsRightToLeftChar(ch);
 	bool bCurrCharRightToLeft = bLookingForRightToLeft;
 
 	bool bEmphasisTagFound = false;
+
+	bool bFoundWord = false;
 	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
 	while (bCurrCharRightToLeft == bLookingForRightToLeft && currwidth < maxwidth && !bEmphasisTagFound) {
 		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis tag is found, and break out of the while loop without changing pos
-		if (bEmphasisTagFound) continue; // The tag will be dealt with on the next call to this function.
+		if (bEmphasisTagFound) {
+			I2CSerial.printf("found tag-\n");
+			lastwordendstrpos = pos; // save this position as if it is a word boundary
+			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+			continue; // The tag will be dealt with on the next call to this function.
+		}
+
+		ch = utf8CharAt(s, pos); // get next character
+		I2CSerial.printf("%s", ch.c_str());
 		
-		pos += ch.length();
-		ch = utf8CharAt(pos); // get next character
+		//pos += ch.length();
+		//ch = utf8CharAt(s, pos); // get next character
 	
 		if (ch == " ") { // space char is special case, inherits the reading direction of the character preceding it
+			bFoundWord = true;
+			
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
 		} 
@@ -105,12 +219,145 @@ void Bidi::GetString(String s,
 		}
 		
 		currwidth += diskfont->GetTextWidth(ch);
+
+		pos += ch.length();
+		//ch = utf8CharAt(s, pos); // get next character
 	}
-		
-	*endstrpos = lastwordendstrpos;
-	*textwidth = lastwordendxwidth;
-	*bRTL = bLookingForRightToLeft;
+
+	if (pos >= s.length()) {
+		lastwordendstrpos = pos; // save this position as it is a word boundary
+		lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos		
+	}
+	
+	*endstrpos = lastwordendstrpos;	// make the end pos the index of the last character of the last whole word scanned that fitted on the line
+	*textwidth = lastwordendxwidth;	// make the width of the text to be rendered the width of the whole line up to and including the last whole word scanned which fitted on the line
+	*bRTL = bLookingForRightToLeft;	// save whether this block of text is a rtl or ltr block (maybe less than one whole line of text, if bidi text is embedded).
+
+	if (!bFoundWord && xpos == 0) { // word on line is longer than whole line, so need to split it
+		*textwidth = currwidth;		// make the width of the text to be drawn equal to the width of the whole text line scanned
+		*endstrpos = pos;			// make the end pos the index of the last character scanned
+	}
+	
+	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
+		*bNewLine = true;		 // *startstrpos and *endstrpos).
+	}
 }
+
+
+// render bidi text using the internal (rom) font
+bool Bidi::RenderText(String s, 
+					  int* xpos, int* ypos, 
+					  Paint* paint_black, Paint* paint_red, 
+					  FONT_INFO* font, 
+					  bool* bEmphasisOn,
+					  int fbwidth, int fbheight,
+					  bool render_right_to_left) 
+{
+	bool bNewLine = false;
+	bool bRTL = false;
+	int startstrpos = 0;
+	int endstrpos = 0;
+	int textwidth = 0;
+	bool bLineBreak = false;
+	
+	while (*ypos < fbheight && endstrpos < s.length()) {		
+		bLineBreak = false;
+		
+		GetString(s, &startstrpos, &endstrpos, &textwidth, paint_black, font, bEmphasisOn, &bLineBreak, &bRTL, &bNewLine, fbwidth, *xpos);
+		I2CSerial.printf("s.length=%d, startstrpos=%d, endstrpos=%d\n", s.length(), startstrpos, endstrpos);
+
+		if (textwidth > 0) {
+			if (render_right_to_left) {
+				bRTL = !bRTL;
+			}
+			
+			if (*bEmphasisOn == false) {
+				paint_black->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTL);
+			}
+			else {
+				paint_red->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), font, COLORED, render_right_to_left, bRTL);			
+			}
+			
+			*xpos += textwidth;		
+		}
+		
+		if (bLineBreak) {			
+			*ypos += font->heightPages * 2;
+			*xpos = 0;
+		}
+		
+		if (bNewLine) {
+			*ypos += font->heightPages;
+			*xpos = 0;
+		}
+		
+		startstrpos = endstrpos;
+	}
+
+	if (*ypos >= fbheight) return true; // will return true if the text overflows the screen
+	
+	return false;						// oherwise will return false if there is more space
+}
+
+// render bidi text using disk font
+bool Bidi::RenderText(String s, 
+				      int* xpos, int* ypos, 
+					  Paint* paint_black, Paint* paint_red, 
+					  DiskFont* diskfont, 
+					  bool* bEmphasisOn, 
+					  int fbwidth, int fbheight, 
+					  bool render_right_to_left) 
+{
+	if (diskfont->available == false) return true; // if no diskfont is available, return true to stop caller from trying to output more text (is used to indicate screen full)
+	
+	bool bNewLine = false;
+	bool bRTL = false;
+	int startstrpos = 0;
+	int endstrpos = 0;
+	int textwidth = 0;
+	bool bLineBreak = false;
+	
+	while (*ypos < fbheight && endstrpos < s.length()) {
+		bLineBreak = false;
+
+		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, bEmphasisOn, &bLineBreak, &bRTL, &bNewLine, fbwidth, *xpos);
+		I2CSerial.printf("s.length=%d, startstrpos=%d, endstrpos=%d\n", s.length(), startstrpos, endstrpos);
+
+		if (textwidth > 0) {
+			if (render_right_to_left) {
+				bRTL = !bRTL;
+			}
+			
+			if (*bEmphasisOn == false) {
+				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_black, COLORED, render_right_to_left, bRTL);
+			}
+			else {
+				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_red, COLORED, render_right_to_left, bRTL);			
+			}
+			
+			*xpos += textwidth;		
+		}
+
+		if (bLineBreak) {			
+			*ypos += diskfont->_FontHeader.charheight * 2;
+			*xpos = 0;
+		}
+		
+		if (bNewLine) {
+			*ypos += diskfont->_FontHeader.charheight;
+			*xpos = 0;
+		}
+
+		startstrpos = endstrpos;
+	}
+	
+	if (*ypos >= fbheight) return true; // will return true if the text overflows the screen
+	
+	return false;						// oherwise will return false if there is more space
+
+}
+
+
 
 bool Bidi::IsRightToLeftChar(String ch) {
 	uint32_t codepoint = codepointUtf8(ch);

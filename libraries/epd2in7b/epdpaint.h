@@ -64,7 +64,8 @@ public:
 	int DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
 
-	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left);
+	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string);
+	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left);
 
 	//bool doRtlStrings(String* s, bool right_to_left);
@@ -74,6 +75,7 @@ public:
 	
 	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
 	
+	String Utf8ReverseString(String instr);
 	int codepointUtf8(String c);
 	String utf8fromCodepoint(int c);
 	String utf8CharAt(String s, int pos);

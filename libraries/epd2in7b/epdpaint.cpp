@@ -253,8 +253,8 @@ int Paint::DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored,
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void Paint::DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left) {
-	DrawStringAt(x, y, String(text), font, colored, right_to_left);
+void Paint::DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string) {
+	DrawStringAt(x, y, String(text), font, colored, right_to_left, reverse_string);
 
 //    const char* p_text = text;
 //    unsigned int counter = 0;
@@ -277,7 +277,8 @@ void Paint::DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int co
 //    }
 }
 
-void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left) {
+// Draw string using internal font, optionally reverse string text before drawing	
+void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string) {
 	int charIndex = 0;
 	int len = text.length();
 	
@@ -286,6 +287,10 @@ void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored
 	
 	uint16_t blockToCheckFirst = 0;
 	
+	if (reverse_string) {
+		text = Utf8ReverseString(text);
+	}
+
 	//printf("text=%s\n", text.c_str());
     
     /* Send the string character by character on EPD */
@@ -332,6 +337,14 @@ void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored
 //		}		
 	}
 }
+
+
+// Draw string using internal font, reverse_string defaulted to false
+void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left)
+{
+	DrawStringAt(x, y, text, font, colored, right_to_left, false);		
+}
+
 
 /*
 bool Paint::doRtlStrings(String* s, bool right_to_left) {
@@ -494,6 +507,21 @@ const FONT_CHAR_INFO* Paint::getCharInfo(int codepoint, uint16_t* blockToCheckFi
 	}
 	
 	return NULL;
+}
+
+String Paint::Utf8ReverseString(String instr) {
+	String outstr = "";
+	String c = "";
+	
+	int charpos = 0;
+	
+	while (charpos < instr.length()) {
+		c = utf8CharAt(instr, charpos);
+		outstr = c + outstr;
+		charpos += c.length();
+	}
+	
+	return outstr;
 }
 
 

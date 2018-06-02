@@ -263,6 +263,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 	DrawStringAt(x, y, text, paint, colored, right_to_left, false);
 }
 
+/*
 bool DiskFont::doRtlStrings(String* s, bool right_to_left) {
 	int i = 0;
 	int strlen = s->length();
@@ -323,6 +324,7 @@ bool DiskFont::doRtlStrings(String* s, bool right_to_left) {
 	return true;
 }
 
+
 bool DiskFont::isRtlChar(String ch) {
 	DiskFont_FontCharInfo fci = {0};
 	uint16_t blockToCheckFirst = 0;
@@ -331,7 +333,7 @@ bool DiskFont::isRtlChar(String ch) {
 	
 	return (fci.rtlflag > 0);
 }
-
+*/
 
 String DiskFont::Utf8ReverseString(String instr) {
 	String outstr = "";

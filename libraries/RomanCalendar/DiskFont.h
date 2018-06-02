@@ -76,17 +76,17 @@ public:
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
 	
-	bool doRtlStrings(String* s, bool right_to_left); // will process input string so that substrings are in correct rtl or ltr order, depending on characterset
-	String Utf8ReverseString(String instr); // function to reverse utf-8 string
+	//bool doRtlStrings(String* s, bool right_to_left); // will process input string so that substrings are in correct rtl or ltr order, depending on characterset
 	
 	int GetTextWidth(const char* text);
 	int GetTextWidth(String text);
 	
+	String Utf8ReverseString(String instr); // function to reverse utf-8 string
 	int codepointUtf8(String c);
 	String utf8fromCodepoint(int c);
 	String utf8CharAt(String s, int pos);
 	int charLenBytesUTF8(char s);
-	bool isRtlChar(String ch);
+	//bool isRtlChar(String ch);
 	
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);

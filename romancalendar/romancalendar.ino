@@ -33,6 +33,7 @@ extern const int PANEL_SIZE_Y = 176;
 #include <Config.h>
 #include <images.h>
 #include <DiskFont.h>
+#include <Bidi.h>
 
 extern "C" {
 #include "user_interface.h"
@@ -608,7 +609,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
 //---------------------------------------------------------------------------calendar
 bool epd_init(void) {
   if (epd.Init() != 0) {
-    Serial.print("e-Paper init failed");
+    I2CSerial.printf("e-Paper init failed\n");
     return false;
   }
   return true;
@@ -796,7 +797,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
 
       String book_name;
 
-      String format_state = FORMAT_DEFAULT;
+      //String format_state = FORMAT_DEFAULT;
+      bool bEmphasis_On = false;
     
       while (!bDone && !bEndOfScreen) {
         int numRecords = 0;
@@ -828,7 +830,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
           }
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
+          //bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &bEmphasis_On, right_to_left); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -847,6 +850,23 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   return true;
 }
 
+bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, bool* bEmphasis_On, bool right_to_left) {
+  I2CSerial.println("epd_verse() verse=" + verse);
+
+  int fbwidth = PANEL_SIZE_X;
+  int fbheight = PANEL_SIZE_Y;
+  
+  Bidi bidi;
+
+  if (diskfont->available) {
+    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left);    
+  }
+  else {
+    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, font,     bEmphasis_On, fbwidth, fbheight, right_to_left);
+  }
+
+  return true;
+}
 
 bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state, bool right_to_left) {
   I2CSerial.println("epd_verse() verse=" + verse);
