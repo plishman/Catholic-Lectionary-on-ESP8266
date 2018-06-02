@@ -94,14 +94,14 @@ void Bidi::GetString(String s,
 	// iii) an opening or closing emphasis tag <i>, </i>, <b>, or </b> is found
 	// iv)  the string changes from left to right to right to left reading, or vice versa
 	
-	String ch = ""; //utf8CharAt(s, pos);
-	bool bLookingForRightToLeft = IsRightToLeftChar(ch);
+	String ch = ""; // = utf8CharAt(s, pos); // get character
+	bool bLookingForRightToLeft = *bRTL; //IsRightToLeftChar(ch);
 	bool bCurrCharRightToLeft = bLookingForRightToLeft;
 
 	bool bEmphasisTagFound = false;
 	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
-	while (pos < s.length() && currwidth < maxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
+	while (pos < s.length() && currwidth < maxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {
 		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis or line break tag is found, and break out of the while loop without changing pos
 		if (bEmphasisTagFound) {
 			I2CSerial.printf("found tag-\n");
@@ -122,6 +122,7 @@ void Bidi::GetString(String s,
 		} 
 		else {
 			bCurrCharRightToLeft = IsRightToLeftChar(ch);
+			I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
 		}
 		
 		currwidth += paint->GetTextWidth(ch, font);
@@ -130,14 +131,14 @@ void Bidi::GetString(String s,
 		//ch = utf8CharAt(s, pos); // get next character
 	}
 	
-	if (pos >= s.length()) {
+	if (pos >= s.length() || bCurrCharRightToLeft != bLookingForRightToLeft) {
 		lastwordendstrpos = pos; // save this position as it is a word boundary
 		lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos		
 	}
 	
 	*endstrpos = lastwordendstrpos;
 	*textwidth = lastwordendxwidth;
-	*bRTL = bLookingForRightToLeft;
+	*bRTL = bCurrCharRightToLeft; //bLookingForRightToLeft;
 
 	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
 		*bNewLine = true;		 // *startstrpos and *endstrpos).
@@ -173,6 +174,8 @@ void Bidi::GetString(String s,
 	
 	// check if an emphasis tag is present in the string starting at pos 
 	if (ExpectEmphasisTag(s, startstrpos, bEmphasis_On, bLineBreak)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
+		I2CSerial.printf("found tag\n");
+
 		*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
 		*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
 								   // The emphasis state will be changed or left unchanged by the call to ExpectEmphasisTag.
@@ -180,21 +183,20 @@ void Bidi::GetString(String s,
 	}
 	
 	// scan string s up to the point where either 
-	// i)   the string changes from left to right to right to left reading, or vice versa
+	// i)   the string index pos reaches the end of the string
 	// ii)  the width of the string in pixels exceeds the remaining space on the line
 	// iii) an opening or closing emphasis tag <i>, </i>, <b>, or </b> is found
+	// iv)  the string changes from left to right to right to left reading, or vice versa
 	
-	String ch = utf8CharAt(s, pos);
+	String ch = ""; //utf8CharAt(s, pos);
 	bool bLookingForRightToLeft = IsRightToLeftChar(ch);
 	bool bCurrCharRightToLeft = bLookingForRightToLeft;
 
 	bool bEmphasisTagFound = false;
-
-	bool bFoundWord = false;
 	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
-	while (bCurrCharRightToLeft == bLookingForRightToLeft && currwidth < maxwidth && !bEmphasisTagFound) {
-		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis tag is found, and break out of the while loop without changing pos
+	while (pos < s.length() && currwidth < maxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
+		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis or line break tag is found, and break out of the while loop without changing pos
 		if (bEmphasisTagFound) {
 			I2CSerial.printf("found tag-\n");
 			lastwordendstrpos = pos; // save this position as if it is a word boundary
@@ -209,8 +211,6 @@ void Bidi::GetString(String s,
 		//ch = utf8CharAt(s, pos); // get next character
 	
 		if (ch == " ") { // space char is special case, inherits the reading direction of the character preceding it
-			bFoundWord = true;
-			
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
 		} 
@@ -233,14 +233,11 @@ void Bidi::GetString(String s,
 	*textwidth = lastwordendxwidth;	// make the width of the text to be rendered the width of the whole line up to and including the last whole word scanned which fitted on the line
 	*bRTL = bLookingForRightToLeft;	// save whether this block of text is a rtl or ltr block (maybe less than one whole line of text, if bidi text is embedded).
 
-	if (!bFoundWord && xpos == 0) { // word on line is longer than whole line, so need to split it
-		*textwidth = currwidth;		// make the width of the text to be drawn equal to the width of the whole text line scanned
-		*endstrpos = pos;			// make the end pos the index of the last character scanned
-	}
-	
 	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
 		*bNewLine = true;		 // *startstrpos and *endstrpos).
 	}
+
+	I2CSerial.printf("\n\n");
 }
 
 
@@ -254,11 +251,12 @@ bool Bidi::RenderText(String s,
 					  bool render_right_to_left) 
 {
 	bool bNewLine = false;
-	bool bRTL = false;
 	int startstrpos = 0;
 	int endstrpos = 0;
 	int textwidth = 0;
 	bool bLineBreak = false;
+
+	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
 	
 	while (*ypos < fbheight && endstrpos < s.length()) {		
 		bLineBreak = false;

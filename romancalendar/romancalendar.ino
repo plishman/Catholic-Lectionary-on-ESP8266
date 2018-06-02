@@ -859,9 +859,11 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   Bidi bidi;
 
   if (diskfont->available) {
+    fbheight = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
     return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left);    
   }
   else {
+    fbheight = PANEL_SIZE_Y - font->heightPages;
     return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, font,     bEmphasis_On, fbwidth, fbheight, right_to_left);
   }
 

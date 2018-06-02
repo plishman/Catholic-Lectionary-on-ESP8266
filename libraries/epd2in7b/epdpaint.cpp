@@ -521,6 +521,8 @@ String Paint::Utf8ReverseString(String instr) {
 		charpos += c.length();
 	}
 	
+	I2CSerial.printf("instr=[%s], outstr=[%s]\n", instr.c_str(), outstr.c_str());
+	
 	return outstr;
 }
 
