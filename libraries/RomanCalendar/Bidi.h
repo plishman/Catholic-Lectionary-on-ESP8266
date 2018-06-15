@@ -5,6 +5,8 @@
 #include <DiskFont.h>
 #include <epdpaint.h>
 #include <I2CSerialPort.h>
+#include <utf8string.h>
+#include <ArabicLigaturizer.h>
 
 class Bidi {
 public:
@@ -21,13 +23,15 @@ public:
 	bool RenderText(String s, int* xpos, int* ypos, Paint* paint_black, Paint* paint_red, FONT_INFO* font,    bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left);
 	bool RenderText(String s, int* xpos, int* ypos, Paint* paint_black, Paint* paint_red, DiskFont* diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left);
 
+/*
 	bool IsRightToLeftChar(String ch);
 	bool IsRightToLeftChar(uint32_t c);
-	
+
 	uint32_t codepointUtf8(String c);
 	String utf8fromCodepoint(uint32_t c);
 	String utf8CharAt(String s, int pos);
 	int charLenBytesUTF8(char s);	
+*/
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include "SD.h"
 #include <epd2in7b.h>
 #include <epdpaint.h>
+#include <utf8string.h>
 #include "I2CSerialPort.h"
 //#include "I18n.h"
 
@@ -35,13 +36,15 @@ typedef struct {
 } DiskFont_BlocktableEntry;
 
 typedef struct {
-	uint8_t rtlflag;
+	//uint8_t rtlflag;
 	uint16_t widthbits;
 	uint16_t heightbits;
 	uint32_t bitmapfileoffset;
+	double advanceWidth;
+	double advanceHeight;
 } DiskFont_FontCharInfo;
 
-const int DiskFont_FontCharInfo_RecSize = 9; //bytes
+const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 
 class DiskFont {
 public:
@@ -70,23 +73,29 @@ public:
 	void end(void);
 	
 	int DrawCharAt(int x, int y, char ascii_char, Paint* paint, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, int codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);	
 
 	void DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
 	
+	void DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
+	
 	//bool doRtlStrings(String* s, bool right_to_left); // will process input string so that substrings are in correct rtl or ltr order, depending on characterset
 	
+	void GetTextWidth(String text, int& width, double& advanceWidth);
 	int GetTextWidth(const char* text);
 	int GetTextWidth(String text);
+	double GetTextWidth(String text);
+	double GetTextWidth(const char* text);
 	
-	String Utf8ReverseString(String instr); // function to reverse utf-8 string
-	int codepointUtf8(String c);
-	String utf8fromCodepoint(int c);
-	String utf8CharAt(String s, int pos);
-	int charLenBytesUTF8(char s);
-	//bool isRtlChar(String ch);
+//	String Utf8ReverseString(String instr); // function to reverse utf-8 string
+//	int codepointUtf8(String c);
+//	String utf8fromCodepoint(int c);
+//	String utf8CharAt(String s, int pos);
+//	int charLenBytesUTF8(char s);
+//	//bool isRtlChar(String ch);
 	
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
@@ -94,6 +103,7 @@ public:
 	bool ReadUInt32LittleEndian(uint32_t* dword);
 	bool ReadUInt16LittleEndian(uint16_t* word);
 	bool ReadUInt8(uint8_t* byte);
+	bool ReadDouble(double* d);
 };
 
 class FontBlockTable {

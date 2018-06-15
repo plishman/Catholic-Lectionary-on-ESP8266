@@ -14,6 +14,7 @@ extern const int PANEL_SIZE_Y = 176;
 //----------
 #include <pins_arduino.h>
 #include <I2CSerialPort.h>
+#include <utf8string.h>
 #include <TimeLib.h>
 #include <Enums.h>
 #include <I18n.h>
@@ -1194,6 +1195,7 @@ String utf8CharAt(String s, int pos) {
   }
 }
 
+/*
 int charLenBytesUTF8(char s) {
   byte ch = (byte) s;
   //I2CSerial.println(String(ch)+ ";");
@@ -1218,6 +1220,7 @@ int charLenBytesUTF8(char s) {
 int lines(String s) {
   
 }
+*/
 
 String get_verse(String verse_record, String* book_name, String sentence_range, int numRecords) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
   I2CSerial.printf("get_verse() %s", verse_record.c_str());

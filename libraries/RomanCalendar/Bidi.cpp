@@ -286,6 +286,11 @@ bool Bidi::RenderText(String s,
 	int textwidth = 0;
 	bool bLineBreak = false;
 
+	String alshapedtext = "";
+	int level = ArabicLigaturizer::ar_nothing; //ArabicLigaturizer::ar_composedtashkeel | ArabicLigaturizer::ar_lig | ArabicLigaturizer::DIGITS_EN2AN;
+	ArabicLigaturizer::Shape(s, alshapedtext, level);
+	s = alshapedtext;
+	
 	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
 	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
@@ -352,6 +357,11 @@ bool Bidi::RenderText(String s,
 	int textwidth = 0;
 	bool bLineBreak = false;
 
+	String alshapedtext = "";
+	int level = ArabicLigaturizer::ar_nothing; //ArabicLigaturizer::ar_composedtashkeel | ArabicLigaturizer::ar_lig | ArabicLigaturizer::DIGITS_EN2AN;
+	ArabicLigaturizer::Shape(s, alshapedtext, level);
+	s = alshapedtext;
+	
 	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
 	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
@@ -403,7 +413,7 @@ bool Bidi::RenderText(String s,
 }
 
 
-
+/*
 bool Bidi::IsRightToLeftChar(String ch) {
 	uint32_t codepoint = codepointUtf8(ch);
 	return IsRightToLeftChar(codepoint);
@@ -601,3 +611,4 @@ int Bidi::charLenBytesUTF8(char s) {
 
   return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
+*/

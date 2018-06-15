@@ -12,7 +12,7 @@ Csv::~Csv()
 {
 }
 
-
+/*
 //---------------------------------------
 int Csv::charLenBytesUTF8(char s) {
 	byte ch = (byte)s;
@@ -61,7 +61,7 @@ String Csv::utf8CharAt(String s, int pos) {
 		return s.substring(pos, pos + charLen);
 	}
 }
-
+*/
 
 
 //---------------------------------------
