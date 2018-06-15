@@ -181,9 +181,11 @@ void Bidi::GetString(String s,
 	int lastwordendstrpos = *startstrpos; // this variable stores the position of the last space (text word boundary) found 
 	int lastwordendxwidth = 0; // this variable stores the width of the scanned string in pixels up to the last text word boundary 
 	
-	int maxwidth = fbwidth - xpos;
+	//int maxwidth = fbwidth - xpos;
 	
-	int currwidth = 0;
+	//int currwidth = 0;
+	double dcurrwidth = 0.0;
+	double dmaxwidth = (double)(fbwidth - xpos);
 
 	*bNewLine = false;
 	
@@ -217,12 +219,12 @@ void Bidi::GetString(String s,
 	bool bEmphasisTagFound = false;
 	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
-	while (pos < s.length() && currwidth < maxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
+	while (pos < s.length() && dcurrwidth < dmaxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
 		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis or line break tag is found, and break out of the while loop without changing pos
 		if (bEmphasisTagFound) {
 			I2CSerial.printf("found tag-\n");
 			lastwordendstrpos = pos; // save this position as if it is a word boundary
-			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 			continue; // The tag will be dealt with on the next call to this function.
 		}
 
@@ -230,7 +232,7 @@ void Bidi::GetString(String s,
 			
 		if (ch == " " || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text
 			lastwordendstrpos = pos; // save this position as it is a word boundary
-			lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos
+			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 			//I2CSerial.printf("*");
 		} 
 		else {
@@ -245,8 +247,10 @@ void Bidi::GetString(String s,
 		}
 		
 		I2CSerial.printf("%s", ch.c_str());		
-		currwidth += diskfont->GetTextWidth(ch);
-
+		//currwidth += diskfont->GetTextWidth(ch);
+		
+		dcurrwidth += diskfont->GetTextWidthA(ch);
+		
 		pos += ch.length();
 	}
 
@@ -257,13 +261,13 @@ void Bidi::GetString(String s,
 	
 	if (pos >= s.length() || bCurrCharRightToLeft != bLookingForRightToLeft) {
 		lastwordendstrpos = pos; // save this position as it is a word boundary
-		lastwordendxwidth = currwidth; // and save the width in pixels of the string scanned up to position pos		
+		lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos		
 	}
 	
 	*endstrpos = lastwordendstrpos;	// make the end pos the index of the last character of the last whole word scanned that fitted on the line
 	*textwidth = lastwordendxwidth;	// make the width of the text to be rendered the width of the whole line up to and including the last whole word scanned which fitted on the line
 
-	if (currwidth >= maxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
+	if (dcurrwidth >= dmaxwidth) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
 		*bNewLine = true;		 // *startstrpos and *endstrpos).
 	}
 
@@ -382,10 +386,10 @@ bool Bidi::RenderText(String s,
 			} 
 			
 			if (*bEmphasisOn == false) {
-				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_black, COLORED, render_right_to_left, bRTLrender);
+				diskfont->DrawStringAtA(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_black, COLORED, render_right_to_left, bRTLrender);
 			}
 			else {
-				diskfont->DrawStringAt(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_red, COLORED, render_right_to_left, bRTLrender);			
+				diskfont->DrawStringAtA(*xpos, *ypos, s.substring(startstrpos, endstrpos), paint_red, COLORED, render_right_to_left, bRTLrender);			
 			}
 			
 			*xpos += textwidth;		
