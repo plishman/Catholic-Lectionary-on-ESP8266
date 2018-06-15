@@ -874,6 +874,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   return true;
 }
 
+/*
 bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state, bool right_to_left) {
   I2CSerial.println("epd_verse() verse=" + verse);
 
@@ -1136,10 +1137,10 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
     I2CSerial.printf("rtlxposoffsetpx = [%d], rtlreversedwidthpx = [%d], rtlreversedpospx = [%d], width = [%d], *xpos = [%d]\n", rtlxposoffsetpx, rtlreversedwidthpx, rtlreversedpospx, width, *xpos);
 
     //if (!bReversed_bidi) rtlxposoffsetpx = *xpos + width;
-    
-    bool bDrawingDirection = false; //right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
-    int xpos_bidi = bReversed_bidi ? /* *xpos*/ rtlxposoffsetpx + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
-    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
+*/    
+//    bool bDrawingDirection = false; //right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
+//    int xpos_bidi = bReversed_bidi ? /* *xpos*/ rtlxposoffsetpx + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
+/*    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
       if (diskfont->available) {
         if (!b_emphasis_on) {
           diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_black, COLORED, right_to_left, bReversed_bidi);
@@ -1173,6 +1174,7 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   
   return false;
 }
+*/
 
 String utf8CharAt(String s, int pos) { 
   //I2CSerial.println("String=" + s);
