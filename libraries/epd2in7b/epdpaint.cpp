@@ -25,6 +25,7 @@
  */
 
 #include "I2CSerialPort.h"
+#include <utf8string.h>
 #include <pgmspace.h>
 #include <arduino.h>
 #include "epdpaint.h"
@@ -190,10 +191,10 @@ void Paint::DrawStringAt(int x, int y, const char* text, sFONT* font, int colore
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
 int Paint::DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), font, colored, blockToCheckFirst);
+	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), font, colored, blockToCheckFirst);
 }
  
-int Paint::DrawCharAt(int x, int y, int codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
+int Paint::DrawCharAt(int x, int y, uint32_t codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst) {	
 	if (codepoint == 32) return font->spacePixels; // space character
 
 	const FONT_CHAR_INFO* fci = getCharInfo(codepoint, blockToCheckFirst, font);
@@ -508,7 +509,7 @@ const FONT_CHAR_INFO* Paint::getCharInfo(int codepoint, uint16_t* blockToCheckFi
 	
 	return NULL;
 }
-
+/*
 String Paint::Utf8ReverseString(String instr) {
 	String outstr = "";
 	String c = "";
@@ -632,6 +633,7 @@ int Paint::charLenBytesUTF8(char s) {
 
   return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
+*/
 
 /**
 *  @brief: this draws a line on the frame buffer

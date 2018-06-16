@@ -136,11 +136,15 @@ bool I18n::get_config( void ) {
 	String s_transfer_to_sunday = "";
 	String s_celebrate_feast_of_christ_priest = "";
 	String s_right_to_left = "";
+	String s_font_tuning_percent = "";
 	bool transfer_to_sunday = false;
 	bool celebrate_feast_of_christ_priest = false;
 	bool right_to_left = false;
+	double font_tuning_percent = 50.0;	//defaults to 50%
 	int pos = 0;
 	int i = 0;
+	
+	readLine(file); // skip first line, as it contains the column headings
 	
 	do {
 	#ifndef _WIN32
@@ -157,24 +161,32 @@ bool I18n::get_config( void ) {
 		yml_filename = csv.getCsvField(csv_record, &pos);
 		sanctorale_filename = csv.getCsvField(csv_record, &pos);
 		bible_filename = csv.getCsvField(csv_record, &pos);
+		
 		s_transfer_to_sunday = csv.getCsvField(csv_record, &pos);
 		transfer_to_sunday = (s_transfer_to_sunday.indexOf("true") != -1);
+		
 		s_celebrate_feast_of_christ_priest = csv.getCsvField(csv_record, &pos);
-		celebrate_feast_of_christ_priest = (s_celebrate_feast_of_christ_priest.indexOf("true") != -1);
+		celebrate_feast_of_christ_priest = ((s_celebrate_feast_of_christ_priest.indexOf("true") != -1) || s_celebrate_feast_of_christ_priest == "1");
+		
 		font_filename = csv.getCsvField(csv_record, &pos);
+		
 		s_right_to_left = csv.getCsvField(csv_record, &pos);
-		right_to_left = (s_right_to_left.indexOf("true") != -1);		
+		right_to_left = ((s_right_to_left.indexOf("true") != -1) || s_right_to_left == "1");		
+		
+		s_font_tuning_percent = csv.getCsvField(csv_record, &pos);
+		font_tuning_percent = (double)s_font_tuning_percent.toFloat();
 		
 		if (_lectionary_config_number == i) {
-			I2CSerial.println("\tdesc=" + desc);
-			I2CSerial.println("\tlang=" + lang);
-			I2CSerial.println("\tyml_filename=" + yml_filename);
-			I2CSerial.println("\tsanctorale_filename=" + sanctorale_filename);
-			I2CSerial.println("\tbible_filename=" + bible_filename);
-			I2CSerial.println("\ttransfer_to_sunday=" + String(transfer_to_sunday));
-			I2CSerial.println("\tcelebrate_feast_of_christ_eternal_priest=" + String(celebrate_feast_of_christ_priest));
-			I2CSerial.println("\tfont filename=" + font_filename);
-			I2CSerial.println("\tright_to_left=" + String(right_to_left));
+			I2CSerial.printf("\tdesc=%s\n", desc.c_str());
+			I2CSerial.printf("\tlang=%s\n", lang.c_str());
+			I2CSerial.printf("\tyml_filename=%s\n", yml_filename.c_str());
+			I2CSerial.printf("\tsanctorale_filename=%s\n", sanctorale_filename.c_str());
+			I2CSerial.printf("\tbible_filename=%s\n", bible_filename.c_str());
+			I2CSerial.printf("\ttransfer_to_sunday=%s\n", String(transfer_to_sunday).c_str());
+			I2CSerial.printf("\tcelebrate_feast_of_christ_eternal_priest=%s\n", String(celebrate_feast_of_christ_priest).c_str());
+			I2CSerial.printf("\tfont filename=%s\n", font_filename.c_str());
+			I2CSerial.printf("\tright_to_left=%s\n", String(right_to_left).c_str());			
+			I2CSerial.printf("\tfont tuning=%s%%\n", String(font_tuning_percent).c_str());
 			bFoundSelection = true;
 			I2CSerial.println("* selected");
 			break;
@@ -208,6 +220,7 @@ bool I18n::get_config( void ) {
 	_celebrate_feast_of_christ_priest = celebrate_feast_of_christ_priest;
 	_font_filename = font_filename;
 	_right_to_left = right_to_left;
+	_font_tuning_percent = font_tuning_percent;
 	_have_config = true;
 
 	if (!bFoundSelection) {

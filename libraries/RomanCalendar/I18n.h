@@ -30,6 +30,7 @@ public:
 	bool _celebrate_feast_of_christ_priest = true;
 	bool _have_config = false;
 	bool _right_to_left = false;
+	double _font_tuning_percent = 50.0;
 	
 	Enums::I18nLanguages _locale;
 	static const char* const I18n_LANGUAGES[5];

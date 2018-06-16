@@ -11,6 +11,9 @@ extern const int PANEL_SIZE_Y = 176;
 
 //ESP8266---
 #include "ESP8266WiFi.h"
+#define FS_NO_GLOBALS
+#include "FS.h"
+
 //----------
 #include <pins_arduino.h>
 #include <I2CSerialPort.h>
@@ -68,6 +71,7 @@ Network network;
 bool bEEPROM_checksum_good = false;
 
 void setup() { 
+  SPIFFS.begin();
   //Serial.begin(9600);
   I2CSerial.begin(1,3,8);
 
@@ -629,7 +633,7 @@ void display_calendar(String date, Calendar* c, String refs) {
   
   if ((c->_I18n->_font_filename) != "builtin" && (c->_I18n->_font_filename) != "") {
     I2CSerial.printf("Using disk font\n");
-    diskfont.begin(c->_I18n->_font_filename);
+    diskfont.begin(c->_I18n->_font_filename, c->_I18n->_font_tuning_percent);
   }
   else {
     I2CSerial.printf("Using internal font\n");    

@@ -92,7 +92,7 @@
 		<script type="text/javascript">
 			function MakeConfigOpt(config) {
 				var optlist = "";
-				var i = 0;
+				var i = 1; //line 0 contains the headings
 				
 				while (i < config.length) {
 					if (config[i] != "") {
@@ -107,7 +107,7 @@
 						//	selected = config[i][5] == 'selected' ? 'selected="1"' : '';
 						//}
 						
-						optlist += '<option class="optconfig" ' + selected + ' value="' + i + '">' + opttext + '</option>\r\n';
+						optlist += '<option class="optconfig" ' + selected + ' value="' + (i - 1) + '">' + opttext + '</option>\r\n';
 					}
 					i++;
 				}

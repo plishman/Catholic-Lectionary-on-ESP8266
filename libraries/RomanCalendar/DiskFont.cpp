@@ -3,27 +3,182 @@ extern "C" {
 #include "user_interface.h"
 }
 
+bool DiskFont::OpenFontFile() {
+	_file_sd = SD.open(_fontfilename.c_str(), FILE_READ);
+
+	if (!_file_sd.available()) {
+		Serial.printf("unable to open diskfont from SD card, trying spiffs%s\n", _fontfilename.c_str());
+	}
+	else {
+		Serial.printf("Opened font file from SD Card\n");
+		return true;
+	}
+
+	_file_spiffs = SPIFFS.open(_fontfilename.c_str(), "r");
+
+	if (!_file_spiffs.available()) {
+		Serial.printf("diskfont file not found%s\n", _fontfilename.c_str());
+		return false;
+	}
+	else {
+		Serial.printf("Opened font file from SPIFFS\n");
+		return true;
+	}
+	
+	return false;
+}
+
+bool DiskFont::CloseFontFile() {
+	available = false;
+
+	if (_file_sd.available()) {
+		_file_sd.close();
+	}	
+
+	if (_file_spiffs.available()) {
+		_file_spiffs.close();
+	}	
+}
+
+bool DiskFont::Seek(uint64_t offset) {
+	if (_file_sd) {
+		return _file_sd.seek(offset);
+	}
+
+	if (_file_spiffs) {
+		return _file_spiffs.seek(offset, fs::SeekSet);
+	}
+	
+	return false;
+}
+
+size_t DiskFont::Position() {
+	if (_file_sd) {
+		return _file_sd.position();
+	}
+
+	if (_file_spiffs) {
+		return _file_spiffs.position();
+	}
+	
+	return 0;
+}
+
+size_t DiskFont::Size() {
+	if (_file_sd) {
+		return _file_sd.size();
+	}
+
+	if (_file_spiffs) {
+		return _file_spiffs.size();
+	}
+	
+	return 0;
+}
+
+bool DiskFont::Read(uint32_t* var) {
+	if (_file_sd) {
+		_file_sd.read(var, sizeof(*var)); // should be 4 bytes
+		return true;
+	} 
+		
+	if (_file_spiffs) {
+		_file_spiffs.read((uint8_t*)var, sizeof(*var));		
+		return true;
+	} 
+	
+	return false;
+	
+}
+
+bool DiskFont::Read(uint16_t* var) {
+	if (_file_sd) {
+		_file_sd.read(var, sizeof(*var)); // should be 2 bytes
+		return true;
+	} 
+		
+	if (_file_spiffs) {
+		_file_spiffs.read((uint8_t*)var, sizeof(*var));
+		return true;
+	} 
+	
+	return false;
+}
+
+bool DiskFont::Read(uint8_t* var) {
+	if (_file_sd) {
+		_file_sd.read(var, sizeof(*var)); // should be 1 bytes
+		return true;
+	} 
+		
+	if (_file_spiffs) {
+		_file_spiffs.read(var, sizeof(*var));		
+		return true;
+	} 
+	
+	return false;
+}
+
+bool DiskFont::Read(double* var) {
+	if (_file_sd) {
+		_file_sd.read(var, sizeof(*var)); // should be 8 bytes
+		return true;
+	} 
+		
+	if (_file_spiffs) {
+		_file_spiffs.read((uint8_t*)var, sizeof(*var));
+		return true;
+	} 
+	
+	return false;
+}
+
+bool DiskFont::Read(void* array, uint32_t bytecount) { // no way of checking bounds, so careful with this function
+	if (_file_sd) {
+		_file_sd.read(array, bytecount);
+		return true;
+	} 
+		
+	if (_file_spiffs) {
+		_file_spiffs.read((uint8_t*)array, bytecount);		
+		return true;
+	} 
+	
+	return false;
+}
+
+
+
+
 DiskFont::DiskFont() {
-	available = false; // must call "begin" first
+	available = false; // must have called SD.begin() and SPIFFS.begin() somewhere first
 }
 
 DiskFont::~DiskFont() {
 	end();
 }
 
-bool DiskFont::begin(/*I18n* i18n,*/ String fontfilename) {
-	//if (i18n == NULL) return false;
+bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
+	if (font_tuning_percent >= 0.0 && font_tuning_percent <= 100.0) {
+		_font_tuning_percent = font_tuning_percent;
+	}
 	
-	//_I18n = i18n;
+	begin(fontfilename);
+}
+
+bool DiskFont::begin(String fontfilename) {
 	_fontfilename = fontfilename;
 	
-	//_file = _I18n->openFile(_fontfilename, "r");
+/*
 	_file = SD.open(_fontfilename.c_str(), FILE_READ);
 
 	if (!_file.available()) {
 		I2CSerial.printf("unable to open diskfont %s\n", _fontfilename.c_str());
 		return false;
 	}
+*/
+	if (!OpenFontFile()) return false;
+
 	/*
             const unsigned long FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
             const unsigned long FONT_HEADER_OFFSET_STARTCHAR = 10; // dword
@@ -34,29 +189,38 @@ bool DiskFont::begin(/*I18n* i18n,*/ String fontfilename) {
             const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
 	*/
 	
-	bool bResult = false;
 	_FontHeader = {0};
 	
-	_file.seek(FONT_HEADER_OFFSET_START);
-	bResult = ReadUInt16LittleEndian(&_FontHeader.charheight)
-		&& ReadUInt32LittleEndian(&_FontHeader.startchar)
-		&& ReadUInt32LittleEndian(&_FontHeader.endchar)
-		&& ReadUInt16LittleEndian(&_FontHeader.numlookupblocks)
-		&& ReadUInt8(&_FontHeader.spacecharwidth);
-
-	if (!bResult) {
-		I2CSerial.printf("Problem reading diskfont header\n");
+	//_file.seek(FONT_HEADER_OFFSET_START);
+	if (!Seek(FONT_HEADER_OFFSET_START)) {
+		Serial.printf("couldn't find diskfont header\n");
+		CloseFontFile();
+		return false;
+	};
+	
+	if (!(Read(&_FontHeader.charheight)
+		&& Read(&_FontHeader.startchar)
+		&& Read(&_FontHeader.endchar)
+		&& Read(&_FontHeader.numlookupblocks)
+		&& Read(&_FontHeader.spacecharwidth))) 
+	{		
+		Serial.printf("Problem reading diskfont header\n");
+		CloseFontFile();
+		return false;
 	}
+	
+	Serial.printf("FontHeader\ncharheight=%d\nstartchar=%d\nendchar=%d\nnumlookupblocks=%d\nspacecharwidth=%d\n\n", _FontHeader.charheight, _FontHeader.startchar, _FontHeader.endchar, _FontHeader.numlookupblocks, _FontHeader.spacecharwidth);
+	
 	
 	// need to read blocktable (1024/3*4 = 85 blocktable entries/kB)
 	uint32_t font_blocktablesize = _FontHeader.numlookupblocks * sizeof(DiskFont_BlocktableEntry);
 	
-	I2CSerial.printf("Diskfont blocktable count = %d, size = %d\n", _FontHeader.numlookupblocks, font_blocktablesize);
+	Serial.printf("Diskfont blocktable count = %d, size = %d\n", _FontHeader.numlookupblocks, font_blocktablesize);
 	
 	if (font_blocktablesize > (system_get_free_heap_size() - 10240)) {
 		//_I18n.closeFile(_file); // not enough memory for blocktable (leaves a minimum of 10k free)
-		I2CSerial.printf("Not enough room for diskfont blocktable\n");
-		_file.close();
+		Serial.printf("Not enough room for diskfont blocktable\n");
+		CloseFontFile();
 		return false;
 	}
 	
@@ -64,16 +228,16 @@ bool DiskFont::begin(/*I18n* i18n,*/ String fontfilename) {
 
 	if (_Font_BlocktablePtr == NULL) {
 		//_I18n.closeFile(_file);
-		I2CSerial.printf("Could not allocate memory for diskfont blocktable\n");
-		_file.close();	// 'new' failed (shouldn't happen, since we calculated the available memory beforehand, but still...)
+		Serial.printf("Could not allocate memory for diskfont blocktable\n");
+		CloseFontFile();	// 'new' failed (shouldn't happen, since we calculated the available memory beforehand, but still...)
 		return false;
 	}
 	
-	_file.read(_Font_BlocktablePtr, font_blocktablesize);
+	Read(_Font_BlocktablePtr, font_blocktablesize);
 	
 	available = true;
 	
-	I2CSerial.printf("Diskfont is available\n");
+	Serial.printf("Diskfont is available\n");
 	
 	return true; // ready to access font
 }
@@ -81,8 +245,8 @@ bool DiskFont::begin(/*I18n* i18n,*/ String fontfilename) {
 void DiskFont::end() {
 	//_I18n.closeFile(_file);
 	available = false;
-	delete _Font_BlocktablePtr;	
-	_file.close();
+	if (_Font_BlocktablePtr != NULL) delete _Font_BlocktablePtr;	
+	CloseFontFile();
 }
 
 
@@ -102,6 +266,11 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int col
 int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst) {	
 	//if (codepoint == 32) return _FontHeader.spacecharwidth; // space character
 
+	if(!available) {
+		Serial.printf("DrawCharAt() Diskfont is not available.\n");
+		return 0;
+	}
+	
 	DiskFont_FontCharInfo fci;
 	if (!getCharInfo(codepoint, blockToCheckFirst, &fci)) {
 		I2CSerial.printf("DrawCharAt() getCharInfo returned false\n");
@@ -144,7 +313,7 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 	
 	//I2CSerial.printf("-%x\t", fci.bitmapfileoffset);
 	
-	_file.seek(fci.bitmapfileoffset);
+	Seek(fci.bitmapfileoffset);
 	
 	// calculate the number of bytes needed to store the given number of bits (the character width in bits) in fci.widthbits
 	if (fci.widthbits == 0) return 0; // zero-width character - return 0 for the character width.
@@ -166,10 +335,10 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 		for (i = 0; i < char_width; i++) {
 
 			if (buf_offset == 0 && i % 8 == 0) {
-				if ((_file.size() - _file.position()) > bytesremaining) {
+				if ((Size() - Position()) > bytesremaining) {
 					int bytestoread = CHARBUFF_SIZE;
 					if (bytesremaining < CHARBUFF_SIZE) bytestoread = bytesremaining;
-					_file.read(_char_buffer, bytestoread);
+					Read(_char_buffer, bytestoread);
 					bytesremaining -= bytestoread;
 					/* 
 					//debugging
@@ -234,8 +403,13 @@ void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int co
 }
 
 void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
-	Serial.printf("DrawStringAt: String is %s\n\n", text.c_str());
-	
+	Serial.printf("DrawStringAt: String is %s\n", text.c_str());
+
+	if (!available) {
+		Serial.printf("Diskfont is not available.\n");
+		return;
+	}
+		
 	int charIndex = 0;
 	int len = Utf8CharCount(text); //text.length();
 	
@@ -326,7 +500,12 @@ void DiskFont::DrawStringAtA(int x, int y, String text, Paint* paint, int colore
 }
 
 void DiskFont::DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
-	Serial.printf("DrawStringAt: String is %s\n\n", text.c_str());
+	Serial.printf("DrawStringAt: String is %s\n", text.c_str());
+
+	if (!available) {
+		Serial.printf("Diskfont is not available.\n");
+		return;
+	}
 	
 	int charIndex = 0;
 	int len = Utf8CharCount(text); //text.length();
@@ -510,13 +689,14 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 }
 
 double DiskFont::GetAdvanceWidth(int bitmapwidth, double advanceWidth) {
+	//Font tuning value will be obtained from the config.csv file
 	double dbitmapwidth = (double) bitmapwidth;
 
 	double scalefactor = (dbitmapwidth / advanceWidth) * 100.0;
 	
 	//Serial.printf("dbitmapwidth = %d, advanceWidth = %d, sf = %d\n", (int)dbitmapwidth, (int)advanceWidth, (int)scalefactor);
 	
-	if (scalefactor < 50.0) {
+	if (scalefactor < _font_tuning_percent) {
 		//Serial.printf("dbitmapwidth < 50pc of advanceWidth: returning advanceWidth\n\n");
 		return advanceWidth; // if bitmap width is less than 80% of advanceWidth (which comes from the font metrics), then return advancewidth, since it is likely a small character with a large footprint
 	}
@@ -619,7 +799,7 @@ int DiskFont::GetTextWidth(String text) {
 }
 
 bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* fci) {
-	I2CSerial.printf("@");
+	Serial.printf("@");
 	
 	uint16_t blockToCheckFirst = 0;
 	
@@ -627,11 +807,11 @@ bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* fci) {
 }
 
 bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci) {
-	if (!_file.available()) {
-		I2CSerial.printf("getCharInfo() diskfont _file is not available\n");
+	if (!available) {
+		Serial.printf("getCharInfo() diskfont _file is not available\n");
 		return false;
 	}
-	
+		
 	uint32_t foffset = 0;
 	bool bresult = false;
 	
@@ -640,7 +820,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			//I2CSerial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
 			//I2CSerial.printf("sc=%x, ec=%x, cp=%x\n", _Font_BlocktablePtr[*blockToCheckFirst].startchar, _Font_BlocktablePtr[*blockToCheckFirst].endchar, codepoint);
 			foffset = _Font_BlocktablePtr[*blockToCheckFirst].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
-			_file.seek(foffset);			
+			Seek(foffset);			
 						
 			//I2CSerial.printf("# foffset=%x\n", foffset);			
 	
@@ -670,7 +850,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			//I2CSerial.printf("BlockIndex = %d\n", blockIndex);
 			
 			foffset = _Font_BlocktablePtr[blockIndex].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
-			_file.seek(foffset);
+			Seek(foffset);
 			
 			//I2CSerial.printf("@ foffset=%x\n", foffset);			
 
@@ -684,63 +864,21 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 }
 
 bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
-	if (!_file) return false;
+	if (!available) return false;
 	
 	bool bresult = false;
 
 	//I2CSerial.printf("pos:%x", _file.position());
 	
 	bresult = /*ReadUInt8(&(fci->rtlflag)) && */
-			   ReadUInt16LittleEndian(&(fci->widthbits)) 
-			&& ReadUInt16LittleEndian(&(fci->heightbits)) 
-			&& ReadUInt32LittleEndian(&(fci->bitmapfileoffset))
-			&& ReadDouble(&(fci->advanceWidth))
-			&& ReadDouble(&(fci->advanceHeight));
+			   Read(&(fci->widthbits))
+			&& Read(&(fci->heightbits))
+			&& Read(&(fci->bitmapfileoffset))
+			&& Read(&(fci->advanceWidth))
+			&& Read(&(fci->advanceHeight));
 
 	//I2CSerial.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	//I2CSerial.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	
 	return bresult;
-}
-
-bool DiskFont::ReadUInt32LittleEndian(uint32_t* dword){
-	if (!_file.available()) return false;
-	
-	_file.read(dword, 4);	
-	return true;
-}
-
-bool DiskFont::ReadUInt16LittleEndian(uint16_t* word){
-	if (!_file.available()) return false;
-	
-	_file.read(word, 2);	
-	return true;
-}
-
-bool DiskFont::ReadUInt8(uint8_t* byte) {
-	if (!_file.available()) return false;
-
-	_file.read(byte, 1);
-	return true;
-}
-
-bool DiskFont::ReadDouble(double* d) {
-  union F {
-    double d;
-    byte b[8];
-  };
-
-  F f;
-
-  if (!_file.available()) return false;
-
-  byte b;
-
-  for (int i = 0; i < 8; i++) {
-    _file.read(&b, 1);
-    f.b[i] = b;
-  }
-
-  *d = f.d;
-  return true;
 }

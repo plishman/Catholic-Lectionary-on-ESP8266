@@ -5,6 +5,8 @@
 
 #include "Arduino.h"
 #include "SD.h"
+#define FS_NO_GLOBALS
+#include "FS.h"
 #include <epd2in7b.h>
 #include <epdpaint.h>
 #include <utf8string.h>
@@ -50,7 +52,12 @@ class DiskFont {
 public:
 	//I18n* _I18n;
 	String _fontfilename;
-	File _file;
+	
+	File _file_sd;
+	fs::File _file_spiffs;
+	
+	double _font_tuning_percent = 50.0;
+	
 	bool available = false;
 	
 	struct {
@@ -69,8 +76,20 @@ public:
 	DiskFont();
 	~DiskFont();
 	
-	bool begin(/*I18n* i18n,*/String fontfilename);
+	bool begin(String fontfilename);
+	bool begin(String fontfilename, double font_tuning_percent);
 	void end(void);
+
+	bool OpenFontFile();
+	bool CloseFontFile();
+	bool Seek(uint64_t offset);
+	size_t Position();
+	size_t Size();
+	bool Read(uint32_t* var);
+	bool Read(uint16_t* var);
+	bool Read(uint8_t* var);
+	bool Read(double* var);
+	bool Read(void* array, uint32_t bytecount);
 	
 	int DrawCharAt(int x, int y, char ascii_char, Paint* paint, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
@@ -103,10 +122,6 @@ public:
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
 	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
-	bool ReadUInt32LittleEndian(uint32_t* dword);
-	bool ReadUInt16LittleEndian(uint16_t* word);
-	bool ReadUInt8(uint8_t* byte);
-	bool ReadDouble(double* d);
 };
 
 class FontBlockTable {
