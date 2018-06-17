@@ -158,6 +158,37 @@ DiskFont::~DiskFont() {
 	end();
 }
 
+bool DiskFont::begin(ConfigParams c) {
+/*
+		desc = "";
+		lang = "";
+		yml_filename = "";
+		sanctorale_filename = "";
+		bible_filename = "";
+		font_filename = "builtin";
+		transfer_to_sunday = true;
+		celebrate_feast_of_christ_priest = true;
+		have_config = false;
+		right_to_left = false;
+		font_tuning_percent = 50.0;
+		font_use_fixed_spacing = false;
+		font_use_fixed_spacecharwidth = false;
+		font_fixed_spacing = 1;
+		font_fixed_spacechar_width = 2;		
+*/
+	if (c.font_tuning_percent >= 0.0 && c.font_tuning_percent <= 100.0) {
+		_font_tuning_percent = c.font_tuning_percent;
+	}
+
+	_font_use_fixed_spacing 		= c.font_use_fixed_spacing;
+	_font_use_fixed_spacecharwidth 	= c.font_use_fixed_spacecharwidth;
+	_font_fixed_spacing 			= c.font_fixed_spacing;
+	_font_fixed_spacecharwidth 		= c.font_fixed_spacecharwidth;
+	
+	begin(c.font_filename);
+}
+
+
 bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
 	if (font_tuning_percent >= 0.0 && font_tuning_percent <= 100.0) {
 		_font_tuning_percent = font_tuning_percent;
@@ -167,6 +198,8 @@ bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
 }
 
 bool DiskFont::begin(String fontfilename) {
+	if (fontfilename == "builtin") return false;
+	
 	_fontfilename = fontfilename;
 	
 /*

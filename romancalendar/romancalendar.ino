@@ -204,7 +204,7 @@ void loop(void) {
   Calendar c(D1);
 
   if (bEEPROM_checksum_good) {  
-    if (!c._I18n->_have_config) {
+    if (!c._I18n->configparams.have_config) {
       I2CSerial.println("Error: Failed to get config: config.csv is missing or bad or no SD card inserted");
       display_image(sd_card_not_inserted_image);
       ESP.deepSleep(SLEEP_HOUR);    
@@ -631,9 +631,8 @@ void init_panel() {
 void display_calendar(String date, Calendar* c, String refs) {  
   DiskFont diskfont;
   
-  if ((c->_I18n->_font_filename) != "builtin" && (c->_I18n->_font_filename) != "") {
+  if (diskfont.begin(c->_I18n->configparams)) {
     I2CSerial.printf("Using disk font\n");
-    diskfont.begin(c->_I18n->_font_filename, c->_I18n->_font_tuning_percent);
   }
   else {
     I2CSerial.printf("Using internal font\n");    
@@ -747,7 +746,7 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFo
 #define FORMAT_LINEBREAK String("br")
 
 bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont) {
-  bool right_to_left = c->_I18n->_right_to_left;
+  bool right_to_left = c->_I18n->configparams.right_to_left;
 
   I2CSerial.printf("refs from lectionary: [%s]\n", refs.c_str());
   

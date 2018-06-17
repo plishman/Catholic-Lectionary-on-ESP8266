@@ -952,7 +952,7 @@ bool Temporale::do_solemnities(time64_t date) {
 	if (issameday(date, ascension(lit_year))) { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; _Lectionary = 58; }
 	if (issameday(date, pentecost(lit_year))) { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; _Lectionary = 62; }
 
-	if (_I18n->_celebrate_feast_of_christ_priest) {
+	if (_I18n->configparams.celebrate_feast_of_christ_priest) {
 		if (issameday(date, christ_eternal_priest(lit_year))) { s = Enums::SOLEMNITIES_CHRIST_PRIEST;  bIsSolemnity = true; _Lectionary = 982; }		
 	}
 

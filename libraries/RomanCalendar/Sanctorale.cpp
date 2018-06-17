@@ -20,7 +20,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 		return false;
 	} 
 
-	if (!(_I18n->_have_config)) {
+	if (!(_I18n->configparams.have_config)) {
 		I2CSerial.println("Sanctorale::get(): No config");
 		return false;
 	}
@@ -44,7 +44,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 	String month_token = "= " + String(m);
 	String readLine;
 
-	String I18nFilename = _I18n->_sanctorale_filename; //"data/" + String(_I18n->I18n_SANCTORALE[_locale]);
+	String I18nFilename = _I18n->configparams.sanctorale_filename; //"data/" + String(_I18n->I18n_SANCTORALE[_locale]);
 
 #ifndef _WIN32
 	File file = _I18n->openFile(I18nFilename, FILE_READ);

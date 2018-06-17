@@ -11,7 +11,7 @@
 #include <epdpaint.h>
 #include <utf8string.h>
 #include "I2CSerialPort.h"
-//#include "I18n.h"
+#include "I18n.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -56,10 +56,14 @@ public:
 	File _file_sd;
 	fs::File _file_spiffs;
 	
-	double _font_tuning_percent = 50.0;
-	
+	double 	_font_tuning_percent = 50.0;
+	bool	_font_use_fixed_spacing = false;
+	bool	_font_use_fixed_spacecharwidth = false;
+	int		_font_fixed_spacing = 1;
+	int		_font_fixed_spacecharwidth = 2;
+
 	bool available = false;
-	
+
 	struct {
 		uint16_t charheight;
 		uint32_t startchar;
@@ -78,6 +82,7 @@ public:
 	
 	bool begin(String fontfilename);
 	bool begin(String fontfilename, double font_tuning_percent);
+	bool begin(ConfigParams c);
 	void end(void);
 
 	bool OpenFontFile();

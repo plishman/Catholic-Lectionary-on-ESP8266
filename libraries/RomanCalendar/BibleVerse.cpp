@@ -71,7 +71,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 		return false;
 	} 
 
-	if (!(_I18n->_have_config)) {
+	if (!(_I18n->configparams.have_config)) {
 		I2CSerial.println("BibleVerse::get(): No config");
 		return false;
 	}
@@ -82,9 +82,9 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	chapterstr = chapter < 100 ? "0" + chapterstr : chapterstr;
 
 	String edb_filename = bookstr + "_" + chapterstr + ".edb";
-	String edb_filedir = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
+	String edb_filedir = (_I18n->configparams.bible_filename.substring(0, _I18n->configparams.bible_filename.lastIndexOf(".")));
 
-	String index_filename = (_I18n->_bible_filename.substring(0, _I18n->_bible_filename.lastIndexOf(".")));
+	String index_filename = (_I18n->configparams.bible_filename.substring(0, _I18n->configparams.bible_filename.lastIndexOf(".")));
 	index_filename += "/Bible/" + edb_filename;
 /*	
 	//String index_filename = String("/Bibles/") + String(_I18n->I18n_LANGUAGES[_I18n->_locale]) + "/Bible/" + String(book) + "/" + String(chapter) + "/" + String(verse);	
@@ -155,7 +155,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 		return false;
 	}
 	
-	String bible_filename = _I18n->_bible_filename;
+	String bible_filename = _I18n->configparams.bible_filename;
 	
 	//if (!get_bible_filename(&bible_filename)) return false;
 

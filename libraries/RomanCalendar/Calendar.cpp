@@ -62,7 +62,7 @@ Calendar::Calendar() {
 	_I18n = new I18n();
 #endif
 	_date = (time64_t)-1;
-	_transfer_to_sunday = _I18n->_transfer_to_sunday;
+	_transfer_to_sunday = _I18n->configparams.transfer_to_sunday;
 
 	transfers = new Transfers(_transfer_to_sunday, _I18n);
 	temporale = new Temporale(_transfer_to_sunday, _I18n);
