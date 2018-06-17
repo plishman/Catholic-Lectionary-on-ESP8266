@@ -115,14 +115,8 @@ public:
 	double GetTextWidthA(String text);
 	double GetTextWidthA(const char* text);
 	
-	double GetAdvanceWidth(int bitmapwidth, double advanceWidth);
-	
-//	String Utf8ReverseString(String instr); // function to reverse utf-8 string
-//	int codepointUtf8(String c);
-//	String utf8fromCodepoint(int c);
-//	String utf8CharAt(String s, int pos);
-//	int charLenBytesUTF8(char s);
-//	//bool isRtlChar(String ch);
+	double GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width);
+//	double GetAdvanceWidth(int bitmapwidth, double advanceWidth);
 	
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);

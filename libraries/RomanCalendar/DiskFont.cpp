@@ -174,7 +174,7 @@ bool DiskFont::begin(ConfigParams c) {
 		font_use_fixed_spacing = false;
 		font_use_fixed_spacecharwidth = false;
 		font_fixed_spacing = 1;
-		font_fixed_spacechar_width = 2;		
+		font_fixed_spacecharwidth = 2;		
 */
 	if (c.font_tuning_percent >= 0.0 && c.font_tuning_percent <= 100.0) {
 		_font_tuning_percent = c.font_tuning_percent;
@@ -309,14 +309,14 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 		I2CSerial.printf("DrawCharAt() getCharInfo returned false\n");
 		return 0;
 	}
-	//else {
-		//refcolumn += (int)(pgm_read_byte(&(fci->widthBits))) + 1;
-	//}
+
+	uint16_t char_width = fci.widthbits;
+	//I2CSerial.printf("char_width=%d\n", char_width);
 
 	if (codepoint == 32) {
 		//Serial.printf("DrawCharAt: space char width = %d\n", (int)fci.advanceWidth);
-		advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth); //fci.advanceWidth;
-		return (int)advanceWidth; //fci.widthbits;
+		advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth;
+		return char_width; //fci.widthbits;
 	}
 	else {
 		//Serial.printf("ch=%s, u+%x advanceWidth=%d\n", utf8fromCodepoint(codepoint).c_str(), codepoint, (int)fci.advanceWidth);
@@ -327,10 +327,6 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 
 	uint16_t char_height = _FontHeader.charheight;
 	//I2CSerial.printf("char_height=%d\n", char_height);
-
-	////uint8_t char_width = pgm_read_byte(&(font->charInfo[charIndex].widthBits));
-	uint16_t char_width = fci.widthbits;
-	//I2CSerial.printf("char_width=%d\n", char_width);
 
 	////uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
 	uint32_t char_offset = fci.bitmapfileoffset;
@@ -408,10 +404,12 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 		}
 	}
 	//printf("char width=%d\n", char_width);
-
-	advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth); //fci.advanceWidth;
-	
 	unsigned int bidi_info = getBidiDirection((uint16_t)codepoint);
+
+	advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth; bitmapwidth, advancewidth, isSpaceChar, bidi_info
+	
+	return char_width;
+/*	
 	switch(bidi_info) {
 		case BIDI_AL:
 			return char_width;
@@ -426,6 +424,7 @@ int DiskFont::DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint,
 	}
 	
 	return char_width + 1;
+*/
 }
 
 /**
@@ -681,33 +680,15 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	
 	while (i < len) {
 		ch = utf8CharAt(text, i);
-		bresult = getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci);
+		int codepoint = codepointUtf8(ch);
+		bresult = getCharInfo(codepoint, &blockToCheckFirst, &fci);
 
 		//if (!bresult) Serial.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());
 		
 		if (bresult){
-			if (ch == " ") {
-				//refcolumn += _FontHeader.spacecharwidth;
-				refcolumn += (int)fci.advanceWidth;
-				advwidth += GetAdvanceWidth(_FontHeader.spacecharwidth, fci.advanceWidth);
-			} 
-			else {
-				//charIndex = (int)(codepointUtf8(ch) - font->startChar);
-				//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
-				
-				//I2CSerial.printf(">cp=%x, len(ch)=%d\n", codepointUtf8(ch), ch.length());
-				bresult = getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci);
-				
-				//I2CSerial.printf(bresult ? "getCharInfo returned true\n" : "getCharInfo returned false\n");
-				
-				//if (bresult) {
-					refcolumn += fci.widthbits + 1;
-					advwidth += GetAdvanceWidth(fci.widthbits, fci.advanceWidth); //fci.advanceWidth;
-				//}
-				//else {
-				//	refcolumn += 0;
-				//}
-			}
+			uint16_t char_width = 0;
+			advwidth += GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); // char width is modified by GetAdvanceWidth()
+			refcolumn += char_width;
 		}
 		else {
 			//refcolumn += 0;
@@ -721,6 +702,46 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	advanceWidth = advwidth;
 }
 
+double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width) {
+	// if using fixed (integer) pixel width space character, and character is a space
+	byte bidi_info = getBidiDirection(codepoint);
+	if (bidi_info == BIDI_NSM) {	// is non-spacing character, which is overprinted to create composed characters
+		char_width = 0;
+		return 0.0;
+	}
+
+	if (codepoint == 32 && _font_use_fixed_spacecharwidth) {
+		char_width = _font_fixed_spacecharwidth;
+		return (double)_font_fixed_spacecharwidth;
+	}
+	
+	// if using fixed (integer) pixel width intercharacter spacing (may be useful for very small fonts)
+	if (_font_use_fixed_spacing) {
+		char_width = bitmapwidth + _font_fixed_spacing;
+		return (double)char_width;
+	}
+	
+	// otherwise, calculate the advance width according to the font and the tuning value
+	
+	//Font tuning value is obtained from the config.csv file
+	double dbitmapwidth = (double) bitmapwidth;
+
+	double scalefactor = (dbitmapwidth / advanceWidth) * 100.0;
+	
+	//Serial.printf("dbitmapwidth = %d, advanceWidth = %d, sf = %d\n", (int)dbitmapwidth, (int)advanceWidth, (int)scalefactor);
+	
+	if (scalefactor < _font_tuning_percent) {
+		//Serial.printf("dbitmapwidth < 50pc of advanceWidth: returning advanceWidth\n\n");
+		char_width = (uint16_t)advanceWidth;
+		return advanceWidth; // if bitmap width is less than 80% of advanceWidth (which comes from the font metrics), then return advancewidth, since it is likely a small character with a large footprint
+	}
+	
+	//Serial.printf("returning dbitmapwidth\n\n");
+	char_width = (uint16_t)dbitmapwidth;
+	return dbitmapwidth; // otherwise, if the values are close, prefer the bitmap width (helps with Arabic ligaturization etc.)
+}
+
+/*
 double DiskFont::GetAdvanceWidth(int bitmapwidth, double advanceWidth) {
 	//Font tuning value will be obtained from the config.csv file
 	double dbitmapwidth = (double) bitmapwidth;
@@ -737,7 +758,7 @@ double DiskFont::GetAdvanceWidth(int bitmapwidth, double advanceWidth) {
 	//Serial.printf("returning dbitmapwidth\n\n");
 	return dbitmapwidth; // otherwise, if the values are close, prefer the bitmap width (helps with Arabic ligaturization etc.)
 }
-
+*/
 
 int DiskFont::GetTextWidth(const char* text) {
 	return GetTextWidth(String(text));
