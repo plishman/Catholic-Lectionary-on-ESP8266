@@ -127,9 +127,9 @@ bool Config::ServeClient(bool* bSettingsUpdated)
     GetConfig(&c);
     I2CSerial.println("timezone = " + String(c.timezone_offset));
     I2CSerial.println("lectionary = " + String(c.lectionary_config_number));
-    String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-    client.print(header);
     String line = "{\"tz_offset\":\"" + String(c.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.lectionary_config_number) + "\"}"; // output in JSON format
+    String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + String(line.length()) + "\r\nConnection: close\r\n\r\n";
+    client.print(header);
     I2CSerial.println(line);
     client.print(line);
   }
@@ -215,7 +215,8 @@ bool Config::sendHttpFile(WiFiClient* client, String filename) {
   if (!file.available()) {
     return false;
   } else {
-    String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+	int filelength = file.size();
+    String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + String(filelength) + "\r\nConnection: close\r\n\r\n";
     client->print(header);
     String line;
     do {
