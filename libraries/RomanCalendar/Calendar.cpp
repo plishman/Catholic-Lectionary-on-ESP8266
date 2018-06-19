@@ -82,6 +82,9 @@ Calendar::~Calendar() {
 }
 
 bool Calendar::get(time64_t date) {
+	if (date < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
+											  // which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
+	
 	int tz_offset = (int) (_timezone_offset * 3600);
 	I2CSerial.println("Timezone offset is " + String(_timezone_offset));
 
@@ -106,6 +109,7 @@ bool Calendar::get(time64_t date) {
 	//bool bTransfersSuccess = transfers->get(date);
 	bool bTemporaleSuccess = temporale->get(date);
 	if (!bTemporaleSuccess) return false;
+	I2CSerial.printf("got temporale\n");
 
 	time64_t transferred_from;
 	bool bWasTransferred = transfers->transferred_to(date, &transferred_from);
@@ -114,9 +118,11 @@ bool Calendar::get(time64_t date) {
 
 	if (!bWasTransferred) {
 		bIsSanctorale = sanctorale->get(date);
+		I2CSerial.printf("got sanctorale(1)\n");
 	}
 	else {
 		bIsSanctorale = sanctorale->get(transferred_from);
+		I2CSerial.printf("got sanctorale(2)\n");
 	}
 
 	int lit_year = temporale->liturgical_year(date);

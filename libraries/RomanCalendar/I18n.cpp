@@ -186,6 +186,7 @@ bool I18n::get_config( void ) {
 		s_font_tuning = csv.getCsvField(csv_record, &pos);
 		// font tuning can be either a percentage 0-100, or npx for fixed intercharacter spacing (in pixels), or npx mpx for fixed interchar spacing and fixed spacechar width
 		// check for fixed intercharacter distance:
+				
 		int pxoffset = s_font_tuning.indexOf("px",0);
 		if (pxoffset != -1) {
 			c.font_fixed_spacing = s_font_tuning.substring(0, pxoffset).toInt();
@@ -226,6 +227,7 @@ bool I18n::get_config( void ) {
 		else {
 			//I2CSerial.println("Not selected");	
 			i++;
+			c.Clear();
 		}
 		//if (csv.getCsvField(csv_record, &pos) == "selected") {
 		//	bFoundSelection = true;

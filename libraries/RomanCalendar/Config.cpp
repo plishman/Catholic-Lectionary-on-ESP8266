@@ -290,6 +290,11 @@ bool Config::GetConfig(config_t* c) {
 }
 
 bool Config::EEPROMChecksumValid() {
+	time64_t t;
+	if (!getDS3231DateTime(&t)){ // if the time is invalid, also return false
+		return false;
+	}
+	
 	config_t c;
 	return GetConfig(&c);
 }
@@ -407,6 +412,10 @@ bool Config::getDS3231DateTime(time64_t* t) {
 	  I2CSerial.printf("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March %d\n", tm.Year);
 	  setDS3231DateTime(*t);
   }
+  
+  if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
+											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
+
   
   //I2CSerial.printf("-4-");
 

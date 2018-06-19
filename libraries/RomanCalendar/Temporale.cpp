@@ -1032,7 +1032,7 @@ bool Temporale::get(time64_t date) {
 		break;
 
 	default:
-		printf("Colours:Season not set!\n");
+		I2CSerial.printf("Colours:Season not set!\n");
 		_colour_e = Enums::COLOURS_GREEN;
 	}
 

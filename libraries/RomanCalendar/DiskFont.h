@@ -7,6 +7,7 @@
 #include "SD.h"
 #define FS_NO_GLOBALS
 #include "FS.h"
+#include <math.h>
 #include <epd2in7b.h>
 #include <epdpaint.h>
 #include <utf8string.h>

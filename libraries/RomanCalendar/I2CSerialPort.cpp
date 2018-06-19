@@ -8,7 +8,7 @@ I2CSerialPort::I2CSerialPort() {
 	
 	
 	if (conf.GetConfig(&c)) {
-		_b_enable = true; //c.debug_on;
+		_b_enable = c.debug_on;
 	} 
 	else {
 		_b_enable = true; // turn on debug output if the EEPROM settings are corrupt or invalid.
