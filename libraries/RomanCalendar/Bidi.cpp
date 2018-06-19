@@ -299,8 +299,10 @@ bool Bidi::RenderText(String s,
 	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	bool bDirectionChanged = true; // at the start of the string, want to force GetString to check which direction the text is reading, otherwise inherit it from the preceding text
+
+	int font_ascent = (int)font->ascent;
 	
-	while (*ypos < fbheight && endstrpos < s.length()) {		
+	while ((*ypos + font_ascent) < fbheight && endstrpos < s.length()) {		
 		bLineBreak = false;
 
 		GetString(s, &startstrpos, &endstrpos, &textwidth, paint_black, font, bEmphasisOn, &bLineBreak, &bRTL, &bDirectionChanged, &bNewLine, fbwidth, *xpos);
@@ -371,7 +373,9 @@ bool Bidi::RenderText(String s,
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	bool bDirectionChanged = true; // at the start of the string, want to force GetString to check which direction the text is reading, otherwise inherit it from the preceding text
 	
-	while (*ypos < fbheight && endstrpos < s.length()) {
+	int font_ascent = (int)diskfont->_FontHeader.ascent;
+	
+	while ((*ypos + font_ascent) < fbheight && endstrpos < s.length()) {
 		bLineBreak = false;
 
 		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, bEmphasisOn, &bLineBreak, &bRTL, &bDirectionChanged, &bNewLine, fbwidth, *xpos);

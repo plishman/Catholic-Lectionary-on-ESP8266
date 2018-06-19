@@ -71,6 +71,9 @@ public:
 		uint32_t endchar;
 		uint16_t numlookupblocks;
 		uint8_t spacecharwidth;
+		double ascent;
+		double descent;
+		double linespacing;
 	} _FontHeader;
 	
 	DiskFont_BlocktableEntry* _Font_BlocktablePtr = NULL;

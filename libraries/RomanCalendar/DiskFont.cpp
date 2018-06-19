@@ -221,7 +221,9 @@ bool DiskFont::begin(String fontfilename) {
             const unsigned long FONT_HEADER_OFFSET_ENDCHAR = 14; // dword
             const unsigned long FONT_HEADER_OFFSET_NUMLOOKUPENTRIES = 18; // word
             const unsigned long FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
-            const unsigned long FONT_HEADER_OFFSET_END = 21;
+			const double 		FONT_HEADER_OFFSET_ASCENT = 21;
+            const double 		FONT_HEADER_OFFSET_DESCENT = 29;
+            const unsigned long FONT_HEADER_OFFSET_END = 37;
             const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
 	*/
 	
@@ -238,7 +240,10 @@ bool DiskFont::begin(String fontfilename) {
 		&& Read(&_FontHeader.startchar)
 		&& Read(&_FontHeader.endchar)
 		&& Read(&_FontHeader.numlookupblocks)
-		&& Read(&_FontHeader.spacecharwidth))) 
+		&& Read(&_FontHeader.spacecharwidth)
+		&& Read(&_FontHeader.ascent)
+		&& Read(&_FontHeader.descent)
+		&& Read(&_FontHeader.linespacing))) 
 	{		
 		Serial.printf("Problem reading diskfont header\n");
 		CloseFontFile();

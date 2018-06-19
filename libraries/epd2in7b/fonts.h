@@ -61,9 +61,7 @@ typedef struct
 {
 	const uint8_t widthBits;				// width, in bits (or pixels), of the character
 	const uint8_t heightBits;				// height, in bits (or pixels), of the character
-	const uint32_t offset;					// offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
-	const uint8_t rtlflag;	// flags (only bit 0 is used so far, bit0 = 1 -> character is right to left reading)
-	
+	const uint32_t offset;					// offset of the character's bitmap, in bytes, into the the FONT_INFO's data array	
 } FONT_CHAR_INFO;	
 
 typedef struct 
@@ -73,7 +71,25 @@ typedef struct
 	FONT_CHAR_INFO* fontcharinfoBlock;
 } FONT_CHAR_INFO_LOOKUP;
 
+
 // Describes a single font
+typedef struct
+{
+	const uint8_t heightPages;		// height, in pages (8 pixels), of the font's characters
+	const uint32_t startChar;		// the first character in the font (e.g. in charInfo and data)
+	const uint32_t endChar;		// the last character in the font
+	const uint8_t spacePixels;		// number of pixels that a space character takes up
+	FONT_CHAR_INFO_LOOKUP* fontcharinfoBlockLookup;		// points to array of fontcharinfo lookup entries
+	const FONT_CHAR_INFO* charInfo;		// pointer to array of char information (NULL if multiple blocks are used in the font, in which case FONT_CHAR_INFO_LOOKUP* will be used)
+	const uint16_t blockCount;		// number of blocks in font (set to 0 if a single-block font)
+	const uint8_t* data;		// pointer to generated array of character visual representation
+	const double ascent;		//Font ascent height (px)
+	const double descent;		//Font descent height (px)
+	const double lineheight;		//Font lineheight (px)
+} FONT_INFO;
+
+// Describes a single font
+/*
 typedef struct
 {
 	const uint8_t 			heightPages;	// height, in pages (8 pixels), of the font's characters
@@ -84,8 +100,8 @@ typedef struct
 	const uint16_t			blockCount;		// number of blocks in font (set to 0 if a single-block font)
 	const FONT_CHAR_INFO*	charInfo;		// pointer to array of char information (NULL if multiple blocks are used in the font, in which case FONT_CHAR_INFO_LOOKUP* will be used)
 	const uint8_t*			data;			// pointer to generated array of character visual representation
-		
 } FONT_INFO;	
+*/
 
 //^^ the dot factory font structs
 

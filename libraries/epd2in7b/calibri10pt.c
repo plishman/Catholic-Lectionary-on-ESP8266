@@ -1,12 +1,13 @@
 #include "fonts.h"
-#include "calibri8pt.h"
+#include "calibri10pt.h"
 #include <pgmspace.h>
+
 // 
-//  Font data for Calibri 8pt
+//  Font data for Calibri 10pt
 // 
 
-// Character bitmaps for Calibri 8pt
-const uint8_t calibri_8ptBitmaps[] PROGMEM = 
+// Character bitmaps for Calibri 10pt
+const uint8_t calibri_10ptBitmaps[] PROGMEM = 
 {
 	// @0 '!' (1 pixels wide)
 	0x00, //  
@@ -1011,7 +1012,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @945 'backslash' (5 pixels wide)
+	// @945 backslash (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -23111,22 +23112,22 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @21915 'ؔ' (6 pixels wide)
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x04, //      #
-	0xFC, // ######
-	0x00, //       
-	0x00, //       
-	0x00, //       
-	0x00, //       
+	// @21915 'ؔ' (5 pixels wide)
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x08, //     #
+	0xF0, // #### 
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
 
 	// @21930 'ؕ' (2 pixels wide)
 	0x00, //   
@@ -23883,10 +23884,10 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x0C, //     ##  
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
@@ -24648,10 +24649,10 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
@@ -25600,10 +25601,10 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x0C, //     ##  
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
@@ -25617,10 +25618,10 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #  
 	0x0C, //     ##  
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
@@ -28014,10 +28015,10 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x0C, //     ##  
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
@@ -28279,7 +28280,398 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##   
 	0x00, //         
 
-	// @27525 'ࣣ' (2 pixels wide)
+	// @27525 'ࢶ' (10 pixels wide)
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x04, 0x00, //      #    
+	0x04, 0x00, //      #    
+	0x0C, 0x00, //     ##    
+	0x08, 0x00, //     #     
+	0x48, 0x40, //  #  #    #
+	0x80, 0x40, // #        #
+	0x40, 0x40, //  #       #
+	0x7F, 0x80, //  ######## 
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x06, 0x00, //      ##   
+	0x00, 0x00, //           
+
+	// @27555 'ࢷ' (10 pixels wide)
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x04, 0x00, //      #    
+	0x04, 0x00, //      #    
+	0x0C, 0x00, //     ##    
+	0x08, 0x00, //     #     
+	0x48, 0x40, //  #  #    #
+	0x80, 0x40, // #        #
+	0x40, 0x40, //  #       #
+	0x7F, 0x80, //  ######## 
+	0x00, 0x00, //           
+	0x06, 0x00, //      ##   
+	0x02, 0x00, //       #   
+	0x00, 0x00, //           
+
+	// @27585 'ࢸ' (10 pixels wide)
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x0C, 0x00, //     ##    
+	0x40, 0x40, //  #       #
+	0x9E, 0x40, // #  ####  #
+	0x40, 0x40, //  #       #
+	0x7F, 0x80, //  ######## 
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+
+	// @27615 'ࢹ' (5 pixels wide)
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x00, //      
+	0x08, //     #
+	0x30, //   ## 
+	0x00, //      
+	0x00, //      
+	0x08, //     #
+	0x08, //     #
+	0x08, //     #
+	0x10, //    # 
+	0xF0, // #### 
+	0x00, //      
+	0x00, //      
+
+	// @27630 'ࢺ' (8 pixels wide)
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x08, //     #   
+	0x33, //   ##  ##
+	0x04, //      #  
+	0x08, //     #   
+	0x4C, //  #  ##  
+	0x87, // #    ###
+	0x81, // #      #
+	0x42, //  #    # 
+	0x7C, //  #####  
+	0x00, //         
+	0x00, //         
+
+	// @27645 'ࢻ' (11 pixels wide)
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0xC0, //         ## 
+	0x01, 0x40, //        # # 
+	0x81, 0x20, // #      #  #
+	0x80, 0xC0, // #       ## 
+	0x40, 0x40, //  #       # 
+	0x3F, 0x80, //   #######  
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+	0x00, 0x00, //            
+
+	// @27675 'ࢼ' (8 pixels wide)
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x06, //      ## 
+	0x0A, //     # # 
+	0x49, //  #  #  #
+	0x87, // #    ###
+	0x81, // #      #
+	0x42, //  #    # 
+	0x7C, //  #####  
+	0x00, //         
+	0x00, //         
+
+	// @27690 'ࢽ' (7 pixels wide)
+	0x00, //        
+	0x00, //        
+	0x00, //        
+	0x00, //        
+	0x00, //        
+	0x00, //        
+	0x04, //      # 
+	0x04, //      # 
+	0x42, //  #    #
+	0x82, // #     #
+	0x44, //  #   # 
+	0x78, //  ####  
+	0x00, //        
+	0x00, //        
+	0x00, //        
+
+	// @27705 'ࣔ' (8 pixels wide)
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x03, //       ##
+	0x53, //  # #  ##
+	0xB1, // # ##   #
+	0xA7, // # #  ###
+	0xF8, // #####   
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+
+	// @27720 'ࣕ' (6 pixels wide)
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x08, //     # 
+	0x34, //   ## #
+	0x98, // #  ## 
+	0xA0, // # #   
+	0x60, //  ##   
+	0x00, //       
+	0x00, //       
+	0x00, //       
+
+	// @27735 'ࣖ' (2 pixels wide)
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x80, // # 
+	0x80, // # 
+	0xC0, // ##
+	0x80, // # 
+	0x80, // # 
+	0xC0, // ##
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+
+	// @27750 'ࣗ' (4 pixels wide)
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x20, //   # 
+	0x00, //     
+	0x20, //   # 
+	0x20, //   # 
+	0xB0, // # ##
+	0x90, // #  #
+	0x60, //  ## 
+	0x00, //     
+	0x00, //     
+	0x00, //     
+
+	// @27765 'ࣘ' (2 pixels wide)
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x40, //  #
+	0xC0, // ##
+	0xC0, // ##
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+
+	// @27780 'ࣙ' (2 pixels wide)
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x40, //  #
+	0xC0, // ##
+	0xC0, // ##
+
+	// @27795 'ࣚ' (10 pixels wide)
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x1A, 0x80, //    ## # # 
+	0x56, 0xC0, //  # # ## ##
+	0x56, 0xC0, //  # # ## ##
+	0xBF, 0x40, // # ###### #
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+
+	// @27825 'ࣛ' (12 pixels wide)
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x80, 0x00, // #           
+	0x00, 0x00, //             
+	0x80, 0x00, // #           
+	0x9C, 0x30, // #  ###    ##
+	0xAC, 0x30, // # # ##    ##
+	0x73, 0xE0, //  ###  ##### 
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+
+	// @27855 'ࣜ' (12 pixels wide)
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x60, //          ## 
+	0x01, 0x30, //        #  ##
+	0x32, 0xF0, //   ##  # ####
+	0xFF, 0xE0, // ########### 
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+
+	// @27885 'ࣝ' (10 pixels wide)
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x06, 0x00, //      ##   
+	0x68, 0x00, //  ## #     
+	0x08, 0x00, //     #     
+	0x44, 0x00, //  #   #    
+	0xFF, 0xC0, // ##########
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+	0x00, 0x00, //           
+
+	// @27915 'ࣞ' (6 pixels wide)
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x04, //      #
+	0x10, //    #  
+	0x04, //      #
+	0x14, //    # #
+	0xFC, // ######
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+
+	// @27930 'ࣟ' (8 pixels wide)
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x00, //         
+	0x14, //    # #  
+	0xC0, // ##      
+	0x15, //    # # #
+	0xB5, // # ## # #
+	0x7D, //  ##### #
+	0x03, //       ##
+	0x00, //         
+	0x00, //         
+	0x00, //         
+
+	// @27945 '࣠' (4 pixels wide)
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0xC0, // ##  
+	0xC0, // ##  
+	0xF0, // ####
+	0x00, //     
+	0x00, //     
+	0x00, //     
+
+	// @27960 '࣡' (6 pixels wide)
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x00, //       
+	0x04, //      #
+	0x1C, //    ###
+	0xFC, // ######
+	0x00, //       
+	0x00, //       
+	0x00, //       
+
+	// @27975 '࣢' (4 pixels wide)
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x40, //  #  
+	0x60, //  ## 
+	0x90, // #  #
+	0x90, // #  #
+	0xF0, // ####
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+	0x00, //     
+
+	// @27990 'ࣣ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28296,7 +28688,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x00, //   
 
-	// @27540 'ࣤ' (2 pixels wide)
+	// @28005 'ࣤ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28313,7 +28705,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27555 'ࣥ' (2 pixels wide)
+	// @28020 'ࣥ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28330,7 +28722,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27570 'ࣦ' (2 pixels wide)
+	// @28035 'ࣦ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28347,7 +28739,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27585 'ࣧ' (2 pixels wide)
+	// @28050 'ࣧ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28364,7 +28756,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27600 'ࣨ' (2 pixels wide)
+	// @28065 'ࣨ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28381,7 +28773,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27615 'ࣩ' (2 pixels wide)
+	// @28080 'ࣩ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28398,7 +28790,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27630 '࣪' (1 pixels wide)
+	// @28095 '࣪' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -28415,7 +28807,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @27645 '࣫' (2 pixels wide)
+	// @28110 '࣫' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28432,7 +28824,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27660 '࣬' (2 pixels wide)
+	// @28125 '࣬' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28449,7 +28841,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27675 '࣭' (1 pixels wide)
+	// @28140 '࣭' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -28466,7 +28858,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @27690 '࣮' (2 pixels wide)
+	// @28155 '࣮' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28483,7 +28875,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27705 '࣯' (2 pixels wide)
+	// @28170 '࣯' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28500,7 +28892,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27720 'ࣰ' (4 pixels wide)
+	// @28185 'ࣰ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28517,7 +28909,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @27735 'ࣱ' (3 pixels wide)
+	// @28200 'ࣱ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -28534,7 +28926,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @27750 'ࣲ' (4 pixels wide)
+	// @28215 'ࣲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28551,7 +28943,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @27765 'ࣳ' (2 pixels wide)
+	// @28230 'ࣳ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28568,7 +28960,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @27780 'ࣴ' (2 pixels wide)
+	// @28245 'ࣴ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28585,7 +28977,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27795 'ࣵ' (2 pixels wide)
+	// @28260 'ࣵ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28602,7 +28994,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27810 'ࣶ' (2 pixels wide)
+	// @28275 'ࣶ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28619,7 +29011,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27825 'ࣷ' (2 pixels wide)
+	// @28290 'ࣷ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28636,7 +29028,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27840 'ࣸ' (2 pixels wide)
+	// @28305 'ࣸ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28653,7 +29045,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27855 'ࣹ' (2 pixels wide)
+	// @28320 'ࣹ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28670,7 +29062,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27870 'ࣺ' (2 pixels wide)
+	// @28335 'ࣺ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28687,7 +29079,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27885 'ࣻ' (4 pixels wide)
+	// @28350 'ࣻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28704,7 +29096,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @27900 'ࣼ' (4 pixels wide)
+	// @28365 'ࣼ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28721,7 +29113,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @27915 'ࣽ' (4 pixels wide)
+	// @28380 'ࣽ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28738,7 +29130,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @27930 'ࣾ' (3 pixels wide)
+	// @28395 'ࣾ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -28755,7 +29147,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @27945 'ࣿ' (2 pixels wide)
+	// @28410 'ࣿ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -28772,7 +29164,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @27960 '฿' (5 pixels wide)
+	// @28425 '฿' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -28789,7 +29181,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @27975 'ᴀ' (6 pixels wide)
+	// @28440 'ᴀ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -28806,7 +29198,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @27990 'ᴁ' (8 pixels wide)
+	// @28455 'ᴁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -28823,7 +29215,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @28005 'ᴂ' (9 pixels wide)
+	// @28470 'ᴂ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -28840,7 +29232,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @28035 'ᴃ' (6 pixels wide)
+	// @28500 'ᴃ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -28857,7 +29249,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28050 'ᴄ' (5 pixels wide)
+	// @28515 'ᴄ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -28874,7 +29266,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28065 'ᴅ' (5 pixels wide)
+	// @28530 'ᴅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -28891,7 +29283,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28080 'ᴆ' (6 pixels wide)
+	// @28545 'ᴆ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -28908,7 +29300,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28095 'ᴇ' (4 pixels wide)
+	// @28560 'ᴇ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28925,7 +29317,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28110 'ᴈ' (4 pixels wide)
+	// @28575 'ᴈ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28942,7 +29334,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28125 'ᴉ' (1 pixels wide)
+	// @28590 'ᴉ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -28959,7 +29351,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @28140 'ᴊ' (3 pixels wide)
+	// @28605 'ᴊ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -28976,7 +29368,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28155 'ᴋ' (4 pixels wide)
+	// @28620 'ᴋ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -28993,7 +29385,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28170 'ᴌ' (4 pixels wide)
+	// @28635 'ᴌ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29010,7 +29402,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28185 'ᴍ' (7 pixels wide)
+	// @28650 'ᴍ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -29027,7 +29419,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @28200 'ᴎ' (5 pixels wide)
+	// @28665 'ᴎ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29044,7 +29436,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28215 'ᴏ' (6 pixels wide)
+	// @28680 'ᴏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29061,7 +29453,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28230 'ᴐ' (5 pixels wide)
+	// @28695 'ᴐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29078,7 +29470,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28245 'ᴑ' (6 pixels wide)
+	// @28710 'ᴑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29095,7 +29487,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28260 'ᴒ' (6 pixels wide)
+	// @28725 'ᴒ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29112,7 +29504,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28275 'ᴓ' (8 pixels wide)
+	// @28740 'ᴓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -29129,7 +29521,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @28290 'ᴔ' (10 pixels wide)
+	// @28755 'ᴔ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -29146,7 +29538,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @28320 'ᴕ' (5 pixels wide)
+	// @28785 'ᴕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29163,7 +29555,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28335 'ᴖ' (6 pixels wide)
+	// @28800 'ᴖ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29180,7 +29572,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28350 'ᴗ' (6 pixels wide)
+	// @28815 'ᴗ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29197,7 +29589,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28365 'ᴘ' (4 pixels wide)
+	// @28830 'ᴘ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29214,7 +29606,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28380 'ᴙ' (5 pixels wide)
+	// @28845 'ᴙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29231,7 +29623,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28395 'ᴚ' (4 pixels wide)
+	// @28860 'ᴚ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29248,7 +29640,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28410 'ᴛ' (5 pixels wide)
+	// @28875 'ᴛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29265,7 +29657,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28425 'ᴜ' (5 pixels wide)
+	// @28890 'ᴜ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29282,7 +29674,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28440 'ᴝ' (6 pixels wide)
+	// @28905 'ᴝ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29299,7 +29691,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28455 'ᴞ' (8 pixels wide)
+	// @28920 'ᴞ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -29316,7 +29708,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @28470 'ᴟ' (6 pixels wide)
+	// @28935 'ᴟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29333,7 +29725,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28485 'ᴠ' (6 pixels wide)
+	// @28950 'ᴠ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29350,7 +29742,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28500 'ᴡ' (9 pixels wide)
+	// @28965 'ᴡ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -29367,7 +29759,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @28530 'ᴢ' (5 pixels wide)
+	// @28995 'ᴢ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29384,7 +29776,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28545 'ᴣ' (4 pixels wide)
+	// @29010 'ᴣ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29401,7 +29793,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28560 'ᴤ' (4 pixels wide)
+	// @29025 'ᴤ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29418,7 +29810,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28575 'ᴥ' (6 pixels wide)
+	// @29040 'ᴥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29435,7 +29827,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28590 'ᴦ' (4 pixels wide)
+	// @29055 'ᴦ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29452,7 +29844,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28605 'ᴧ' (6 pixels wide)
+	// @29070 'ᴧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29469,7 +29861,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28620 'ᴨ' (5 pixels wide)
+	// @29085 'ᴨ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -29486,7 +29878,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28635 'ᴩ' (4 pixels wide)
+	// @29100 'ᴩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29503,7 +29895,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28650 'ᴪ' (7 pixels wide)
+	// @29115 'ᴪ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -29520,7 +29912,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @28665 'ᴫ' (6 pixels wide)
+	// @29130 'ᴫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29537,7 +29929,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28680 'ᴬ' (5 pixels wide)
+	// @29145 'ᴬ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -29554,7 +29946,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28695 'ᴭ' (6 pixels wide)
+	// @29160 'ᴭ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x3C, //   ####
@@ -29571,7 +29963,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @28710 'ᴮ' (3 pixels wide)
+	// @29175 'ᴮ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29588,7 +29980,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28725 'ᴯ' (4 pixels wide)
+	// @29190 'ᴯ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x70, //  ###
@@ -29605,7 +29997,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28740 'ᴰ' (4 pixels wide)
+	// @29205 'ᴰ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xE0, // ### 
@@ -29622,7 +30014,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28755 'ᴱ' (3 pixels wide)
+	// @29220 'ᴱ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29639,7 +30031,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28770 'ᴲ' (3 pixels wide)
+	// @29235 'ᴲ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29656,7 +30048,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28785 'ᴳ' (4 pixels wide)
+	// @29250 'ᴳ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x70, //  ###
@@ -29673,7 +30065,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28800 'ᴴ' (4 pixels wide)
+	// @29265 'ᴴ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -29690,7 +30082,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28815 'ᴵ' (1 pixels wide)
+	// @29280 'ᴵ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x80, // #
@@ -29707,7 +30099,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @28830 'ᴶ' (2 pixels wide)
+	// @29295 'ᴶ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x40, //  #
@@ -29724,7 +30116,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @28845 'ᴷ' (3 pixels wide)
+	// @29310 'ᴷ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xA0, // # #
@@ -29741,7 +30133,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28860 'ᴸ' (3 pixels wide)
+	// @29325 'ᴸ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x80, // #  
@@ -29758,7 +30150,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28875 'ᴹ' (5 pixels wide)
+	// @29340 'ᴹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0xC8, // ##  #
@@ -29775,7 +30167,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @28890 'ᴺ' (4 pixels wide)
+	// @29355 'ᴺ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -29792,7 +30184,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28905 'ᴻ' (4 pixels wide)
+	// @29370 'ᴻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -29809,7 +30201,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28920 'ᴼ' (4 pixels wide)
+	// @29385 'ᴼ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x60, //  ## 
@@ -29826,7 +30218,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @28935 'ᴽ' (3 pixels wide)
+	// @29400 'ᴽ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xA0, // # #
@@ -29843,7 +30235,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28950 'ᴾ' (3 pixels wide)
+	// @29415 'ᴾ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29860,7 +30252,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28965 'ᴿ' (3 pixels wide)
+	// @29430 'ᴿ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29877,7 +30269,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28980 'ᵀ' (3 pixels wide)
+	// @29445 'ᵀ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -29894,7 +30286,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @28995 'ᵁ' (4 pixels wide)
+	// @29460 'ᵁ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -29911,7 +30303,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29010 'ᵂ' (7 pixels wide)
+	// @29475 'ᵂ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x92, // #  #  #
@@ -29928,7 +30320,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @29025 'ᵃ' (3 pixels wide)
+	// @29490 'ᵃ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -29945,7 +30337,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29040 'ᵄ' (3 pixels wide)
+	// @29505 'ᵄ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -29962,7 +30354,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29055 'ᵅ' (4 pixels wide)
+	// @29520 'ᵅ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -29979,7 +30371,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29070 'ᵆ' (6 pixels wide)
+	// @29535 'ᵆ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -29996,7 +30388,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @29085 'ᵇ' (4 pixels wide)
+	// @29550 'ᵇ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x80, // #   
@@ -30013,7 +30405,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29100 'ᵈ' (4 pixels wide)
+	// @29565 'ᵈ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x10, //    #
@@ -30030,7 +30422,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29115 'ᵉ' (4 pixels wide)
+	// @29580 'ᵉ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30047,7 +30439,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29130 'ᵊ' (1 pixels wide)
+	// @29595 'ᵊ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -30064,7 +30456,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @29145 'ᵋ' (3 pixels wide)
+	// @29610 'ᵋ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30081,7 +30473,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29160 'ᵌ' (3 pixels wide)
+	// @29625 'ᵌ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30098,7 +30490,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29175 'ᵍ' (4 pixels wide)
+	// @29640 'ᵍ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30115,7 +30507,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29190 'ᵎ' (1 pixels wide)
+	// @29655 'ᵎ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -30132,7 +30524,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @29205 'ᵏ' (3 pixels wide)
+	// @29670 'ᵏ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x80, // #  
@@ -30149,7 +30541,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29220 'ᵐ' (6 pixels wide)
+	// @29685 'ᵐ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30166,7 +30558,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @29235 'ᵑ' (3 pixels wide)
+	// @29700 'ᵑ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30183,7 +30575,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29250 'ᵒ' (4 pixels wide)
+	// @29715 'ᵒ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30200,7 +30592,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29265 'ᵓ' (3 pixels wide)
+	// @29730 'ᵓ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30217,7 +30609,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29280 'ᵔ' (4 pixels wide)
+	// @29745 'ᵔ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30234,7 +30626,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29295 'ᵕ' (4 pixels wide)
+	// @29760 'ᵕ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30251,7 +30643,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29310 'ᵖ' (4 pixels wide)
+	// @29775 'ᵖ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30268,7 +30660,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29325 'ᵗ' (3 pixels wide)
+	// @29790 'ᵗ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30285,7 +30677,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29340 'ᵘ' (3 pixels wide)
+	// @29805 'ᵘ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30302,7 +30694,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29355 'ᵙ' (4 pixels wide)
+	// @29820 'ᵙ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30319,7 +30711,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29370 'ᵚ' (6 pixels wide)
+	// @29835 'ᵚ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30336,7 +30728,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @29385 'ᵛ' (3 pixels wide)
+	// @29850 'ᵛ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30353,7 +30745,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29400 'ᵜ' (4 pixels wide)
+	// @29865 'ᵜ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30370,7 +30762,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29415 'ᵝ' (3 pixels wide)
+	// @29880 'ᵝ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -30387,7 +30779,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29430 'ᵞ' (3 pixels wide)
+	// @29895 'ᵞ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30404,7 +30796,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29445 'ᵟ' (3 pixels wide)
+	// @29910 'ᵟ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -30421,7 +30813,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29460 'ᵠ' (5 pixels wide)
+	// @29925 'ᵠ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -30438,7 +30830,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29475 'ᵡ' (4 pixels wide)
+	// @29940 'ᵡ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30455,7 +30847,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29490 'ᵢ' (1 pixels wide)
+	// @29955 'ᵢ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -30472,7 +30864,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @29505 'ᵣ' (2 pixels wide)
+	// @29970 'ᵣ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -30489,7 +30881,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x00, //   
 
-	// @29520 'ᵤ' (3 pixels wide)
+	// @29985 'ᵤ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30506,7 +30898,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###
 	0x00, //    
 
-	// @29535 'ᵥ' (3 pixels wide)
+	// @30000 'ᵥ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30523,7 +30915,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  # 
 	0x00, //    
 
-	// @29550 'ᵦ' (3 pixels wide)
+	// @30015 'ᵦ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30540,7 +30932,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###
 	0x80, // #  
 
-	// @29565 'ᵧ' (3 pixels wide)
+	// @30030 'ᵧ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30557,7 +30949,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  # 
 	0x40, //  # 
 
-	// @29580 'ᵨ' (4 pixels wide)
+	// @30045 'ᵨ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30574,7 +30966,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x00, //     
 
-	// @29595 'ᵩ' (5 pixels wide)
+	// @30060 'ᵩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30591,7 +30983,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @29610 'ᵪ' (3 pixels wide)
+	// @30075 'ᵪ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30608,7 +31000,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##
 	0x60, //  ##
 
-	// @29625 'ᵫ' (9 pixels wide)
+	// @30090 'ᵫ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -30625,7 +31017,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @29655 'ᵬ' (7 pixels wide)
+	// @30120 'ᵬ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -30642,7 +31034,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @29670 'ᵭ' (6 pixels wide)
+	// @30135 'ᵭ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30659,7 +31051,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @29685 'ᵮ' (5 pixels wide)
+	// @30150 'ᵮ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30676,7 +31068,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29700 'ᵯ' (10 pixels wide)
+	// @30165 'ᵯ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -30693,7 +31085,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @29730 'ᵰ' (7 pixels wide)
+	// @30195 'ᵰ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -30710,7 +31102,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @29745 'ᵱ' (7 pixels wide)
+	// @30210 'ᵱ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -30727,7 +31119,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xB0, // # ##   
 	0x00, //        
 
-	// @29760 'ᵲ' (5 pixels wide)
+	// @30225 'ᵲ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30744,7 +31136,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29775 'ᵳ' (5 pixels wide)
+	// @30240 'ᵳ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30761,7 +31153,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29790 'ᵴ' (6 pixels wide)
+	// @30255 'ᵴ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30778,7 +31170,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @29805 'ᵵ' (5 pixels wide)
+	// @30270 'ᵵ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30795,7 +31187,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29820 'ᵶ' (5 pixels wide)
+	// @30285 'ᵶ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30812,7 +31204,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @29835 'ᵷ' (5 pixels wide)
+	// @30300 'ᵷ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30829,7 +31221,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @29850 'ᵸ' (4 pixels wide)
+	// @30315 'ᵸ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30846,7 +31238,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29865 'ᵹ' (5 pixels wide)
+	// @30330 'ᵹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30863,7 +31255,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @29880 'ᵺ' (10 pixels wide)
+	// @30345 'ᵺ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -30880,7 +31272,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @29910 'ᵻ' (3 pixels wide)
+	// @30375 'ᵻ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -30897,7 +31289,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @29925 'ᵼ' (4 pixels wide)
+	// @30390 'ᵼ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -30914,7 +31306,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @29940 'ᵽ' (6 pixels wide)
+	// @30405 'ᵽ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30931,7 +31323,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #    
 	0x00, //       
 
-	// @29955 'ᵾ' (7 pixels wide)
+	// @30420 'ᵾ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -30948,7 +31340,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @29970 'ᵿ' (7 pixels wide)
+	// @30435 'ᵿ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -30965,7 +31357,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @29985 'ᶀ' (5 pixels wide)
+	// @30450 'ᶀ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -30982,7 +31374,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ## 
 	0x00, //      
 
-	// @30000 'ᶁ' (6 pixels wide)
+	// @30465 'ᶁ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -30999,7 +31391,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30015 'ᶂ' (4 pixels wide)
+	// @30480 'ᶂ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31016,7 +31408,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @30030 'ᶃ' (7 pixels wide)
+	// @30495 'ᶃ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -31033,7 +31425,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF6, // #### ##
 	0x00, //        
 
-	// @30045 'ᶄ' (5 pixels wide)
+	// @30510 'ᶄ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31050,7 +31442,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##
 	0x00, //      
 
-	// @30060 'ᶅ' (2 pixels wide)
+	// @30525 'ᶅ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -31067,7 +31459,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @30075 'ᶆ' (9 pixels wide)
+	// @30540 'ᶆ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -31084,7 +31476,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x01, 0x80, //        ##
 	0x00, 0x00, //          
 
-	// @30105 'ᶇ' (6 pixels wide)
+	// @30570 'ᶇ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31101,7 +31493,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30120 'ᶈ' (5 pixels wide)
+	// @30585 'ᶈ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31118,7 +31510,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xB0, // # ## 
 	0x00, //      
 
-	// @30135 'ᶉ' (3 pixels wide)
+	// @30600 'ᶉ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31135,7 +31527,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ## 
 	0x00, //    
 
-	// @30150 'ᶊ' (4 pixels wide)
+	// @30615 'ᶊ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31152,7 +31544,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ##
 	0x00, //     
 
-	// @30165 'ᶋ' (4 pixels wide)
+	// @30630 'ᶋ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31169,7 +31561,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####
 	0x00, //     
 
-	// @30180 'ᶌ' (6 pixels wide)
+	// @30645 'ᶌ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31186,7 +31578,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ##  
 	0x00, //       
 
-	// @30195 'ᶍ' (5 pixels wide)
+	// @30660 'ᶍ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31203,7 +31595,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##
 	0x00, //      
 
-	// @30210 'ᶎ' (5 pixels wide)
+	// @30675 'ᶎ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31220,7 +31612,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##
 	0x00, //      
 
-	// @30225 'ᶏ' (6 pixels wide)
+	// @30690 'ᶏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31237,7 +31629,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30240 'ᶐ' (7 pixels wide)
+	// @30705 'ᶐ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -31254,7 +31646,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, //      ##
 	0x00, //        
 
-	// @30255 'ᶑ' (6 pixels wide)
+	// @30720 'ᶑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31271,7 +31663,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30270 'ᶒ' (6 pixels wide)
+	// @30735 'ᶒ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31288,7 +31680,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30285 'ᶓ' (5 pixels wide)
+	// @30750 'ᶓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31305,7 +31697,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##
 	0x00, //      
 
-	// @30300 'ᶔ' (4 pixels wide)
+	// @30765 'ᶔ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31322,7 +31714,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##  
 	0x00, //     
 
-	// @30315 'ᶕ' (6 pixels wide)
+	// @30780 'ᶕ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31339,7 +31731,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @30330 'ᶖ' (3 pixels wide)
+	// @30795 'ᶖ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31356,7 +31748,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##
 	0x00, //    
 
-	// @30345 'ᶗ' (5 pixels wide)
+	// @30810 'ᶗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31373,7 +31765,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##   
 	0x00, //      
 
-	// @30360 'ᶘ' (3 pixels wide)
+	// @30825 'ᶘ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31390,7 +31782,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ## 
 	0x00, //    
 
-	// @30375 'ᶙ' (7 pixels wide)
+	// @30840 'ᶙ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -31407,7 +31799,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, //      ##
 	0x00, //        
 
-	// @30390 'ᶚ' (5 pixels wide)
+	// @30855 'ᶚ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31424,7 +31816,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##   
 	0x00, //      
 
-	// @30405 'ᶛ' (4 pixels wide)
+	// @30870 'ᶛ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31441,7 +31833,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30420 'ᶜ' (3 pixels wide)
+	// @30885 'ᶜ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31458,7 +31850,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30435 'ᶝ' (3 pixels wide)
+	// @30900 'ᶝ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31475,7 +31867,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30450 'ᶞ' (4 pixels wide)
+	// @30915 'ᶞ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x70, //  ###
@@ -31492,7 +31884,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30465 'ᶟ' (3 pixels wide)
+	// @30930 'ᶟ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31509,7 +31901,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30480 'ᶠ' (3 pixels wide)
+	// @30945 'ᶠ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -31526,7 +31918,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30495 'ᶡ' (3 pixels wide)
+	// @30960 'ᶡ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31543,7 +31935,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30510 'ᶢ' (4 pixels wide)
+	// @30975 'ᶢ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31560,7 +31952,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30525 'ᶣ' (3 pixels wide)
+	// @30990 'ᶣ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31577,7 +31969,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30540 'ᶤ' (3 pixels wide)
+	// @31005 'ᶤ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x40, //  # 
@@ -31594,7 +31986,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30555 'ᶥ' (2 pixels wide)
+	// @31020 'ᶥ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -31611,7 +32003,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @30570 'ᶦ' (1 pixels wide)
+	// @31035 'ᶦ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -31628,7 +32020,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @30585 'ᶧ' (3 pixels wide)
+	// @31050 'ᶧ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31645,7 +32037,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30600 'ᶨ' (2 pixels wide)
+	// @31065 'ᶨ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -31662,7 +32054,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @30615 'ᶩ' (2 pixels wide)
+	// @31080 'ᶩ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x80, // # 
@@ -31679,7 +32071,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @30630 'ᶪ' (2 pixels wide)
+	// @31095 'ᶪ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x80, // # 
@@ -31696,7 +32088,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @30645 'ᶫ' (3 pixels wide)
+	// @31110 'ᶫ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31713,7 +32105,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30660 'ᶬ' (6 pixels wide)
+	// @31125 'ᶬ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -31730,7 +32122,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @30675 'ᶭ' (5 pixels wide)
+	// @31140 'ᶭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31747,7 +32139,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @30690 'ᶮ' (4 pixels wide)
+	// @31155 'ᶮ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31764,7 +32156,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30705 'ᶯ' (4 pixels wide)
+	// @31170 'ᶯ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31781,7 +32173,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30720 'ᶰ' (4 pixels wide)
+	// @31185 'ᶰ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31798,7 +32190,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30735 'ᶱ' (4 pixels wide)
+	// @31200 'ᶱ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31815,7 +32207,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30750 'ᶲ' (5 pixels wide)
+	// @31215 'ᶲ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -31832,7 +32224,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @30765 'ᶳ' (3 pixels wide)
+	// @31230 'ᶳ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31849,7 +32241,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30780 'ᶴ' (3 pixels wide)
+	// @31245 'ᶴ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -31866,7 +32258,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30795 'ᶵ' (3 pixels wide)
+	// @31260 'ᶵ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31883,7 +32275,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30810 'ᶶ' (5 pixels wide)
+	// @31275 'ᶶ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -31900,7 +32292,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @30825 'ᶷ' (4 pixels wide)
+	// @31290 'ᶷ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -31917,7 +32309,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30840 'ᶸ' (3 pixels wide)
+	// @31305 'ᶸ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31934,7 +32326,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30855 'ᶹ' (3 pixels wide)
+	// @31320 'ᶹ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31951,7 +32343,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30870 'ᶺ' (3 pixels wide)
+	// @31335 'ᶺ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31968,7 +32360,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30885 'ᶻ' (3 pixels wide)
+	// @31350 'ᶻ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -31985,7 +32377,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30900 'ᶼ' (4 pixels wide)
+	// @31365 'ᶼ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32002,7 +32394,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30915 'ᶽ' (4 pixels wide)
+	// @31380 'ᶽ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32019,7 +32411,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30930 'ᶾ' (3 pixels wide)
+	// @31395 'ᶾ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -32036,7 +32428,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @30945 'ᶿ' (4 pixels wide)
+	// @31410 'ᶿ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x60, //  ## 
@@ -32053,7 +32445,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30960 '᷀' (4 pixels wide)
+	// @31425 '᷀' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32070,7 +32462,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30975 '᷁' (4 pixels wide)
+	// @31440 '᷁' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32087,7 +32479,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @30990 '᷂' (1 pixels wide)
+	// @31455 '᷂' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -32104,7 +32496,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @31005 '᷃' (4 pixels wide)
+	// @31470 '᷃' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32121,7 +32513,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @31020 '᷄' (5 pixels wide)
+	// @31485 '᷄' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32138,7 +32530,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31035 '᷅' (4 pixels wide)
+	// @31500 '᷅' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32155,7 +32547,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @31050 '᷆' (5 pixels wide)
+	// @31515 '᷆' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32172,7 +32564,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31065 '᷇' (4 pixels wide)
+	// @31530 '᷇' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32189,7 +32581,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @31080 '᷈' (5 pixels wide)
+	// @31545 '᷈' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32206,7 +32598,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31095 '᷉' (5 pixels wide)
+	// @31560 '᷉' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32223,7 +32615,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31110 '᷊' (2 pixels wide)
+	// @31575 '᷊' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -32240,7 +32632,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x80, // # 
 
-	// @31125 '᷾' (2 pixels wide)
+	// @31590 '᷾' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x40, //  #
@@ -32257,7 +32649,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @31140 '᷿' (4 pixels wide)
+	// @31605 '᷿' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -32274,7 +32666,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###
 	0x90, // #  #
 
-	// @31155 'Ḁ' (7 pixels wide)
+	// @31620 'Ḁ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -32291,7 +32683,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1C, //    ### 
 	0x14, //    # # 
 
-	// @31170 'ḁ' (5 pixels wide)
+	// @31635 'ḁ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32308,7 +32700,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x50, //  # # 
 
-	// @31185 'Ḃ' (5 pixels wide)
+	// @31650 'Ḃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -32325,7 +32717,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31200 'ḃ' (5 pixels wide)
+	// @31665 'ḃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32342,7 +32734,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31215 'Ḅ' (5 pixels wide)
+	// @31680 'Ḅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32359,7 +32751,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31230 'ḅ' (5 pixels wide)
+	// @31695 'ḅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32376,7 +32768,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31245 'Ḇ' (5 pixels wide)
+	// @31710 'Ḇ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32393,7 +32785,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @31260 'ḇ' (5 pixels wide)
+	// @31725 'ḇ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32410,7 +32802,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @31275 'Ḉ' (6 pixels wide)
+	// @31740 'Ḉ' (6 pixels wide)
 	0x00, //       
 	0x10, //    #  
 	0x20, //   #   
@@ -32427,7 +32819,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ##  
 	0x00, //       
 
-	// @31290 'ḉ' (5 pixels wide)
+	// @31755 'ḉ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32444,7 +32836,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ## 
 	0x00, //      
 
-	// @31305 'Ḋ' (6 pixels wide)
+	// @31770 'Ḋ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x20, //   #   
@@ -32461,7 +32853,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @31320 'ḋ' (5 pixels wide)
+	// @31785 'ḋ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32478,7 +32870,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31335 'Ḍ' (6 pixels wide)
+	// @31800 'Ḍ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32495,7 +32887,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @31350 'ḍ' (5 pixels wide)
+	// @31815 'ḍ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32512,7 +32904,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31365 'Ḏ' (6 pixels wide)
+	// @31830 'Ḏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32529,7 +32921,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###  
 	0x00, //       
 
-	// @31380 'ḏ' (5 pixels wide)
+	// @31845 'ḏ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32546,7 +32938,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @31395 'Ḑ' (6 pixels wide)
+	// @31860 'Ḑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32563,7 +32955,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x20, //   #   
 
-	// @31410 'ḑ' (5 pixels wide)
+	// @31875 'ḑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32580,7 +32972,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x20, //   #  
 
-	// @31425 'Ḓ' (6 pixels wide)
+	// @31890 'Ḓ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32597,7 +32989,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x50, //  # #  
 
-	// @31440 'ḓ' (5 pixels wide)
+	// @31905 'ḓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32614,7 +33006,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x50, //  # # 
 
-	// @31455 'Ḕ' (5 pixels wide)
+	// @31920 'Ḕ' (5 pixels wide)
 	0x40, //  #   
 	0x20, //   #  
 	0x78, //  ####
@@ -32631,7 +33023,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31470 'ḕ' (5 pixels wide)
+	// @31935 'ḕ' (5 pixels wide)
 	0x00, //      
 	0x40, //  #   
 	0x20, //   #  
@@ -32648,7 +33040,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31485 'Ḗ' (5 pixels wide)
+	// @31950 'Ḗ' (5 pixels wide)
 	0x10, //    # 
 	0x20, //   #  
 	0x78, //  ####
@@ -32665,7 +33057,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31500 'ḗ' (5 pixels wide)
+	// @31965 'ḗ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -32682,7 +33074,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31515 'Ḙ' (5 pixels wide)
+	// @31980 'Ḙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32699,7 +33091,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x50, //  # # 
 
-	// @31530 'ḙ' (5 pixels wide)
+	// @31995 'ḙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32716,7 +33108,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x50, //  # # 
 
-	// @31545 'Ḛ' (5 pixels wide)
+	// @32010 'Ḛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32733,7 +33125,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xD0, // ## # 
 	0xB0, // # ## 
 
-	// @31560 'ḛ' (5 pixels wide)
+	// @32025 'ḛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32750,7 +33142,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x68, //  ## #
 	0x58, //  # ##
 
-	// @31575 'Ḝ' (5 pixels wide)
+	// @32040 'Ḝ' (5 pixels wide)
 	0x00, //      
 	0x50, //  # # 
 	0x70, //  ### 
@@ -32767,7 +33159,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @31590 'ḝ' (5 pixels wide)
+	// @32055 'ḝ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32784,7 +33176,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @31605 'Ḟ' (4 pixels wide)
+	// @32070 'Ḟ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x20, //   # 
@@ -32801,7 +33193,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @31620 'ḟ' (4 pixels wide)
+	// @32085 'ḟ' (4 pixels wide)
 	0x00, //     
 	0x20, //   # 
 	0x00, //     
@@ -32818,7 +33210,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @31635 'Ḡ' (6 pixels wide)
+	// @32100 'Ḡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x3C, //   ####
@@ -32835,7 +33227,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @31650 'ḡ' (5 pixels wide)
+	// @32115 'ḡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32852,7 +33244,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @31665 'Ḣ' (6 pixels wide)
+	// @32130 'Ḣ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x10, //    #  
@@ -32869,7 +33261,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @31680 'ḣ' (5 pixels wide)
+	// @32145 'ḣ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32886,7 +33278,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31695 'Ḥ' (6 pixels wide)
+	// @32160 'Ḥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32903,7 +33295,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @31710 'ḥ' (5 pixels wide)
+	// @32175 'ḥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -32920,7 +33312,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31725 'Ḧ' (6 pixels wide)
+	// @32190 'Ḧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x50, //  # #  
@@ -32937,7 +33329,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @31740 'ḧ' (5 pixels wide)
+	// @32205 'ḧ' (5 pixels wide)
 	0x00, //      
 	0x50, //  # # 
 	0x00, //      
@@ -32954,7 +33346,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31755 'Ḩ' (7 pixels wide)
+	// @32220 'Ḩ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -32971,7 +33363,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##     
 	0x00, //        
 
-	// @31770 'ḩ' (6 pixels wide)
+	// @32235 'ḩ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -32988,7 +33380,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##    
 	0x00, //       
 
-	// @31785 'Ḫ' (6 pixels wide)
+	// @32250 'Ḫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -33005,7 +33397,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x28, //   # # 
 	0x38, //   ### 
 
-	// @31800 'ḫ' (5 pixels wide)
+	// @32265 'ḫ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33022,7 +33414,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x50, //  # # 
 	0x70, //  ### 
 
-	// @31815 'Ḭ' (4 pixels wide)
+	// @32280 'Ḭ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33039,7 +33431,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xD0, // ## #
 	0xB0, // # ##
 
-	// @31830 'ḭ' (4 pixels wide)
+	// @32295 'ḭ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33056,7 +33448,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xD0, // ## #
 	0xB0, // # ##
 
-	// @31845 'Ḯ' (3 pixels wide)
+	// @32310 'Ḯ' (3 pixels wide)
 	0x20, //   #
 	0x40, //  # 
 	0xA0, // # #
@@ -33073,7 +33465,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @31860 'ḯ' (3 pixels wide)
+	// @32325 'ḯ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x20, //   #
@@ -33090,7 +33482,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @31875 'Ḱ' (5 pixels wide)
+	// @32340 'Ḱ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -33107,7 +33499,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31890 'ḱ' (5 pixels wide)
+	// @32355 'ḱ' (5 pixels wide)
 	0x10, //    # 
 	0x20, //   #  
 	0x00, //      
@@ -33124,7 +33516,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @31905 'Ḳ' (5 pixels wide)
+	// @32370 'Ḳ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33141,7 +33533,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31920 'ḳ' (5 pixels wide)
+	// @32385 'ḳ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33158,7 +33550,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @31935 'Ḵ' (5 pixels wide)
+	// @32400 'Ḵ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33175,7 +33567,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @31950 'ḵ' (5 pixels wide)
+	// @32415 'ḵ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33192,7 +33584,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @31965 'Ḷ' (4 pixels wide)
+	// @32430 'Ḷ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33209,7 +33601,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x00, //     
 
-	// @31980 'ḷ' (1 pixels wide)
+	// @32445 'ḷ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -33226,7 +33618,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @31995 'Ḹ' (4 pixels wide)
+	// @32460 'Ḹ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xF0, // ####
@@ -33243,7 +33635,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x00, //     
 
-	// @32010 'ḹ' (3 pixels wide)
+	// @32475 'ḹ' (3 pixels wide)
 	0x00, //    
 	0xE0, // ###
 	0x00, //    
@@ -33260,7 +33652,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  # 
 	0x00, //    
 
-	// @32025 'Ḻ' (4 pixels wide)
+	// @32490 'Ḻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33277,7 +33669,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###
 	0x00, //     
 
-	// @32040 'ḻ' (3 pixels wide)
+	// @32505 'ḻ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33294,7 +33686,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###
 	0x00, //    
 
-	// @32055 'Ḽ' (4 pixels wide)
+	// @32520 'Ḽ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33311,7 +33703,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x50, //  # #
 
-	// @32070 'ḽ' (3 pixels wide)
+	// @32535 'ḽ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33328,7 +33720,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  # 
 	0xA0, // # #
 
-	// @32085 'Ḿ' (9 pixels wide)
+	// @32550 'Ḿ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x04, 0x00, //      #   
 	0x08, 0x00, //     #    
@@ -33345,7 +33737,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @32115 'ḿ' (8 pixels wide)
+	// @32580 'ḿ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -33362,7 +33754,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @32130 'Ṁ' (9 pixels wide)
+	// @32595 'Ṁ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x08, 0x00, //     #    
@@ -33379,7 +33771,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @32160 'ṁ' (8 pixels wide)
+	// @32625 'ṁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -33396,7 +33788,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @32175 'Ṃ' (9 pixels wide)
+	// @32640 'Ṃ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -33413,7 +33805,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, 0x00, //     #    
 	0x00, 0x00, //          
 
-	// @32205 'ṃ' (8 pixels wide)
+	// @32670 'ṃ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -33430,7 +33822,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x00, //         
 
-	// @32220 'Ṅ' (6 pixels wide)
+	// @32685 'Ṅ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x10, //    #  
@@ -33447,7 +33839,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @32235 'ṅ' (5 pixels wide)
+	// @32700 'ṅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33464,7 +33856,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32250 'Ṇ' (6 pixels wide)
+	// @32715 'Ṇ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -33481,7 +33873,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x00, //       
 
-	// @32265 'ṇ' (5 pixels wide)
+	// @32730 'ṇ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33498,7 +33890,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @32280 'Ṉ' (6 pixels wide)
+	// @32745 'Ṉ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -33515,7 +33907,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x38, //   ### 
 	0x00, //       
 
-	// @32295 'ṉ' (5 pixels wide)
+	// @32760 'ṉ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33532,7 +33924,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @32310 'Ṋ' (6 pixels wide)
+	// @32775 'Ṋ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -33549,7 +33941,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x28, //   # # 
 
-	// @32325 'ṋ' (5 pixels wide)
+	// @32790 'ṋ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33566,7 +33958,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x50, //  # # 
 
-	// @32340 'Ṍ' (7 pixels wide)
+	// @32805 'Ṍ' (7 pixels wide)
 	0x10, //    #   
 	0x20, //   #    
 	0x68, //  ## #  
@@ -33583,7 +33975,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @32355 'ṍ' (5 pixels wide)
+	// @32820 'ṍ' (5 pixels wide)
 	0x00, //      
 	0x08, //     #
 	0x10, //    # 
@@ -33600,7 +33992,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32370 'Ṏ' (7 pixels wide)
+	// @32835 'Ṏ' (7 pixels wide)
 	0x50, //  # #   
 	0x68, //  ## #  
 	0x58, //  # ##  
@@ -33617,7 +34009,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @32385 'ṏ' (5 pixels wide)
+	// @32850 'ṏ' (5 pixels wide)
 	0x00, //      
 	0x50, //  # # 
 	0x00, //      
@@ -33634,7 +34026,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32400 'Ṑ' (7 pixels wide)
+	// @32865 'Ṑ' (7 pixels wide)
 	0x20, //   #    
 	0x10, //    #   
 	0x3C, //   #### 
@@ -33651,7 +34043,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @32415 'ṑ' (5 pixels wide)
+	// @32880 'ṑ' (5 pixels wide)
 	0x00, //      
 	0x40, //  #   
 	0x20, //   #  
@@ -33668,7 +34060,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32430 'Ṓ' (7 pixels wide)
+	// @32895 'Ṓ' (7 pixels wide)
 	0x08, //     #  
 	0x10, //    #   
 	0x3C, //   #### 
@@ -33685,7 +34077,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @32445 'ṓ' (5 pixels wide)
+	// @32910 'ṓ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -33702,7 +34094,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32460 'Ṕ' (5 pixels wide)
+	// @32925 'Ṕ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -33719,7 +34111,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32475 'ṕ' (5 pixels wide)
+	// @32940 'ṕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33736,7 +34128,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @32490 'Ṗ' (5 pixels wide)
+	// @32955 'Ṗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -33753,7 +34145,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32505 'ṗ' (5 pixels wide)
+	// @32970 'ṗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33770,7 +34162,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @32520 'Ṙ' (5 pixels wide)
+	// @32985 'Ṙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -33787,7 +34179,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32535 'ṙ' (3 pixels wide)
+	// @33000 'ṙ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33804,7 +34196,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @32550 'Ṛ' (5 pixels wide)
+	// @33015 'Ṛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33821,7 +34213,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @32565 'ṛ' (3 pixels wide)
+	// @33030 'ṛ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33838,7 +34230,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #  
 	0x00, //    
 
-	// @32580 'Ṝ' (5 pixels wide)
+	// @33045 'Ṝ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x78, //  ####
@@ -33855,7 +34247,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @32595 'ṝ' (3 pixels wide)
+	// @33060 'ṝ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33872,7 +34264,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #  
 	0x00, //    
 
-	// @32610 'Ṟ' (5 pixels wide)
+	// @33075 'Ṟ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33889,7 +34281,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @32625 'ṟ' (3 pixels wide)
+	// @33090 'ṟ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -33906,7 +34298,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###
 	0x00, //    
 
-	// @32640 'Ṡ' (5 pixels wide)
+	// @33105 'Ṡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x10, //    # 
@@ -33923,7 +34315,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32655 'ṡ' (4 pixels wide)
+	// @33120 'ṡ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33940,7 +34332,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @32670 'Ṣ' (5 pixels wide)
+	// @33135 'Ṣ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -33957,7 +34349,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @32685 'ṣ' (4 pixels wide)
+	// @33150 'ṣ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -33974,7 +34366,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #  
 	0x00, //     
 
-	// @32700 'Ṥ' (5 pixels wide)
+	// @33165 'Ṥ' (5 pixels wide)
 	0x00, //      
 	0x50, //  # # 
 	0x20, //   #  
@@ -33991,7 +34383,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @32715 'ṥ' (4 pixels wide)
+	// @33180 'ṥ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34008,7 +34400,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @32730 'Ṧ' (6 pixels wide)
+	// @33195 'Ṧ' (6 pixels wide)
 	0x10, //    #  
 	0x24, //   #  #
 	0x18, //    ## 
@@ -34025,7 +34417,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @32745 'ṧ' (4 pixels wide)
+	// @33210 'ṧ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x40, //  #  
@@ -34042,7 +34434,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @32760 'Ṩ' (5 pixels wide)
+	// @33225 'Ṩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x10, //    # 
@@ -34059,7 +34451,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @32775 'ṩ' (4 pixels wide)
+	// @33240 'ṩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34076,7 +34468,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #  
 	0x00, //     
 
-	// @32790 'Ṫ' (7 pixels wide)
+	// @33255 'Ṫ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x10, //    #   
@@ -34093,7 +34485,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @32805 'ṫ' (4 pixels wide)
+	// @33270 'ṫ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x40, //  #  
@@ -34110,7 +34502,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @32820 'Ṭ' (7 pixels wide)
+	// @33285 'Ṭ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -34127,7 +34519,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @32835 'ṭ' (4 pixels wide)
+	// @33300 'ṭ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34144,7 +34536,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x00, //     
 
-	// @32850 'Ṯ' (7 pixels wide)
+	// @33315 'Ṯ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -34161,7 +34553,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x38, //   ###  
 	0x00, //        
 
-	// @32865 'ṯ' (4 pixels wide)
+	// @33330 'ṯ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34178,7 +34570,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###
 	0x00, //     
 
-	// @32880 'Ṱ' (7 pixels wide)
+	// @33345 'Ṱ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -34195,7 +34587,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x28, //   # #  
 
-	// @32895 'ṱ' (4 pixels wide)
+	// @33360 'ṱ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34212,7 +34604,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x50, //  # #
 
-	// @32910 'Ṳ' (6 pixels wide)
+	// @33375 'Ṳ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34229,7 +34621,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x28, //   # # 
 	0x00, //       
 
-	// @32925 'ṳ' (5 pixels wide)
+	// @33390 'ṳ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34246,7 +34638,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x50, //  # # 
 	0x00, //      
 
-	// @32940 'Ṵ' (6 pixels wide)
+	// @33405 'Ṵ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34263,7 +34655,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x68, //  ## # 
 	0x58, //  # ## 
 
-	// @32955 'ṵ' (5 pixels wide)
+	// @33420 'ṵ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34280,7 +34672,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x68, //  ## #
 	0x58, //  # ##
 
-	// @32970 'Ṷ' (6 pixels wide)
+	// @33435 'Ṷ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34297,7 +34689,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x28, //   # # 
 
-	// @32985 'ṷ' (5 pixels wide)
+	// @33450 'ṷ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34314,7 +34706,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x50, //  # # 
 
-	// @33000 'Ṹ' (6 pixels wide)
+	// @33465 'Ṹ' (6 pixels wide)
 	0x10, //    #  
 	0x20, //   #   
 	0x68, //  ## # 
@@ -34331,7 +34723,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33015 'ṹ' (5 pixels wide)
+	// @33480 'ṹ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -34348,7 +34740,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33030 'Ṻ' (6 pixels wide)
+	// @33495 'Ṻ' (6 pixels wide)
 	0x28, //   # # 
 	0x00, //       
 	0x3C, //   ####
@@ -34365,7 +34757,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33045 'ṻ' (5 pixels wide)
+	// @33510 'ṻ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x50, //  # # 
@@ -34382,7 +34774,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33060 'Ṽ' (6 pixels wide)
+	// @33525 'Ṽ' (6 pixels wide)
 	0x00, //       
 	0x68, //  ## # 
 	0x58, //  # ## 
@@ -34399,7 +34791,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33075 'ṽ' (6 pixels wide)
+	// @33540 'ṽ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34416,7 +34808,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33090 'Ṿ' (6 pixels wide)
+	// @33555 'Ṿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34433,7 +34825,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @33105 'ṿ' (6 pixels wide)
+	// @33570 'ṿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34450,7 +34842,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @33120 'Ẁ' (11 pixels wide)
+	// @33585 'Ẁ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x08, 0x00, //     #      
 	0x04, 0x00, //      #     
@@ -34467,7 +34859,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @33150 'ẁ' (8 pixels wide)
+	// @33615 'ẁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -34484,7 +34876,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @33165 'Ẃ' (11 pixels wide)
+	// @33630 'Ẃ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x02, 0x00, //       #    
 	0x04, 0x00, //      #     
@@ -34501,7 +34893,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @33195 'ẃ' (8 pixels wide)
+	// @33660 'ẃ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -34518,7 +34910,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @33210 'Ẅ' (11 pixels wide)
+	// @33675 'Ẅ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x0A, 0x00, //     # #    
@@ -34535,7 +34927,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @33240 'ẅ' (8 pixels wide)
+	// @33705 'ẅ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -34552,7 +34944,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @33255 'Ẇ' (11 pixels wide)
+	// @33720 'Ẇ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x04, 0x00, //      #     
@@ -34569,7 +34961,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @33285 'ẇ' (8 pixels wide)
+	// @33750 'ẇ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -34586,7 +34978,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @33300 'Ẉ' (11 pixels wide)
+	// @33765 'Ẉ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -34603,7 +34995,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #     
 	0x00, 0x00, //            
 
-	// @33330 'ẉ' (8 pixels wide)
+	// @33795 'ẉ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -34620,7 +35012,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #    
 	0x00, //         
 
-	// @33345 'Ẋ' (6 pixels wide)
+	// @33810 'Ẋ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x10, //    #  
@@ -34637,7 +35029,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33360 'ẋ' (4 pixels wide)
+	// @33825 'ẋ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34654,7 +35046,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @33375 'Ẍ' (6 pixels wide)
+	// @33840 'Ẍ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x28, //   # # 
@@ -34671,7 +35063,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33390 'ẍ' (4 pixels wide)
+	// @33855 'ẍ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34688,7 +35080,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @33405 'Ẏ' (5 pixels wide)
+	// @33870 'Ẏ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -34705,7 +35097,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33420 'ẏ' (6 pixels wide)
+	// @33885 'ẏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34722,7 +35114,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @33435 'Ẑ' (6 pixels wide)
+	// @33900 'Ẑ' (6 pixels wide)
 	0x00, //       
 	0x20, //   #   
 	0x50, //  # #  
@@ -34739,7 +35131,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33450 'ẑ' (5 pixels wide)
+	// @33915 'ẑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34756,7 +35148,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33465 'Ẓ' (6 pixels wide)
+	// @33930 'Ẓ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34773,7 +35165,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x00, //       
 
-	// @33480 'ẓ' (5 pixels wide)
+	// @33945 'ẓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34790,7 +35182,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @33495 'Ẕ' (6 pixels wide)
+	// @33960 'Ẕ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34807,7 +35199,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x38, //   ### 
 	0x00, //       
 
-	// @33510 'ẕ' (5 pixels wide)
+	// @33975 'ẕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34824,7 +35216,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @33525 'ẖ' (5 pixels wide)
+	// @33990 'ẖ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -34841,7 +35233,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @33540 'ẗ' (4 pixels wide)
+	// @34005 'ẗ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x50, //  # #
@@ -34858,7 +35250,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @33555 'ẘ' (8 pixels wide)
+	// @34020 'ẘ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x1C, //    ###  
@@ -34875,7 +35267,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @33570 'ẙ' (6 pixels wide)
+	// @34035 'ẙ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x38, //   ### 
@@ -34892,7 +35284,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @33585 'ẚ' (5 pixels wide)
+	// @34050 'ẚ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x30, //   ## 
@@ -34909,7 +35301,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33600 'ẛ' (3 pixels wide)
+	// @34065 'ẛ' (3 pixels wide)
 	0x00, //    
 	0x40, //  # 
 	0x00, //    
@@ -34926,7 +35318,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @33615 'ẜ' (4 pixels wide)
+	// @34080 'ẜ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34943,7 +35335,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @33630 'ẝ' (4 pixels wide)
+	// @34095 'ẝ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -34960,7 +35352,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @33645 'ẞ' (6 pixels wide)
+	// @34110 'ẞ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34977,7 +35369,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33660 'ẟ' (6 pixels wide)
+	// @34125 'ẟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -34994,7 +35386,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33675 'Ạ' (7 pixels wide)
+	// @34140 'Ạ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -35011,7 +35403,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @33690 'ạ' (5 pixels wide)
+	// @34155 'ạ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35028,7 +35420,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @33705 'Ả' (7 pixels wide)
+	// @34170 'Ả' (7 pixels wide)
 	0x30, //   ##   
 	0x10, //    #   
 	0x10, //    #   
@@ -35045,7 +35437,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33720 'ả' (5 pixels wide)
+	// @34185 'ả' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x60, //  ##  
@@ -35062,7 +35454,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33735 'Ấ' (7 pixels wide)
+	// @34200 'Ấ' (7 pixels wide)
 	0x04, //      # 
 	0x38, //   ###  
 	0x48, //  #  #  
@@ -35079,7 +35471,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33750 'ấ' (6 pixels wide)
+	// @34215 'ấ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x04, //      #
@@ -35096,7 +35488,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33765 'Ầ' (7 pixels wide)
+	// @34230 'Ầ' (7 pixels wide)
 	0x40, //  #     
 	0x38, //   ###  
 	0x24, //   #  # 
@@ -35113,7 +35505,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33780 'ầ' (6 pixels wide)
+	// @34245 'ầ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x80, // #     
@@ -35130,7 +35522,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @33795 'Ẩ' (7 pixels wide)
+	// @34260 'Ẩ' (7 pixels wide)
 	0x06, //      ##
 	0x1A, //    ## #
 	0x24, //   #  # 
@@ -35147,7 +35539,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33810 'ẩ' (5 pixels wide)
+	// @34275 'ẩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x18, //    ##
@@ -35164,7 +35556,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33825 'Ẫ' (7 pixels wide)
+	// @34290 'Ẫ' (7 pixels wide)
 	0x3C, //   #### 
 	0x18, //    ##  
 	0x24, //   #  # 
@@ -35181,7 +35573,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33840 'ẫ' (5 pixels wide)
+	// @34305 'ẫ' (5 pixels wide)
 	0x00, //      
 	0x68, //  ## #
 	0x58, //  # ##
@@ -35198,7 +35590,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33855 'Ậ' (7 pixels wide)
+	// @34320 'Ậ' (7 pixels wide)
 	0x00, //        
 	0x10, //    #   
 	0x28, //   # #  
@@ -35215,7 +35607,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @33870 'ậ' (5 pixels wide)
+	// @34335 'ậ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35232,7 +35624,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @33885 'Ắ' (7 pixels wide)
+	// @34350 'Ắ' (7 pixels wide)
 	0x18, //    ##  
 	0x28, //   # #  
 	0x38, //   ###  
@@ -35249,7 +35641,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33900 'ắ' (5 pixels wide)
+	// @34365 'ắ' (5 pixels wide)
 	0x00, //      
 	0x10, //    # 
 	0x20, //   #  
@@ -35266,7 +35658,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33915 'Ằ' (7 pixels wide)
+	// @34380 'Ằ' (7 pixels wide)
 	0x30, //   ##   
 	0x28, //   # #  
 	0x38, //   ###  
@@ -35283,7 +35675,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33930 'ằ' (5 pixels wide)
+	// @34395 'ằ' (5 pixels wide)
 	0x00, //      
 	0x40, //  #   
 	0x20, //   #  
@@ -35300,7 +35692,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33945 'Ẳ' (7 pixels wide)
+	// @34410 'Ẳ' (7 pixels wide)
 	0x18, //    ##  
 	0x18, //    ##  
 	0x28, //   # #  
@@ -35317,7 +35709,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33960 'ẳ' (5 pixels wide)
+	// @34425 'ẳ' (5 pixels wide)
 	0x00, //      
 	0x30, //   ## 
 	0x30, //   ## 
@@ -35334,7 +35726,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @33975 'Ẵ' (7 pixels wide)
+	// @34440 'Ẵ' (7 pixels wide)
 	0x34, //   ## # 
 	0x2C, //   # ## 
 	0x28, //   # #  
@@ -35351,7 +35743,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @33990 'ẵ' (5 pixels wide)
+	// @34455 'ẵ' (5 pixels wide)
 	0x00, //      
 	0x68, //  ## #
 	0x58, //  # ##
@@ -35368,7 +35760,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34005 'Ặ' (7 pixels wide)
+	// @34470 'Ặ' (7 pixels wide)
 	0x00, //        
 	0x28, //   # #  
 	0x38, //   ###  
@@ -35385,7 +35777,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @34020 'ặ' (5 pixels wide)
+	// @34485 'ặ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35402,7 +35794,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34035 'Ẹ' (5 pixels wide)
+	// @34500 'Ẹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35419,7 +35811,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34050 'ẹ' (5 pixels wide)
+	// @34515 'ẹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35436,7 +35828,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34065 'Ẻ' (5 pixels wide)
+	// @34530 'Ẻ' (5 pixels wide)
 	0x60, //  ##  
 	0x20, //   #  
 	0x20, //   #  
@@ -35453,7 +35845,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34080 'ẻ' (5 pixels wide)
+	// @34545 'ẻ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x60, //  ##  
@@ -35470,7 +35862,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34095 'Ẽ' (5 pixels wide)
+	// @34560 'Ẽ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -35487,7 +35879,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34110 'ẽ' (5 pixels wide)
+	// @34575 'ẽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35504,7 +35896,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34125 'Ế' (5 pixels wide)
+	// @34590 'Ế' (5 pixels wide)
 	0x08, //     #
 	0x70, //  ### 
 	0x90, // #  # 
@@ -35521,7 +35913,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34140 'ế' (6 pixels wide)
+	// @34605 'ế' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x04, //      #
@@ -35538,7 +35930,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34155 'Ề' (5 pixels wide)
+	// @34620 'Ề' (5 pixels wide)
 	0x80, // #    
 	0x70, //  ### 
 	0x48, //  #  #
@@ -35555,7 +35947,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34170 'ề' (6 pixels wide)
+	// @34635 'ề' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x80, // #     
@@ -35572,7 +35964,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34185 'Ể' (6 pixels wide)
+	// @34650 'Ể' (6 pixels wide)
 	0x0C, //     ##
 	0x34, //   ## #
 	0x48, //  #  # 
@@ -35589,7 +35981,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34200 'ể' (5 pixels wide)
+	// @34665 'ể' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x18, //    ##
@@ -35606,7 +35998,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34215 'Ễ' (5 pixels wide)
+	// @34680 'Ễ' (5 pixels wide)
 	0x78, //  ####
 	0x30, //   ## 
 	0x48, //  #  #
@@ -35623,7 +36015,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34230 'ễ' (5 pixels wide)
+	// @34695 'ễ' (5 pixels wide)
 	0x00, //      
 	0x68, //  ## #
 	0x58, //  # ##
@@ -35640,7 +36032,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34245 'Ệ' (5 pixels wide)
+	// @34710 'Ệ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -35657,7 +36049,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34260 'ệ' (5 pixels wide)
+	// @34725 'ệ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35674,7 +36066,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34275 'Ỉ' (2 pixels wide)
+	// @34740 'Ỉ' (2 pixels wide)
 	0xC0, // ##
 	0x40, //  #
 	0x40, //  #
@@ -35691,7 +36083,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @34290 'ỉ' (2 pixels wide)
+	// @34755 'ỉ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0xC0, // ##
@@ -35708,7 +36100,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @34305 'Ị' (1 pixels wide)
+	// @34770 'Ị' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -35725,7 +36117,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @34320 'ị' (1 pixels wide)
+	// @34785 'ị' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -35742,7 +36134,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @34335 'Ọ' (7 pixels wide)
+	// @34800 'Ọ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -35759,7 +36151,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @34350 'ọ' (5 pixels wide)
+	// @34815 'ọ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35776,7 +36168,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34365 'Ỏ' (7 pixels wide)
+	// @34830 'Ỏ' (7 pixels wide)
 	0x30, //   ##   
 	0x10, //    #   
 	0x10, //    #   
@@ -35793,7 +36185,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34380 'ỏ' (5 pixels wide)
+	// @34845 'ỏ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x60, //  ##  
@@ -35810,7 +36202,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34395 'Ố' (7 pixels wide)
+	// @34860 'Ố' (7 pixels wide)
 	0x04, //      # 
 	0x38, //   ###  
 	0x48, //  #  #  
@@ -35827,7 +36219,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34410 'ố' (6 pixels wide)
+	// @34875 'ố' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x04, //      #
@@ -35844,7 +36236,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34425 'Ồ' (7 pixels wide)
+	// @34890 'Ồ' (7 pixels wide)
 	0x40, //  #     
 	0x38, //   ###  
 	0x24, //   #  # 
@@ -35861,7 +36253,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34440 'ồ' (6 pixels wide)
+	// @34905 'ồ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x80, // #     
@@ -35878,7 +36270,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34455 'Ổ' (7 pixels wide)
+	// @34920 'Ổ' (7 pixels wide)
 	0x06, //      ##
 	0x1A, //    ## #
 	0x24, //   #  # 
@@ -35895,7 +36287,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34470 'ổ' (5 pixels wide)
+	// @34935 'ổ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x18, //    ##
@@ -35912,7 +36304,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34485 'Ỗ' (7 pixels wide)
+	// @34950 'Ỗ' (7 pixels wide)
 	0x3C, //   #### 
 	0x18, //    ##  
 	0x24, //   #  # 
@@ -35929,7 +36321,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34500 'ỗ' (5 pixels wide)
+	// @34965 'ỗ' (5 pixels wide)
 	0x00, //      
 	0x68, //  ## #
 	0x58, //  # ##
@@ -35946,7 +36338,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34515 'Ộ' (7 pixels wide)
+	// @34980 'Ộ' (7 pixels wide)
 	0x00, //        
 	0x20, //   #    
 	0x50, //  # #   
@@ -35963,7 +36355,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @34530 'ộ' (5 pixels wide)
+	// @34995 'ộ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -35980,7 +36372,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34545 'Ớ' (8 pixels wide)
+	// @35010 'Ớ' (8 pixels wide)
 	0x00, //         
 	0x08, //     #   
 	0x10, //    #    
@@ -35997,7 +36389,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34560 'ớ' (6 pixels wide)
+	// @35025 'ớ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36014,7 +36406,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34575 'Ờ' (8 pixels wide)
+	// @35040 'Ờ' (8 pixels wide)
 	0x00, //         
 	0x20, //   #     
 	0x10, //    #    
@@ -36031,7 +36423,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34590 'ờ' (6 pixels wide)
+	// @35055 'ờ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36048,7 +36440,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34605 'Ở' (8 pixels wide)
+	// @35070 'Ở' (8 pixels wide)
 	0x30, //   ##    
 	0x10, //    #    
 	0x10, //    #    
@@ -36065,7 +36457,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34620 'ở' (6 pixels wide)
+	// @35085 'ở' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x60, //  ##   
@@ -36082,7 +36474,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34635 'Ỡ' (8 pixels wide)
+	// @35100 'Ỡ' (8 pixels wide)
 	0x00, //         
 	0x68, //  ## #   
 	0x58, //  # ##   
@@ -36099,7 +36491,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34650 'ỡ' (6 pixels wide)
+	// @35115 'ỡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36116,7 +36508,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34665 'Ợ' (8 pixels wide)
+	// @35130 'Ợ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -36133,7 +36525,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #    
 	0x00, //         
 
-	// @34680 'ợ' (6 pixels wide)
+	// @35145 'ợ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36150,7 +36542,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @34695 'Ụ' (6 pixels wide)
+	// @35160 'Ụ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36167,7 +36559,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x00, //       
 
-	// @34710 'ụ' (5 pixels wide)
+	// @35175 'ụ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36184,7 +36576,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34725 'Ủ' (6 pixels wide)
+	// @35190 'Ủ' (6 pixels wide)
 	0x30, //   ##  
 	0x10, //    #  
 	0x10, //    #  
@@ -36201,7 +36593,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @34740 'ủ' (5 pixels wide)
+	// @35205 'ủ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x60, //  ##  
@@ -36218,7 +36610,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34755 'Ứ' (8 pixels wide)
+	// @35220 'Ứ' (8 pixels wide)
 	0x00, //         
 	0x08, //     #   
 	0x10, //    #    
@@ -36235,7 +36627,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34770 'ứ' (7 pixels wide)
+	// @35235 'ứ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36252,7 +36644,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34785 'Ừ' (8 pixels wide)
+	// @35250 'Ừ' (8 pixels wide)
 	0x00, //         
 	0x40, //  #      
 	0x20, //   #     
@@ -36269,7 +36661,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34800 'ừ' (7 pixels wide)
+	// @35265 'ừ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36286,7 +36678,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34815 'Ử' (8 pixels wide)
+	// @35280 'Ử' (8 pixels wide)
 	0x30, //   ##    
 	0x10, //    #    
 	0x10, //    #    
@@ -36303,7 +36695,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34830 'ử' (7 pixels wide)
+	// @35295 'ử' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x60, //  ##    
@@ -36320,7 +36712,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34845 'Ữ' (8 pixels wide)
+	// @35310 'Ữ' (8 pixels wide)
 	0x00, //         
 	0x68, //  ## #   
 	0x58, //  # ##   
@@ -36337,7 +36729,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @34860 'ữ' (7 pixels wide)
+	// @35325 'ữ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36354,7 +36746,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @34875 'Ự' (8 pixels wide)
+	// @35340 'Ự' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -36371,7 +36763,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #    
 	0x00, //         
 
-	// @34890 'ự' (7 pixels wide)
+	// @35355 'ự' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36388,7 +36780,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x00, //        
 
-	// @34905 'Ỳ' (5 pixels wide)
+	// @35370 'Ỳ' (5 pixels wide)
 	0x00, //      
 	0x80, // #    
 	0x40, //  #   
@@ -36405,7 +36797,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34920 'ỳ' (6 pixels wide)
+	// @35385 'ỳ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36422,7 +36814,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @34935 'Ỵ' (5 pixels wide)
+	// @35400 'Ỵ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36439,7 +36831,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @34950 'ỵ' (6 pixels wide)
+	// @35415 'ỵ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36456,7 +36848,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x28, //   # # 
 	0x00, //       
 
-	// @34965 'Ỷ' (5 pixels wide)
+	// @35430 'Ỷ' (5 pixels wide)
 	0x60, //  ##  
 	0x20, //   #  
 	0x20, //   #  
@@ -36473,7 +36865,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @34980 'ỷ' (6 pixels wide)
+	// @35445 'ỷ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x30, //   ##  
@@ -36490,7 +36882,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @34995 'Ỹ' (5 pixels wide)
+	// @35460 'Ỹ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -36507,7 +36899,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35010 'ỹ' (6 pixels wide)
+	// @35475 'ỹ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36524,7 +36916,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x00, //       
 
-	// @35025 'Ỻ' (6 pixels wide)
+	// @35490 'Ỻ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36541,7 +36933,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @35040 'ỻ' (5 pixels wide)
+	// @35505 'ỻ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36558,7 +36950,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35055 'Ỽ' (6 pixels wide)
+	// @35520 'Ỽ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36575,7 +36967,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @35070 'ỽ' (5 pixels wide)
+	// @35535 'ỽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36592,7 +36984,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35085 'Ỿ' (7 pixels wide)
+	// @35550 'Ỿ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36609,7 +37001,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35100 'ỿ' (6 pixels wide)
+	// @35565 'ỿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -36626,7 +37018,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###   
 	0x00, //       
 
-	// @35115 'ἀ' (7 pixels wide)
+	// @35580 'ἀ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36643,7 +37035,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35130 'ἁ' (7 pixels wide)
+	// @35595 'ἁ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36660,7 +37052,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35145 'ἂ' (7 pixels wide)
+	// @35610 'ἂ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36677,7 +37069,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35160 'ἃ' (7 pixels wide)
+	// @35625 'ἃ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36694,7 +37086,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35175 'ἄ' (7 pixels wide)
+	// @35640 'ἄ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36711,7 +37103,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35190 'ἅ' (7 pixels wide)
+	// @35655 'ἅ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36728,7 +37120,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35205 'ἆ' (7 pixels wide)
+	// @35670 'ἆ' (7 pixels wide)
 	0x00, //        
 	0xD0, // ## #   
 	0xB0, // # ##   
@@ -36745,7 +37137,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35220 'ἇ' (7 pixels wide)
+	// @35685 'ἇ' (7 pixels wide)
 	0x00, //        
 	0xD0, // ## #   
 	0xB0, // # ##   
@@ -36762,7 +37154,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35235 'Ἀ' (7 pixels wide)
+	// @35700 'Ἀ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36779,7 +37171,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35250 'Ἁ' (7 pixels wide)
+	// @35715 'Ἁ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -36796,7 +37188,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35265 'Ἂ' (9 pixels wide)
+	// @35730 'Ἂ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -36813,7 +37205,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35295 'Ἃ' (9 pixels wide)
+	// @35760 'Ἃ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -36830,7 +37222,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35325 'Ἄ' (8 pixels wide)
+	// @35790 'Ἄ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -36847,7 +37239,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35340 'Ἅ' (8 pixels wide)
+	// @35805 'Ἅ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -36864,7 +37256,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35355 'Ἆ' (8 pixels wide)
+	// @35820 'Ἆ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0xD0, // ## #    
@@ -36881,7 +37273,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35370 'Ἇ' (8 pixels wide)
+	// @35835 'Ἇ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0xD0, // ## #    
@@ -36898,7 +37290,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35385 'ἐ' (5 pixels wide)
+	// @35850 'ἐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36915,7 +37307,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35400 'ἑ' (5 pixels wide)
+	// @35865 'ἑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36932,7 +37324,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35415 'ἒ' (5 pixels wide)
+	// @35880 'ἒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36949,7 +37341,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35430 'ἓ' (5 pixels wide)
+	// @35895 'ἓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36966,7 +37358,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35445 'ἔ' (5 pixels wide)
+	// @35910 'ἔ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -36983,7 +37375,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35460 'ἕ' (5 pixels wide)
+	// @35925 'ἕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37000,7 +37392,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @35475 'Ἐ' (7 pixels wide)
+	// @35940 'Ἐ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -37017,7 +37409,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35490 'Ἑ' (7 pixels wide)
+	// @35955 'Ἑ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -37034,7 +37426,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @35505 'Ἒ' (8 pixels wide)
+	// @35970 'Ἒ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37051,7 +37443,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35520 'Ἓ' (8 pixels wide)
+	// @35985 'Ἓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37068,7 +37460,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35535 'Ἔ' (8 pixels wide)
+	// @36000 'Ἔ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37085,7 +37477,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35550 'Ἕ' (8 pixels wide)
+	// @36015 'Ἕ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37102,7 +37494,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35565 'ἠ' (5 pixels wide)
+	// @36030 'ἠ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37119,7 +37511,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35580 'ἡ' (5 pixels wide)
+	// @36045 'ἡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37136,7 +37528,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35595 'ἢ' (5 pixels wide)
+	// @36060 'ἢ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37153,7 +37545,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35610 'ἣ' (5 pixels wide)
+	// @36075 'ἣ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37170,7 +37562,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35625 'ἤ' (5 pixels wide)
+	// @36090 'ἤ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37187,7 +37579,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35640 'ἥ' (5 pixels wide)
+	// @36105 'ἥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37204,7 +37596,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35655 'ἦ' (5 pixels wide)
+	// @36120 'ἦ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37221,7 +37613,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35670 'ἧ' (5 pixels wide)
+	// @36135 'ἧ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37238,7 +37630,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @35685 'Ἠ' (8 pixels wide)
+	// @36150 'Ἠ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37255,7 +37647,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35700 'Ἡ' (8 pixels wide)
+	// @36165 'Ἡ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -37272,7 +37664,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @35715 'Ἢ' (9 pixels wide)
+	// @36180 'Ἢ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37289,7 +37681,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35745 'Ἣ' (9 pixels wide)
+	// @36210 'Ἣ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37306,7 +37698,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35775 'Ἤ' (9 pixels wide)
+	// @36240 'Ἤ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37323,7 +37715,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35805 'Ἥ' (9 pixels wide)
+	// @36270 'Ἥ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37340,7 +37732,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @35835 'Ἦ' (10 pixels wide)
+	// @36300 'Ἦ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -37357,7 +37749,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @35865 'Ἧ' (10 pixels wide)
+	// @36330 'Ἧ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -37374,7 +37766,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @35895 'ἰ' (3 pixels wide)
+	// @36360 'ἰ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -37391,7 +37783,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @35910 'ἱ' (3 pixels wide)
+	// @36375 'ἱ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -37408,7 +37800,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @35925 'ἲ' (4 pixels wide)
+	// @36390 'ἲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37425,7 +37817,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @35940 'ἳ' (4 pixels wide)
+	// @36405 'ἳ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37442,7 +37834,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @35955 'ἴ' (4 pixels wide)
+	// @36420 'ἴ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37459,7 +37851,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @35970 'ἵ' (4 pixels wide)
+	// @36435 'ἵ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37476,7 +37868,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @35985 'ἶ' (5 pixels wide)
+	// @36450 'ἶ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37493,7 +37885,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36000 'ἷ' (5 pixels wide)
+	// @36465 'ἷ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37510,7 +37902,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36015 'Ἰ' (3 pixels wide)
+	// @36480 'Ἰ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -37527,7 +37919,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @36030 'Ἱ' (3 pixels wide)
+	// @36495 'Ἱ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -37544,7 +37936,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @36045 'Ἲ' (4 pixels wide)
+	// @36510 'Ἲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37561,7 +37953,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @36060 'Ἳ' (4 pixels wide)
+	// @36525 'Ἳ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37578,7 +37970,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @36075 'Ἴ' (4 pixels wide)
+	// @36540 'Ἴ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37595,7 +37987,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @36090 'Ἵ' (4 pixels wide)
+	// @36555 'Ἵ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -37612,7 +38004,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @36105 'Ἶ' (5 pixels wide)
+	// @36570 'Ἶ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0xD0, // ## # 
@@ -37629,7 +38021,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36120 'Ἷ' (5 pixels wide)
+	// @36585 'Ἷ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0xD0, // ## # 
@@ -37646,7 +38038,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36135 'ὀ' (5 pixels wide)
+	// @36600 'ὀ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37663,7 +38055,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36150 'ὁ' (5 pixels wide)
+	// @36615 'ὁ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37680,7 +38072,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36165 'ὂ' (5 pixels wide)
+	// @36630 'ὂ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37697,7 +38089,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36180 'ὃ' (5 pixels wide)
+	// @36645 'ὃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37714,7 +38106,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36195 'ὄ' (5 pixels wide)
+	// @36660 'ὄ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37731,7 +38123,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36210 'ὅ' (5 pixels wide)
+	// @36675 'ὅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37748,7 +38140,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36225 'Ὀ' (9 pixels wide)
+	// @36690 'Ὀ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37765,7 +38157,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36255 'Ὁ' (9 pixels wide)
+	// @36720 'Ὁ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -37782,7 +38174,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36285 'Ὂ' (10 pixels wide)
+	// @36750 'Ὂ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -37799,7 +38191,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36315 'Ὃ' (11 pixels wide)
+	// @36780 'Ὃ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -37816,7 +38208,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @36345 'Ὄ' (10 pixels wide)
+	// @36810 'Ὄ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -37833,7 +38225,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36375 'Ὅ' (10 pixels wide)
+	// @36840 'Ὅ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -37850,7 +38242,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36405 'ὐ' (5 pixels wide)
+	// @36870 'ὐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37867,7 +38259,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36420 'ὑ' (5 pixels wide)
+	// @36885 'ὑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37884,7 +38276,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36435 'ὒ' (5 pixels wide)
+	// @36900 'ὒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37901,7 +38293,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36450 'ὓ' (5 pixels wide)
+	// @36915 'ὓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37918,7 +38310,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36465 'ὔ' (5 pixels wide)
+	// @36930 'ὔ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37935,7 +38327,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36480 'ὕ' (5 pixels wide)
+	// @36945 'ὕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -37952,7 +38344,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36495 'ὖ' (5 pixels wide)
+	// @36960 'ὖ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37969,7 +38361,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36510 'ὗ' (5 pixels wide)
+	// @36975 'ὗ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -37986,7 +38378,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @36525 'Ὑ' (7 pixels wide)
+	// @36990 'Ὑ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38003,7 +38395,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36540 'Ὓ' (9 pixels wide)
+	// @37005 'Ὓ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38020,7 +38412,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36570 'Ὕ' (9 pixels wide)
+	// @37035 'Ὕ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38037,7 +38429,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36600 'Ὗ' (9 pixels wide)
+	// @37065 'Ὗ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0xD0, 0x00, // ## #     
@@ -38054,7 +38446,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36630 'ὠ' (7 pixels wide)
+	// @37095 'ὠ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38071,7 +38463,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36645 'ὡ' (7 pixels wide)
+	// @37110 'ὡ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38088,7 +38480,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36660 'ὢ' (7 pixels wide)
+	// @37125 'ὢ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38105,7 +38497,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36675 'ὣ' (7 pixels wide)
+	// @37140 'ὣ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38122,7 +38514,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36690 'ὤ' (7 pixels wide)
+	// @37155 'ὤ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38139,7 +38531,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36705 'ὥ' (7 pixels wide)
+	// @37170 'ὥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38156,7 +38548,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36720 'ὦ' (7 pixels wide)
+	// @37185 'ὦ' (7 pixels wide)
 	0x00, //        
 	0x68, //  ## #  
 	0x58, //  # ##  
@@ -38173,7 +38565,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36735 'ὧ' (7 pixels wide)
+	// @37200 'ὧ' (7 pixels wide)
 	0x00, //        
 	0x68, //  ## #  
 	0x58, //  # ##  
@@ -38190,7 +38582,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @36750 'Ὠ' (9 pixels wide)
+	// @37215 'Ὠ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38207,7 +38599,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36780 'Ὡ' (9 pixels wide)
+	// @37245 'Ὡ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38224,7 +38616,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @36810 'Ὢ' (10 pixels wide)
+	// @37275 'Ὢ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -38241,7 +38633,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36840 'Ὣ' (10 pixels wide)
+	// @37305 'Ὣ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -38258,7 +38650,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36870 'Ὤ' (10 pixels wide)
+	// @37335 'Ὤ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -38275,7 +38667,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36900 'Ὥ' (10 pixels wide)
+	// @37365 'Ὥ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -38292,7 +38684,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36930 'Ὦ' (10 pixels wide)
+	// @37395 'Ὦ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -38309,7 +38701,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36960 'Ὧ' (10 pixels wide)
+	// @37425 'Ὧ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -38326,7 +38718,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @36990 'ὰ' (7 pixels wide)
+	// @37455 'ὰ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38343,7 +38735,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @37005 'ά' (7 pixels wide)
+	// @37470 'ά' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38360,7 +38752,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @37020 'ὲ' (5 pixels wide)
+	// @37485 'ὲ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38377,7 +38769,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37035 'έ' (5 pixels wide)
+	// @37500 'έ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38394,7 +38786,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37050 'ὴ' (5 pixels wide)
+	// @37515 'ὴ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38411,7 +38803,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @37065 'ή' (5 pixels wide)
+	// @37530 'ή' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38428,7 +38820,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @37080 'ὶ' (4 pixels wide)
+	// @37545 'ὶ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -38445,7 +38837,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @37095 'ί' (3 pixels wide)
+	// @37560 'ί' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -38462,7 +38854,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @37110 'ὸ' (5 pixels wide)
+	// @37575 'ὸ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38479,7 +38871,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37125 'ό' (5 pixels wide)
+	// @37590 'ό' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38496,7 +38888,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37140 'ὺ' (5 pixels wide)
+	// @37605 'ὺ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38513,7 +38905,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37155 'ύ' (5 pixels wide)
+	// @37620 'ύ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38530,7 +38922,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @37170 'ὼ' (7 pixels wide)
+	// @37635 'ὼ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38547,7 +38939,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @37185 'ώ' (7 pixels wide)
+	// @37650 'ώ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38564,7 +38956,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @37200 'ᾀ' (7 pixels wide)
+	// @37665 'ᾀ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38581,7 +38973,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37215 'ᾁ' (7 pixels wide)
+	// @37680 'ᾁ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38598,7 +38990,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37230 'ᾂ' (7 pixels wide)
+	// @37695 'ᾂ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38615,7 +39007,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37245 'ᾃ' (7 pixels wide)
+	// @37710 'ᾃ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38632,7 +39024,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37260 'ᾄ' (7 pixels wide)
+	// @37725 'ᾄ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38649,7 +39041,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37275 'ᾅ' (7 pixels wide)
+	// @37740 'ᾅ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38666,7 +39058,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37290 'ᾆ' (7 pixels wide)
+	// @37755 'ᾆ' (7 pixels wide)
 	0x00, //        
 	0xD0, // ## #   
 	0xB0, // # ##   
@@ -38683,7 +39075,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37305 'ᾇ' (7 pixels wide)
+	// @37770 'ᾇ' (7 pixels wide)
 	0x00, //        
 	0xD0, // ## #   
 	0xB0, // # ##   
@@ -38700,7 +39092,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @37320 'ᾈ' (7 pixels wide)
+	// @37785 'ᾈ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38717,7 +39109,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37335 'ᾉ' (7 pixels wide)
+	// @37800 'ᾉ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -38734,7 +39126,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37350 'ᾊ' (9 pixels wide)
+	// @37815 'ᾊ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38751,7 +39143,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #   
 	0x06, 0x00, //      ##  
 
-	// @37380 'ᾋ' (9 pixels wide)
+	// @37845 'ᾋ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -38768,7 +39160,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #   
 	0x06, 0x00, //      ##  
 
-	// @37410 'ᾌ' (8 pixels wide)
+	// @37875 'ᾌ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -38785,7 +39177,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37425 'ᾍ' (8 pixels wide)
+	// @37890 'ᾍ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -38802,7 +39194,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37440 'ᾎ' (8 pixels wide)
+	// @37905 'ᾎ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0xD0, // ## #    
@@ -38819,7 +39211,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37455 'ᾏ' (8 pixels wide)
+	// @37920 'ᾏ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0xD0, // ## #    
@@ -38836,7 +39228,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37470 'ᾐ' (5 pixels wide)
+	// @37935 'ᾐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38853,7 +39245,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37485 'ᾑ' (5 pixels wide)
+	// @37950 'ᾑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38870,7 +39262,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37500 'ᾒ' (5 pixels wide)
+	// @37965 'ᾒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38887,7 +39279,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37515 'ᾓ' (5 pixels wide)
+	// @37980 'ᾓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38904,7 +39296,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37530 'ᾔ' (5 pixels wide)
+	// @37995 'ᾔ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38921,7 +39313,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37545 'ᾕ' (5 pixels wide)
+	// @38010 'ᾕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -38938,7 +39330,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37560 'ᾖ' (5 pixels wide)
+	// @38025 'ᾖ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -38955,7 +39347,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37575 'ᾗ' (5 pixels wide)
+	// @38040 'ᾗ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -38972,7 +39364,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @37590 'ᾘ' (8 pixels wide)
+	// @38055 'ᾘ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -38989,7 +39381,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37605 'ᾙ' (8 pixels wide)
+	// @38070 'ᾙ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -39006,7 +39398,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #   
 	0x0C, //     ##  
 
-	// @37620 'ᾚ' (9 pixels wide)
+	// @38085 'ᾚ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39023,7 +39415,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #  
 	0x03, 0x00, //       ## 
 
-	// @37650 'ᾛ' (9 pixels wide)
+	// @38115 'ᾛ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39040,7 +39432,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #  
 	0x03, 0x00, //       ## 
 
-	// @37680 'ᾜ' (9 pixels wide)
+	// @38145 'ᾜ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39057,7 +39449,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #  
 	0x03, 0x00, //       ## 
 
-	// @37710 'ᾝ' (9 pixels wide)
+	// @38175 'ᾝ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39074,7 +39466,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #  
 	0x03, 0x00, //       ## 
 
-	// @37740 'ᾞ' (10 pixels wide)
+	// @38205 'ᾞ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -39091,7 +39483,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @37770 'ᾟ' (10 pixels wide)
+	// @38235 'ᾟ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -39108,7 +39500,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @37800 'ᾠ' (7 pixels wide)
+	// @38265 'ᾠ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39125,7 +39517,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37815 'ᾡ' (7 pixels wide)
+	// @38280 'ᾡ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39142,7 +39534,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37830 'ᾢ' (7 pixels wide)
+	// @38295 'ᾢ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39159,7 +39551,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37845 'ᾣ' (7 pixels wide)
+	// @38310 'ᾣ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39176,7 +39568,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37860 'ᾤ' (7 pixels wide)
+	// @38325 'ᾤ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39193,7 +39585,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37875 'ᾥ' (7 pixels wide)
+	// @38340 'ᾥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39210,7 +39602,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37890 'ᾦ' (7 pixels wide)
+	// @38355 'ᾦ' (7 pixels wide)
 	0x00, //        
 	0x68, //  ## #  
 	0x58, //  # ##  
@@ -39227,7 +39619,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37905 'ᾧ' (7 pixels wide)
+	// @38370 'ᾧ' (7 pixels wide)
 	0x00, //        
 	0x68, //  ## #  
 	0x58, //  # ##  
@@ -39244,7 +39636,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @37920 'ᾨ' (9 pixels wide)
+	// @38385 'ᾨ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39261,7 +39653,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #   
 	0x06, 0x00, //      ##  
 
-	// @37950 'ᾩ' (9 pixels wide)
+	// @38415 'ᾩ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -39278,7 +39670,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #   
 	0x06, 0x00, //      ##  
 
-	// @37980 'ᾪ' (10 pixels wide)
+	// @38445 'ᾪ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -39295,7 +39687,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38010 'ᾫ' (10 pixels wide)
+	// @38475 'ᾫ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -39312,7 +39704,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38040 'ᾬ' (10 pixels wide)
+	// @38505 'ᾬ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -39329,7 +39721,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38070 'ᾭ' (10 pixels wide)
+	// @38535 'ᾭ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -39346,7 +39738,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38100 'ᾮ' (10 pixels wide)
+	// @38565 'ᾮ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -39363,7 +39755,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38130 'ᾯ' (10 pixels wide)
+	// @38595 'ᾯ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xD0, 0x00, // ## #      
@@ -39380,7 +39772,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x03, 0x00, //       ##  
 
-	// @38160 'ᾰ' (7 pixels wide)
+	// @38625 'ᾰ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39397,7 +39789,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38175 'ᾱ' (7 pixels wide)
+	// @38640 'ᾱ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39414,7 +39806,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38190 'ᾲ' (7 pixels wide)
+	// @38655 'ᾲ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39431,7 +39823,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @38205 'ᾳ' (7 pixels wide)
+	// @38670 'ᾳ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39448,7 +39840,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @38220 'ᾴ' (7 pixels wide)
+	// @38685 'ᾴ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39465,7 +39857,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @38235 'ᾶ' (7 pixels wide)
+	// @38700 'ᾶ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39482,7 +39874,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38250 'ᾷ' (7 pixels wide)
+	// @38715 'ᾷ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39499,7 +39891,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #    
 	0x30, //   ##   
 
-	// @38265 'Ᾰ' (7 pixels wide)
+	// @38730 'Ᾰ' (7 pixels wide)
 	0x00, //        
 	0x28, //   # #  
 	0x38, //   ###  
@@ -39516,7 +39908,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38280 'Ᾱ' (7 pixels wide)
+	// @38745 'Ᾱ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x3C, //   #### 
@@ -39533,7 +39925,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38295 'Ὰ' (7 pixels wide)
+	// @38760 'Ὰ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39550,7 +39942,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38310 'Ά' (7 pixels wide)
+	// @38775 'Ά' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39567,7 +39959,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38325 'ᾼ' (7 pixels wide)
+	// @38790 'ᾼ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39584,7 +39976,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @38340 '᾽' (1 pixels wide)
+	// @38805 '᾽' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -39601,7 +39993,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @38355 'ι' (2 pixels wide)
+	// @38820 'ι' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -39618,7 +40010,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0xC0, // ##
 
-	// @38370 '᾿' (1 pixels wide)
+	// @38835 '᾿' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -39635,7 +40027,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @38385 '῀' (4 pixels wide)
+	// @38850 '῀' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39652,7 +40044,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38400 '῁' (4 pixels wide)
+	// @38865 '῁' (4 pixels wide)
 	0x00, //     
 	0xD0, // ## #
 	0xB0, // # ##
@@ -39669,7 +40061,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38415 'ῂ' (5 pixels wide)
+	// @38880 'ῂ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39686,7 +40078,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @38430 'ῃ' (5 pixels wide)
+	// @38895 'ῃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39703,7 +40095,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @38445 'ῄ' (5 pixels wide)
+	// @38910 'ῄ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39720,7 +40112,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @38460 'ῆ' (5 pixels wide)
+	// @38925 'ῆ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39737,7 +40129,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @38475 'ῇ' (5 pixels wide)
+	// @38940 'ῇ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39754,7 +40146,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0xC0, // ##   
 
-	// @38490 'Ὲ' (7 pixels wide)
+	// @38955 'Ὲ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39771,7 +40163,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38505 'Έ' (7 pixels wide)
+	// @38970 'Έ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -39788,7 +40180,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @38520 'Ὴ' (8 pixels wide)
+	// @38985 'Ὴ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -39805,7 +40197,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @38535 'Ή' (8 pixels wide)
+	// @39000 'Ή' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -39822,7 +40214,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @38550 'ῌ' (6 pixels wide)
+	// @39015 'ῌ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -39839,7 +40231,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x30, //   ##  
 
-	// @38565 '῍' (4 pixels wide)
+	// @39030 '῍' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39856,7 +40248,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38580 '῎' (4 pixels wide)
+	// @39045 '῎' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39873,7 +40265,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38595 '῏' (4 pixels wide)
+	// @39060 '῏' (4 pixels wide)
 	0x00, //     
 	0xD0, // ## #
 	0xB0, // # ##
@@ -39890,7 +40282,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38610 'ῐ' (4 pixels wide)
+	// @39075 'ῐ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39907,7 +40299,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38625 'ῑ' (4 pixels wide)
+	// @39090 'ῑ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39924,7 +40316,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38640 'ῒ' (5 pixels wide)
+	// @39105 'ῒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39941,7 +40333,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38655 'ΐ' (5 pixels wide)
+	// @39120 'ΐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -39958,7 +40350,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38670 'ῖ' (4 pixels wide)
+	// @39135 'ῖ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -39975,7 +40367,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38685 'ῗ' (5 pixels wide)
+	// @39150 'ῗ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -39992,7 +40384,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38700 'Ῐ' (3 pixels wide)
+	// @39165 'Ῐ' (3 pixels wide)
 	0x00, //    
 	0xA0, // # #
 	0xE0, // ###
@@ -40009,7 +40401,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @38715 'Ῑ' (4 pixels wide)
+	// @39180 'Ῑ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xF0, // ####
@@ -40026,7 +40418,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38730 'Ὶ' (3 pixels wide)
+	// @39195 'Ὶ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -40043,7 +40435,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @38745 'Ί' (3 pixels wide)
+	// @39210 'Ί' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -40060,7 +40452,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @38760 '῝' (4 pixels wide)
+	// @39225 '῝' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -40077,7 +40469,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38775 '῞' (4 pixels wide)
+	// @39240 '῞' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -40094,7 +40486,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38790 '῟' (4 pixels wide)
+	// @39255 '῟' (4 pixels wide)
 	0x00, //     
 	0xD0, // ## #
 	0xB0, // # ##
@@ -40111,7 +40503,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @38805 'ῠ' (5 pixels wide)
+	// @39270 'ῠ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40128,7 +40520,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38820 'ῡ' (5 pixels wide)
+	// @39285 'ῡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40145,7 +40537,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38835 'ῢ' (5 pixels wide)
+	// @39300 'ῢ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40162,7 +40554,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38850 'ΰ' (5 pixels wide)
+	// @39315 'ΰ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40179,7 +40571,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38865 'ῤ' (5 pixels wide)
+	// @39330 'ῤ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40196,7 +40588,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @38880 'ῥ' (5 pixels wide)
+	// @39345 'ῥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40213,7 +40605,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @38895 'ῦ' (5 pixels wide)
+	// @39360 'ῦ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -40230,7 +40622,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38910 'ῧ' (5 pixels wide)
+	// @39375 'ῧ' (5 pixels wide)
 	0x00, //      
 	0xD0, // ## # 
 	0xB0, // # ## 
@@ -40247,7 +40639,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38925 'Ῠ' (5 pixels wide)
+	// @39390 'Ῠ' (5 pixels wide)
 	0x00, //      
 	0x50, //  # # 
 	0x70, //  ### 
@@ -40264,7 +40656,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38940 'Ῡ' (5 pixels wide)
+	// @39405 'Ῡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0xF0, // #### 
@@ -40281,7 +40673,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @38955 'Ὺ' (8 pixels wide)
+	// @39420 'Ὺ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -40298,7 +40690,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @38970 'Ύ' (8 pixels wide)
+	// @39435 'Ύ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -40315,7 +40707,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @38985 'Ῥ' (7 pixels wide)
+	// @39450 'Ῥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40332,7 +40724,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @39000 '῭' (4 pixels wide)
+	// @39465 '῭' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -40349,7 +40741,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39015 '΅' (4 pixels wide)
+	// @39480 '΅' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -40366,7 +40758,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39030 '`' (2 pixels wide)
+	// @39495 '`' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40383,7 +40775,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39045 'ῲ' (7 pixels wide)
+	// @39510 'ῲ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40400,7 +40792,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @39060 'ῳ' (7 pixels wide)
+	// @39525 'ῳ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40417,7 +40809,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @39075 'ῴ' (7 pixels wide)
+	// @39540 'ῴ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40434,7 +40826,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @39090 'ῶ' (7 pixels wide)
+	// @39555 'ῶ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40451,7 +40843,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @39105 'ῷ' (7 pixels wide)
+	// @39570 'ῷ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40468,7 +40860,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @39120 'Ὸ' (9 pixels wide)
+	// @39585 'Ὸ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -40485,7 +40877,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @39150 'Ό' (9 pixels wide)
+	// @39615 'Ό' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -40502,7 +40894,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @39180 'Ὼ' (9 pixels wide)
+	// @39645 'Ὼ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -40519,7 +40911,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @39210 'Ώ' (9 pixels wide)
+	// @39675 'Ώ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -40536,7 +40928,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @39240 'ῼ' (7 pixels wide)
+	// @39705 'ῼ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40553,7 +40945,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x18, //    ##  
 
-	// @39255 '´' (2 pixels wide)
+	// @39720 '´' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40570,7 +40962,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39270 '῾' (1 pixels wide)
+	// @39735 '῾' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -40587,7 +40979,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @39285 ' ' (2 pixels wide)
+	// @39750 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40604,7 +40996,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39300 ' ' (2 pixels wide)
+	// @39765 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40621,7 +41013,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39315 ' ' (2 pixels wide)
+	// @39780 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40638,7 +41030,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39330 ' ' (2 pixels wide)
+	// @39795 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40655,7 +41047,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39345 ' ' (2 pixels wide)
+	// @39810 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40672,7 +41064,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39360 ' ' (2 pixels wide)
+	// @39825 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40689,7 +41081,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39375 ' ' (2 pixels wide)
+	// @39840 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40706,7 +41098,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39390 ' ' (2 pixels wide)
+	// @39855 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40723,7 +41115,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39405 ' ' (2 pixels wide)
+	// @39870 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40740,7 +41132,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39420 ' ' (2 pixels wide)
+	// @39885 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40757,7 +41149,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39435 ' ' (2 pixels wide)
+	// @39900 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40774,7 +41166,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39450 '​' (2 pixels wide)
+	// @39915 '​' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40791,7 +41183,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39465 '‌' (2 pixels wide)
+	// @39930 '‌' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40808,7 +41200,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39480 '‍' (2 pixels wide)
+	// @39945 '‍' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40825,7 +41217,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39495 '‎' (2 pixels wide)
+	// @39960 '‎' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40842,7 +41234,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39510 '‏' (2 pixels wide)
+	// @39975 '‏' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40859,7 +41251,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39525 '‐' (3 pixels wide)
+	// @39990 '‐' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -40876,7 +41268,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @39540 '‒' (6 pixels wide)
+	// @40005 '‒' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -40893,7 +41285,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @39555 '–' (6 pixels wide)
+	// @40020 '–' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -40910,7 +41302,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @39570 '—' (10 pixels wide)
+	// @40035 '—' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -40927,7 +41319,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @39600 '―' (10 pixels wide)
+	// @40065 '―' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -40944,7 +41336,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @39630 '‖' (4 pixels wide)
+	// @40095 '‖' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -40961,7 +41353,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x90, // #  #
 	0x00, //     
 
-	// @39645 '‗' (7 pixels wide)
+	// @40110 '‗' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -40978,7 +41370,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0xFE, // #######
 
-	// @39660 '‘' (2 pixels wide)
+	// @40125 '‘' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -40995,7 +41387,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39675 '’' (2 pixels wide)
+	// @40140 '’' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41012,7 +41404,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39690 '‚' (2 pixels wide)
+	// @40155 '‚' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41029,7 +41421,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x00, //   
 
-	// @39705 '‛' (2 pixels wide)
+	// @40170 '‛' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41046,7 +41438,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39720 '“' (4 pixels wide)
+	// @40185 '“' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41063,7 +41455,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39735 '”' (4 pixels wide)
+	// @40200 '”' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41080,7 +41472,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39750 '„' (4 pixels wide)
+	// @40215 '„' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41097,7 +41489,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xA0, // # # 
 	0x00, //     
 
-	// @39765 '‟' (4 pixels wide)
+	// @40230 '‟' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41114,7 +41506,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39780 '†' (5 pixels wide)
+	// @40245 '†' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -41131,7 +41523,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @39795 '‡' (5 pixels wide)
+	// @40260 '‡' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -41148,7 +41540,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @39810 '•' (4 pixels wide)
+	// @40275 '•' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41165,7 +41557,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39825 '…' (7 pixels wide)
+	// @40290 '…' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -41182,7 +41574,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @39840 '‪' (2 pixels wide)
+	// @40305 '‪' (2 pixels wide)
 	0x00, //   
 	0x80, // # 
 	0x40, //  #
@@ -41199,7 +41591,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #
 	0x40, //  #
 
-	// @39855 '‫' (2 pixels wide)
+	// @40320 '‫' (2 pixels wide)
 	0x00, //   
 	0x40, //  #
 	0x80, // # 
@@ -41216,7 +41608,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x80, // # 
 
-	// @39870 '‬' (3 pixels wide)
+	// @40335 '‬' (3 pixels wide)
 	0x00, //    
 	0x40, //  # 
 	0xA0, // # #
@@ -41233,7 +41625,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  # 
 	0x40, //  # 
 
-	// @39885 '‭' (4 pixels wide)
+	// @40350 '‭' (4 pixels wide)
 	0x00, //     
 	0xA0, // # # 
 	0x50, //  # #
@@ -41250,7 +41642,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #  
 	0x40, //  #  
 
-	// @39900 '‮' (4 pixels wide)
+	// @40365 '‮' (4 pixels wide)
 	0x00, //     
 	0x50, //  # #
 	0xA0, // # # 
@@ -41267,7 +41659,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x20, //   # 
 
-	// @39915 ' ' (2 pixels wide)
+	// @40380 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41284,7 +41676,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @39930 '‰' (14 pixels wide)
+	// @40395 '‰' (14 pixels wide)
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 	0x00, 0x00, //               
@@ -41301,7 +41693,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 
-	// @39960 '′' (1 pixels wide)
+	// @40425 '′' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -41318,7 +41710,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @39975 '″' (4 pixels wide)
+	// @40440 '″' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41335,7 +41727,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @39990 '‴' (6 pixels wide)
+	// @40455 '‴' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -41352,7 +41744,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40005 '‸' (3 pixels wide)
+	// @40470 '‸' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41369,7 +41761,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xA0, // # #
 	0xA0, // # #
 
-	// @40020 '‹' (2 pixels wide)
+	// @40485 '‹' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41386,7 +41778,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40035 '›' (2 pixels wide)
+	// @40500 '›' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41403,7 +41795,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40050 '‼' (4 pixels wide)
+	// @40515 '‼' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41420,7 +41812,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40065 '‽' (5 pixels wide)
+	// @40530 '‽' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -41437,7 +41829,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @40080 '‾' (7 pixels wide)
+	// @40545 '‾' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0xFE, // #######
@@ -41454,7 +41846,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40095 '⁄' (7 pixels wide)
+	// @40560 '⁄' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -41471,7 +41863,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40110 '⁞' (1 pixels wide)
+	// @40575 '⁞' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -41488,7 +41880,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @40125 ' ' (2 pixels wide)
+	// @40590 ' ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41505,7 +41897,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40140 '⁰' (4 pixels wide)
+	// @40605 '⁰' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x60, //  ## 
@@ -41522,7 +41914,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40155 'ⁱ' (1 pixels wide)
+	// @40620 'ⁱ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x80, // #
@@ -41539,7 +41931,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @40170 '⁴' (4 pixels wide)
+	// @40635 '⁴' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x60, //  ## 
@@ -41556,7 +41948,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40185 '⁵' (3 pixels wide)
+	// @40650 '⁵' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -41573,7 +41965,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40200 '⁶' (4 pixels wide)
+	// @40665 '⁶' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x70, //  ###
@@ -41590,7 +41982,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40215 '⁷' (4 pixels wide)
+	// @40680 '⁷' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xF0, // ####
@@ -41607,7 +41999,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40230 '⁸' (4 pixels wide)
+	// @40695 '⁸' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xF0, // ####
@@ -41624,7 +42016,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40245 '⁹' (4 pixels wide)
+	// @40710 '⁹' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xE0, // ### 
@@ -41641,7 +42033,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40260 '⁺' (3 pixels wide)
+	// @40725 '⁺' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41658,7 +42050,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40275 '⁻' (4 pixels wide)
+	// @40740 '⁻' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41675,7 +42067,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40290 '⁼' (3 pixels wide)
+	// @40755 '⁼' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41692,7 +42084,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40305 '⁽' (2 pixels wide)
+	// @40770 '⁽' (2 pixels wide)
 	0x00, //   
 	0x40, //  #
 	0x80, // # 
@@ -41709,7 +42101,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40320 '⁾' (2 pixels wide)
+	// @40785 '⁾' (2 pixels wide)
 	0x00, //   
 	0x80, // # 
 	0x40, //  #
@@ -41726,7 +42118,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40335 'ⁿ' (3 pixels wide)
+	// @40800 'ⁿ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41743,7 +42135,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40350 '₀' (4 pixels wide)
+	// @40815 '₀' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41760,7 +42152,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40365 '₁' (2 pixels wide)
+	// @40830 '₁' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41777,7 +42169,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @40380 '₂' (3 pixels wide)
+	// @40845 '₂' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41794,7 +42186,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40395 '₃' (3 pixels wide)
+	// @40860 '₃' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41811,7 +42203,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40410 '₄' (4 pixels wide)
+	// @40875 '₄' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41828,7 +42220,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40425 '₅' (3 pixels wide)
+	// @40890 '₅' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41845,7 +42237,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40440 '₆' (4 pixels wide)
+	// @40905 '₆' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41862,7 +42254,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40455 '₇' (4 pixels wide)
+	// @40920 '₇' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41879,7 +42271,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40470 '₈' (4 pixels wide)
+	// @40935 '₈' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41896,7 +42288,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40485 '₉' (4 pixels wide)
+	// @40950 '₉' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41913,7 +42305,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40500 '₊' (3 pixels wide)
+	// @40965 '₊' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41930,7 +42322,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40515 '₋' (4 pixels wide)
+	// @40980 '₋' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -41947,7 +42339,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40530 '₌' (3 pixels wide)
+	// @40995 '₌' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -41964,7 +42356,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @40545 '₍' (2 pixels wide)
+	// @41010 '₍' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41981,7 +42373,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #
 	0x00, //   
 
-	// @40560 '₎' (2 pixels wide)
+	// @41025 '₎' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -41998,7 +42390,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x00, //   
 
-	// @40575 'ₐ' (3 pixels wide)
+	// @41040 'ₐ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -42015,7 +42407,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###
 	0x00, //    
 
-	// @40590 'ₑ' (4 pixels wide)
+	// @41055 'ₑ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -42032,7 +42424,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###
 	0x00, //     
 
-	// @40605 'ₒ' (4 pixels wide)
+	// @41070 'ₒ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -42049,7 +42441,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ### 
 	0x00, //     
 
-	// @40620 'ₓ' (3 pixels wide)
+	// @41085 'ₓ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -42066,7 +42458,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xA0, // # #
 	0x00, //    
 
-	// @40635 'ₔ' (4 pixels wide)
+	// @41100 'ₔ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -42083,7 +42475,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @40650 '₠' (7 pixels wide)
+	// @41115 '₠' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42100,7 +42492,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40665 '₡' (6 pixels wide)
+	// @41130 '₡' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42117,7 +42509,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40680 '₢' (6 pixels wide)
+	// @41145 '₢' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42134,7 +42526,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40695 '₣' (5 pixels wide)
+	// @41160 '₣' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -42151,7 +42543,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @40710 '₤' (6 pixels wide)
+	// @41175 '₤' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42168,7 +42560,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40725 '₥' (8 pixels wide)
+	// @41190 '₥' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42185,7 +42577,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @40740 '₦' (8 pixels wide)
+	// @41205 '₦' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42202,7 +42594,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @40755 '₧' (10 pixels wide)
+	// @41220 '₧' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -42219,7 +42611,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @40785 '₨' (8 pixels wide)
+	// @41250 '₨' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42236,7 +42628,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @40800 '₩' (11 pixels wide)
+	// @41265 '₩' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -42253,7 +42645,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @40830 '₪' (8 pixels wide)
+	// @41295 '₪' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42270,7 +42662,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @40845 '₫' (6 pixels wide)
+	// @41310 '₫' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42287,7 +42679,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFC, // ######
 	0x00, //       
 
-	// @40860 '€' (7 pixels wide)
+	// @41325 '€' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42304,7 +42696,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40875 '₭' (6 pixels wide)
+	// @41340 '₭' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42321,7 +42713,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40890 '₮' (7 pixels wide)
+	// @41355 '₮' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42338,7 +42730,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40905 '₯' (13 pixels wide)
+	// @41370 '₯' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -42355,7 +42747,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x40, //          #   
 	0x00, 0x00, //              
 
-	// @40935 '₰' (6 pixels wide)
+	// @41400 '₰' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x38, //   ### 
@@ -42372,7 +42764,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ## 
 	0x00, //       
 
-	// @40950 '₱' (7 pixels wide)
+	// @41415 '₱' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42389,7 +42781,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40965 '₲' (6 pixels wide)
+	// @41430 '₲' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42406,7 +42798,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @40980 '₳' (7 pixels wide)
+	// @41445 '₳' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42423,7 +42815,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @40995 '₴' (6 pixels wide)
+	// @41460 '₴' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42440,7 +42832,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41010 '₵' (6 pixels wide)
+	// @41475 '₵' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42457,7 +42849,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41025 '₸' (7 pixels wide)
+	// @41490 '₸' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42474,7 +42866,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41040 '₹' (6 pixels wide)
+	// @41505 '₹' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42491,7 +42883,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41055 '₺' (7 pixels wide)
+	// @41520 '₺' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42508,7 +42900,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41070 '₻' (8 pixels wide)
+	// @41535 '₻' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42525,7 +42917,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41085 '₼' (9 pixels wide)
+	// @41550 '₼' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42542,7 +42934,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41115 '₽' (6 pixels wide)
+	// @41580 '₽' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42559,7 +42951,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41130 '₾' (8 pixels wide)
+	// @41595 '₾' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42576,7 +42968,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41145 '₿' (6 pixels wide)
+	// @41610 '₿' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42593,7 +42985,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x50, //  # #  
 	0x00, //       
 
-	// @41160 '⃝' (13 pixels wide)
+	// @41625 '⃝' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x0F, 0x80, //     #####    
@@ -42610,7 +43002,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, 0x60, //   ##     ##  
 	0x0F, 0x80, //     #####    
 
-	// @41190 '℅' (9 pixels wide)
+	// @41655 '℅' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42627,7 +43019,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41220 'ℓ' (6 pixels wide)
+	// @41685 'ℓ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -42644,7 +43036,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41235 '№' (12 pixels wide)
+	// @41700 '№' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -42661,7 +43053,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @41265 '℗' (9 pixels wide)
+	// @41730 '℗' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42678,7 +43070,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41295 '℠' (9 pixels wide)
+	// @41760 '℠' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42695,7 +43087,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41325 '™' (9 pixels wide)
+	// @41790 '™' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42712,7 +43104,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41355 'Ω' (7 pixels wide)
+	// @41820 'Ω' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42729,7 +43121,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41370 '℮' (9 pixels wide)
+	// @41835 '℮' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42746,7 +43138,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41400 'Ⅎ' (4 pixels wide)
+	// @41865 'Ⅎ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -42763,7 +43155,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @41415 '⅍' (9 pixels wide)
+	// @41880 '⅍' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -42780,7 +43172,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41445 'ⅎ' (3 pixels wide)
+	// @41910 'ⅎ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -42797,7 +43189,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @41460 '⅓' (7 pixels wide)
+	// @41925 '⅓' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42814,7 +43206,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41475 '⅔' (8 pixels wide)
+	// @41940 '⅔' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42831,7 +43223,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41490 '⅕' (7 pixels wide)
+	// @41955 '⅕' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42848,7 +43240,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41505 '⅖' (8 pixels wide)
+	// @41970 '⅖' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42865,7 +43257,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41520 '⅗' (8 pixels wide)
+	// @41985 '⅗' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42882,7 +43274,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41535 '⅘' (8 pixels wide)
+	// @42000 '⅘' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42899,7 +43291,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41550 '⅙' (7 pixels wide)
+	// @42015 '⅙' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42916,7 +43308,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41565 '⅚' (8 pixels wide)
+	// @42030 '⅚' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42933,7 +43325,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41580 '⅛' (7 pixels wide)
+	// @42045 '⅛' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -42950,7 +43342,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41595 '⅜' (8 pixels wide)
+	// @42060 '⅜' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42967,7 +43359,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41610 '⅝' (8 pixels wide)
+	// @42075 '⅝' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -42984,7 +43376,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41625 '⅞' (8 pixels wide)
+	// @42090 '⅞' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -43001,7 +43393,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41640 '⅟' (7 pixels wide)
+	// @42105 '⅟' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -43018,7 +43410,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41655 'Ↄ' (6 pixels wide)
+	// @42120 'Ↄ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -43035,7 +43427,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @41670 'ↄ' (5 pixels wide)
+	// @42135 'ↄ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43052,7 +43444,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @41685 '←' (10 pixels wide)
+	// @42150 '←' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -43069,7 +43461,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @41715 '↑' (9 pixels wide)
+	// @42180 '↑' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -43086,7 +43478,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @41745 '→' (10 pixels wide)
+	// @42210 '→' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -43103,7 +43495,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @41775 '↓' (9 pixels wide)
+	// @42240 '↓' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -43120,7 +43512,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, 0x00, //     #    
 	0x00, 0x00, //          
 
-	// @41805 '↔' (15 pixels wide)
+	// @42270 '↔' (15 pixels wide)
 	0x00, 0x00, //                
 	0x00, 0x00, //                
 	0x00, 0x00, //                
@@ -43137,7 +43529,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //                
 	0x00, 0x00, //                
 
-	// @41835 '↕' (7 pixels wide)
+	// @42300 '↕' (7 pixels wide)
 	0x00, //        
 	0x10, //    #   
 	0x38, //   ###  
@@ -43154,7 +43546,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @41850 '↖' (8 pixels wide)
+	// @42315 '↖' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -43171,7 +43563,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41865 '↗' (8 pixels wide)
+	// @42330 '↗' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -43188,7 +43580,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41880 '↘' (8 pixels wide)
+	// @42345 '↘' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -43205,7 +43597,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41895 '↙' (8 pixels wide)
+	// @42360 '↙' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -43222,7 +43614,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @41910 '↨' (5 pixels wide)
+	// @42375 '↨' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x20, //   #  
@@ -43239,7 +43631,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @41925 '∂' (5 pixels wide)
+	// @42390 '∂' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43256,7 +43648,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @41940 '∆' (7 pixels wide)
+	// @42405 '∆' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -43273,7 +43665,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @41955 '∏' (9 pixels wide)
+	// @42420 '∏' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -43290,7 +43682,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x41, 0x00, //  #     # 
 	0x00, 0x00, //          
 
-	// @41985 '∑' (6 pixels wide)
+	// @42450 '∑' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -43307,7 +43699,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFC, // ######
 	0x00, //       
 
-	// @42000 '−' (5 pixels wide)
+	// @42465 '−' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43324,7 +43716,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42015 '∕' (7 pixels wide)
+	// @42480 '∕' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -43341,7 +43733,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @42030 '∙' (1 pixels wide)
+	// @42495 '∙' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -43358,7 +43750,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @42045 '√' (6 pixels wide)
+	// @42510 '√' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -43375,7 +43767,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @42060 '∞' (10 pixels wide)
+	// @42525 '∞' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -43392,7 +43784,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @42090 '∟' (6 pixels wide)
+	// @42555 '∟' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -43409,7 +43801,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @42105 '∩' (6 pixels wide)
+	// @42570 '∩' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -43426,7 +43818,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @42120 '∫' (5 pixels wide)
+	// @42585 '∫' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43443,7 +43835,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###  
 	0x00, //      
 
-	// @42135 '≈' (5 pixels wide)
+	// @42600 '≈' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43460,7 +43852,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42150 '≠' (5 pixels wide)
+	// @42615 '≠' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43477,7 +43869,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42165 '≡' (5 pixels wide)
+	// @42630 '≡' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43494,7 +43886,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42180 '≤' (5 pixels wide)
+	// @42645 '≤' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43511,7 +43903,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42195 '≥' (5 pixels wide)
+	// @42660 '≥' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43528,7 +43920,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42210 '⌂' (9 pixels wide)
+	// @42675 '⌂' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -43545,7 +43937,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @42240 '⌐' (5 pixels wide)
+	// @42705 '⌐' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -43562,7 +43954,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @42255 '⌠' (3 pixels wide)
+	// @42720 '⌠' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -43579,7 +43971,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #  
 	0x80, // #  
 
-	// @42270 '⌡' (3 pixels wide)
+	// @42735 '⌡' (3 pixels wide)
 	0x00, //    
 	0x20, //   #
 	0x20, //   #
@@ -43596,7 +43988,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #
 	0xC0, // ## 
 
-	// @42285 '①' (15 pixels wide)
+	// @42750 '①' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43613,7 +44005,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42315 '②' (15 pixels wide)
+	// @42780 '②' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43630,7 +44022,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42345 '③' (15 pixels wide)
+	// @42810 '③' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43647,7 +44039,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42375 '④' (15 pixels wide)
+	// @42840 '④' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43664,7 +44056,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42405 '⑤' (15 pixels wide)
+	// @42870 '⑤' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43681,7 +44073,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42435 '⑥' (15 pixels wide)
+	// @42900 '⑥' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43698,7 +44090,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42465 '⑦' (15 pixels wide)
+	// @42930 '⑦' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43715,7 +44107,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42495 '⑧' (15 pixels wide)
+	// @42960 '⑧' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43732,7 +44124,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42525 '⑨' (15 pixels wide)
+	// @42990 '⑨' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43749,7 +44141,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42555 '⑩' (15 pixels wide)
+	// @43020 '⑩' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43766,7 +44158,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42585 '⑪' (15 pixels wide)
+	// @43050 '⑪' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43783,7 +44175,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42615 '⑫' (15 pixels wide)
+	// @43080 '⑫' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43800,7 +44192,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42645 '⑬' (15 pixels wide)
+	// @43110 '⑬' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43817,7 +44209,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42675 '⑭' (15 pixels wide)
+	// @43140 '⑭' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43834,7 +44226,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42705 '⑮' (15 pixels wide)
+	// @43170 '⑮' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43851,7 +44243,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42735 '⑯' (15 pixels wide)
+	// @43200 '⑯' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43868,7 +44260,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42765 '⑰' (15 pixels wide)
+	// @43230 '⑰' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43885,7 +44277,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42795 '⑱' (15 pixels wide)
+	// @43260 '⑱' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43902,7 +44294,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42825 '⑲' (15 pixels wide)
+	// @43290 '⑲' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43919,7 +44311,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42855 '⑳' (15 pixels wide)
+	// @43320 '⑳' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43936,7 +44328,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42885 '⓪' (15 pixels wide)
+	// @43350 '⓪' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x18, 0x30, //    ##     ##   
 	0x20, 0x08, //   #         #  
@@ -43953,7 +44345,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, 0x30, //    ##     ##   
 	0x07, 0xC0, //      #####     
 
-	// @42915 '⓫' (15 pixels wide)
+	// @43380 '⓫' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -43970,7 +44362,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @42945 '⓬' (15 pixels wide)
+	// @43410 '⓬' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -43987,7 +44379,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @42975 '⓭' (15 pixels wide)
+	// @43440 '⓭' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44004,7 +44396,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43005 '⓮' (15 pixels wide)
+	// @43470 '⓮' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44021,7 +44413,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43035 '⓯' (15 pixels wide)
+	// @43500 '⓯' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44038,7 +44430,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43065 '⓰' (15 pixels wide)
+	// @43530 '⓰' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44055,7 +44447,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43095 '⓱' (15 pixels wide)
+	// @43560 '⓱' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44072,7 +44464,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43125 '⓲' (15 pixels wide)
+	// @43590 '⓲' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44089,7 +44481,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43155 '⓳' (15 pixels wide)
+	// @43620 '⓳' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44106,7 +44498,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43185 '⓴' (15 pixels wide)
+	// @43650 '⓴' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44123,7 +44515,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43215 '⓿' (15 pixels wide)
+	// @43680 '⓿' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44140,7 +44532,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43245 '─' (7 pixels wide)
+	// @43710 '─' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -44157,7 +44549,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @43260 '│' (1 pixels wide)
+	// @43725 '│' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x80, // #
@@ -44174,7 +44566,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x80, // #
 
-	// @43275 '┌' (4 pixels wide)
+	// @43740 '┌' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44191,7 +44583,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x80, // #   
 
-	// @43290 '┐' (4 pixels wide)
+	// @43755 '┐' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44208,7 +44600,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #
 	0x10, //    #
 
-	// @43305 '└' (4 pixels wide)
+	// @43770 '└' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x80, // #   
@@ -44225,7 +44617,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @43320 '┘' (4 pixels wide)
+	// @43785 '┘' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x10, //    #
@@ -44242,7 +44634,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @43335 '□' (6 pixels wide)
+	// @43800 '□' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44259,7 +44651,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43350 '▪' (3 pixels wide)
+	// @43815 '▪' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -44276,7 +44668,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @43365 '▫' (3 pixels wide)
+	// @43830 '▫' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -44293,7 +44685,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @43380 '◊' (5 pixels wide)
+	// @43845 '◊' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44310,7 +44702,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @43395 '○' (6 pixels wide)
+	// @43860 '○' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44327,7 +44719,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43410 '◌' (6 pixels wide)
+	// @43875 '◌' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44344,7 +44736,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43425 '●' (6 pixels wide)
+	// @43890 '●' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44361,7 +44753,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43440 '◦' (3 pixels wide)
+	// @43905 '◦' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -44378,7 +44770,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @43455 '❶' (15 pixels wide)
+	// @43920 '❶' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44395,7 +44787,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43485 '❷' (15 pixels wide)
+	// @43950 '❷' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44412,7 +44804,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43515 '❸' (15 pixels wide)
+	// @43980 '❸' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44429,7 +44821,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43545 '❹' (15 pixels wide)
+	// @44010 '❹' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44446,7 +44838,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43575 '❺' (15 pixels wide)
+	// @44040 '❺' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44463,7 +44855,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43605 '❻' (15 pixels wide)
+	// @44070 '❻' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44480,7 +44872,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43635 '❼' (15 pixels wide)
+	// @44100 '❼' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44497,7 +44889,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43665 '❽' (15 pixels wide)
+	// @44130 '❽' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44514,7 +44906,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43695 '❾' (15 pixels wide)
+	// @44160 '❾' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44531,7 +44923,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43725 '❿' (15 pixels wide)
+	// @44190 '❿' (15 pixels wide)
 	0x07, 0xC0, //      #####     
 	0x1F, 0xF0, //    #########   
 	0x3F, 0xF8, //   ###########  
@@ -44548,7 +44940,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0xF0, //    #########   
 	0x07, 0xC0, //      #####     
 
-	// @43755 'Ⱡ' (5 pixels wide)
+	// @44220 'Ⱡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44565,7 +44957,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @43770 'ⱡ' (3 pixels wide)
+	// @44235 'ⱡ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -44582,7 +44974,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @43785 'Ɫ' (6 pixels wide)
+	// @44250 'Ɫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44599,7 +44991,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43800 'Ᵽ' (6 pixels wide)
+	// @44265 'Ᵽ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44616,7 +45008,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43815 'Ɽ' (5 pixels wide)
+	// @44280 'Ɽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44633,7 +45025,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##   
 	0x00, //      
 
-	// @43830 'ⱥ' (6 pixels wide)
+	// @44295 'ⱥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44650,7 +45042,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43845 'ⱦ' (6 pixels wide)
+	// @44310 'ⱦ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44667,7 +45059,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @43860 'Ⱨ' (7 pixels wide)
+	// @44325 'Ⱨ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -44684,7 +45076,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, //       #
 	0x00, //        
 
-	// @43875 'ⱨ' (6 pixels wide)
+	// @44340 'ⱨ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44701,7 +45093,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #
 	0x00, //       
 
-	// @43890 'Ⱪ' (6 pixels wide)
+	// @44355 'Ⱪ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44718,7 +45110,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #
 	0x00, //       
 
-	// @43905 'ⱪ' (5 pixels wide)
+	// @44370 'ⱪ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44735,7 +45127,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @43920 'Ⱬ' (6 pixels wide)
+	// @44385 'Ⱬ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44752,7 +45144,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #
 	0x00, //       
 
-	// @43935 'ⱬ' (4 pixels wide)
+	// @44400 'ⱬ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44769,7 +45161,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #
 	0x00, //     
 
-	// @43950 'Ɱ' (9 pixels wide)
+	// @44415 'Ɱ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -44786,7 +45178,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x03, 0x80, //       ###
 	0x00, 0x00, //          
 
-	// @43980 'Ɐ' (7 pixels wide)
+	// @44445 'Ɐ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -44803,7 +45195,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @43995 'Ɒ' (7 pixels wide)
+	// @44460 'Ɒ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -44820,7 +45212,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44010 'ⱴ' (6 pixels wide)
+	// @44475 'ⱴ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -44837,7 +45229,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44025 'Ⱶ' (5 pixels wide)
+	// @44490 'Ⱶ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44854,7 +45246,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44040 'ⱶ' (4 pixels wide)
+	// @44505 'ⱶ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44871,7 +45263,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44055 'ⱷ' (7 pixels wide)
+	// @44520 'ⱷ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -44888,7 +45280,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44070 'ⱸ' (8 pixels wide)
+	// @44535 'ⱸ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -44905,7 +45297,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @44085 'ⱹ' (4 pixels wide)
+	// @44550 'ⱹ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44922,7 +45314,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44100 'ⱺ' (5 pixels wide)
+	// @44565 'ⱺ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -44939,7 +45331,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44115 'ⱻ' (4 pixels wide)
+	// @44580 'ⱻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -44956,7 +45348,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44130 'ⱼ' (1 pixels wide)
+	// @44595 'ⱼ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -44973,7 +45365,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x80, // #
 
-	// @44145 'ⱽ' (5 pixels wide)
+	// @44610 'ⱽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x88, // #   #
@@ -44990,7 +45382,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44160 'Ȿ' (5 pixels wide)
+	// @44625 'Ȿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45007,7 +45399,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##
 	0x00, //      
 
-	// @44175 'Ɀ' (7 pixels wide)
+	// @44640 'Ɀ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45024,7 +45416,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, //      ##
 	0x00, //        
 
-	// @44190 '⸗' (3 pixels wide)
+	// @44655 '⸗' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45041,7 +45433,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @44205 'ꓐ' (5 pixels wide)
+	// @44670 'ꓐ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45058,7 +45450,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44220 'ꓑ' (5 pixels wide)
+	// @44685 'ꓑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45075,7 +45467,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44235 'ꓒ' (5 pixels wide)
+	// @44700 'ꓒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45092,7 +45484,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44250 'ꓓ' (6 pixels wide)
+	// @44715 'ꓓ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45109,7 +45501,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44265 'ꓔ' (7 pixels wide)
+	// @44730 'ꓔ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45126,7 +45518,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44280 'ꓕ' (6 pixels wide)
+	// @44745 'ꓕ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45143,7 +45535,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44295 'ꓖ' (6 pixels wide)
+	// @44760 'ꓖ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45160,7 +45552,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44310 'ꓗ' (5 pixels wide)
+	// @44775 'ꓗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45177,7 +45569,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44325 'ꓘ' (6 pixels wide)
+	// @44790 'ꓘ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45194,7 +45586,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44340 'ꓙ' (3 pixels wide)
+	// @44805 'ꓙ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45211,7 +45603,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @44355 'ꓛ' (6 pixels wide)
+	// @44820 'ꓛ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45228,7 +45620,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44370 'ꓜ' (6 pixels wide)
+	// @44835 'ꓜ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45245,7 +45637,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44385 'ꓝ' (4 pixels wide)
+	// @44850 'ꓝ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45262,7 +45654,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44400 'ꓞ' (4 pixels wide)
+	// @44865 'ꓞ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45279,7 +45671,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44415 'ꓟ' (9 pixels wide)
+	// @44880 'ꓟ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -45296,7 +45688,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @44445 'ꓠ' (6 pixels wide)
+	// @44910 'ꓠ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45313,7 +45705,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44460 'ꓡ' (4 pixels wide)
+	// @44925 'ꓡ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45330,7 +45722,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44475 'ꓢ' (5 pixels wide)
+	// @44940 'ꓢ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45347,7 +45739,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44490 'ꓣ' (5 pixels wide)
+	// @44955 'ꓣ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45364,7 +45756,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44505 'ꓤ' (5 pixels wide)
+	// @44970 'ꓤ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45381,7 +45773,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44520 'ꓥ' (5 pixels wide)
+	// @44985 'ꓥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45398,7 +45790,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44535 'ꓦ' (6 pixels wide)
+	// @45000 'ꓦ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45415,7 +45807,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44550 'ꓧ' (6 pixels wide)
+	// @45015 'ꓧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45432,7 +45824,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44565 'ꓨ' (7 pixels wide)
+	// @45030 'ꓨ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45449,7 +45841,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44580 'ꓩ' (3 pixels wide)
+	// @45045 'ꓩ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45466,7 +45858,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @44595 'ꓪ' (11 pixels wide)
+	// @45060 'ꓪ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -45483,7 +45875,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @44625 'ꓫ' (6 pixels wide)
+	// @45090 'ꓫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45500,7 +45892,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44640 'ꓬ' (5 pixels wide)
+	// @45105 'ꓬ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45517,7 +45909,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44655 'ꓭ' (5 pixels wide)
+	// @45120 'ꓭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45534,7 +45926,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44670 'ꓮ' (7 pixels wide)
+	// @45135 'ꓮ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45551,7 +45943,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44685 'ꓯ' (7 pixels wide)
+	// @45150 'ꓯ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45568,7 +45960,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44700 'ꓰ' (5 pixels wide)
+	// @45165 'ꓰ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45585,7 +45977,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44715 'ꓱ' (4 pixels wide)
+	// @45180 'ꓱ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45602,7 +45994,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44730 'ꓲ' (1 pixels wide)
+	// @45195 'ꓲ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -45619,7 +46011,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @44745 'ꓳ' (7 pixels wide)
+	// @45210 'ꓳ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -45636,7 +46028,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @44760 'ꓴ' (6 pixels wide)
+	// @45225 'ꓴ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45653,7 +46045,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44775 'ꓵ' (6 pixels wide)
+	// @45240 'ꓵ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45670,7 +46062,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44790 'ꓶ' (4 pixels wide)
+	// @45255 'ꓶ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45687,7 +46079,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44805 'ꓷ' (6 pixels wide)
+	// @45270 'ꓷ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45704,7 +46096,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @44820 'ꓸ' (1 pixels wide)
+	// @45285 'ꓸ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -45721,7 +46113,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @44835 'ꓹ' (1 pixels wide)
+	// @45300 'ꓹ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -45738,7 +46130,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @44850 'ꓺ' (4 pixels wide)
+	// @45315 'ꓺ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45755,7 +46147,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44865 'ꓻ' (4 pixels wide)
+	// @45330 'ꓻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45767,12 +46159,12 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 	0x00, //     
-	0x90, // #  #
+	0xB0, // # ##
 	0x10, //    #
 	0x00, //     
 	0x00, //     
 
-	// @44880 'ꓼ' (1 pixels wide)
+	// @45345 'ꓼ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -45789,7 +46181,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @44895 'ꓽ' (1 pixels wide)
+	// @45360 'ꓽ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -45806,7 +46198,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @44910 '꓾' (5 pixels wide)
+	// @45375 '꓾' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -45823,7 +46215,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @44925 '꓿' (4 pixels wide)
+	// @45390 '꓿' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45840,7 +46232,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @44940 'Ꙁ' (6 pixels wide)
+	// @45405 'Ꙁ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45857,7 +46249,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####
 	0x00, //       
 
-	// @44955 'ꙁ' (4 pixels wide)
+	// @45420 'ꙁ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45874,7 +46266,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####
 	0x00, //     
 
-	// @44970 'Ꙃ' (6 pixels wide)
+	// @45435 'Ꙃ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45891,7 +46283,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####
 	0x00, //       
 
-	// @44985 'ꙃ' (4 pixels wide)
+	// @45450 'ꙃ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45908,7 +46300,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####
 	0x00, //     
 
-	// @45000 'Ꙅ' (4 pixels wide)
+	// @45465 'Ꙅ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -45925,7 +46317,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @45015 'ꙅ' (3 pixels wide)
+	// @45480 'ꙅ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45942,7 +46334,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @45030 'Ꙇ' (3 pixels wide)
+	// @45495 'Ꙇ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45959,7 +46351,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @45045 'ꙇ' (3 pixels wide)
+	// @45510 'ꙇ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -45976,7 +46368,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @45060 'Ꙉ' (6 pixels wide)
+	// @45525 'Ꙉ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -45993,7 +46385,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @45075 'ꙉ' (5 pixels wide)
+	// @45540 'ꙉ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -46010,7 +46402,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @45090 'Ꙋ' (7 pixels wide)
+	// @45555 'Ꙋ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46027,7 +46419,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45105 'ꙋ' (5 pixels wide)
+	// @45570 'ꙋ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -46044,7 +46436,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @45120 'Ꙍ' (12 pixels wide)
+	// @45585 'Ꙍ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -46061,7 +46453,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @45150 'ꙍ' (10 pixels wide)
+	// @45615 'ꙍ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -46078,7 +46470,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @45180 'Ꙏ' (7 pixels wide)
+	// @45645 'Ꙏ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46095,7 +46487,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45195 'ꙏ' (6 pixels wide)
+	// @45660 'ꙏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -46112,7 +46504,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @45210 'Ꙑ' (10 pixels wide)
+	// @45675 'Ꙑ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -46129,7 +46521,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @45240 'ꙑ' (9 pixels wide)
+	// @45705 'ꙑ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -46146,7 +46538,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @45270 'Ꙓ' (8 pixels wide)
+	// @45735 'Ꙓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46163,7 +46555,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @45285 'ꙓ' (7 pixels wide)
+	// @45750 'ꙓ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46180,7 +46572,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45300 'Ꙕ' (9 pixels wide)
+	// @45765 'Ꙕ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -46197,7 +46589,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @45330 'ꙕ' (7 pixels wide)
+	// @45795 'ꙕ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46214,7 +46606,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45345 'Ꙗ' (10 pixels wide)
+	// @45810 'Ꙗ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -46231,7 +46623,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @45375 'ꙗ' (7 pixels wide)
+	// @45840 'ꙗ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46248,7 +46640,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45390 'Ꙙ' (7 pixels wide)
+	// @45855 'Ꙙ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46265,7 +46657,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45405 'ꙙ' (6 pixels wide)
+	// @45870 'ꙙ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -46282,7 +46674,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @45420 'Ꙛ' (9 pixels wide)
+	// @45885 'Ꙛ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -46299,7 +46691,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @45450 'ꙛ' (7 pixels wide)
+	// @45915 'ꙛ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46316,7 +46708,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45465 'Ꙝ' (10 pixels wide)
+	// @45930 'Ꙝ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -46333,7 +46725,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @45495 'ꙝ' (8 pixels wide)
+	// @45960 'ꙝ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46350,7 +46742,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @45510 'Ꙟ' (7 pixels wide)
+	// @45975 'Ꙟ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46367,7 +46759,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #  
 	0x00, //        
 
-	// @45525 'ꙟ' (6 pixels wide)
+	// @45990 'ꙟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -46384,7 +46776,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x00, //       
 
-	// @45540 'Ꙡ' (7 pixels wide)
+	// @46005 'Ꙡ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46401,7 +46793,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #      
 	0x00, //        
 
-	// @45555 'ꙡ' (6 pixels wide)
+	// @46020 'ꙡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -46418,7 +46810,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #     
 	0x00, //       
 
-	// @45570 'Ꙣ' (9 pixels wide)
+	// @46035 'Ꙣ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -46435,7 +46827,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x81, 0x00, // #      # 
 	0x00, 0x00, //          
 
-	// @45600 'ꙣ' (8 pixels wide)
+	// @46065 'ꙣ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46452,7 +46844,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x82, // #     # 
 	0x00, //         
 
-	// @45615 'Ꙥ' (9 pixels wide)
+	// @46080 'Ꙥ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -46469,7 +46861,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @45645 'ꙥ' (8 pixels wide)
+	// @46110 'ꙥ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46486,7 +46878,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @45660 'Ꙧ' (11 pixels wide)
+	// @46125 'Ꙧ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -46503,7 +46895,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @45690 'ꙧ' (8 pixels wide)
+	// @46155 'ꙧ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46520,7 +46912,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @45705 'Ꙩ' (7 pixels wide)
+	// @46170 'Ꙩ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46537,7 +46929,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45720 'ꙩ' (5 pixels wide)
+	// @46185 'ꙩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -46554,7 +46946,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @45735 'Ꙫ' (7 pixels wide)
+	// @46200 'Ꙫ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46571,7 +46963,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @45750 'ꙫ' (5 pixels wide)
+	// @46215 'ꙫ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -46588,7 +46980,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @45765 'Ꙭ' (13 pixels wide)
+	// @46230 'Ꙭ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -46605,7 +46997,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 
-	// @45795 'ꙭ' (10 pixels wide)
+	// @46260 'ꙭ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -46622,7 +47014,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @45825 'ꙮ' (8 pixels wide)
+	// @46290 'ꙮ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -46639,7 +47031,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @45840 '꙯' (4 pixels wide)
+	// @46305 '꙯' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -46656,7 +47048,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @45855 '꙰' (11 pixels wide)
+	// @46320 '꙰' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x0C, 0x00, //     ##     
@@ -46673,7 +47065,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, 0x00, //     #      
 	0x00, 0x00, //            
 
-	// @45885 '꙱' (10 pixels wide)
+	// @46350 '꙱' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0xFF, 0xC0, // ##########
@@ -46690,7 +47082,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFF, 0xC0, // ##########
 	0x00, 0x00, //           
 
-	// @45915 '꙲' (13 pixels wide)
+	// @46380 '꙲' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x02, 0x00, //       #      
@@ -46707,7 +47099,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x12, 0x80, //    #  # #    
 	0x12, 0x00, //    #  #      
 
-	// @45945 '꙳' (4 pixels wide)
+	// @46410 '꙳' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x20, //   # 
@@ -46724,7 +47116,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @45960 'ꙴ' (3 pixels wide)
+	// @46425 'ꙴ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xE0, // ###
@@ -46741,7 +47133,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @45975 'ꙵ' (3 pixels wide)
+	// @46440 'ꙵ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0xA0, // # #
@@ -46758,7 +47150,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @45990 'ꙶ' (2 pixels wide)
+	// @46455 'ꙶ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0xC0, // ##
@@ -46775,7 +47167,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @46005 'ꙷ' (3 pixels wide)
+	// @46470 'ꙷ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -46792,7 +47184,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @46020 'ꙸ' (4 pixels wide)
+	// @46485 'ꙸ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xC0, // ##  
@@ -46809,7 +47201,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46035 'ꙹ' (5 pixels wide)
+	// @46500 'ꙹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x88, // #   #
@@ -46826,7 +47218,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46050 'ꙺ' (3 pixels wide)
+	// @46515 'ꙺ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x80, // #  
@@ -46843,7 +47235,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @46065 'ꙻ' (5 pixels wide)
+	// @46530 'ꙻ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -46860,7 +47252,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46080 '꙼' (4 pixels wide)
+	// @46545 '꙼' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -46877,7 +47269,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46095 '꙽' (2 pixels wide)
+	// @46560 '꙽' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0xC0, // ##
@@ -46894,7 +47286,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @46110 '꙾' (4 pixels wide)
+	// @46575 '꙾' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -46911,7 +47303,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46125 'ꙿ' (2 pixels wide)
+	// @46590 'ꙿ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0xC0, // ##
@@ -46928,7 +47320,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @46140 'Ꚁ' (8 pixels wide)
+	// @46605 'Ꚁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x30, //   ##    
@@ -46945,7 +47337,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x81, // #      #
 	0x00, //         
 
-	// @46155 'ꚁ' (7 pixels wide)
+	// @46620 'ꚁ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -46962,7 +47354,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x82, // #     #
 	0x00, //        
 
-	// @46170 'Ꚃ' (6 pixels wide)
+	// @46635 'Ꚃ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -46979,7 +47371,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  #### 
 	0x00, //       
 
-	// @46185 'ꚃ' (4 pixels wide)
+	// @46650 'ꚃ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -46996,7 +47388,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ### 
 	0x00, //     
 
-	// @46200 'Ꚅ' (12 pixels wide)
+	// @46665 'Ꚅ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -47013,7 +47405,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @46230 'ꚅ' (11 pixels wide)
+	// @46695 'ꚅ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -47030,7 +47422,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @46260 'Ꚇ' (9 pixels wide)
+	// @46725 'Ꚇ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47047,7 +47439,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @46290 'ꚇ' (9 pixels wide)
+	// @46755 'ꚇ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47064,7 +47456,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @46320 'Ꚉ' (9 pixels wide)
+	// @46785 'Ꚉ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47081,7 +47473,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x81, 0x80, // #      ##
 	0x01, 0x80, //        ##
 
-	// @46350 'ꚉ' (8 pixels wide)
+	// @46815 'ꚉ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47098,7 +47490,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x82, // #     # 
 	0x07, //      ###
 
-	// @46365 'Ꚋ' (8 pixels wide)
+	// @46830 'Ꚋ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47115,7 +47507,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0E, //     ### 
 	0x00, //         
 
-	// @46380 'ꚋ' (6 pixels wide)
+	// @46845 'ꚋ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47132,7 +47524,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1C, //    ###
 	0x00, //       
 
-	// @46395 'Ꚍ' (6 pixels wide)
+	// @46860 'Ꚍ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47149,7 +47541,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @46410 'ꚍ' (5 pixels wide)
+	// @46875 'ꚍ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47166,7 +47558,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46425 'Ꚏ' (7 pixels wide)
+	// @46890 'Ꚏ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47183,7 +47575,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFA, // ##### #
 	0xFE, // #######
 
-	// @46440 'ꚏ' (6 pixels wide)
+	// @46905 'ꚏ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47200,7 +47592,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF4, // #### #
 	0xF8, // ##### 
 
-	// @46455 'Ꚑ' (6 pixels wide)
+	// @46920 'Ꚑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47217,7 +47609,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ##  
 	0x00, //       
 
-	// @46470 'ꚑ' (5 pixels wide)
+	// @46935 'ꚑ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47234,7 +47626,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @46485 'Ꚓ' (7 pixels wide)
+	// @46950 'Ꚓ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47251,7 +47643,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @46500 'ꚓ' (6 pixels wide)
+	// @46965 'ꚓ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47268,7 +47660,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @46515 'Ꚕ' (5 pixels wide)
+	// @46980 'Ꚕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47285,7 +47677,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46530 'ꚕ' (5 pixels wide)
+	// @46995 'ꚕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47302,7 +47694,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46545 'Ꚗ' (11 pixels wide)
+	// @47010 'Ꚗ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -47319,7 +47711,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1F, 0x40, //    ##### # 
 	0x1F, 0xC0, //    ####### 
 
-	// @46575 'ꚗ' (9 pixels wide)
+	// @47040 'ꚗ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47336,7 +47728,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, 0x80, //  #####  #
 	0x7F, 0x00, //  ####### 
 
-	// @46605 'Ꚙ' (13 pixels wide)
+	// @47070 'Ꚙ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -47353,7 +47745,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 
-	// @46635 'ꚙ' (10 pixels wide)
+	// @47100 'ꚙ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -47370,7 +47762,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @46665 'Ꚛ' (7 pixels wide)
+	// @47130 'Ꚛ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47387,7 +47779,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @46680 'ꚛ' (5 pixels wide)
+	// @47145 'ꚛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47404,7 +47796,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46695 'ꚜ' (4 pixels wide)
+	// @47160 'ꚜ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xC0, // ##  
@@ -47421,7 +47813,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46710 'ꚝ' (3 pixels wide)
+	// @47175 'ꚝ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x80, // #  
@@ -47438,7 +47830,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @46725 'ꚟ' (5 pixels wide)
+	// @47190 'ꚟ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x98, // #  ##
@@ -47455,7 +47847,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @46740 'ꜗ' (3 pixels wide)
+	// @47205 'ꜗ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x20, //   #
@@ -47472,7 +47864,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @46755 'ꜘ' (4 pixels wide)
+	// @47220 'ꜘ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -47489,7 +47881,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46770 'ꜙ' (3 pixels wide)
+	// @47235 'ꜙ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x40, //  # 
@@ -47506,7 +47898,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @46785 'ꜚ' (4 pixels wide)
+	// @47250 'ꜚ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -47523,7 +47915,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @46800 '꜠' (9 pixels wide)
+	// @47265 '꜠' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47540,7 +47932,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @46830 '꜡' (9 pixels wide)
+	// @47295 '꜡' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47557,7 +47949,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x07, 0x80, //      ####
 	0x00, 0x00, //          
 
-	// @46860 'Ꜣ' (2 pixels wide)
+	// @47325 'Ꜣ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -47574,7 +47966,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @46875 'ꜣ' (1 pixels wide)
+	// @47340 'ꜣ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -47591,7 +47983,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @46890 'Ꜥ' (2 pixels wide)
+	// @47355 'Ꜥ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -47608,7 +48000,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @46905 'ꜥ' (1 pixels wide)
+	// @47370 'ꜥ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -47625,7 +48017,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @46920 'Ꜧ' (6 pixels wide)
+	// @47385 'Ꜧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47642,7 +48034,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1C, //    ###
 	0x00, //       
 
-	// @46935 'ꜧ' (5 pixels wide)
+	// @47400 'ꜧ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47659,7 +48051,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x38, //   ###
 	0x00, //      
 
-	// @46950 'Ꜩ' (8 pixels wide)
+	// @47415 'Ꜩ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47676,7 +48068,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1E, //    #### 
 	0x00, //         
 
-	// @46965 'ꜩ' (8 pixels wide)
+	// @47430 'ꜩ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47693,7 +48085,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x1E, //    #### 
 	0x00, //         
 
-	// @46980 'Ꜫ' (6 pixels wide)
+	// @47445 'Ꜫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47710,7 +48102,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @46995 'ꜫ' (4 pixels wide)
+	// @47460 'ꜫ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -47727,7 +48119,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###
 	0x00, //     
 
-	// @47010 'Ꜭ' (5 pixels wide)
+	// @47475 'Ꜭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47744,7 +48136,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47025 'ꜭ' (5 pixels wide)
+	// @47490 'ꜭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -47761,7 +48153,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ## 
 	0x00, //      
 
-	// @47040 'Ꜯ' (7 pixels wide)
+	// @47505 'Ꜯ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47778,7 +48170,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47055 'ꜯ' (6 pixels wide)
+	// @47520 'ꜯ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -47795,7 +48187,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x34, //   ## #
 	0x04, //      #
 
-	// @47070 'ꜰ' (4 pixels wide)
+	// @47535 'ꜰ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -47812,7 +48204,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @47085 'ꜱ' (4 pixels wide)
+	// @47550 'ꜱ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -47829,7 +48221,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @47100 'Ꜳ' (13 pixels wide)
+	// @47565 'Ꜳ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -47846,7 +48238,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 
-	// @47130 'ꜳ' (8 pixels wide)
+	// @47595 'ꜳ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47863,7 +48255,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @47145 'Ꜵ' (12 pixels wide)
+	// @47610 'Ꜵ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -47880,7 +48272,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @47175 'ꜵ' (9 pixels wide)
+	// @47640 'ꜵ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -47897,7 +48289,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @47205 'Ꜷ' (12 pixels wide)
+	// @47670 'Ꜷ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -47914,7 +48306,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @47235 'ꜷ' (8 pixels wide)
+	// @47700 'ꜷ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -47931,7 +48323,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @47250 'Ꜹ' (10 pixels wide)
+	// @47715 'Ꜹ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -47948,7 +48340,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @47280 'ꜹ' (7 pixels wide)
+	// @47745 'ꜹ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47965,7 +48357,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47295 'Ꜻ' (11 pixels wide)
+	// @47760 'Ꜻ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -47982,7 +48374,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @47325 'ꜻ' (7 pixels wide)
+	// @47790 'ꜻ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -47999,7 +48391,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47340 'Ꜽ' (10 pixels wide)
+	// @47805 'Ꜽ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -48016,7 +48408,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0E, 0x00, //     ###   
 	0x00, 0x00, //           
 
-	// @47370 'ꜽ' (7 pixels wide)
+	// @47835 'ꜽ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -48033,7 +48425,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #   
 	0x00, //        
 
-	// @47385 'Ꜿ' (6 pixels wide)
+	// @47850 'Ꜿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48050,7 +48442,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47400 'ꜿ' (4 pixels wide)
+	// @47865 'ꜿ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48067,7 +48459,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @47415 'Ꝁ' (6 pixels wide)
+	// @47880 'Ꝁ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48084,7 +48476,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47430 'ꝁ' (6 pixels wide)
+	// @47895 'ꝁ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48101,7 +48493,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47445 'Ꝃ' (5 pixels wide)
+	// @47910 'Ꝃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48118,7 +48510,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47460 'ꝃ' (5 pixels wide)
+	// @47925 'ꝃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48135,7 +48527,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47475 'Ꝅ' (6 pixels wide)
+	// @47940 'Ꝅ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48152,7 +48544,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47490 'ꝅ' (6 pixels wide)
+	// @47955 'ꝅ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48169,7 +48561,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47505 'Ꝇ' (5 pixels wide)
+	// @47970 'Ꝇ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48186,7 +48578,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47520 'ꝇ' (2 pixels wide)
+	// @47985 'ꝇ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -48203,7 +48595,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @47535 'Ꝉ' (5 pixels wide)
+	// @48000 'Ꝉ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48220,7 +48612,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47550 'ꝉ' (3 pixels wide)
+	// @48015 'ꝉ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -48237,7 +48629,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @47565 'Ꝋ' (9 pixels wide)
+	// @48030 'Ꝋ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -48254,7 +48646,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @47595 'ꝋ' (7 pixels wide)
+	// @48060 'ꝋ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -48271,7 +48663,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47610 'Ꝍ' (8 pixels wide)
+	// @48075 'Ꝍ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48288,7 +48680,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @47625 'ꝍ' (7 pixels wide)
+	// @48090 'ꝍ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -48305,7 +48697,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47640 'Ꝏ' (13 pixels wide)
+	// @48105 'Ꝏ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -48322,7 +48714,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 
-	// @47670 'ꝏ' (10 pixels wide)
+	// @48135 'ꝏ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -48339,7 +48731,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @47700 'Ꝑ' (6 pixels wide)
+	// @48165 'Ꝑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48356,7 +48748,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47715 'ꝑ' (6 pixels wide)
+	// @48180 'ꝑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48373,7 +48765,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####  
 	0x00, //       
 
-	// @47730 'Ꝓ' (8 pixels wide)
+	// @48195 'Ꝓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48390,7 +48782,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @47745 'ꝓ' (8 pixels wide)
+	// @48210 'ꝓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48407,7 +48799,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #    
 	0x00, //         
 
-	// @47760 'Ꝕ' (9 pixels wide)
+	// @48225 'Ꝕ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -48424,7 +48816,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @47790 'ꝕ' (10 pixels wide)
+	// @48255 'ꝕ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -48441,7 +48833,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #    
 	0x00, 0x00, //           
 
-	// @47820 'Ꝗ' (8 pixels wide)
+	// @48285 'Ꝗ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48458,7 +48850,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @47835 'ꝗ' (6 pixels wide)
+	// @48300 'ꝗ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48475,7 +48867,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x3C, //   ####
 	0x00, //       
 
-	// @47850 'Ꝙ' (10 pixels wide)
+	// @48315 'Ꝙ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -48492,7 +48884,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, 0x00, //      #    
 	0x08, 0x00, //     #     
 
-	// @47880 'ꝙ' (8 pixels wide)
+	// @48345 'ꝙ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48509,7 +48901,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x28, //   # #   
 	0x00, //         
 
-	// @47895 'Ꝛ' (5 pixels wide)
+	// @48360 'Ꝛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48526,7 +48918,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @47910 'ꝛ' (4 pixels wide)
+	// @48375 'ꝛ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48543,7 +48935,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @47925 'Ꝝ' (6 pixels wide)
+	// @48390 'Ꝝ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48560,7 +48952,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47940 'ꝝ' (6 pixels wide)
+	// @48405 'ꝝ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48577,7 +48969,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47955 'Ꝟ' (7 pixels wide)
+	// @48420 'Ꝟ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -48594,7 +48986,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @47970 'ꝟ' (6 pixels wide)
+	// @48435 'ꝟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48611,7 +49003,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @47985 'Ꝡ' (11 pixels wide)
+	// @48450 'Ꝡ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -48628,7 +49020,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x07, 0x00, //      ###   
 	0x00, 0x00, //            
 
-	// @48015 'ꝡ' (9 pixels wide)
+	// @48480 'ꝡ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -48645,7 +49037,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##  
 	0x00, 0x00, //          
 
-	// @48045 'Ꝣ' (4 pixels wide)
+	// @48510 'Ꝣ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48662,7 +49054,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####
 	0x00, //     
 
-	// @48060 'ꝣ' (4 pixels wide)
+	// @48525 'ꝣ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48679,7 +49071,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #
 	0xE0, // ### 
 
-	// @48075 'Ꝥ' (6 pixels wide)
+	// @48540 'Ꝥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48696,7 +49088,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48090 'ꝥ' (6 pixels wide)
+	// @48555 'ꝥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48713,7 +49105,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #    
 	0x00, //       
 
-	// @48105 'Ꝧ' (6 pixels wide)
+	// @48570 'Ꝧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48730,7 +49122,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48120 'ꝧ' (6 pixels wide)
+	// @48585 'ꝧ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48747,7 +49139,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #    
 	0x00, //       
 
-	// @48135 'Ꝩ' (5 pixels wide)
+	// @48600 'Ꝩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48764,7 +49156,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @48150 'ꝩ' (4 pixels wide)
+	// @48615 'ꝩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48781,7 +49173,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x00, //     
 
-	// @48165 'Ꝫ' (5 pixels wide)
+	// @48630 'Ꝫ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48798,7 +49190,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48180 'ꝫ' (5 pixels wide)
+	// @48645 'ꝫ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48815,7 +49207,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @48195 'Ꝭ' (6 pixels wide)
+	// @48660 'Ꝭ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -48832,7 +49224,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48210 'ꝭ' (5 pixels wide)
+	// @48675 'ꝭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48849,7 +49241,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##   
 	0x00, //      
 
-	// @48225 'Ꝯ' (5 pixels wide)
+	// @48690 'Ꝯ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48866,7 +49258,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48240 'ꝯ' (5 pixels wide)
+	// @48705 'ꝯ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -48883,7 +49275,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###  
 	0x00, //      
 
-	// @48255 'ꝰ' (3 pixels wide)
+	// @48720 'ꝰ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -48900,7 +49292,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @48270 'ꝱ' (8 pixels wide)
+	// @48735 'ꝱ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48917,7 +49309,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #  
 	0x00, //         
 
-	// @48285 'ꝲ' (4 pixels wide)
+	// @48750 'ꝲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -48934,7 +49326,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #  
 	0x00, //     
 
-	// @48300 'ꝳ' (11 pixels wide)
+	// @48765 'ꝳ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -48951,7 +49343,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x80, //         #  
 	0x00, 0x00, //            
 
-	// @48330 'ꝴ' (8 pixels wide)
+	// @48795 'ꝴ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -48968,7 +49360,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #  
 	0x00, //         
 
-	// @48345 'ꝵ' (3 pixels wide)
+	// @48810 'ꝵ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -48985,7 +49377,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @48360 'ꝶ' (7 pixels wide)
+	// @48825 'ꝶ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49002,7 +49394,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #  
 	0x00, //        
 
-	// @48375 'ꝷ' (5 pixels wide)
+	// @48840 'ꝷ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49019,7 +49411,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48390 'ꝸ' (4 pixels wide)
+	// @48855 'ꝸ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49036,7 +49428,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @48405 'Ꝺ' (8 pixels wide)
+	// @48870 'Ꝺ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49053,7 +49445,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @48420 'ꝺ' (5 pixels wide)
+	// @48885 'ꝺ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49070,7 +49462,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48435 'Ꝼ' (4 pixels wide)
+	// @48900 'Ꝼ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49087,7 +49479,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x00, //     
 
-	// @48450 'ꝼ' (3 pixels wide)
+	// @48915 'ꝼ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -49104,7 +49496,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #  
 	0x00, //    
 
-	// @48465 'Ᵹ' (5 pixels wide)
+	// @48930 'Ᵹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49121,7 +49513,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48480 'Ꝿ' (6 pixels wide)
+	// @48945 'Ꝿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49138,7 +49530,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48495 'ꝿ' (6 pixels wide)
+	// @48960 'ꝿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49155,7 +49547,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####
 	0x00, //       
 
-	// @48510 'Ꞁ' (4 pixels wide)
+	// @48975 'Ꞁ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49172,7 +49564,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @48525 'ꞁ' (1 pixels wide)
+	// @48990 'ꞁ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -49189,7 +49581,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x80, // #
 
-	// @48540 'Ꞃ' (6 pixels wide)
+	// @49005 'Ꞃ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49206,7 +49598,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #     
 	0x00, //       
 
-	// @48555 'ꞃ' (5 pixels wide)
+	// @49020 'ꞃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49223,7 +49615,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @48570 'Ꞅ' (4 pixels wide)
+	// @49035 'Ꞅ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49240,7 +49632,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x00, //     
 
-	// @48585 'ꞅ' (3 pixels wide)
+	// @49050 'ꞅ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -49257,7 +49649,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #  
 	0x00, //    
 
-	// @48600 'Ꞇ' (6 pixels wide)
+	// @49065 'Ꞇ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49274,7 +49666,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48615 'ꞇ' (4 pixels wide)
+	// @49080 'ꞇ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49291,7 +49683,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @48630 'Ɥ' (6 pixels wide)
+	// @49095 'Ɥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49308,7 +49700,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48645 'ꞎ' (4 pixels wide)
+	// @49110 'ꞎ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49325,7 +49717,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ##
 	0x00, //     
 
-	// @48660 'Ꞑ' (7 pixels wide)
+	// @49125 'Ꞑ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49342,7 +49734,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, //       #
 	0x00, //        
 
-	// @48675 'ꞑ' (6 pixels wide)
+	// @49140 'ꞑ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49359,7 +49751,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #
 	0x00, //       
 
-	// @48690 'Ꞓ' (7 pixels wide)
+	// @49155 'Ꞓ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49376,7 +49768,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @48705 'ꞓ' (5 pixels wide)
+	// @49170 'ꞓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49393,7 +49785,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48720 'ꞔ' (5 pixels wide)
+	// @49185 'ꞔ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49410,7 +49802,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ## 
 	0x00, //      
 
-	// @48735 'ꞕ' (6 pixels wide)
+	// @49200 'ꞕ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49427,7 +49819,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @48750 'Ꞗ' (8 pixels wide)
+	// @49215 'Ꞗ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49444,7 +49836,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @48765 'ꞗ' (7 pixels wide)
+	// @49230 'ꞗ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49461,7 +49853,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ###   
 	0x00, //        
 
-	// @48780 'Ꞙ' (5 pixels wide)
+	// @49245 'Ꞙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49478,7 +49870,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##   
 	0x00, //      
 
-	// @48795 'ꞙ' (4 pixels wide)
+	// @49260 'ꞙ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49495,7 +49887,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @48810 'Ꞛ' (6 pixels wide)
+	// @49275 'Ꞛ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49512,7 +49904,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48825 'ꞛ' (5 pixels wide)
+	// @49290 'ꞛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49529,7 +49921,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48840 'Ꞝ' (7 pixels wide)
+	// @49305 'Ꞝ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49546,7 +49938,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @48855 'ꞝ' (5 pixels wide)
+	// @49320 'ꞝ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49563,7 +49955,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48870 'Ꞟ' (6 pixels wide)
+	// @49335 'Ꞟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49580,7 +49972,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48885 'ꞟ' (5 pixels wide)
+	// @49350 'ꞟ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49597,7 +49989,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @48900 'Ꞡ' (7 pixels wide)
+	// @49365 'Ꞡ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49614,7 +50006,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @48915 'ꞡ' (6 pixels wide)
+	// @49380 'ꞡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49631,7 +50023,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  #### 
 	0x00, //       
 
-	// @48930 'Ꞣ' (6 pixels wide)
+	// @49395 'Ꞣ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49648,7 +50040,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48945 'ꞣ' (6 pixels wide)
+	// @49410 'ꞣ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49665,7 +50057,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @48960 'Ꞥ' (8 pixels wide)
+	// @49425 'Ꞥ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49682,7 +50074,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @48975 'ꞥ' (7 pixels wide)
+	// @49440 'ꞥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49699,7 +50091,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @48990 'Ꞧ' (7 pixels wide)
+	// @49455 'Ꞧ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49716,7 +50108,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49005 'ꞧ' (4 pixels wide)
+	// @49470 'ꞧ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49733,7 +50125,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49020 'Ꞩ' (6 pixels wide)
+	// @49485 'Ꞩ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49750,7 +50142,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49035 'ꞩ' (4 pixels wide)
+	// @49500 'ꞩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49767,7 +50159,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49050 'Ɦ' (8 pixels wide)
+	// @49515 'Ɦ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49784,7 +50176,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49065 'Ɜ' (5 pixels wide)
+	// @49530 'Ɜ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49801,7 +50193,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49080 'Ɡ' (6 pixels wide)
+	// @49545 'Ɡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49818,7 +50210,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #
 	0x78, //  #### 
 
-	// @49095 'Ɬ' (6 pixels wide)
+	// @49560 'Ɬ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49835,7 +50227,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49110 'Ʞ' (6 pixels wide)
+	// @49575 'Ʞ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49852,7 +50244,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49125 'Ʇ' (6 pixels wide)
+	// @49590 'Ʇ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -49869,7 +50261,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49140 'ꟷ' (8 pixels wide)
+	// @49605 'ꟷ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49886,7 +50278,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49155 'ꟸ' (5 pixels wide)
+	// @49620 'ꟸ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x48, //  #  #
@@ -49903,7 +50295,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49170 'ꟹ' (7 pixels wide)
+	// @49635 'ꟹ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -49920,7 +50312,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49185 'ꟺ' (8 pixels wide)
+	// @49650 'ꟺ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -49937,7 +50329,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49200 'ꟻ' (4 pixels wide)
+	// @49665 'ꟻ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -49954,7 +50346,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49215 'ꟼ' (5 pixels wide)
+	// @49680 'ꟼ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -49971,7 +50363,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49230 'ꟽ' (9 pixels wide)
+	// @49695 'ꟽ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -49988,7 +50380,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @49260 'ꟾ' (1 pixels wide)
+	// @49725 'ꟾ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -50005,7 +50397,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #
 	0x00, //  
 
-	// @49275 'ꟿ' (14 pixels wide)
+	// @49740 'ꟿ' (14 pixels wide)
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 	0x00, 0x00, //               
@@ -50022,7 +50414,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 
-	// @49305 'ꬰ' (7 pixels wide)
+	// @49770 'ꬰ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50039,7 +50431,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49320 'ꬱ' (8 pixels wide)
+	// @49785 'ꬱ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -50056,7 +50448,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49335 'ꬲ' (4 pixels wide)
+	// @49800 'ꬲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -50073,7 +50465,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49350 'ꬳ' (6 pixels wide)
+	// @49815 'ꬳ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50090,7 +50482,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49365 'ꬴ' (7 pixels wide)
+	// @49830 'ꬴ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50107,7 +50499,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49380 'ꬵ' (4 pixels wide)
+	// @49845 'ꬵ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -50124,7 +50516,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49395 'ꬶ' (5 pixels wide)
+	// @49860 'ꬶ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50141,7 +50533,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x88, // #   #
 	0x78, //  ####
 
-	// @49410 'ꬷ' (4 pixels wide)
+	// @49875 'ꬷ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -50158,7 +50550,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49425 'ꬸ' (4 pixels wide)
+	// @49890 'ꬸ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -50175,7 +50567,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @49440 'ꬹ' (3 pixels wide)
+	// @49905 'ꬹ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -50192,7 +50584,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @49455 'ꬺ' (9 pixels wide)
+	// @49920 'ꬺ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50209,7 +50601,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @49485 'ꬻ' (6 pixels wide)
+	// @49950 'ꬻ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50226,7 +50618,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49500 'ꬼ' (5 pixels wide)
+	// @49965 'ꬼ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50243,7 +50635,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x98, // #  ##
 	0x78, //  ####
 
-	// @49515 'ꬽ' (5 pixels wide)
+	// @49980 'ꬽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50260,7 +50652,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49530 'ꬾ' (5 pixels wide)
+	// @49995 'ꬾ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50277,7 +50669,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49545 'ꬿ' (5 pixels wide)
+	// @50010 'ꬿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50294,7 +50686,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49560 'ꭀ' (9 pixels wide)
+	// @50025 'ꭀ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50311,7 +50703,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @49590 'ꭁ' (9 pixels wide)
+	// @50055 'ꭁ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50328,7 +50720,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @49620 'ꭂ' (9 pixels wide)
+	// @50085 'ꭂ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50345,7 +50737,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @49650 'ꭃ' (10 pixels wide)
+	// @50115 'ꭃ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -50362,7 +50754,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @49680 'ꭄ' (10 pixels wide)
+	// @50145 'ꭄ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -50379,7 +50771,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @49710 'ꭅ' (5 pixels wide)
+	// @50175 'ꭅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50396,7 +50788,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49725 'ꭆ' (6 pixels wide)
+	// @50190 'ꭆ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50413,7 +50805,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##
 	0x00, //       
 
-	// @49740 'ꭇ' (2 pixels wide)
+	// @50205 'ꭇ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -50430,7 +50822,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @49755 'ꭈ' (5 pixels wide)
+	// @50220 'ꭈ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50447,7 +50839,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49770 'ꭉ' (6 pixels wide)
+	// @50235 'ꭉ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50464,7 +50856,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49785 'ꭊ' (7 pixels wide)
+	// @50250 'ꭊ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50481,7 +50873,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49800 'ꭋ' (5 pixels wide)
+	// @50265 'ꭋ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50498,7 +50890,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49815 'ꭌ' (8 pixels wide)
+	// @50280 'ꭌ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -50515,7 +50907,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49830 'ꭍ' (3 pixels wide)
+	// @50295 'ꭍ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -50532,7 +50924,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ## 
 	0x00, //    
 
-	// @49845 'ꭎ' (5 pixels wide)
+	// @50310 'ꭎ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50549,7 +50941,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @49860 'ꭏ' (7 pixels wide)
+	// @50325 'ꭏ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50566,7 +50958,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49875 'ꭐ' (8 pixels wide)
+	// @50340 'ꭐ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -50583,7 +50975,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49890 'ꭑ' (8 pixels wide)
+	// @50355 'ꭑ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -50600,7 +50992,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @49905 'ꭒ' (6 pixels wide)
+	// @50370 'ꭒ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50617,7 +51009,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @49920 'ꭓ' (5 pixels wide)
+	// @50385 'ꭓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50634,7 +51026,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x98, // #  ##
 	0x00, //      
 
-	// @49935 'ꭔ' (6 pixels wide)
+	// @50400 'ꭔ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50651,7 +51043,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x8C, // #   ##
 	0x00, //       
 
-	// @49950 'ꭕ' (6 pixels wide)
+	// @50415 'ꭕ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50668,7 +51060,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC8, // ##  # 
 	0x00, //       
 
-	// @49965 'ꭖ' (7 pixels wide)
+	// @50430 'ꭖ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50685,7 +51077,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @49980 'ꭗ' (6 pixels wide)
+	// @50445 'ꭗ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50702,7 +51094,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #     
 	0x00, //       
 
-	// @49995 'ꭘ' (8 pixels wide)
+	// @50460 'ꭘ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -50719,7 +51111,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #       
 	0x00, //         
 
-	// @50010 'ꭙ' (7 pixels wide)
+	// @50475 'ꭙ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50736,7 +51128,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##     
 	0x00, //        
 
-	// @50025 'ꭚ' (5 pixels wide)
+	// @50490 'ꭚ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50753,7 +51145,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @50040 '꭛' (3 pixels wide)
+	// @50505 '꭛' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -50770,7 +51162,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50055 'ꭜ' (3 pixels wide)
+	// @50520 'ꭜ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x80, // #  
@@ -50787,7 +51179,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50070 'ꭝ' (3 pixels wide)
+	// @50535 'ꭝ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x40, //  # 
@@ -50804,7 +51196,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50085 'ꭞ' (3 pixels wide)
+	// @50550 'ꭞ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x40, //  # 
@@ -50821,7 +51213,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50100 'ꭟ' (4 pixels wide)
+	// @50565 'ꭟ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -50838,7 +51230,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @50115 'ꭤ' (5 pixels wide)
+	// @50580 'ꭤ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -50855,7 +51247,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50130 'ꭥ' (6 pixels wide)
+	// @50595 'ꭥ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50872,7 +51264,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50145 'ﬀ' (7 pixels wide)
+	// @50610 'ﬀ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -50889,7 +51281,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50160 'ﬁ' (6 pixels wide)
+	// @50625 'ﬁ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50906,7 +51298,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50175 'ﬂ' (6 pixels wide)
+	// @50640 'ﬂ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -50923,7 +51315,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50190 'ﬃ' (9 pixels wide)
+	// @50655 'ﬃ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50940,7 +51332,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @50220 'ﬄ' (9 pixels wide)
+	// @50685 'ﬄ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -50957,7 +51349,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @50250 'יִ' (1 pixels wide)
+	// @50715 'יִ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -50974,7 +51366,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @50265 'ﬞ' (4 pixels wide)
+	// @50730 'ﬞ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x90, // #  #
@@ -50991,7 +51383,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @50280 'ײַ' (4 pixels wide)
+	// @50745 'ײַ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -51008,7 +51400,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @50295 'ﬠ' (6 pixels wide)
+	// @50760 'ﬠ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51025,7 +51417,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50310 'ﬡ' (8 pixels wide)
+	// @50775 'ﬡ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51042,7 +51434,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50325 'ﬢ' (7 pixels wide)
+	// @50790 'ﬢ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51059,7 +51451,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50340 'ﬣ' (7 pixels wide)
+	// @50805 'ﬣ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51076,7 +51468,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50355 'ﬤ' (7 pixels wide)
+	// @50820 'ﬤ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51093,7 +51485,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50370 'ﬥ' (7 pixels wide)
+	// @50835 'ﬥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51110,7 +51502,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50385 'ﬦ' (8 pixels wide)
+	// @50850 'ﬦ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51127,7 +51519,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50400 'ﬧ' (7 pixels wide)
+	// @50865 'ﬧ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51144,7 +51536,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50415 'ﬨ' (8 pixels wide)
+	// @50880 'ﬨ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51161,7 +51553,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50430 '﬩' (5 pixels wide)
+	// @50895 '﬩' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51178,7 +51570,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50445 'שׁ' (8 pixels wide)
+	// @50910 'שׁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51195,7 +51587,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50460 'שׂ' (8 pixels wide)
+	// @50925 'שׂ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51212,7 +51604,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50475 'שּׁ' (8 pixels wide)
+	// @50940 'שּׁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51229,7 +51621,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50490 'שּׂ' (8 pixels wide)
+	// @50955 'שּׂ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51246,7 +51638,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50505 'אַ' (5 pixels wide)
+	// @50970 'אַ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51263,7 +51655,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x00, //      
 
-	// @50520 'אָ' (5 pixels wide)
+	// @50985 'אָ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51280,7 +51672,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x70, //  ### 
 	0x20, //   #  
 
-	// @50535 'אּ' (6 pixels wide)
+	// @51000 'אּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51297,7 +51689,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50550 'בּ' (6 pixels wide)
+	// @51015 'בּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51314,7 +51706,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50565 'גּ' (4 pixels wide)
+	// @51030 'גּ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -51331,7 +51723,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @50580 'דּ' (5 pixels wide)
+	// @51045 'דּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51348,7 +51740,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50595 'הּ' (6 pixels wide)
+	// @51060 'הּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51365,7 +51757,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50610 'וּ' (2 pixels wide)
+	// @51075 'וּ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -51382,7 +51774,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @50625 'זּ' (3 pixels wide)
+	// @51090 'זּ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -51399,7 +51791,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50640 'טּ' (6 pixels wide)
+	// @51105 'טּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51416,7 +51808,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50655 'יּ' (2 pixels wide)
+	// @51120 'יּ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -51433,7 +51825,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @50670 'ךּ' (5 pixels wide)
+	// @51135 'ךּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51450,7 +51842,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @50685 'כּ' (5 pixels wide)
+	// @51150 'כּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51467,7 +51859,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50700 'לּ' (5 pixels wide)
+	// @51165 'לּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51484,7 +51876,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50715 'מּ' (6 pixels wide)
+	// @51180 'מּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51501,7 +51893,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50730 'נּ' (3 pixels wide)
+	// @51195 'נּ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -51518,7 +51910,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50745 'סּ' (6 pixels wide)
+	// @51210 'סּ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51535,7 +51927,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50760 'ףּ' (5 pixels wide)
+	// @51225 'ףּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51552,7 +51944,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x08, //     #
 	0x00, //      
 
-	// @50775 'פּ' (5 pixels wide)
+	// @51240 'פּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51569,7 +51961,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50790 'צּ' (5 pixels wide)
+	// @51255 'צּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51586,7 +51978,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50805 'קּ' (5 pixels wide)
+	// @51270 'קּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51603,7 +51995,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #    
 	0x00, //      
 
-	// @50820 'רּ' (5 pixels wide)
+	// @51285 'רּ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51620,7 +52012,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50835 'שּ' (8 pixels wide)
+	// @51300 'שּ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -51637,7 +52029,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @50850 'תּ' (7 pixels wide)
+	// @51315 'תּ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -51654,7 +52046,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @50865 'וֹ' (1 pixels wide)
+	// @51330 'וֹ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -51671,7 +52063,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @50880 'בֿ' (6 pixels wide)
+	// @51345 'בֿ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -51688,7 +52080,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @50895 'כֿ' (5 pixels wide)
+	// @51360 'כֿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51705,7 +52097,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50910 'פֿ' (5 pixels wide)
+	// @51375 'פֿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51722,7 +52114,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50925 'ﭏ' (5 pixels wide)
+	// @51390 'ﭏ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51739,7 +52131,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @50940 'ﭐ' (3 pixels wide)
+	// @51405 'ﭐ' (3 pixels wide)
 	0x00, //    
 	0x60, //  ##
 	0xE0, // ###
@@ -51756,7 +52148,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50955 'ﭑ' (3 pixels wide)
+	// @51420 'ﭑ' (3 pixels wide)
 	0x00, //    
 	0x60, //  ##
 	0xE0, // ###
@@ -51773,7 +52165,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @50970 'ﭒ' (10 pixels wide)
+	// @51435 'ﭒ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -51790,7 +52182,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##   
 	0x00, 0x00, //           
 
-	// @51000 'ﭓ' (11 pixels wide)
+	// @51465 'ﭓ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -51807,7 +52199,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##    
 	0x00, 0x00, //            
 
-	// @51030 'ﭔ' (4 pixels wide)
+	// @51495 'ﭔ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -51824,7 +52216,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @51045 'ﭕ' (5 pixels wide)
+	// @51510 'ﭕ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51841,7 +52233,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @51060 'ﭖ' (10 pixels wide)
+	// @51525 'ﭖ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -51858,7 +52250,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #   
 	0x00, 0x00, //           
 
-	// @51090 'ﭗ' (11 pixels wide)
+	// @51555 'ﭗ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -51875,7 +52267,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x02, 0x00, //       #    
 	0x00, 0x00, //            
 
-	// @51120 'ﭘ' (4 pixels wide)
+	// @51585 'ﭘ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -51892,7 +52284,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   # 
 	0x00, //     
 
-	// @51135 'ﭙ' (5 pixels wide)
+	// @51600 'ﭙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51909,7 +52301,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #  
 	0x00, //      
 
-	// @51150 'ﭚ' (10 pixels wide)
+	// @51615 'ﭚ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -51926,7 +52318,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##   
 	0x00, 0x00, //           
 
-	// @51180 'ﭛ' (11 pixels wide)
+	// @51645 'ﭛ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -51943,7 +52335,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##    
 	0x00, 0x00, //            
 
-	// @51210 'ﭜ' (4 pixels wide)
+	// @51675 'ﭜ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -51960,7 +52352,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @51225 'ﭝ' (5 pixels wide)
+	// @51690 'ﭝ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -51977,7 +52369,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @51240 'ﭞ' (10 pixels wide)
+	// @51705 'ﭞ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -51994,7 +52386,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @51270 'ﭟ' (11 pixels wide)
+	// @51735 'ﭟ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -52011,7 +52403,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @51300 'ﭠ' (4 pixels wide)
+	// @51765 'ﭠ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -52028,7 +52420,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @51315 'ﭡ' (5 pixels wide)
+	// @51780 'ﭡ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52045,7 +52437,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @51330 'ﭢ' (10 pixels wide)
+	// @51795 'ﭢ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -52062,7 +52454,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @51360 'ﭣ' (11 pixels wide)
+	// @51825 'ﭣ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -52079,7 +52471,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @51390 'ﭤ' (4 pixels wide)
+	// @51855 'ﭤ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -52096,7 +52488,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @51405 'ﭥ' (5 pixels wide)
+	// @51870 'ﭥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52113,7 +52505,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @51420 'ﭦ' (10 pixels wide)
+	// @51885 'ﭦ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -52130,7 +52522,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @51450 'ﭧ' (11 pixels wide)
+	// @51915 'ﭧ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -52147,7 +52539,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @51480 'ﭨ' (4 pixels wide)
+	// @51945 'ﭨ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -52164,7 +52556,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @51495 'ﭩ' (5 pixels wide)
+	// @51960 'ﭩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52181,7 +52573,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @51510 'ﭪ' (11 pixels wide)
+	// @51975 'ﭪ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x01, 0x00, //        #   
 	0x00, 0x80, //         #  
@@ -52198,7 +52590,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @51540 'ﭫ' (12 pixels wide)
+	// @52005 'ﭫ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x80, //         #   
@@ -52215,7 +52607,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @51570 'ﭬ' (5 pixels wide)
+	// @52035 'ﭬ' (5 pixels wide)
 	0x00, //      
 	0x20, //   #  
 	0x10, //    # 
@@ -52232,7 +52624,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @51585 'ﭭ' (6 pixels wide)
+	// @52050 'ﭭ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x20, //   #   
@@ -52249,7 +52641,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @51600 'ﭮ' (11 pixels wide)
+	// @52065 'ﭮ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x01, 0x80, //        ##  
@@ -52266,7 +52658,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @51630 'ﭯ' (12 pixels wide)
+	// @52095 'ﭯ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -52283,7 +52675,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @51660 'ﭰ' (5 pixels wide)
+	// @52125 'ﭰ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x30, //   ## 
@@ -52300,7 +52692,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @51675 'ﭱ' (6 pixels wide)
+	// @52140 'ﭱ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -52317,7 +52709,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @51690 'ﭲ' (7 pixels wide)
+	// @52155 'ﭲ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -52334,7 +52726,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @51705 'ﭳ' (8 pixels wide)
+	// @52170 'ﭳ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52351,7 +52743,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @51720 'ﭴ' (8 pixels wide)
+	// @52185 'ﭴ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52368,7 +52760,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##  
 	0x00, //         
 
-	// @51735 'ﭵ' (9 pixels wide)
+	// @52200 'ﭵ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -52385,7 +52777,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @51765 'ﭶ' (7 pixels wide)
+	// @52230 'ﭶ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -52402,7 +52794,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @51780 'ﭷ' (8 pixels wide)
+	// @52245 'ﭷ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52419,7 +52811,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @51795 'ﭸ' (8 pixels wide)
+	// @52260 'ﭸ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52436,7 +52828,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##  
 	0x00, //         
 
-	// @51810 'ﭹ' (9 pixels wide)
+	// @52275 'ﭹ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -52453,7 +52845,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @51840 'ﭺ' (7 pixels wide)
+	// @52305 'ﭺ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -52470,7 +52862,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @51855 'ﭻ' (8 pixels wide)
+	// @52320 'ﭻ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52487,7 +52879,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @51870 'ﭼ' (8 pixels wide)
+	// @52335 'ﭼ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52504,7 +52896,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x04, //      #  
 	0x00, //         
 
-	// @51885 'ﭽ' (9 pixels wide)
+	// @52350 'ﭽ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -52521,7 +52913,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @51915 'ﭾ' (7 pixels wide)
+	// @52380 'ﭾ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -52538,7 +52930,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @51930 'ﭿ' (8 pixels wide)
+	// @52395 'ﭿ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52555,7 +52947,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @51945 'ﮀ' (8 pixels wide)
+	// @52410 'ﮀ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -52572,7 +52964,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##  
 	0x00, //         
 
-	// @51960 'ﮁ' (9 pixels wide)
+	// @52425 'ﮁ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -52589,7 +52981,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @51990 'ﮂ' (4 pixels wide)
+	// @52455 'ﮂ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -52606,7 +52998,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @52005 'ﮃ' (5 pixels wide)
+	// @52470 'ﮃ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52623,7 +53015,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @52020 'ﮄ' (4 pixels wide)
+	// @52485 'ﮄ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -52640,7 +53032,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52035 'ﮅ' (5 pixels wide)
+	// @52500 'ﮅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52657,7 +53049,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52050 'ﮆ' (4 pixels wide)
+	// @52515 'ﮆ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x80, // #   
@@ -52674,7 +53066,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52065 'ﮇ' (5 pixels wide)
+	// @52530 'ﮇ' (5 pixels wide)
 	0x00, //      
 	0x20, //   #  
 	0x10, //    # 
@@ -52691,7 +53083,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52080 'ﮈ' (4 pixels wide)
+	// @52545 'ﮈ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x80, // #   
@@ -52708,7 +53100,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52095 'ﮉ' (5 pixels wide)
+	// @52560 'ﮉ' (5 pixels wide)
 	0x00, //      
 	0x20, //   #  
 	0x30, //   ## 
@@ -52725,7 +53117,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52110 'ﮊ' (5 pixels wide)
+	// @52575 'ﮊ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52742,7 +53134,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52125 'ﮋ' (6 pixels wide)
+	// @52590 'ﮋ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -52759,7 +53151,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###   
 	0x00, //       
 
-	// @52140 'ﮌ' (5 pixels wide)
+	// @52605 'ﮌ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -52776,7 +53168,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52155 'ﮍ' (6 pixels wide)
+	// @52620 'ﮍ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -52793,7 +53185,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###   
 	0x00, //       
 
-	// @52170 'ﮎ' (11 pixels wide)
+	// @52635 'ﮎ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x20, //           #
@@ -52810,7 +53202,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @52200 'ﮏ' (12 pixels wide)
+	// @52665 'ﮏ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x30, //           ##
@@ -52827,7 +53219,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @52230 'ﮐ' (7 pixels wide)
+	// @52695 'ﮐ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x02, //       #
@@ -52844,7 +53236,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52245 'ﮑ' (7 pixels wide)
+	// @52710 'ﮑ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x02, //       #
@@ -52861,7 +53253,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52260 'ﮒ' (11 pixels wide)
+	// @52725 'ﮒ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0xE0, //         ###
 	0x03, 0x20, //       ##  #
@@ -52878,7 +53270,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @52290 'ﮓ' (12 pixels wide)
+	// @52755 'ﮓ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x60, //          ## 
 	0x01, 0x90, //        ##  #
@@ -52895,7 +53287,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @52320 'ﮔ' (7 pixels wide)
+	// @52785 'ﮔ' (7 pixels wide)
 	0x02, //       #
 	0x0C, //     ## 
 	0x12, //    #  #
@@ -52912,7 +53304,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52335 'ﮕ' (7 pixels wide)
+	// @52800 'ﮕ' (7 pixels wide)
 	0x02, //       #
 	0x0C, //     ## 
 	0x12, //    #  #
@@ -52929,7 +53321,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52350 'ﮖ' (11 pixels wide)
+	// @52815 'ﮖ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0xE0, //         ###
 	0x03, 0x20, //       ##  #
@@ -52946,7 +53338,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##    
 	0x00, 0x00, //            
 
-	// @52380 'ﮗ' (12 pixels wide)
+	// @52845 'ﮗ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x60, //          ## 
 	0x01, 0x90, //        ##  #
@@ -52963,7 +53355,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, 0x00, //     ##      
 	0x00, 0x00, //             
 
-	// @52410 'ﮘ' (7 pixels wide)
+	// @52875 'ﮘ' (7 pixels wide)
 	0x02, //       #
 	0x0C, //     ## 
 	0x12, //    #  #
@@ -52980,7 +53372,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##  
 	0x00, //        
 
-	// @52425 'ﮙ' (7 pixels wide)
+	// @52890 'ﮙ' (7 pixels wide)
 	0x02, //       #
 	0x0C, //     ## 
 	0x12, //    #  #
@@ -52997,7 +53389,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##  
 	0x00, //        
 
-	// @52440 'ﮚ' (11 pixels wide)
+	// @52905 'ﮚ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x01, 0xE0, //        ####
 	0x02, 0x20, //       #   #
@@ -53014,7 +53406,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @52470 'ﮛ' (12 pixels wide)
+	// @52935 'ﮛ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x01, 0xE0, //        #### 
 	0x01, 0x90, //        ##  #
@@ -53031,7 +53423,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @52500 'ﮜ' (7 pixels wide)
+	// @52965 'ﮜ' (7 pixels wide)
 	0x02, //       #
 	0x3C, //   #### 
 	0x12, //    #  #
@@ -53048,7 +53440,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52515 'ﮝ' (7 pixels wide)
+	// @52980 'ﮝ' (7 pixels wide)
 	0x02, //       #
 	0x3C, //   #### 
 	0x12, //    #  #
@@ -53065,7 +53457,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52530 'ﮞ' (7 pixels wide)
+	// @52995 'ﮞ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -53082,7 +53474,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52545 'ﮟ' (8 pixels wide)
+	// @53010 'ﮟ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53099,7 +53491,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  ####   
 	0x00, //         
 
-	// @52560 'ﮠ' (7 pixels wide)
+	// @53025 'ﮠ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -53116,7 +53508,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52575 'ﮡ' (8 pixels wide)
+	// @53040 'ﮡ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53133,7 +53525,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  ####   
 	0x00, //         
 
-	// @52590 'ﮢ' (4 pixels wide)
+	// @53055 'ﮢ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -53150,7 +53542,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52605 'ﮣ' (5 pixels wide)
+	// @53070 'ﮣ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53167,7 +53559,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52620 'ﮤ' (4 pixels wide)
+	// @53085 'ﮤ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x60, //  ## 
@@ -53184,7 +53576,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52635 'ﮥ' (5 pixels wide)
+	// @53100 'ﮥ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x60, //  ##  
@@ -53201,7 +53593,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52650 'ﮦ' (4 pixels wide)
+	// @53115 'ﮦ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -53218,7 +53610,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @52665 'ﮧ' (5 pixels wide)
+	// @53130 'ﮧ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53235,7 +53627,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @52680 'ﮨ' (4 pixels wide)
+	// @53145 'ﮨ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -53252,7 +53644,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @52695 'ﮩ' (6 pixels wide)
+	// @53160 'ﮩ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53269,7 +53661,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0x00, //       
 
-	// @52710 'ﮪ' (8 pixels wide)
+	// @53175 'ﮪ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53286,7 +53678,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @52725 'ﮫ' (8 pixels wide)
+	// @53190 'ﮫ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53303,7 +53695,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, //      ## 
 	0x00, //         
 
-	// @52740 'ﮬ' (7 pixels wide)
+	// @53205 'ﮬ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -53320,7 +53712,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @52755 'ﮭ' (6 pixels wide)
+	// @53220 'ﮭ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53337,7 +53729,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ## 
 	0x00, //       
 
-	// @52770 'ﮮ' (11 pixels wide)
+	// @53235 'ﮮ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -53354,7 +53746,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFF, 0xE0, // ###########
 	0x00, 0x00, //            
 
-	// @52800 'ﮯ' (8 pixels wide)
+	// @53265 'ﮯ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53371,7 +53763,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7F, //  #######
 	0x00, //         
 
-	// @52815 'ﮰ' (11 pixels wide)
+	// @53280 'ﮰ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -53388,7 +53780,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xFF, 0xE0, // ###########
 	0x00, 0x00, //            
 
-	// @52845 'ﮱ' (8 pixels wide)
+	// @53310 'ﮱ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53405,7 +53797,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7F, //  #######
 	0x00, //         
 
-	// @52860 '﮲' (2 pixels wide)
+	// @53325 '﮲' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53422,7 +53814,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52875 '﮳' (2 pixels wide)
+	// @53340 '﮳' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53439,7 +53831,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52890 '﮴' (2 pixels wide)
+	// @53355 '﮴' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53456,7 +53848,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52905 '﮵' (2 pixels wide)
+	// @53370 '﮵' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53473,7 +53865,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52920 '﮶' (2 pixels wide)
+	// @53385 '﮶' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53490,7 +53882,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52935 '﮷' (2 pixels wide)
+	// @53400 '﮷' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53502,37 +53894,12 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 	0x00, //   
-	0x80, // # 
-	0x40, //  #
-	0xC0, // ##
-	0x00, //   
-
-	// @52950 '﮸' (2 pixels wide)
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0xC0, // ##
 	0x80, // # 
 	0x40, //  #
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
+	0xC0, // ##
 	0x00, //   
 
-	// @52965 '﮹' (2 pixels wide)
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0x00, //   
+	// @53415 '﮸' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53540,15 +53907,6 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // # 
 	0x40, //  #
 	0x00, //   
-
-	// @52980 '﮺' (2 pixels wide)
-	0x00, //   
-	0x00, //   
-	0x00, //   
-	0xC0, // ##
-	0xC0, // ##
-	0xC0, // ##
-	0x00, //   
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53558,7 +53916,41 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @52995 '﮻' (2 pixels wide)
+	// @53430 '﮹' (2 pixels wide)
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0xC0, // ##
+	0x80, // # 
+	0x40, //  #
+	0x00, //   
+
+	// @53445 '﮺' (2 pixels wide)
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0xC0, // ##
+	0xC0, // ##
+	0xC0, // ##
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+	0x00, //   
+
+	// @53460 '﮻' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53575,7 +53967,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @53010 '﮼' (2 pixels wide)
+	// @53475 '﮼' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53592,7 +53984,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #
 	0x00, //   
 
-	// @53025 '﮽' (2 pixels wide)
+	// @53490 '﮽' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53609,7 +54001,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @53040 '﮾' (2 pixels wide)
+	// @53505 '﮾' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53626,7 +54018,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @53055 '﮿' (2 pixels wide)
+	// @53520 '﮿' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53643,7 +54035,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @53070 '﯀' (2 pixels wide)
+	// @53535 '﯀' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53660,7 +54052,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @53085 '﯁' (2 pixels wide)
+	// @53550 '﯁' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -53677,7 +54069,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @53100 'ﯓ' (8 pixels wide)
+	// @53565 'ﯓ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x10, //    #    
@@ -53694,7 +54086,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @53115 'ﯔ' (10 pixels wide)
+	// @53580 'ﯔ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x08, 0x00, //     #     
@@ -53711,7 +54103,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @53145 'ﯕ' (7 pixels wide)
+	// @53610 'ﯕ' (7 pixels wide)
 	0x00, //        
 	0x20, //   #    
 	0x32, //   ##  #
@@ -53728,7 +54120,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @53160 'ﯖ' (7 pixels wide)
+	// @53625 'ﯖ' (7 pixels wide)
 	0x00, //        
 	0x20, //   #    
 	0x32, //   ##  #
@@ -53745,7 +54137,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @53175 'ﯗ' (5 pixels wide)
+	// @53640 'ﯗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53762,7 +54154,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53190 'ﯘ' (6 pixels wide)
+	// @53655 'ﯘ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53779,7 +54171,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53205 'ﯙ' (5 pixels wide)
+	// @53670 'ﯙ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53796,7 +54188,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53220 'ﯚ' (6 pixels wide)
+	// @53685 'ﯚ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53813,7 +54205,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53235 'ﯛ' (5 pixels wide)
+	// @53700 'ﯛ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53830,7 +54222,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53250 'ﯜ' (6 pixels wide)
+	// @53715 'ﯜ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53847,7 +54239,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53265 'ﯝ' (6 pixels wide)
+	// @53730 'ﯝ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53864,7 +54256,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // ####  
 	0x00, //       
 
-	// @53280 'ﯞ' (5 pixels wide)
+	// @53745 'ﯞ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53881,7 +54273,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53295 'ﯟ' (6 pixels wide)
+	// @53760 'ﯟ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53898,7 +54290,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53310 'ﯠ' (5 pixels wide)
+	// @53775 'ﯠ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53915,7 +54307,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53325 'ﯡ' (6 pixels wide)
+	// @53790 'ﯡ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53932,7 +54324,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53340 'ﯢ' (5 pixels wide)
+	// @53805 'ﯢ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -53949,7 +54341,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @53355 'ﯣ' (6 pixels wide)
+	// @53820 'ﯣ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -53966,7 +54358,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @53370 'ﯤ' (8 pixels wide)
+	// @53835 'ﯤ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -53983,7 +54375,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ##   
 	0x18, //    ##   
 
-	// @53385 'ﯥ' (8 pixels wide)
+	// @53850 'ﯥ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54000,7 +54392,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x04, //      #  
 
-	// @53400 'ﯦ' (4 pixels wide)
+	// @53865 'ﯦ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54017,7 +54409,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @53415 'ﯧ' (5 pixels wide)
+	// @53880 'ﯧ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54034,7 +54426,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @53430 'ﯨ' (4 pixels wide)
+	// @53895 'ﯨ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54051,7 +54443,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @53445 'ﯩ' (5 pixels wide)
+	// @53910 'ﯩ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54068,7 +54460,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @53460 'ﯪ' (5 pixels wide)
+	// @53925 'ﯪ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54085,7 +54477,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @53475 'ﯫ' (6 pixels wide)
+	// @53940 'ﯫ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -54102,7 +54494,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @53490 'ﯬ' (8 pixels wide)
+	// @53955 'ﯬ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54119,7 +54511,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @53505 'ﯭ' (9 pixels wide)
+	// @53970 'ﯭ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -54136,7 +54528,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @53535 'ﯮ' (9 pixels wide)
+	// @54000 'ﯮ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -54153,7 +54545,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #     
 	0xE0, 0x00, // ###      
 
-	// @53565 'ﯯ' (10 pixels wide)
+	// @54030 'ﯯ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54170,13 +54562,13 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #      
 	0xE0, 0x00, // ###       
 
-	// @53595 'ﯰ' (9 pixels wide)
+	// @54060 'ﯰ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
-	0x0B, 0x00, //     # ## 
+	0x1B, 0x00, //    ## ## 
 	0x0A, 0x00, //     # #  
-	0x13, 0x00, //    #  ## 
+	0x0B, 0x00, //     # ## 
 	0x00, 0x00, //          
 	0x19, 0x00, //    ##  # 
 	0x28, 0x80, //   # #   #
@@ -54187,13 +54579,13 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #     
 	0xE0, 0x00, // ###      
 
-	// @53625 'ﯱ' (10 pixels wide)
+	// @54090 'ﯱ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
-	0x0B, 0x00, //     # ##  
+	0x1B, 0x00, //    ## ##  
 	0x0A, 0x00, //     # #   
-	0x13, 0x00, //    #  ##  
+	0x0B, 0x00, //     # ##  
 	0x00, 0x00, //           
 	0x18, 0x00, //    ##     
 	0x28, 0x80, //   # #   # 
@@ -54204,7 +54596,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #      
 	0xE0, 0x00, // ###       
 
-	// @53655 'ﯲ' (9 pixels wide)
+	// @54120 'ﯲ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -54221,7 +54613,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #     
 	0xE0, 0x00, // ###      
 
-	// @53685 'ﯳ' (10 pixels wide)
+	// @54150 'ﯳ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54238,7 +54630,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #      
 	0xE0, 0x00, // ###       
 
-	// @53715 'ﯴ' (9 pixels wide)
+	// @54180 'ﯴ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -54255,7 +54647,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #     
 	0xE0, 0x00, // ###      
 
-	// @53745 'ﯵ' (10 pixels wide)
+	// @54210 'ﯵ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54272,7 +54664,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, 0x00, //    #      
 	0xE0, 0x00, // ###       
 
-	// @53775 'ﯶ' (8 pixels wide)
+	// @54240 'ﯶ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x06, //      ## 
@@ -54289,7 +54681,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x03, //       ##
 
-	// @53790 'ﯷ' (10 pixels wide)
+	// @54255 'ﯷ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54306,7 +54698,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7F, 0x00, //  #######  
 	0x03, 0x00, //       ##  
 
-	// @53820 'ﯸ' (8 pixels wide)
+	// @54285 'ﯸ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54323,7 +54715,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x00, //         
 
-	// @53835 'ﯹ' (8 pixels wide)
+	// @54300 'ﯹ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x06, //      ## 
@@ -54340,7 +54732,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @53850 'ﯺ' (10 pixels wide)
+	// @54315 'ﯺ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54357,7 +54749,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, 0x00, //  #####    
 	0x00, 0x00, //           
 
-	// @53880 'ﯻ' (8 pixels wide)
+	// @54345 'ﯻ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54374,7 +54766,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @53895 'ﯼ' (8 pixels wide)
+	// @54360 'ﯼ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54391,7 +54783,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @53910 'ﯽ' (8 pixels wide)
+	// @54375 'ﯽ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -54408,7 +54800,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @53925 'ﯾ' (4 pixels wide)
+	// @54390 'ﯾ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54425,7 +54817,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @53940 'ﯿ' (5 pixels wide)
+	// @54405 'ﯿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54442,7 +54834,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @53955 'ﱞ' (4 pixels wide)
+	// @54420 'ﱞ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54459,7 +54851,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @53970 'ﱟ' (2 pixels wide)
+	// @54435 'ﱟ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54476,7 +54868,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @53985 'ﱠ' (2 pixels wide)
+	// @54450 'ﱠ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54493,7 +54885,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54000 'ﱡ' (2 pixels wide)
+	// @54465 'ﱡ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54510,7 +54902,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54015 'ﱢ' (2 pixels wide)
+	// @54480 'ﱢ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54527,7 +54919,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54030 'ﱣ' (2 pixels wide)
+	// @54495 'ﱣ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54544,7 +54936,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54045 'ﳲ' (5 pixels wide)
+	// @54510 'ﳲ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x30, //   ## 
@@ -54561,7 +54953,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54060 'ﳳ' (5 pixels wide)
+	// @54525 'ﳳ' (5 pixels wide)
 	0x10, //    # 
 	0x10, //    # 
 	0x20, //   #  
@@ -54578,7 +54970,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54075 'ﳴ' (5 pixels wide)
+	// @54540 'ﳴ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54595,7 +54987,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54090 'ﴼ' (3 pixels wide)
+	// @54555 'ﴼ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -54612,7 +55004,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @54105 'ﴽ' (3 pixels wide)
+	// @54570 'ﴽ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x60, //  ##
@@ -54629,7 +55021,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @54120 '﴾' (5 pixels wide)
+	// @54585 '﴾' (5 pixels wide)
 	0x00, //      
 	0x08, //     #
 	0x10, //    # 
@@ -54646,7 +55038,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    # 
 	0x08, //     #
 
-	// @54135 '﴿' (6 pixels wide)
+	// @54600 '﴿' (6 pixels wide)
 	0x00, //       
 	0x80, // #     
 	0x40, //  #    
@@ -54663,7 +55055,24 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #    
 	0x40, //  #    
 
-	// @54150 'ﷴ' (16 pixels wide)
+	// @54615 'ﷲ' (12 pixels wide)
+	0x02, 0x00, //       #     
+	0x03, 0x00, //       ##    
+	0x06, 0x00, //      ##     
+	0x00, 0x10, //            #
+	0x02, 0x10, //       #    #
+	0x12, 0x50, //    #  #  # #
+	0x32, 0x50, //   ##  #  # #
+	0xD2, 0x50, // ## #  #  # #
+	0x92, 0x50, // #  #  #  # #
+	0xF3, 0x50, // ####  ## # #
+	0x1D, 0xC0, //    ### ###  
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+	0x00, 0x00, //             
+
+	// @54645 'ﷴ' (16 pixels wide)
 	0x00, 0x00, //                 
 	0x00, 0x00, //                 
 	0x00, 0x00, //                 
@@ -54680,7 +55089,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //                 
 	0x00, 0x00, //                 
 
-	// @54180 'ﷺ' (12 pixels wide)
+	// @54675 'ﷺ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x10, 0x40, //    #     #  
 	0x1A, 0xE0, //    ## # ### 
@@ -54697,7 +55106,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @54210 'ﷻ' (10 pixels wide)
+	// @54705 'ﷻ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x08, 0x00, //     #     
@@ -54714,7 +55123,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @54240 '﷼' (10 pixels wide)
+	// @54735 '﷼' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -54731,7 +55140,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @54270 '﷽' (15 pixels wide)
+	// @54765 '﷽' (15 pixels wide)
 	0x00, 0x00, //                
 	0x00, 0x00, //                
 	0x00, 0x00, //                
@@ -54748,7 +55157,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x18, //            ##  
 	0x00, 0x00, //                
 
-	// @54300 '︠' (6 pixels wide)
+	// @54795 '︠' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -54765,7 +55174,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @54315 '︡' (6 pixels wide)
+	// @54810 '︡' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -54782,7 +55191,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @54330 '︢' (4 pixels wide)
+	// @54825 '︢' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54799,7 +55208,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54345 '︣' (4 pixels wide)
+	// @54840 '︣' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54816,7 +55225,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54360 'ﹰ' (2 pixels wide)
+	// @54855 'ﹰ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54833,7 +55242,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54375 'ﹱ' (5 pixels wide)
+	// @54870 'ﹱ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54850,7 +55259,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54390 'ﹲ' (4 pixels wide)
+	// @54885 'ﹲ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x30, //   ##
@@ -54867,7 +55276,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54405 'ﹳ' (4 pixels wide)
+	// @54900 'ﹳ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -54884,7 +55293,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54420 'ﹴ' (2 pixels wide)
+	// @54915 'ﹴ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54901,7 +55310,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0xC0, // ##
 
-	// @54435 'ﹶ' (2 pixels wide)
+	// @54930 'ﹶ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54918,7 +55327,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54450 'ﹷ' (5 pixels wide)
+	// @54945 'ﹷ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -54935,7 +55344,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54465 'ﹸ' (2 pixels wide)
+	// @54960 'ﹸ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x40, //  #
@@ -54952,7 +55361,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54480 'ﹹ' (5 pixels wide)
+	// @54975 'ﹹ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x10, //    # 
@@ -54969,7 +55378,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54495 'ﹺ' (2 pixels wide)
+	// @54990 'ﹺ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -54986,7 +55395,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @54510 'ﹻ' (5 pixels wide)
+	// @55005 'ﹻ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55003,7 +55412,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x30, //   ## 
 	0x00, //      
 
-	// @54525 'ﹼ' (2 pixels wide)
+	// @55020 'ﹼ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -55020,7 +55429,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54540 'ﹽ' (5 pixels wide)
+	// @55035 'ﹽ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55037,7 +55446,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54555 'ﹾ' (2 pixels wide)
+	// @55050 'ﹾ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0xC0, // ##
@@ -55054,7 +55463,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54570 'ﹿ' (5 pixels wide)
+	// @55065 'ﹿ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x30, //   ## 
@@ -55071,7 +55480,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54585 'ﺀ' (3 pixels wide)
+	// @55080 'ﺀ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -55088,7 +55497,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @54600 'ﺁ' (4 pixels wide)
+	// @55095 'ﺁ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0xF0, // ####
@@ -55105,7 +55514,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54615 'ﺃ' (2 pixels wide)
+	// @55110 'ﺃ' (2 pixels wide)
 	0xC0, // ##
 	0x80, // # 
 	0xC0, // ##
@@ -55122,7 +55531,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54630 'ﺄ' (3 pixels wide)
+	// @55125 'ﺄ' (3 pixels wide)
 	0xC0, // ## 
 	0x80, // #  
 	0xC0, // ## 
@@ -55139,7 +55548,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @54645 'ﺅ' (5 pixels wide)
+	// @55140 'ﺅ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55156,7 +55565,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @54660 'ﺆ' (6 pixels wide)
+	// @55155 'ﺆ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -55173,7 +55582,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @54675 'ﺇ' (2 pixels wide)
+	// @55170 'ﺇ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -55190,7 +55599,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @54690 'ﺈ' (2 pixels wide)
+	// @55185 'ﺈ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -55207,7 +55616,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xC0, // ##
 	0x00, //   
 
-	// @54705 'ﺉ' (8 pixels wide)
+	// @55200 'ﺉ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55224,7 +55633,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @54720 'ﺊ' (8 pixels wide)
+	// @55215 'ﺊ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55241,7 +55650,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @54735 'ﺋ' (4 pixels wide)
+	// @55230 'ﺋ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55258,7 +55667,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54750 'ﺌ' (5 pixels wide)
+	// @55245 'ﺌ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55275,7 +55684,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54765 'ﺍ' (1 pixels wide)
+	// @55260 'ﺍ' (1 pixels wide)
 	0x00, //  
 	0x00, //  
 	0x00, //  
@@ -55292,7 +55701,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //  
 	0x00, //  
 
-	// @54780 'ﺎ' (2 pixels wide)
+	// @55275 'ﺎ' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -55309,7 +55718,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 	0x00, //   
 
-	// @54795 'ﺏ' (10 pixels wide)
+	// @55290 'ﺏ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -55326,7 +55735,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##   
 	0x00, 0x00, //           
 
-	// @54825 'ﺐ' (11 pixels wide)
+	// @55320 'ﺐ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -55343,7 +55752,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x06, 0x00, //      ##    
 	0x00, 0x00, //            
 
-	// @54855 'ﺑ' (4 pixels wide)
+	// @55350 'ﺑ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55360,7 +55769,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @54870 'ﺒ' (5 pixels wide)
+	// @55365 'ﺒ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55377,7 +55786,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @54885 'ﺓ' (4 pixels wide)
+	// @55380 'ﺓ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55394,7 +55803,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54900 'ﺔ' (5 pixels wide)
+	// @55395 'ﺔ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55411,7 +55820,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @54915 'ﺕ' (10 pixels wide)
+	// @55410 'ﺕ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -55428,7 +55837,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @54945 'ﺖ' (11 pixels wide)
+	// @55440 'ﺖ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -55445,7 +55854,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @54975 'ﺗ' (4 pixels wide)
+	// @55470 'ﺗ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55462,7 +55871,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @54990 'ﺘ' (5 pixels wide)
+	// @55485 'ﺘ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55479,7 +55888,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55005 'ﺙ' (10 pixels wide)
+	// @55500 'ﺙ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -55496,7 +55905,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @55035 'ﺚ' (11 pixels wide)
+	// @55530 'ﺚ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -55513,7 +55922,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @55065 'ﺛ' (4 pixels wide)
+	// @55560 'ﺛ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55530,7 +55939,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @55080 'ﺜ' (5 pixels wide)
+	// @55575 'ﺜ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55547,7 +55956,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55095 'ﺝ' (7 pixels wide)
+	// @55590 'ﺝ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -55564,7 +55973,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @55110 'ﺞ' (8 pixels wide)
+	// @55605 'ﺞ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55581,7 +55990,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @55125 'ﺟ' (8 pixels wide)
+	// @55620 'ﺟ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55598,7 +56007,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x0C, //     ##  
 	0x00, //         
 
-	// @55140 'ﺠ' (9 pixels wide)
+	// @55635 'ﺠ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -55615,7 +56024,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55170 'ﺡ' (7 pixels wide)
+	// @55665 'ﺡ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -55632,7 +56041,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @55185 'ﺢ' (8 pixels wide)
+	// @55680 'ﺢ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55649,7 +56058,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @55200 'ﺣ' (8 pixels wide)
+	// @55695 'ﺣ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55666,7 +56075,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @55215 'ﺤ' (9 pixels wide)
+	// @55710 'ﺤ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -55683,7 +56092,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55245 'ﺥ' (7 pixels wide)
+	// @55740 'ﺥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -55700,7 +56109,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @55260 'ﺦ' (8 pixels wide)
+	// @55755 'ﺦ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55717,7 +56126,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##     
 	0x3E, //   ##### 
 
-	// @55275 'ﺧ' (8 pixels wide)
+	// @55770 'ﺧ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -55734,7 +56143,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @55290 'ﺨ' (9 pixels wide)
+	// @55785 'ﺨ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -55751,7 +56160,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55320 'ﺩ' (4 pixels wide)
+	// @55815 'ﺩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55768,7 +56177,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @55335 'ﺪ' (5 pixels wide)
+	// @55830 'ﺪ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55785,7 +56194,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55350 'ﺫ' (4 pixels wide)
+	// @55845 'ﺫ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -55802,7 +56211,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @55365 'ﺬ' (5 pixels wide)
+	// @55860 'ﺬ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55819,7 +56228,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55380 'ﺭ' (5 pixels wide)
+	// @55875 'ﺭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55836,7 +56245,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55395 'ﺮ' (6 pixels wide)
+	// @55890 'ﺮ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -55853,7 +56262,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###   
 	0x00, //       
 
-	// @55410 'ﺯ' (5 pixels wide)
+	// @55905 'ﺯ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -55870,7 +56279,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @55425 'ﺰ' (6 pixels wide)
+	// @55920 'ﺰ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -55887,7 +56296,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xE0, // ###   
 	0x00, //       
 
-	// @55440 'ﺱ' (11 pixels wide)
+	// @55935 'ﺱ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -55904,7 +56313,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####      
 	0x00, 0x00, //            
 
-	// @55470 'ﺲ' (12 pixels wide)
+	// @55965 'ﺲ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -55921,7 +56330,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####       
 	0x00, 0x00, //             
 
-	// @55500 'ﺳ' (9 pixels wide)
+	// @55995 'ﺳ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -55938,7 +56347,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55530 'ﺴ' (10 pixels wide)
+	// @56025 'ﺴ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -55955,7 +56364,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @55560 'ﺵ' (11 pixels wide)
+	// @56055 'ﺵ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -55972,7 +56381,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####      
 	0x00, 0x00, //            
 
-	// @55590 'ﺶ' (12 pixels wide)
+	// @56085 'ﺶ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -55989,7 +56398,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####       
 	0x00, 0x00, //             
 
-	// @55620 'ﺷ' (9 pixels wide)
+	// @56115 'ﺷ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -56006,7 +56415,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55650 'ﺸ' (10 pixels wide)
+	// @56145 'ﺸ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -56023,7 +56432,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @55680 'ﺹ' (13 pixels wide)
+	// @56175 'ﺹ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -56040,7 +56449,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####        
 	0x00, 0x00, //              
 
-	// @55710 'ﺺ' (14 pixels wide)
+	// @56205 'ﺺ' (14 pixels wide)
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 	0x00, 0x00, //               
@@ -56057,7 +56466,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####         
 	0x00, 0x00, //               
 
-	// @55740 'ﺻ' (10 pixels wide)
+	// @56235 'ﺻ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -56074,7 +56483,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @55770 'ﺼ' (11 pixels wide)
+	// @56265 'ﺼ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -56091,7 +56500,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @55800 'ﺽ' (13 pixels wide)
+	// @56295 'ﺽ' (13 pixels wide)
 	0x00, 0x00, //              
 	0x00, 0x00, //              
 	0x00, 0x00, //              
@@ -56108,7 +56517,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####        
 	0x00, 0x00, //              
 
-	// @55830 'ﺾ' (14 pixels wide)
+	// @56325 'ﺾ' (14 pixels wide)
 	0x00, 0x00, //               
 	0x00, 0x00, //               
 	0x00, 0x00, //               
@@ -56125,7 +56534,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, 0x00, //  ####         
 	0x00, 0x00, //               
 
-	// @55860 'ﺿ' (10 pixels wide)
+	// @56355 'ﺿ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -56142,7 +56551,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @55890 'ﻀ' (11 pixels wide)
+	// @56385 'ﻀ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -56159,7 +56568,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @55920 'ﻁ' (8 pixels wide)
+	// @56415 'ﻁ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56176,7 +56585,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @55935 'ﻂ' (9 pixels wide)
+	// @56430 'ﻂ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -56193,7 +56602,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @55965 'ﻃ' (8 pixels wide)
+	// @56460 'ﻃ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56210,7 +56619,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @55980 'ﻄ' (9 pixels wide)
+	// @56475 'ﻄ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -56227,7 +56636,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @56010 'ﻅ' (8 pixels wide)
+	// @56505 'ﻅ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56244,7 +56653,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56025 'ﻆ' (9 pixels wide)
+	// @56520 'ﻆ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -56261,7 +56670,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @56055 'ﻇ' (8 pixels wide)
+	// @56550 'ﻇ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56278,7 +56687,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56070 'ﻈ' (9 pixels wide)
+	// @56565 'ﻈ' (9 pixels wide)
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 	0x00, 0x00, //          
@@ -56295,7 +56704,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //          
 	0x00, 0x00, //          
 
-	// @56100 'ﻉ' (7 pixels wide)
+	// @56595 'ﻉ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56312,7 +56721,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @56115 'ﻊ' (7 pixels wide)
+	// @56610 'ﻊ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56329,7 +56738,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @56130 'ﻋ' (7 pixels wide)
+	// @56625 'ﻋ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56346,7 +56755,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56145 'ﻌ' (7 pixels wide)
+	// @56640 'ﻌ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56363,7 +56772,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56160 'ﻍ' (7 pixels wide)
+	// @56655 'ﻍ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56380,7 +56789,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @56175 'ﻎ' (7 pixels wide)
+	// @56670 'ﻎ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56397,7 +56806,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x40, //  #     
 	0x3E, //   #####
 
-	// @56190 'ﻏ' (7 pixels wide)
+	// @56685 'ﻏ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56414,7 +56823,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56205 'ﻐ' (7 pixels wide)
+	// @56700 'ﻐ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56431,7 +56840,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56220 'ﻑ' (11 pixels wide)
+	// @56715 'ﻑ' (11 pixels wide)
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 	0x00, 0x00, //            
@@ -56448,7 +56857,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //            
 	0x00, 0x00, //            
 
-	// @56250 'ﻒ' (12 pixels wide)
+	// @56745 'ﻒ' (12 pixels wide)
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 	0x00, 0x00, //             
@@ -56465,7 +56874,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //             
 	0x00, 0x00, //             
 
-	// @56280 'ﻓ' (5 pixels wide)
+	// @56775 'ﻓ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -56482,7 +56891,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @56295 'ﻔ' (6 pixels wide)
+	// @56790 'ﻔ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56499,24 +56908,24 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56310 'ﻕ' (8 pixels wide)
+	// @56805 'ﻕ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
 	0x00, //         
 	0x0C, //     ##  
 	0x00, //         
-	0x00, //         
 	0x06, //      ## 
 	0x0A, //     # # 
-	0x4F, //  #  ####
+	0x49, //  #  #  #
+	0x87, // #    ###
 	0x81, // #      #
 	0x42, //  #    # 
 	0x7C, //  #####  
 	0x00, //         
 	0x00, //         
 
-	// @56325 'ﻖ' (8 pixels wide)
+	// @56820 'ﻖ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56533,7 +56942,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @56340 'ﻗ' (5 pixels wide)
+	// @56835 'ﻗ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -56550,7 +56959,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @56355 'ﻘ' (6 pixels wide)
+	// @56850 'ﻘ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56567,7 +56976,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56370 'ﻙ' (8 pixels wide)
+	// @56865 'ﻙ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56584,7 +56993,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56385 'ﻚ' (10 pixels wide)
+	// @56880 'ﻚ' (10 pixels wide)
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 	0x00, 0x00, //           
@@ -56601,7 +57010,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, 0x00, //           
 	0x00, 0x00, //           
 
-	// @56415 'ﻛ' (7 pixels wide)
+	// @56910 'ﻛ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x02, //       #
@@ -56618,7 +57027,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56430 'ﻜ' (7 pixels wide)
+	// @56925 'ﻜ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x02, //       #
@@ -56635,7 +57044,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56445 'ﻝ' (7 pixels wide)
+	// @56940 'ﻝ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56652,7 +57061,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56460 'ﻞ' (8 pixels wide)
+	// @56955 'ﻞ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56669,7 +57078,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  ####   
 	0x00, //         
 
-	// @56475 'ﻟ' (3 pixels wide)
+	// @56970 'ﻟ' (3 pixels wide)
 	0x00, //    
 	0x00, //    
 	0x00, //    
@@ -56686,7 +57095,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //    
 	0x00, //    
 
-	// @56490 'ﻠ' (4 pixels wide)
+	// @56985 'ﻠ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -56703,7 +57112,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @56505 'ﻡ' (4 pixels wide)
+	// @57000 'ﻡ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -56720,7 +57129,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #   
 	0x80, // #   
 
-	// @56520 'ﻢ' (6 pixels wide)
+	// @57015 'ﻢ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56737,7 +57146,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x80, // #     
 	0x80, // #     
 
-	// @56535 'ﻣ' (6 pixels wide)
+	// @57030 'ﻣ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56754,7 +57163,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56550 'ﻤ' (7 pixels wide)
+	// @57045 'ﻤ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56771,7 +57180,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56565 'ﻥ' (7 pixels wide)
+	// @57060 'ﻥ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56788,7 +57197,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56580 'ﻦ' (8 pixels wide)
+	// @57075 'ﻦ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56805,7 +57214,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x78, //  ####   
 	0x00, //         
 
-	// @56595 'ﻧ' (4 pixels wide)
+	// @57090 'ﻧ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -56822,7 +57231,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @56610 'ﻨ' (5 pixels wide)
+	// @57105 'ﻨ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -56839,7 +57248,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @56625 'ﻩ' (4 pixels wide)
+	// @57120 'ﻩ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -56856,7 +57265,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //     
 	0x00, //     
 
-	// @56640 'ﻪ' (5 pixels wide)
+	// @57135 'ﻪ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -56873,7 +57282,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //      
 	0x00, //      
 
-	// @56655 'ﻫ' (7 pixels wide)
+	// @57150 'ﻫ' (7 pixels wide)
 	0x00, //        
 	0x00, //        
 	0x00, //        
@@ -56890,7 +57299,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //        
 	0x00, //        
 
-	// @56670 'ﻬ' (6 pixels wide)
+	// @57165 'ﻬ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56907,7 +57316,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x18, //    ## 
 	0x00, //       
 
-	// @56685 'ﻭ' (5 pixels wide)
+	// @57180 'ﻭ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -56924,7 +57333,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0xF0, // #### 
 	0x00, //      
 
-	// @56700 'ﻮ' (6 pixels wide)
+	// @57195 'ﻮ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -56941,7 +57350,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x10, //    #  
 	0xE0, // ###   
 
-	// @56715 'ﻯ' (8 pixels wide)
+	// @57210 'ﻯ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56958,7 +57367,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56730 'ﻰ' (8 pixels wide)
+	// @57225 'ﻰ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56975,7 +57384,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @56745 'ﻱ' (8 pixels wide)
+	// @57240 'ﻱ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -56992,7 +57401,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56760 'ﻲ' (8 pixels wide)
+	// @57255 'ﻲ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -57009,7 +57418,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x7C, //  #####  
 	0x00, //         
 
-	// @56775 'ﻳ' (4 pixels wide)
+	// @57270 'ﻳ' (4 pixels wide)
 	0x00, //     
 	0x00, //     
 	0x00, //     
@@ -57026,7 +57435,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ## 
 	0x00, //     
 
-	// @56790 'ﻴ' (5 pixels wide)
+	// @57285 'ﻴ' (5 pixels wide)
 	0x00, //      
 	0x00, //      
 	0x00, //      
@@ -57043,7 +57452,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x60, //  ##  
 	0x00, //      
 
-	// @56805 'ﻵ' (6 pixels wide)
+	// @57300 'ﻵ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -57060,7 +57469,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56820 'ﻶ' (8 pixels wide)
+	// @57315 'ﻶ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0xF0, // ####    
@@ -57077,7 +57486,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56835 'ﻷ' (6 pixels wide)
+	// @57330 'ﻷ' (6 pixels wide)
 	0x00, //       
 	0xC0, // ##    
 	0x80, // #     
@@ -57094,7 +57503,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56850 'ﻸ' (8 pixels wide)
+	// @57345 'ﻸ' (8 pixels wide)
 	0x60, //  ##     
 	0x40, //  #      
 	0x60, //  ##     
@@ -57111,7 +57520,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56865 'ﻹ' (6 pixels wide)
+	// @57360 'ﻹ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -57128,7 +57537,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #   
 	0x30, //   ##  
 
-	// @56880 'ﻺ' (8 pixels wide)
+	// @57375 'ﻺ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -57145,7 +57554,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x20, //   #     
 	0x30, //   ##    
 
-	// @56895 'ﻻ' (6 pixels wide)
+	// @57390 'ﻻ' (6 pixels wide)
 	0x00, //       
 	0x00, //       
 	0x00, //       
@@ -57162,7 +57571,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //       
 	0x00, //       
 
-	// @56910 'ﻼ' (8 pixels wide)
+	// @57405 'ﻼ' (8 pixels wide)
 	0x00, //         
 	0x00, //         
 	0x00, //         
@@ -57179,7 +57588,7 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //         
 	0x00, //         
 
-	// @56925 '﻿' (2 pixels wide)
+	// @57420 '﻿' (2 pixels wide)
 	0x00, //   
 	0x00, //   
 	0x00, //   
@@ -57197,4529 +57606,4533 @@ const uint8_t calibri_8ptBitmaps[] PROGMEM =
 	0x00, //   
 };
 
-// Character descriptors for Calibri 8pt(block #0)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block0[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #0)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block0[] PROGMEM = 
 {
-	{1, 0}, 		// ! 
-	{3, 15}, 		// " 
-	{6, 30}, 		// # 
-	{5, 45}, 		// $ 
-	{9, 60}, 		// % 
-	{7, 90}, 		// & 
-	{1, 105}, 		// ' 
-	{2, 120}, 		// ( 
-	{2, 135}, 		// ) 
-	{5, 150}, 		// * 
-	{5, 165}, 		// + 
-	{2, 180}, 		// , 
-	{3, 195}, 		// - 
-	{1, 210}, 		// . 
-	{5, 225}, 		// / 
-	{5, 240}, 		// 0 
-	{5, 255}, 		// 1 
-	{5, 270}, 		// 2 
-	{5, 285}, 		// 3 
-	{5, 300}, 		// 4 
-	{5, 315}, 		// 5 
-	{5, 330}, 		// 6 
-	{5, 345}, 		// 7 
-	{5, 360}, 		// 8 
-	{5, 375}, 		// 9 
-	{1, 390}, 		// : 
-	{2, 405}, 		// ; 
-	{5, 420}, 		// < 
-	{5, 435}, 		// = 
-	{5, 450}, 		// > 
-	{4, 465}, 		// ? 
-	{10, 480}, 		// @ 
-	{7, 510}, 		// A 
-	{5, 525}, 		// B 
-	{6, 540}, 		// C 
-	{6, 555}, 		// D 
-	{4, 570}, 		// E 
-	{4, 585}, 		// F 
-	{6, 600}, 		// G 
-	{6, 615}, 		// H 
-	{1, 630}, 		// I 
-	{3, 645}, 		// J 
-	{5, 660}, 		// K 
-	{4, 675}, 		// L 
-	{9, 690}, 		// M 
-	{6, 720}, 		// N 
-	{7, 735}, 		// O 
-	{5, 750}, 		// P 
-	{8, 765}, 		// Q 
-	{5, 780}, 		// R 
-	{4, 795}, 		// S 
-	{5, 810}, 		// T 
-	{6, 825}, 		// U 
-	{7, 840}, 		// V 
-	{11, 855}, 		// W 
-	{7, 885}, 		// X 
-	{5, 900}, 		// Y 
-	{6, 915}, 		// Z 
-	{2, 930}, 		// [ 
-	{5, 945}, 		// backslash 
-	{2, 960}, 		// ] 
-	{5, 975}, 		// ^ 
-	{6, 990}, 		// _ 
-	{2, 1005}, 		// ` 
-	{5, 1020}, 		// a 
-	{5, 1035}, 		// b 
-	{4, 1050}, 		// c 
-	{5, 1065}, 		// d 
-	{4, 1080}, 		// e 
-	{4, 1095}, 		// f 
-	{5, 1110}, 		// g 
-	{5, 1125}, 		// h 
-	{1, 1140}, 		// i 
-	{3, 1155}, 		// j 
-	{4, 1170}, 		// k 
-	{1, 1185}, 		// l 
-	{8, 1200}, 		// m 
-	{5, 1215}, 		// n 
-	{5, 1230}, 		// o 
-	{5, 1245}, 		// p 
-	{5, 1260}, 		// q 
-	{4, 1275}, 		// r 
-	{4, 1290}, 		// s 
-	{4, 1305}, 		// t 
-	{5, 1320}, 		// u 
-	{5, 1335}, 		// v 
-	{9, 1350}, 		// w 
-	{5, 1380}, 		// x 
-	{5, 1395}, 		// y 
-	{3, 1410}, 		// z 
-	{3, 1425}, 		// { 
-	{1, 1440}, 		// | 
-	{3, 1455}, 		// } 
-	{5, 1470}, 		// ~ 
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{0, 0}, 		//  
-	{2, 1485}, 		//   
-	{1, 1500}, 		// ¡ 
-	{4, 1515}, 		// ¢ 
-	{5, 1530}, 		// £ 
-	{4, 1545}, 		// ¤ 
-	{5, 1560}, 		// ¥ 
-	{1, 1575}, 		// ¦ 
-	{4, 1590}, 		// § 
-	{3, 1605}, 		// ¨ 
-	{9, 1620}, 		// © 
-	{3, 1650}, 		// ª 
-	{5, 1665}, 		// « 
-	{5, 1680}, 		// ¬ 
-	{2, 1695}, 		// ­ 
-	{6, 1710}, 		// ® 
-	{3, 1725}, 		// ¯ 
-	{4, 1740}, 		// ° 
-	{5, 1755}, 		// ± 
-	{3, 1770}, 		// ² 
-	{3, 1785}, 		// ³ 
-	{2, 1800}, 		// ´ 
-	{6, 1815}, 		// µ 
-	{6, 1830}, 		// ¶ 
-	{1, 1845}, 		// · 
-	{2, 1860}, 		// ¸ 
-	{2, 1875}, 		// ¹ 
-	{3, 1890}, 		// º 
-	{5, 1905}, 		// » 
-	{8, 1920}, 		// ¼ 
-	{8, 1935}, 		// ½ 
-	{9, 1950}, 		// ¾ 
-	{4, 1980}, 		// ¿ 
-	{7, 1995}, 		// À 
-	{7, 2010}, 		// Á 
-	{7, 2025}, 		// Â 
-	{7, 2040}, 		// Ã 
-	{7, 2055}, 		// Ä 
-	{7, 2070}, 		// Å 
-	{9, 2085}, 		// Æ 
-	{6, 2115}, 		// Ç 
-	{4, 2130}, 		// È 
-	{4, 2145}, 		// É 
-	{4, 2160}, 		// Ê 
-	{4, 2175}, 		// Ë 
-	{2, 2190}, 		// Ì 
-	{2, 2205}, 		// Í 
-	{3, 2220}, 		// Î 
-	{3, 2235}, 		// Ï 
-	{7, 2250}, 		// Ð 
-	{6, 2265}, 		// Ñ 
-	{7, 2280}, 		// Ò 
-	{7, 2295}, 		// Ó 
-	{7, 2310}, 		// Ô 
-	{7, 2325}, 		// Õ 
-	{7, 2340}, 		// Ö 
-	{5, 2355}, 		// × 
-	{7, 2370}, 		// Ø 
-	{6, 2385}, 		// Ù 
-	{6, 2400}, 		// Ú 
-	{6, 2415}, 		// Û 
-	{6, 2430}, 		// Ü 
-	{5, 2445}, 		// Ý 
-	{5, 2460}, 		// Þ 
-	{5, 2475}, 		// ß 
-	{5, 2490}, 		// à 
-	{5, 2505}, 		// á 
-	{5, 2520}, 		// â 
-	{5, 2535}, 		// ã 
-	{5, 2550}, 		// ä 
-	{5, 2565}, 		// å 
-	{8, 2580}, 		// æ 
-	{4, 2595}, 		// ç 
-	{4, 2610}, 		// è 
-	{4, 2625}, 		// é 
-	{4, 2640}, 		// ê 
-	{4, 2655}, 		// ë 
-	{2, 2670}, 		// ì 
-	{2, 2685}, 		// í 
-	{3, 2700}, 		// î 
-	{3, 2715}, 		// ï 
-	{5, 2730}, 		// ð 
-	{5, 2745}, 		// ñ 
-	{5, 2760}, 		// ò 
-	{5, 2775}, 		// ó 
-	{5, 2790}, 		// ô 
-	{5, 2805}, 		// õ 
-	{5, 2820}, 		// ö 
-	{5, 2835}, 		// ÷ 
-	{5, 2850}, 		// ø 
-	{5, 2865}, 		// ù 
-	{5, 2880}, 		// ú 
-	{5, 2895}, 		// û 
-	{5, 2910}, 		// ü 
-	{5, 2925}, 		// ý 
-	{5, 2940}, 		// þ 
-	{5, 2955}, 		// ÿ 
-	{7, 2970}, 		// Ā 
-	{5, 2985}, 		// ā 
-	{7, 3000}, 		// Ă 
-	{5, 3015}, 		// ă 
-	{6, 3030}, 		// Ą 
-	{5, 3045}, 		// ą 
-	{6, 3060}, 		// Ć 
-	{5, 3075}, 		// ć 
-	{6, 3090}, 		// Ĉ 
-	{5, 3105}, 		// ĉ 
-	{6, 3120}, 		// Ċ 
-	{5, 3135}, 		// ċ 
-	{6, 3150}, 		// Č 
-	{5, 3165}, 		// č 
-	{6, 3180}, 		// Ď 
-	{8, 3195}, 		// ď 
-	{7, 3210}, 		// Đ 
-	{6, 3225}, 		// đ 
-	{5, 3240}, 		// Ē 
-	{5, 3255}, 		// ē 
-	{5, 3270}, 		// Ĕ 
-	{5, 3285}, 		// ĕ 
-	{5, 3300}, 		// Ė 
-	{5, 3315}, 		// ė 
-	{5, 3330}, 		// Ę 
-	{5, 3345}, 		// ę 
-	{5, 3360}, 		// Ě 
-	{5, 3375}, 		// ě 
-	{6, 3390}, 		// Ĝ 
-	{5, 3405}, 		// ĝ 
-	{6, 3420}, 		// Ğ 
-	{5, 3435}, 		// ğ 
-	{6, 3450}, 		// Ġ 
-	{5, 3465}, 		// ġ 
-	{6, 3480}, 		// Ģ 
-	{5, 3495}, 		// ģ 
-	{6, 3510}, 		// Ĥ 
-	{6, 3525}, 		// ĥ 
-	{8, 3540}, 		// Ħ 
-	{6, 3555}, 		// ħ 
-	{4, 3570}, 		// Ĩ 
-	{4, 3585}, 		// ĩ 
-	{4, 3600}, 		// Ī 
-	{3, 3615}, 		// ī 
-	{3, 3630}, 		// Ĭ 
-	{3, 3645}, 		// ĭ 
-	{2, 3660}, 		// Į 
-	{2, 3675}, 		// į 
-	{1, 3690}, 		// İ 
-	{1, 3705}, 		// ı 
-	{5, 3720}, 		// Ĳ 
-	{4, 3735}, 		// ĳ 
-	{3, 3750}, 		// Ĵ 
-	{3, 3765}, 		// ĵ 
-	{5, 3780}, 		// Ķ 
-	{5, 3795}, 		// ķ 
-	{5, 3810}, 		// ĸ 
-	{4, 3825}, 		// Ĺ 
-	{2, 3840}, 		// ĺ 
-	{4, 3855}, 		// Ļ 
-	{2, 3870}, 		// ļ 
-	{4, 3885}, 		// Ľ 
-	{4, 3900}, 		// ľ 
-	{5, 3915}, 		// Ŀ 
-	{3, 3930}, 		// ŀ 
-	{5, 3945}, 		// Ł 
-	{3, 3960}, 		// ł 
-	{6, 3975}, 		// Ń 
-	{5, 3990}, 		// ń 
-	{6, 4005}, 		// Ņ 
-	{5, 4020}, 		// ņ 
-	{6, 4035}, 		// Ň 
-	{5, 4050}, 		// ň 
-	{8, 4065}, 		// ŉ 
-	{6, 4080}, 		// Ŋ 
-	{5, 4095}, 		// ŋ 
-	{7, 4110}, 		// Ō 
-	{5, 4125}, 		// ō 
-	{7, 4140}, 		// Ŏ 
-	{5, 4155}, 		// ŏ 
-	{7, 4170}, 		// Ő 
-	{5, 4185}, 		// ő 
-	{9, 4200}, 		// Œ 
-	{9, 4230}, 		// œ 
-	{5, 4260}, 		// Ŕ 
-	{3, 4275}, 		// ŕ 
-	{5, 4290}, 		// Ŗ 
-	{4, 4305}, 		// ŗ 
-	{5, 4320}, 		// Ř 
-	{3, 4335}, 		// ř 
-	{5, 4350}, 		// Ś 
-	{4, 4365}, 		// ś 
-	{5, 4380}, 		// Ŝ 
-	{4, 4395}, 		// ŝ 
-	{5, 4410}, 		// Ş 
-	{4, 4425}, 		// ş 
-	{4, 4440}, 		// Š 
-	{4, 4455}, 		// š 
-	{7, 4470}, 		// Ţ 
-	{4, 4485}, 		// ţ 
-	{7, 4500}, 		// Ť 
-	{5, 4515}, 		// ť 
-	{7, 4530}, 		// Ŧ 
-	{4, 4545}, 		// ŧ 
-	{6, 4560}, 		// Ũ 
-	{5, 4575}, 		// ũ 
-	{6, 4590}, 		// Ū 
-	{5, 4605}, 		// ū 
-	{6, 4620}, 		// Ŭ 
-	{5, 4635}, 		// ŭ 
-	{6, 4650}, 		// Ů 
-	{5, 4665}, 		// ů 
-	{6, 4680}, 		// Ű 
-	{5, 4695}, 		// ű 
-	{6, 4710}, 		// Ų 
-	{5, 4725}, 		// ų 
-	{11, 4740}, 		// Ŵ 
-	{8, 4770}, 		// ŵ 
-	{5, 4785}, 		// Ŷ 
-	{6, 4800}, 		// ŷ 
-	{5, 4815}, 		// Ÿ 
-	{6, 4830}, 		// Ź 
-	{5, 4845}, 		// ź 
-	{6, 4860}, 		// Ż 
-	{5, 4875}, 		// ż 
-	{6, 4890}, 		// Ž 
-	{3, 4905}, 		// ž 
-	{3, 4920}, 		// ſ 
-	{6, 4935}, 		// ƀ 
-	{7, 4950}, 		// Ɓ 
-	{5, 4965}, 		// Ƃ 
-	{5, 4980}, 		// ƃ 
-	{6, 4995}, 		// Ƅ 
-	{6, 5010}, 		// ƅ 
-	{6, 5025}, 		// Ɔ 
-	{7, 5040}, 		// Ƈ 
-	{5, 5055}, 		// ƈ 
-	{7, 5070}, 		// Ɖ 
-	{8, 5085}, 		// Ɗ 
-	{5, 5100}, 		// Ƌ 
-	{5, 5115}, 		// ƌ 
-	{6, 5130}, 		// ƍ 
-	{4, 5145}, 		// Ǝ 
-	{7, 5160}, 		// Ə 
-	{5, 5175}, 		// Ɛ 
-	{5, 5190}, 		// Ƒ 
-	{4, 5205}, 		// ƒ 
-	{8, 5220}, 		// Ɠ 
-	{7, 5235}, 		// Ɣ 
-	{8, 5250}, 		// ƕ 
-	{3, 5265}, 		// Ɩ 
-	{3, 5280}, 		// Ɨ 
-	{5, 5295}, 		// Ƙ 
-	{5, 5310}, 		// ƙ 
-	{3, 5325}, 		// ƚ 
-	{6, 5340}, 		// ƛ 
-	{9, 5355}, 		// Ɯ 
-	{7, 5385}, 		// Ɲ 
-	{5, 5400}, 		// ƞ 
-	{7, 5415}, 		// Ɵ 
-	{8, 5430}, 		// Ơ 
-	{6, 5445}, 		// ơ 
-	{8, 5460}, 		// Ƣ 
-	{7, 5475}, 		// ƣ 
-	{7, 5490}, 		// Ƥ 
-	{5, 5505}, 		// ƥ 
-	{6, 5520}, 		// Ʀ 
-	{5, 5535}, 		// Ƨ 
-	{4, 5550}, 		// ƨ 
-	{5, 5565}, 		// Ʃ 
-	{5, 5580}, 		// ƪ 
-	{4, 5595}, 		// ƫ 
-	{7, 5610}, 		// Ƭ 
-	{4, 5625}, 		// ƭ 
-	{7, 5640}, 		// Ʈ 
-	{8, 5655}, 		// Ư 
-	{7, 5670}, 		// ư 
-	{7, 5685}, 		// Ʊ 
-	{6, 5700}, 		// Ʋ 
-	{6, 5715}, 		// Ƴ 
-	{6, 5730}, 		// ƴ 
-	{5, 5745}, 		// Ƶ 
-	{4, 5760}, 		// ƶ 
-	{5, 5775}, 		// Ʒ 
-	{5, 5790}, 		// Ƹ 
-	{5, 5805}, 		// ƹ 
-	{5, 5820}, 		// ƺ 
-	{6, 5835}, 		// ƻ 
-	{5, 5850}, 		// Ƽ 
-	{4, 5865}, 		// ƽ 
-	{4, 5880}, 		// ƾ 
-	{5, 5895}, 		// ƿ 
-	{1, 5910}, 		// ǀ 
-	{3, 5925}, 		// ǁ 
-	{5, 5940}, 		// ǂ 
-	{1, 5955}, 		// ǃ 
-	{13, 5970}, 		// Ǆ 
-	{12, 6000}, 		// ǅ 
-	{11, 6030}, 		// ǆ 
-	{8, 6060}, 		// Ǉ 
-	{6, 6075}, 		// ǈ 
-	{4, 6090}, 		// ǉ 
-	{10, 6105}, 		// Ǌ 
-	{9, 6135}, 		// ǋ 
-	{8, 6165}, 		// ǌ 
-	{7, 6180}, 		// Ǎ 
-	{5, 6195}, 		// ǎ 
-	{3, 6210}, 		// Ǐ 
-	{3, 6225}, 		// ǐ 
-	{7, 6240}, 		// Ǒ 
-	{5, 6255}, 		// ǒ 
-	{6, 6270}, 		// Ǔ 
-	{5, 6285}, 		// ǔ 
-	{6, 6300}, 		// Ǖ 
-	{5, 6315}, 		// ǖ 
-	{6, 6330}, 		// Ǘ 
-	{5, 6345}, 		// ǘ 
-	{6, 6360}, 		// Ǚ 
-	{5, 6375}, 		// ǚ 
-	{6, 6390}, 		// Ǜ 
-	{5, 6405}, 		// ǜ 
-	{5, 6420}, 		// ǝ 
-	{7, 6435}, 		// Ǟ 
-	{5, 6450}, 		// ǟ 
-	{7, 6465}, 		// Ǡ 
-	{5, 6480}, 		// ǡ 
-	{10, 6495}, 		// Ǣ 
-	{9, 6525}, 		// ǣ 
-	{8, 6555}, 		// Ǥ 
-	{7, 6570}, 		// ǥ 
-	{6, 6585}, 		// Ǧ 
-	{5, 6600}, 		// ǧ 
-	{5, 6615}, 		// Ǩ 
-	{5, 6630}, 		// ǩ 
-	{7, 6645}, 		// Ǫ 
-	{5, 6660}, 		// ǫ 
-	{7, 6675}, 		// Ǭ 
-	{5, 6690}, 		// ǭ 
-	{5, 6705}, 		// Ǯ 
-	{5, 6720}, 		// ǯ 
-	{3, 6735}, 		// ǰ 
-	{13, 6750}, 		// Ǳ 
-	{12, 6780}, 		// ǲ 
-	{11, 6810}, 		// ǳ 
-	{6, 6840}, 		// Ǵ 
-	{5, 6855}, 		// ǵ 
-	{10, 6870}, 		// Ƕ 
-	{6, 6900}, 		// Ƿ 
-	{6, 6915}, 		// Ǹ 
-	{5, 6930}, 		// ǹ 
-	{7, 6945}, 		// Ǻ 
-	{5, 6960}, 		// ǻ 
-	{10, 6975}, 		// Ǽ 
-	{9, 7005}, 		// ǽ 
-	{7, 7035}, 		// Ǿ 
-	{6, 7050}, 		// ǿ 
-	{7, 7065}, 		// Ȁ 
-	{5, 7080}, 		// ȁ 
-	{7, 7095}, 		// Ȃ 
-	{5, 7110}, 		// ȃ 
-	{5, 7125}, 		// Ȅ 
-	{5, 7140}, 		// ȅ 
-	{5, 7155}, 		// Ȇ 
-	{5, 7170}, 		// ȇ 
-	{4, 7185}, 		// Ȉ 
-	{4, 7200}, 		// ȉ 
-	{4, 7215}, 		// Ȋ 
-	{3, 7230}, 		// ȋ 
-	{7, 7245}, 		// Ȍ 
-	{5, 7260}, 		// ȍ 
-	{7, 7275}, 		// Ȏ 
-	{5, 7290}, 		// ȏ 
-	{5, 7305}, 		// Ȑ 
-	{4, 7320}, 		// ȑ 
-	{5, 7335}, 		// Ȓ 
-	{3, 7350}, 		// ȓ 
-	{6, 7365}, 		// Ȕ 
-	{5, 7380}, 		// ȕ 
-	{6, 7395}, 		// Ȗ 
-	{5, 7410}, 		// ȗ 
-	{5, 7425}, 		// Ș 
-	{4, 7440}, 		// ș 
-	{7, 7455}, 		// Ț 
-	{4, 7470}, 		// ț 
-	{5, 7485}, 		// Ȝ 
-	{5, 7500}, 		// ȝ 
-	{6, 7515}, 		// Ȟ 
-	{5, 7530}, 		// ȟ 
-	{6, 7545}, 		// Ƞ 
-	{7, 7560}, 		// ȡ 
-	{6, 7575}, 		// Ȣ 
-	{6, 7590}, 		// ȣ 
-	{6, 7605}, 		// Ȥ 
-	{4, 7620}, 		// ȥ 
-	{7, 7635}, 		// Ȧ 
-	{5, 7650}, 		// ȧ 
-	{5, 7665}, 		// Ȩ 
-	{5, 7680}, 		// ȩ 
-	{7, 7695}, 		// Ȫ 
-	{5, 7710}, 		// ȫ 
-	{7, 7725}, 		// Ȭ 
-	{5, 7740}, 		// ȭ 
-	{7, 7755}, 		// Ȯ 
-	{5, 7770}, 		// ȯ 
-	{7, 7785}, 		// Ȱ 
-	{5, 7800}, 		// ȱ 
-	{5, 7815}, 		// Ȳ 
-	{6, 7830}, 		// ȳ 
-	{4, 7845}, 		// ȴ 
-	{7, 7860}, 		// ȵ 
-	{4, 7875}, 		// ȶ 
-	{2, 7890}, 		// ȷ 
-	{9, 7905}, 		// ȸ 
-	{9, 7935}, 		// ȹ 
-	{8, 7965}, 		// Ⱥ 
-	{8, 7980}, 		// Ȼ 
-	{6, 7995}, 		// ȼ 
-	{5, 8010}, 		// Ƚ 
-	{8, 8025}, 		// Ⱦ 
-	{4, 8040}, 		// ȿ 
-	{5, 8055}, 		// ɀ 
-	{5, 8070}, 		// Ɂ 
-	{5, 8085}, 		// ɂ 
-	{6, 8100}, 		// Ƀ 
-	{8, 8115}, 		// Ʉ 
-	{5, 8130}, 		// Ʌ 
-	{7, 8145}, 		// Ɇ 
-	{6, 8160}, 		// ɇ 
-	{4, 8175}, 		// Ɉ 
-	{3, 8190}, 		// ɉ 
-	{7, 8205}, 		// Ɋ 
-	{6, 8220}, 		// ɋ 
-	{6, 8235}, 		// Ɍ 
-	{4, 8250}, 		// ɍ 
-	{7, 8265}, 		// Ɏ 
-	{6, 8280}, 		// ɏ 
-	{5, 8295}, 		// ɐ 
-	{5, 8310}, 		// ɑ 
-	{5, 8325}, 		// ɒ 
-	{5, 8340}, 		// ɓ 
-	{5, 8355}, 		// ɔ 
-	{5, 8370}, 		// ɕ 
-	{6, 8385}, 		// ɖ 
-	{6, 8400}, 		// ɗ 
-	{5, 8415}, 		// ɘ 
-	{5, 8430}, 		// ə 
-	{7, 8445}, 		// ɚ 
-	{4, 8460}, 		// ɛ 
-	{4, 8475}, 		// ɜ 
-	{6, 8490}, 		// ɝ 
-	{6, 8505}, 		// ɞ 
-	{3, 8520}, 		// ɟ 
-	{6, 8535}, 		// ɠ 
-	{5, 8550}, 		// ɡ 
-	{6, 8565}, 		// ɢ 
-	{6, 8580}, 		// ɣ 
-	{6, 8595}, 		// ɤ 
-	{5, 8610}, 		// ɥ 
-	{5, 8625}, 		// ɦ 
-	{5, 8640}, 		// ɧ 
-	{3, 8655}, 		// ɨ 
-	{3, 8670}, 		// ɩ 
-	{3, 8685}, 		// ɪ 
-	{4, 8700}, 		// ɫ 
-	{4, 8715}, 		// ɬ 
-	{2, 8730}, 		// ɭ 
-	{6, 8745}, 		// ɮ 
-	{8, 8760}, 		// ɯ 
-	{8, 8775}, 		// ɰ 
-	{8, 8790}, 		// ɱ 
-	{6, 8805}, 		// ɲ 
-	{6, 8820}, 		// ɳ 
-	{5, 8835}, 		// ɴ 
-	{6, 8850}, 		// ɵ 
-	{8, 8865}, 		// ɶ 
-	{8, 8880}, 		// ɷ 
-	{7, 8895}, 		// ɸ 
-	{3, 8910}, 		// ɹ 
-	{3, 8925}, 		// ɺ 
-	{4, 8940}, 		// ɻ 
-	{3, 8955}, 		// ɼ 
-	{3, 8970}, 		// ɽ 
-	{3, 8985}, 		// ɾ 
-	{3, 9000}, 		// ɿ 
-	{4, 9015}, 		// ʀ 
-	{4, 9030}, 		// ʁ 
-	{4, 9045}, 		// ʂ 
-	{3, 9060}, 		// ʃ 
-	{3, 9075}, 		// ʄ 
-	{3, 9090}, 		// ʅ 
-	{4, 9105}, 		// ʆ 
-	{4, 9120}, 		// ʇ 
-	{4, 9135}, 		// ʈ 
-	{7, 9150}, 		// ʉ 
-	{6, 9165}, 		// ʊ 
-	{5, 9180}, 		// ʋ 
-	{6, 9195}, 		// ʌ 
-	{9, 9210}, 		// ʍ 
-	{6, 9240}, 		// ʎ 
-	{5, 9255}, 		// ʏ 
-	{5, 9270}, 		// ʐ 
-	{5, 9285}, 		// ʑ 
-	{5, 9300}, 		// ʒ 
-	{5, 9315}, 		// ʓ 
-	{5, 9330}, 		// ʔ 
-	{5, 9345}, 		// ʕ 
-	{5, 9360}, 		// ʖ 
-	{5, 9375}, 		// ʗ 
-	{7, 9390}, 		// ʘ 
-	{5, 9405}, 		// ʙ 
-	{6, 9420}, 		// ʚ 
-	{7, 9435}, 		// ʛ 
-	{5, 9450}, 		// ʜ 
-	{4, 9465}, 		// ʝ 
-	{5, 9480}, 		// ʞ 
-	{4, 9495}, 		// ʟ 
-	{6, 9510}, 		// ʠ 
-	{5, 9525}, 		// ʡ 
-	{5, 9540}, 		// ʢ 
-	{9, 9555}, 		// ʣ 
-	{10, 9585}, 		// ʤ 
-	{11, 9615}, 		// ʥ 
-	{7, 9645}, 		// ʦ 
-	{6, 9660}, 		// ʧ 
-	{8, 9675}, 		// ʨ 
-	{9, 9690}, 		// ʩ 
-	{6, 9720}, 		// ʪ 
-	{6, 9735}, 		// ʫ 
-	{5, 9750}, 		// ʬ 
-	{5, 9765}, 		// ʭ 
-	{6, 9780}, 		// ʮ 
-	{7, 9795}, 		// ʯ 
-	{3, 9810}, 		// ʰ 
-	{3, 9825}, 		// ʱ 
-	{2, 9840}, 		// ʲ 
-	{2, 9855}, 		// ʳ 
-	{2, 9870}, 		// ʴ 
-	{3, 9885}, 		// ʵ 
-	{3, 9900}, 		// ʶ 
-	{5, 9915}, 		// ʷ 
-	{3, 9930}, 		// ʸ 
-	{1, 9945}, 		// ʹ 
-	{4, 9960}, 		// ʺ 
-	{2, 9975}, 		// ʻ 
-	{2, 9990}, 		// ʼ 
-	{2, 10005}, 		// ʽ 
-	{2, 10020}, 		// ʾ 
-	{2, 10035}, 		// ʿ 
-	{3, 10050}, 		// ˀ 
-	{3, 10065}, 		// ˁ 
-	{5, 10080}, 		// ˂ 
-	{5, 10095}, 		// ˃ 
-	{5, 10110}, 		// ˄ 
-	{5, 10125}, 		// ˅ 
-	{3, 10140}, 		// ˆ 
-	{3, 10155}, 		// ˇ 
-	{1, 10170}, 		// ˈ 
-	{3, 10185}, 		// ˉ 
-	{2, 10200}, 		// ˊ 
-	{2, 10215}, 		// ˋ 
-	{1, 10230}, 		// ˌ 
-	{3, 10245}, 		// ˍ 
-	{2, 10260}, 		// ˎ 
-	{2, 10275}, 		// ˏ 
-	{2, 10290}, 		// ː 
-	{2, 10305}, 		// ˑ 
-	{2, 10320}, 		// ˒ 
-	{2, 10335}, 		// ˓ 
-	{3, 10350}, 		// ˔ 
-	{3, 10365}, 		// ˕ 
-	{3, 10380}, 		// ˖ 
-	{3, 10395}, 		// ˗ 
-	{3, 10410}, 		// ˘ 
-	{1, 10425}, 		// ˙ 
-	{3, 10440}, 		// ˚ 
-	{2, 10455}, 		// ˛ 
-	{4, 10470}, 		// ˜ 
-	{4, 10485}, 		// ˝ 
-	{3, 10500}, 		// ˞ 
-	{1, 10515}, 		// ˟ 
-	{3, 10530}, 		// ˠ 
-	{1, 10545}, 		// ˡ 
-	{3, 10560}, 		// ˢ 
-	{3, 10575}, 		// ˣ 
-	{3, 10590}, 		// ˤ 
-	{3, 10605}, 		// ˥ 
-	{3, 10620}, 		// ˦ 
-	{3, 10635}, 		// ˧ 
-	{3, 10650}, 		// ˨ 
-	{3, 10665}, 		// ˩ 
-	{3, 10680}, 		// ˪ 
-	{3, 10695}, 		// ˫ 
-	{3, 10710}, 		// ˬ 
-	{6, 10725}, 		// ˭ 
-	{5, 10740}, 		// ˮ 
-	{2, 10755}, 		// ˯ 
-	{2, 10770}, 		// ˰ 
-	{2, 10785}, 		// ˱ 
-	{2, 10800}, 		// ˲ 
-	{3, 10815}, 		// ˳ 
-	{2, 10830}, 		// ˴ 
-	{4, 10845}, 		// ˵ 
-	{4, 10860}, 		// ˶ 
-	{4, 10875}, 		// ˷ 
-	{1, 10890}, 		// ˸ 
-	{2, 10905}, 		// ˹ 
-	{2, 10920}, 		// ˺ 
-	{2, 10935}, 		// ˻ 
-	{2, 10950}, 		// ˼ 
-	{7, 10965}, 		// ˽ 
-	{7, 10980}, 		// ˾ 
-	{3, 10995}, 		// ˿ 
-	{2, 11010}, 		// ̀ 
-	{2, 11025}, 		// ́ 
-	{3, 11040}, 		// ̂ 
-	{4, 11055}, 		// ̃ 
-	{3, 11070}, 		// ̄ 
-	{7, 11085}, 		// ̅ 
-	{3, 11100}, 		// ̆ 
-	{1, 11115}, 		// ̇ 
-	{3, 11130}, 		// ̈ 
-	{2, 11145}, 		// ̉ 
-	{3, 11160}, 		// ̊ 
-	{4, 11175}, 		// ̋ 
-	{3, 11190}, 		// ̌ 
-	{1, 11205}, 		// ̍ 
-	{3, 11220}, 		// ̎ 
-	{4, 11235}, 		// ̏ 
-	{3, 11250}, 		// ̐ 
-	{3, 11265}, 		// ̑ 
-	{2, 11280}, 		// ̒ 
-	{1, 11295}, 		// ̓ 
-	{1, 11310}, 		// ̔ 
-	{2, 11325}, 		// ̕ 
-	{2, 11340}, 		// ̖ 
-	{2, 11355}, 		// ̗ 
-	{3, 11370}, 		// ̘ 
-	{3, 11385}, 		// ̙ 
-	{2, 11400}, 		// ̚ 
-	{2, 11415}, 		// ̛ 
-	{2, 11430}, 		// ̜ 
-	{3, 11445}, 		// ̝ 
-	{3, 11460}, 		// ̞ 
-	{3, 11475}, 		// ̟ 
-	{3, 11490}, 		// ̠ 
-	{2, 11505}, 		// ̡ 
-	{2, 11520}, 		// ̢ 
-	{1, 11535}, 		// ̣ 
-	{3, 11550}, 		// ̤ 
-	{3, 11565}, 		// ̥ 
-	{2, 11580}, 		// ̦ 
-	{2, 11595}, 		// ̧ 
-	{2, 11610}, 		// ̨ 
-	{1, 11625}, 		// ̩ 
-	{2, 11640}, 		// ̪ 
-	{4, 11655}, 		// ̫ 
-	{3, 11670}, 		// ̬ 
-	{3, 11685}, 		// ̭ 
-	{3, 11700}, 		// ̮ 
-	{3, 11715}, 		// ̯ 
-	{4, 11730}, 		// ̰ 
-	{3, 11745}, 		// ̱ 
-	{7, 11760}, 		// ̲ 
-	{7, 11775}, 		// ̳ 
-	{4, 11790}, 		// ̴ 
-	{3, 11805}, 		// ̵ 
-	{7, 11820}, 		// ̶ 
-	{6, 11835}, 		// ̷ 
-	{7, 11850}, 		// ̸ 
-	{2, 11865}, 		// ̹ 
-	{4, 11880}, 		// ̺ 
-	{3, 11895}, 		// ̻ 
-	{4, 11910}, 		// ̼ 
-	{1, 11925}, 		// ̽ 
-	{2, 11940}, 		// ̾ 
-	{7, 11955}, 		// ̿ 
-	{2, 11970}, 		// ̀ 
-	{2, 11985}, 		// ́ 
-	{4, 12000}, 		// ͂ 
-	{1, 12015}, 		// ̓ 
-	{5, 12030}, 		// ̈́ 
-	{2, 12045}, 		// ͅ 
-	{2, 12060}, 		// ͆ 
-	{7, 12075}, 		// ͇ 
-	{3, 12090}, 		// ͈ 
-	{2, 12105}, 		// ͉ 
-	{4, 12120}, 		// ͊ 
-	{4, 12135}, 		// ͋ 
-	{4, 12150}, 		// ͌ 
-	{6, 12165}, 		// ͍ 
-	{1, 12180}, 		// ͎ 
-	{2, 12195}, 		// ͏ 
-	{2, 12210}, 		// ͐ 
-	{2, 12225}, 		// ͑ 
-	{4, 12240}, 		// ͒ 
-	{1, 12255}, 		// ͓ 
-	{2, 12270}, 		// ͔ 
-	{2, 12285}, 		// ͕ 
-	{4, 12300}, 		// ͖ 
-	{2, 12315}, 		// ͗ 
-	{1, 12330}, 		// ͘ 
-	{2, 12345}, 		// ͙ 
-	{4, 12360}, 		// ͚ 
-	{2, 12375}, 		// ͛ 
-	{11, 12390}, 		// ͜ 
-	{11, 12420}, 		// ͝ 
-	{11, 12450}, 		// ͞ 
-	{11, 12480}, 		// ͟ 
-	{10, 12510}, 		// ͠ 
-	{11, 12540}, 		// ͡ 
-	{11, 12570}, 		// ͢ 
-	{2, 12600}, 		// ͣ 
-	{2, 12615}, 		// ͤ 
-	{1, 12630}, 		// ͥ 
-	{3, 12645}, 		// ͦ 
-	{2, 12660}, 		// ͧ 
-	{2, 12675}, 		// ͨ 
-	{3, 12690}, 		// ͩ 
-	{2, 12705}, 		// ͪ 
-	{5, 12720}, 		// ͫ 
-	{2, 12735}, 		// ͬ 
-	{1, 12750}, 		// ͭ 
-	{3, 12765}, 		// ͮ 
-	{3, 12780}, 		// ͯ 
-	{5, 12795}, 		// Ͱ 
-	{4, 12810}, 		// ͱ 
-	{6, 12825}, 		// Ͳ 
-	{5, 12840}, 		// ͳ 
-	{2, 12855}, 		// ʹ 
-	{2, 12870}, 		// ͵ 
-	{6, 12885}, 		// Ͷ 
-	{5, 12900}, 		// ͷ 
-	{0, 0}, 		// ͸ 
-	{0, 0}, 		// ͹ 
-	{2, 12915}, 		// ͺ 
-	{5, 12930}, 		// ͻ 
-	{5, 12945}, 		// ͼ 
-	{5, 12960}, 		// ͽ 
-	{2, 12975}, 		// ; 
-	{3, 12990}, 		// Ϳ 
-	{0, 0}, 		// ΀ 
-	{0, 0}, 		// ΁ 
-	{0, 0}, 		// ΂ 
-	{0, 0}, 		// ΃ 
-	{2, 13005}, 		// ΄ 
-	{5, 13020}, 		// ΅ 
-	{7, 13035}, 		// Ά 
-	{1, 13050}, 		// · 
-	{7, 13065}, 		// Έ 
-	{8, 13080}, 		// Ή 
-	{3, 13095}, 		// Ί 
-	{0, 0}, 		// ΋ 
-	{8, 13110}, 		// Ό 
-	{0, 0}, 		// ΍ 
-	{8, 13125}, 		// Ύ 
-	{9, 13140}, 		// Ώ 
-	{5, 13170}, 		// ΐ 
-	{7, 13185}, 		// Α 
-	{5, 13200}, 		// Β 
-	{4, 13215}, 		// Γ 
-	{7, 13230}, 		// Δ 
-	{5, 13245}, 		// Ε 
-	{6, 13260}, 		// Ζ 
-	{6, 13275}, 		// Η 
-	{7, 13290}, 		// Θ 
-	{1, 13305}, 		// Ι 
-	{5, 13320}, 		// Κ 
-	{5, 13335}, 		// Λ 
-	{9, 13350}, 		// Μ 
-	{6, 13380}, 		// Ν 
-	{5, 13395}, 		// Ξ 
-	{7, 13410}, 		// Ο 
-	{6, 13425}, 		// Π 
-	{5, 13440}, 		// Ρ 
-	{0, 0}, 		// ΢ 
-	{5, 13455}, 		// Σ 
-	{7, 13470}, 		// Τ 
-	{5, 13485}, 		// Υ 
-	{9, 13500}, 		// Φ 
-	{6, 13530}, 		// Χ 
-	{7, 13545}, 		// Ψ 
-	{7, 13560}, 		// Ω 
-	{3, 13575}, 		// Ϊ 
-	{5, 13590}, 		// Ϋ 
-	{7, 13605}, 		// ά 
-	{5, 13620}, 		// έ 
-	{5, 13635}, 		// ή 
-	{3, 13650}, 		// ί 
-	{5, 13665}, 		// ΰ 
-	{7, 13680}, 		// α 
-	{5, 13695}, 		// β 
-	{5, 13710}, 		// γ 
-	{6, 13725}, 		// δ 
-	{5, 13740}, 		// ε 
-	{4, 13755}, 		// ζ 
-	{5, 13770}, 		// η 
-	{6, 13785}, 		// θ 
-	{3, 13800}, 		// ι 
-	{5, 13815}, 		// κ 
-	{6, 13830}, 		// λ 
-	{6, 13845}, 		// μ 
-	{5, 13860}, 		// ν 
-	{4, 13875}, 		// ξ 
-	{5, 13890}, 		// ο 
-	{7, 13905}, 		// π 
-	{5, 13920}, 		// ρ 
-	{4, 13935}, 		// ς 
-	{6, 13950}, 		// σ 
-	{5, 13965}, 		// τ 
-	{5, 13980}, 		// υ 
-	{7, 13995}, 		// φ 
-	{5, 14010}, 		// χ 
-	{7, 14025}, 		// ψ 
-	{7, 14040}, 		// ω 
-	{4, 14055}, 		// ϊ 
-	{5, 14070}, 		// ϋ 
-	{5, 14085}, 		// ό 
-	{5, 14100}, 		// ύ 
-	{7, 14115}, 		// ώ 
-	{5, 14130}, 		// Ϗ 
-	{6, 14145}, 		// ϐ 
-	{7, 14160}, 		// ϑ 
-	{7, 14175}, 		// ϒ 
-	{9, 14190}, 		// ϓ 
-	{7, 14220}, 		// ϔ 
-	{7, 14235}, 		// ϕ 
-	{10, 14250}, 		// ϖ 
-	{6, 14280}, 		// ϗ 
-	{7, 14295}, 		// Ϙ 
-	{6, 14310}, 		// ϙ 
-	{6, 14325}, 		// Ϛ 
-	{4, 14340}, 		// ϛ 
-	{4, 14355}, 		// Ϝ 
-	{4, 14370}, 		// ϝ 
-	{7, 14385}, 		// Ϟ 
-	{6, 14400}, 		// ϟ 
-	{7, 14415}, 		// Ϡ 
-	{7, 14430}, 		// ϡ 
-	{9, 14445}, 		// Ϣ 
-	{8, 14475}, 		// ϣ 
-	{5, 14490}, 		// Ϥ 
-	{5, 14505}, 		// ϥ 
-	{5, 14520}, 		// Ϧ 
-	{6, 14535}, 		// ϧ 
-	{6, 14550}, 		// Ϩ 
-	{5, 14565}, 		// ϩ 
-	{7, 14580}, 		// Ϫ 
-	{6, 14595}, 		// ϫ 
-	{7, 14610}, 		// Ϭ 
-	{6, 14625}, 		// ϭ 
-	{6, 14640}, 		// Ϯ 
-	{5, 14655}, 		// ϯ 
-	{6, 14670}, 		// ϰ 
-	{5, 14685}, 		// ϱ 
-	{5, 14700}, 		// ϲ 
-	{2, 14715}, 		// ϳ 
-	{7, 14730}, 		// ϴ 
-	{5, 14745}, 		// ϵ 
-	{5, 14760}, 		// ϶ 
-	{5, 14775}, 		// Ϸ 
-	{7, 14790}, 		// ϸ 
-	{6, 14805}, 		// Ϲ 
-	{7, 14820}, 		// Ϻ 
-	{6, 14835}, 		// ϻ 
-	{6, 14850}, 		// ϼ 
-	{6, 14865}, 		// Ͻ 
-	{6, 14880}, 		// Ͼ 
-	{6, 14895}, 		// Ͽ 
-	{5, 14910}, 		// Ѐ 
-	{5, 14925}, 		// Ё 
-	{7, 14940}, 		// Ђ 
-	{4, 14955}, 		// Ѓ 
-	{6, 14970}, 		// Є 
-	{5, 14985}, 		// Ѕ 
-	{1, 15000}, 		// І 
-	{3, 15015}, 		// Ї 
-	{3, 15030}, 		// Ј 
-	{11, 15045}, 		// Љ 
-	{10, 15075}, 		// Њ 
-	{7, 15105}, 		// Ћ 
-	{5, 15120}, 		// Ќ 
-	{6, 15135}, 		// Ѝ 
-	{6, 15150}, 		// Ў 
-	{6, 15165}, 		// Џ 
-	{7, 15180}, 		// А 
-	{5, 15195}, 		// Б 
-	{5, 15210}, 		// В 
-	{4, 15225}, 		// Г 
-	{8, 15240}, 		// Д 
-	{5, 15255}, 		// Е 
-	{9, 15270}, 		// Ж 
-	{5, 15300}, 		// З 
-	{6, 15315}, 		// И 
-	{6, 15330}, 		// Й 
-	{5, 15345}, 		// К 
-	{7, 15360}, 		// Л 
-	{9, 15375}, 		// М 
-	{6, 15405}, 		// Н 
-	{7, 15420}, 		// О 
-	{6, 15435}, 		// П 
-	{5, 15450}, 		// Р 
-	{6, 15465}, 		// С 
-	{7, 15480}, 		// Т 
-	{6, 15495}, 		// У 
-	{7, 15510}, 		// Ф 
-	{6, 15525}, 		// Х 
-	{7, 15540}, 		// Ц 
-	{5, 15555}, 		// Ч 
-	{9, 15570}, 		// Ш 
-	{10, 15600}, 		// Щ 
-	{8, 15630}, 		// Ъ 
-	{8, 15645}, 		// Ы 
-	{5, 15660}, 		// Ь 
-	{6, 15675}, 		// Э 
-	{10, 15690}, 		// Ю 
-	{6, 15720}, 		// Я 
-	{5, 15735}, 		// а 
-	{5, 15750}, 		// б 
-	{5, 15765}, 		// в 
-	{3, 15780}, 		// г 
-	{7, 15795}, 		// д 
-	{5, 15810}, 		// е 
-	{9, 15825}, 		// ж 
-	{4, 15855}, 		// з 
-	{5, 15870}, 		// и 
-	{5, 15885}, 		// й 
-	{5, 15900}, 		// к 
-	{6, 15915}, 		// л 
-	{7, 15930}, 		// м 
-	{5, 15945}, 		// н 
-	{5, 15960}, 		// о 
-	{5, 15975}, 		// п 
-	{5, 15990}, 		// р 
-	{5, 16005}, 		// с 
-	{5, 16020}, 		// т 
-	{6, 16035}, 		// у 
-	{7, 16050}, 		// ф 
-	{4, 16065}, 		// х 
-	{6, 16080}, 		// ц 
-	{5, 16095}, 		// ч 
-	{7, 16110}, 		// ш 
-	{8, 16125}, 		// щ 
-	{7, 16140}, 		// ъ 
-	{7, 16155}, 		// ы 
-	{5, 16170}, 		// ь 
-	{5, 16185}, 		// э 
-	{8, 16200}, 		// ю 
-	{5, 16215}, 		// я 
-	{5, 16230}, 		// ѐ 
-	{5, 16245}, 		// ё 
-	{6, 16260}, 		// ђ 
-	{3, 16275}, 		// ѓ 
-	{5, 16290}, 		// є 
-	{4, 16305}, 		// ѕ 
-	{1, 16320}, 		// і 
-	{3, 16335}, 		// ї 
-	{2, 16350}, 		// ј 
-	{9, 16365}, 		// љ 
-	{8, 16395}, 		// њ 
-	{6, 16410}, 		// ћ 
-	{5, 16425}, 		// ќ 
-	{5, 16440}, 		// ѝ 
-	{6, 16455}, 		// ў 
-	{5, 16470}, 		// џ 
-	{11, 16485}, 		// Ѡ 
-	{8, 16515}, 		// ѡ 
-	{7, 16530}, 		// Ѣ 
-	{6, 16545}, 		// ѣ 
-	{9, 16560}, 		// Ѥ 
-	{7, 16590}, 		// ѥ 
-	{7, 16605}, 		// Ѧ 
-	{7, 16620}, 		// ѧ 
-	{9, 16635}, 		// Ѩ 
-	{8, 16665}, 		// ѩ 
-	{9, 16680}, 		// Ѫ 
-	{7, 16710}, 		// ѫ 
-	{10, 16725}, 		// Ѭ 
-	{9, 16755}, 		// ѭ 
-	{5, 16785}, 		// Ѯ 
-	{5, 16800}, 		// ѯ 
-	{7, 16815}, 		// Ѱ 
-	{7, 16830}, 		// ѱ 
-	{7, 16845}, 		// Ѳ 
-	{6, 16860}, 		// ѳ 
-	{7, 16875}, 		// Ѵ 
-	{5, 16890}, 		// ѵ 
-	{7, 16905}, 		// Ѷ 
-	{5, 16920}, 		// ѷ 
-	{12, 16935}, 		// Ѹ 
-	{11, 16965}, 		// ѹ 
-	{8, 16995}, 		// Ѻ 
-	{6, 17010}, 		// ѻ 
-	{11, 17025}, 		// Ѽ 
-	{9, 17055}, 		// ѽ 
-	{11, 17085}, 		// Ѿ 
-	{8, 17115}, 		// ѿ 
-	{6, 17130}, 		// Ҁ 
-	{4, 17145}, 		// ҁ 
-	{6, 17160}, 		// ҂ 
-	{5, 17175}, 		// ҃ 
-	{5, 17190}, 		// ҄ 
-	{1, 17205}, 		// ҅ 
-	{1, 17220}, 		// ҆ 
-	{0, 0}, 		// ҇ 
-	{13, 17235}, 		// ҈ 
-	{12, 17265}, 		// ҉ 
-	{7, 17295}, 		// Ҋ 
-	{6, 17310}, 		// ҋ 
-	{6, 17325}, 		// Ҍ 
-	{6, 17340}, 		// ҍ 
-	{5, 17355}, 		// Ҏ 
-	{5, 17370}, 		// ҏ 
-	{4, 17385}, 		// Ґ 
-	{3, 17400}, 		// ґ 
-	{5, 17415}, 		// Ғ 
-	{4, 17430}, 		// ғ 
-	{5, 17445}, 		// Ҕ 
-	{5, 17460}, 		// ҕ 
-	{10, 17475}, 		// Җ 
-	{9, 17505}, 		// җ 
-	{5, 17535}, 		// Ҙ 
-	{4, 17550}, 		// ҙ 
-	{6, 17565}, 		// Қ 
-	{5, 17580}, 		// қ 
-	{5, 17595}, 		// Ҝ 
-	{5, 17610}, 		// ҝ 
-	{6, 17625}, 		// Ҟ 
-	{6, 17640}, 		// ҟ 
-	{8, 17655}, 		// Ҡ 
-	{7, 17670}, 		// ҡ 
-	{7, 17685}, 		// Ң 
-	{6, 17700}, 		// ң 
-	{8, 17715}, 		// Ҥ 
-	{7, 17730}, 		// ҥ 
-	{10, 17745}, 		// Ҧ 
-	{8, 17775}, 		// ҧ 
-	{6, 17790}, 		// Ҩ 
-	{5, 17805}, 		// ҩ 
-	{6, 17820}, 		// Ҫ 
-	{5, 17835}, 		// ҫ 
-	{7, 17850}, 		// Ҭ 
-	{5, 17865}, 		// ҭ 
-	{5, 17880}, 		// Ү 
-	{5, 17895}, 		// ү 
-	{5, 17910}, 		// Ұ 
-	{5, 17925}, 		// ұ 
-	{7, 17940}, 		// Ҳ 
-	{5, 17955}, 		// ҳ 
-	{9, 17970}, 		// Ҵ 
-	{8, 18000}, 		// ҵ 
-	{6, 18015}, 		// Ҷ 
-	{6, 18030}, 		// ҷ 
-	{5, 18045}, 		// Ҹ 
-	{5, 18060}, 		// ҹ 
-	{5, 18075}, 		// Һ 
-	{5, 18090}, 		// һ 
-	{9, 18105}, 		// Ҽ 
-	{7, 18135}, 		// ҽ 
-	{9, 18150}, 		// Ҿ 
-	{7, 18180}, 		// ҿ 
-	{1, 18195}, 		// Ӏ 
-	{9, 18210}, 		// Ӂ 
-	{9, 18240}, 		// ӂ 
-	{6, 18270}, 		// Ӄ 
-	{5, 18285}, 		// ӄ 
-	{8, 18300}, 		// Ӆ 
-	{7, 18315}, 		// ӆ 
-	{6, 18330}, 		// Ӈ 
-	{5, 18345}, 		// ӈ 
-	{7, 18360}, 		// Ӊ 
-	{6, 18375}, 		// ӊ 
-	{5, 18390}, 		// Ӌ 
-	{5, 18405}, 		// ӌ 
-	{10, 18420}, 		// Ӎ 
-	{8, 18450}, 		// ӎ 
-	{1, 18465}, 		// ӏ 
-	{7, 18480}, 		// Ӑ 
-	{5, 18495}, 		// ӑ 
-	{7, 18510}, 		// Ӓ 
-	{5, 18525}, 		// ӓ 
-	{10, 18540}, 		// Ӕ 
-	{9, 18570}, 		// ӕ 
-	{5, 18600}, 		// Ӗ 
-	{5, 18615}, 		// ӗ 
-	{7, 18630}, 		// Ә 
-	{5, 18645}, 		// ә 
-	{7, 18660}, 		// Ӛ 
-	{5, 18675}, 		// ӛ 
-	{9, 18690}, 		// Ӝ 
-	{9, 18720}, 		// ӝ 
-	{5, 18750}, 		// Ӟ 
-	{4, 18765}, 		// ӟ 
-	{5, 18780}, 		// Ӡ 
-	{5, 18795}, 		// ӡ 
-	{6, 18810}, 		// Ӣ 
-	{5, 18825}, 		// ӣ 
-	{6, 18840}, 		// Ӥ 
-	{5, 18855}, 		// ӥ 
-	{7, 18870}, 		// Ӧ 
-	{5, 18885}, 		// ӧ 
-	{7, 18900}, 		// Ө 
-	{6, 18915}, 		// ө 
-	{7, 18930}, 		// Ӫ 
-	{6, 18945}, 		// ӫ 
-	{6, 18960}, 		// Ӭ 
-	{5, 18975}, 		// ӭ 
-	{6, 18990}, 		// Ӯ 
-	{6, 19005}, 		// ӯ 
-	{6, 19020}, 		// Ӱ 
-	{6, 19035}, 		// ӱ 
-	{6, 19050}, 		// Ӳ 
-	{6, 19065}, 		// ӳ 
-	{5, 19080}, 		// Ӵ 
-	{5, 19095}, 		// ӵ 
-	{4, 19110}, 		// Ӷ 
-	{3, 19125}, 		// ӷ 
-	{8, 19140}, 		// Ӹ 
-	{7, 19155}, 		// ӹ 
-	{5, 19170}, 		// Ӻ 
-	{4, 19185}, 		// ӻ 
-	{7, 19200}, 		// Ӽ 
-	{5, 19215}, 		// ӽ 
-	{6, 19230}, 		// Ӿ 
-	{5, 19245}, 		// ӿ 
-	{5, 19260}, 		// Ԁ 
-	{5, 19275}, 		// ԁ 
-	{9, 19290}, 		// Ԃ 
-	{9, 19320}, 		// ԃ 
-	{8, 19350}, 		// Ԅ 
-	{8, 19365}, 		// ԅ 
-	{6, 19380}, 		// Ԇ 
-	{5, 19395}, 		// ԇ 
-	{10, 19410}, 		// Ԉ 
-	{9, 19440}, 		// ԉ 
-	{9, 19470}, 		// Ԋ 
-	{8, 19500}, 		// ԋ 
-	{7, 19515}, 		// Ԍ 
-	{6, 19530}, 		// ԍ 
-	{8, 19545}, 		// Ԏ 
-	{6, 19560}, 		// ԏ 
-	{5, 19575}, 		// Ԑ 
-	{4, 19590}, 		// ԑ 
-	{8, 19605}, 		// Ԓ 
-	{7, 19620}, 		// ԓ 
-	{10, 19635}, 		// Ԕ 
-	{8, 19665}, 		// ԕ 
-	{7, 19680}, 		// Ԗ 
-	{7, 19695}, 		// ԗ 
-	{9, 19710}, 		// Ԙ 
-	{9, 19740}, 		// ԙ 
-	{8, 19770}, 		// Ԛ 
-	{5, 19785}, 		// ԛ 
-	{11, 19800}, 		// Ԝ 
-	{8, 19830}, 		// ԝ 
-	{5, 19845}, 		// Ԟ 
-	{4, 19860}, 		// ԟ 
-	{11, 19875}, 		// Ԡ 
-	{9, 19905}, 		// ԡ 
-	{10, 19935}, 		// Ԣ 
-	{8, 19965}, 		// ԣ 
-	{7, 19980}, 		// Ԥ 
-	{6, 19995}, 		// ԥ 
-	{7, 20010}, 		// Ԧ 
-	{6, 20025}, 		// ԧ 
-	{7, 20040}, 		// Ԩ 
-	{6, 20055}, 		// ԩ 
-	{15, 20070}, 		// Ԫ 
-	{13, 20100}, 		// ԫ 
-	{7, 20130}, 		// Ԭ 
-	{6, 20145}, 		// ԭ 
-	{8, 20160}, 		// Ԯ 
-	{7, 20175}, 		// ԯ 
+	{1, 15, 0, 4.23388684492966}, 		// ! 
+	{3, 15, 15, 5.21142593656259}, 		// " 
+	{6, 15, 30, 6.4746095679584}, 		// # 
+	{5, 15, 45, 6.58886738386354}, 		// $ 
+	{9, 15, 60, 9.29296902695205}, 		// % 
+	{7, 15, 90, 8.86767604552733}, 		// & 
+	{1, 15, 105, 2.86914071050705}, 		// ' 
+	{2, 15, 120, 3.94189464872761}, 		// ( 
+	{2, 15, 135, 3.94189464872761}, 		// ) 
+	{5, 15, 150, 6.4746095679584}, 		// * 
+	{5, 15, 165, 6.4746095679584}, 		// + 
+	{2, 15, 180, 3.24365244041837}, 		// , 
+	{3, 15, 195, 3.97998058736266}, 		// - 
+	{1, 15, 210, 3.28173837905342}, 		// . 
+	{5, 15, 225, 5.02099624338734}, 		// / 
+	{5, 15, 240, 6.58886738386354}, 		// 0 
+	{5, 15, 255, 6.58886738386354}, 		// 1 
+	{5, 15, 270, 6.58886738386354}, 		// 2 
+	{5, 15, 285, 6.58886738386354}, 		// 3 
+	{5, 15, 300, 6.58886738386354}, 		// 4 
+	{5, 15, 315, 6.58886738386354}, 		// 5 
+	{5, 15, 330, 6.58886738386354}, 		// 6 
+	{5, 15, 345, 6.58886738386354}, 		// 7 
+	{5, 15, 360, 6.58886738386354}, 		// 8 
+	{5, 15, 375, 6.58886738386354}, 		// 9 
+	{1, 15, 390, 3.47851572866784}, 		// : 
+	{2, 15, 405, 3.47851572866784}, 		// ; 
+	{5, 15, 420, 6.4746095679584}, 		// < 
+	{5, 15, 435, 6.4746095679584}, 		// = 
+	{5, 15, 450, 6.4746095679584}, 		// > 
+	{4, 15, 465, 6.02392596077698}, 		// ? 
+	{10, 15, 480, 11.6225589401292}, 		// @ 
+	{7, 15, 510, 7.52197288042225}, 		// A 
+	{5, 15, 525, 7.07128927324084}, 		// B 
+	{6, 15, 540, 6.93164083157899}, 		// C 
+	{6, 15, 555, 7.99804711336037}, 		// D 
+	{4, 15, 570, 6.3476564391749}, 		// E 
+	{4, 15, 585, 5.97314470926358}, 		// F 
+	{6, 15, 600, 8.20117211941397}, 		// G 
+	{6, 15, 615, 8.09960961638717}, 		// H 
+	{1, 15, 630, 3.27539072261425}, 		// I 
+	{3, 15, 645, 4.14501965478121}, 		// J 
+	{5, 15, 660, 6.75390645128209}, 		// K 
+	{4, 15, 675, 5.46533219412959}, 		// L 
+	{9, 15, 690, 11.1147464249952}, 		// M 
+	{6, 15, 720, 8.39160181258922}, 		// N 
+	{7, 15, 735, 8.60742213152116}, 		// O 
+	{5, 15, 750, 6.71582051264704}, 		// P 
+	{8, 15, 765, 8.74707057318301}, 		// Q 
+	{5, 15, 780, 7.05859396036249}, 		// R 
+	{4, 15, 795, 5.97314470926358}, 		// S 
+	{5, 15, 810, 6.33496112629655}, 		// T 
+	{6, 15, 825, 8.34082056107582}, 		// U 
+	{7, 15, 840, 7.37597678232123}, 		// V 
+	{11, 15, 855, 11.5654300321767}, 		// W 
+	{7, 15, 885, 6.74755879484292}, 		// X 
+	{5, 15, 900, 6.33496112629655}, 		// Y 
+	{6, 15, 915, 6.08740252516873}, 		// Z 
+	{2, 15, 930, 3.98632824380184}, 		// [ 
+	{5, 15, 945, 5.02099624338734}, 		// backslash 
+	{2, 15, 960, 3.98632824380184}, 		// ] 
+	{5, 15, 975, 6.4746095679584}, 		// ^ 
+	{6, 15, 990, 6.4746095679584}, 		// _ 
+	{2, 15, 1005, 3.78320323774824}, 		// ` 
+	{5, 15, 1020, 6.22705096683057}, 		// a 
+	{5, 15, 1035, 6.83007832855219}, 		// b 
+	{4, 15, 1050, 5.49707047632546}, 		// c 
+	{5, 15, 1065, 6.83007832855219}, 		// d 
+	{4, 15, 1080, 6.46826191151922}, 		// e 
+	{4, 15, 1095, 3.96728527448431}, 		// f 
+	{5, 15, 1110, 6.1191408073646}, 		// g 
+	{5, 15, 1125, 6.83007832855219}, 		// h 
+	{1, 15, 1140, 2.9833985264122}, 		// i 
+	{3, 15, 1155, 3.1103516551957}, 		// j 
+	{4, 15, 1170, 5.90966814487183}, 		// k 
+	{1, 15, 1185, 2.9833985264122}, 		// l 
+	{8, 15, 1200, 10.3847659344901}, 		// m 
+	{5, 15, 1215, 6.83007832855219}, 		// n 
+	{5, 15, 1230, 6.85546895430889}, 		// o 
+	{5, 15, 1245, 6.83007832855219}, 		// p 
+	{5, 15, 1260, 6.83007832855219}, 		// q 
+	{4, 15, 1275, 4.53222669757088}, 		// r 
+	{4, 15, 1290, 5.08447280777909}, 		// s 
+	{4, 15, 1305, 4.35449231727398}, 		// t 
+	{5, 15, 1320, 6.83007832855219}, 		// u 
+	{5, 15, 1335, 5.87158220623678}, 		// v 
+	{9, 15, 1350, 9.29296902695205}, 		// w 
+	{5, 15, 1380, 5.63037126154813}, 		// x 
+	{5, 15, 1395, 5.88427751911513}, 		// y 
+	{3, 15, 1410, 5.13525405929249}, 		// z 
+	{3, 15, 1425, 4.08789074682863}, 		// { 
+	{1, 15, 1440, 5.98584002214193}, 		// | 
+	{3, 15, 1455, 4.08789074682863}, 		// } 
+	{5, 15, 1470, 6.4746095679584}, 		// ~ 
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{0, 0, 0, 0}, 		//  
+	{2, 15, 1485, 2.93896493133798}, 		//   
+	{1, 15, 1500, 4.23388684492966}, 		// ¡ 
+	{4, 15, 1515, 6.4746095679584}, 		// ¢ 
+	{5, 15, 1530, 6.58886738386354}, 		// £ 
+	{4, 15, 1545, 6.4746095679584}, 		// ¤ 
+	{5, 15, 1560, 6.58886738386354}, 		// ¥ 
+	{1, 15, 1575, 6.4746095679584}, 		// ¦ 
+	{4, 15, 1590, 6.4746095679584}, 		// § 
+	{3, 15, 1605, 5.10351577709662}, 		// ¨ 
+	{9, 15, 1620, 10.8481448545499}, 		// © 
+	{3, 15, 1650, 5.23046890588012}, 		// ª 
+	{5, 15, 1665, 6.65869160469447}, 		// « 
+	{5, 15, 1680, 6.4746095679584}, 		// ¬ 
+	{2, 15, 1695, 3.97998058736266}, 		// ­ 
+	{6, 15, 1710, 6.58886738386354}, 		// ® 
+	{3, 15, 1725, 5.12255874641414}, 		// ¯ 
+	{4, 15, 1740, 4.40527356878738}, 		// ° 
+	{5, 15, 1755, 6.4746095679584}, 		// ± 
+	{3, 15, 1770, 4.36718763015233}, 		// ² 
+	{3, 15, 1785, 4.34814466083481}, 		// ³ 
+	{2, 15, 1800, 3.79589855062659}, 		// ´ 
+	{6, 15, 1815, 7.14746115051094}, 		// µ 
+	{6, 15, 1830, 7.61718772700988}, 		// ¶ 
+	{1, 15, 1845, 3.28173837905342}, 		// · 
+	{2, 15, 1860, 3.99267590024101}, 		// ¸ 
+	{2, 15, 1875, 3.19921884534415}, 		// ¹ 
+	{3, 15, 1890, 5.49072281988629}, 		// º 
+	{5, 15, 1905, 6.65869160469447}, 		// » 
+	{8, 15, 1920, 8.27099634024489}, 		// ¼ 
+	{8, 15, 1935, 8.72802760386548}, 		// ½ 
+	{9, 15, 1950, 8.77880885537888}, 		// ¾ 
+	{4, 15, 1980, 6.02392596077698}, 		// ¿ 
+	{7, 15, 1995, 7.52197288042225}, 		// À 
+	{7, 15, 2010, 7.52197288042225}, 		// Á 
+	{7, 15, 2025, 7.52197288042225}, 		// Â 
+	{7, 15, 2040, 7.52197288042225}, 		// Ã 
+	{7, 15, 2055, 7.52197288042225}, 		// Ä 
+	{7, 15, 2070, 7.52197288042225}, 		// Å 
+	{9, 15, 2085, 9.92138701443037}, 		// Æ 
+	{6, 15, 2115, 6.93164083157899}, 		// Ç 
+	{4, 15, 2130, 6.3476564391749}, 		// È 
+	{4, 15, 2145, 6.3476564391749}, 		// É 
+	{4, 15, 2160, 6.3476564391749}, 		// Ê 
+	{4, 15, 2175, 6.3476564391749}, 		// Ë 
+	{2, 15, 2190, 3.27539072261425}, 		// Ì 
+	{2, 15, 2205, 3.27539072261425}, 		// Í 
+	{3, 15, 2220, 3.27539072261425}, 		// Î 
+	{3, 15, 2235, 3.27539072261425}, 		// Ï 
+	{7, 15, 2250, 8.11865258570469}, 		// Ð 
+	{6, 15, 2265, 8.39160181258922}, 		// Ñ 
+	{7, 15, 2280, 8.60742213152116}, 		// Ò 
+	{7, 15, 2295, 8.60742213152116}, 		// Ó 
+	{7, 15, 2310, 8.60742213152116}, 		// Ô 
+	{7, 15, 2325, 8.60742213152116}, 		// Õ 
+	{7, 15, 2340, 8.60742213152116}, 		// Ö 
+	{5, 15, 2355, 6.4746095679584}, 		// × 
+	{7, 15, 2370, 8.62646510083869}, 		// Ø 
+	{6, 15, 2385, 8.34082056107582}, 		// Ù 
+	{6, 15, 2400, 8.34082056107582}, 		// Ú 
+	{6, 15, 2415, 8.34082056107582}, 		// Û 
+	{6, 15, 2430, 8.34082056107582}, 		// Ü 
+	{5, 15, 2445, 6.33496112629655}, 		// Ý 
+	{5, 15, 2460, 6.71582051264704}, 		// Þ 
+	{5, 15, 2475, 6.85546895430889}, 		// ß 
+	{5, 15, 2490, 6.22705096683057}, 		// à 
+	{5, 15, 2505, 6.22705096683057}, 		// á 
+	{5, 15, 2520, 6.22705096683057}, 		// â 
+	{5, 15, 2535, 6.22705096683057}, 		// ã 
+	{5, 15, 2550, 6.22705096683057}, 		// ä 
+	{5, 15, 2565, 6.22705096683057}, 		// å 
+	{8, 15, 2580, 10.0483401432139}, 		// æ 
+	{4, 15, 2595, 5.49707047632546}, 		// ç 
+	{4, 15, 2610, 6.46826191151922}, 		// è 
+	{4, 15, 2625, 6.46826191151922}, 		// é 
+	{4, 15, 2640, 6.46826191151922}, 		// ê 
+	{4, 15, 2655, 6.46826191151922}, 		// ë 
+	{2, 15, 2670, 2.9833985264122}, 		// ì 
+	{2, 15, 2685, 2.9833985264122}, 		// í 
+	{3, 15, 2700, 2.9833985264122}, 		// î 
+	{3, 15, 2715, 2.9833985264122}, 		// ï 
+	{5, 15, 2730, 6.83007832855219}, 		// ð 
+	{5, 15, 2745, 6.83007832855219}, 		// ñ 
+	{5, 15, 2760, 6.85546895430889}, 		// ò 
+	{5, 15, 2775, 6.85546895430889}, 		// ó 
+	{5, 15, 2790, 6.85546895430889}, 		// ô 
+	{5, 15, 2805, 6.85546895430889}, 		// õ 
+	{5, 15, 2820, 6.85546895430889}, 		// ö 
+	{5, 15, 2835, 6.4746095679584}, 		// ÷ 
+	{5, 15, 2850, 6.88085958006559}, 		// ø 
+	{5, 15, 2865, 6.83007832855219}, 		// ù 
+	{5, 15, 2880, 6.83007832855219}, 		// ú 
+	{5, 15, 2895, 6.83007832855219}, 		// û 
+	{5, 15, 2910, 6.83007832855219}, 		// ü 
+	{5, 15, 2925, 5.88427751911513}, 		// ý 
+	{5, 15, 2940, 6.83007832855219}, 		// þ 
+	{5, 15, 2955, 5.88427751911513}, 		// ÿ 
+	{7, 15, 2970, 7.52197288042225}, 		// Ā 
+	{5, 15, 2985, 6.22705096683057}, 		// ā 
+	{7, 15, 3000, 7.52197288042225}, 		// Ă 
+	{5, 15, 3015, 6.22705096683057}, 		// ă 
+	{6, 15, 3030, 7.52197288042225}, 		// Ą 
+	{5, 15, 3045, 6.22705096683057}, 		// ą 
+	{6, 15, 3060, 6.93164083157899}, 		// Ć 
+	{5, 15, 3075, 5.49707047632546}, 		// ć 
+	{6, 15, 3090, 6.93164083157899}, 		// Ĉ 
+	{5, 15, 3105, 5.49707047632546}, 		// ĉ 
+	{6, 15, 3120, 6.93164083157899}, 		// Ċ 
+	{5, 15, 3135, 5.49707047632546}, 		// ċ 
+	{6, 15, 3150, 6.93164083157899}, 		// Č 
+	{5, 15, 3165, 5.49707047632546}, 		// č 
+	{6, 15, 3180, 7.99804711336037}, 		// Ď 
+	{8, 15, 3195, 7.38867209519958}, 		// ď 
+	{7, 15, 3210, 8.11865258570469}, 		// Đ 
+	{6, 15, 3225, 7.17285177626763}, 		// đ 
+	{5, 15, 3240, 6.3476564391749}, 		// Ē 
+	{5, 15, 3255, 6.46826191151922}, 		// ē 
+	{5, 15, 3270, 6.3476564391749}, 		// Ĕ 
+	{5, 15, 3285, 6.46826191151922}, 		// ĕ 
+	{5, 15, 3300, 6.3476564391749}, 		// Ė 
+	{5, 15, 3315, 6.46826191151922}, 		// ė 
+	{5, 15, 3330, 6.3476564391749}, 		// Ę 
+	{5, 15, 3345, 6.46826191151922}, 		// ę 
+	{5, 15, 3360, 6.3476564391749}, 		// Ě 
+	{5, 15, 3375, 6.46826191151922}, 		// ě 
+	{6, 15, 3390, 8.20117211941397}, 		// Ĝ 
+	{5, 15, 3405, 6.1191408073646}, 		// ĝ 
+	{6, 15, 3420, 8.20117211941397}, 		// Ğ 
+	{5, 15, 3435, 6.1191408073646}, 		// ğ 
+	{6, 15, 3450, 8.20117211941397}, 		// Ġ 
+	{5, 15, 3465, 6.1191408073646}, 		// ġ 
+	{6, 15, 3480, 8.20117211941397}, 		// Ģ 
+	{5, 15, 3495, 6.1191408073646}, 		// ģ 
+	{6, 15, 3510, 8.09960961638717}, 		// Ĥ 
+	{6, 15, 3525, 6.83007832855219}, 		// ĥ 
+	{8, 15, 3540, 8.53125025425106}, 		// Ħ 
+	{6, 15, 3555, 6.92529317513981}, 		// ħ 
+	{4, 15, 3570, 3.27539072261425}, 		// Ĩ 
+	{4, 15, 3585, 2.9833985264122}, 		// ĩ 
+	{4, 15, 3600, 3.27539072261425}, 		// Ī 
+	{3, 15, 3615, 2.9833985264122}, 		// ī 
+	{3, 15, 3630, 3.27539072261425}, 		// Ĭ 
+	{3, 15, 3645, 2.9833985264122}, 		// ĭ 
+	{2, 15, 3660, 3.27539072261425}, 		// Į 
+	{2, 15, 3675, 2.9833985264122}, 		// į 
+	{1, 15, 3690, 3.27539072261425}, 		// İ 
+	{1, 15, 3705, 2.9833985264122}, 		// ı 
+	{5, 15, 3720, 7.42675803383463}, 		// Ĳ 
+	{4, 15, 3735, 6.0937501816079}, 		// ĳ 
+	{3, 15, 3750, 4.14501965478121}, 		// Ĵ 
+	{3, 15, 3765, 3.1103516551957}, 		// ĵ 
+	{5, 15, 3780, 6.75390645128209}, 		// Ķ 
+	{5, 15, 3795, 5.90966814487183}, 		// ķ 
+	{5, 15, 3810, 5.90966814487183}, 		// ĸ 
+	{4, 15, 3825, 5.46533219412959}, 		// Ĺ 
+	{2, 15, 3840, 2.9833985264122}, 		// ĺ 
+	{4, 15, 3855, 5.46533219412959}, 		// Ļ 
+	{2, 15, 3870, 2.9833985264122}, 		// ļ 
+	{4, 15, 3885, 5.49707047632546}, 		// Ľ 
+	{4, 15, 3900, 3.42773447715444}, 		// ľ 
+	{5, 15, 3915, 7.09667989899754}, 		// Ŀ 
+	{3, 15, 3930, 4.8559571759688}, 		// ŀ 
+	{5, 15, 3945, 5.58593766647391}, 		// Ł 
+	{3, 15, 3960, 3.21826181466167}, 		// ł 
+	{6, 15, 3975, 8.39160181258922}, 		// Ń 
+	{5, 15, 3990, 6.83007832855219}, 		// ń 
+	{6, 15, 4005, 8.39160181258922}, 		// Ņ 
+	{5, 15, 4020, 6.83007832855219}, 		// ņ 
+	{6, 15, 4035, 8.39160181258922}, 		// Ň 
+	{5, 15, 4050, 6.83007832855219}, 		// ň 
+	{8, 15, 4065, 7.52832053686143}, 		// ŉ 
+	{6, 15, 4080, 8.16943383721809}, 		// Ŋ 
+	{5, 15, 4095, 6.83007832855219}, 		// ŋ 
+	{7, 15, 4110, 8.60742213152116}, 		// Ō 
+	{5, 15, 4125, 6.85546895430889}, 		// ō 
+	{7, 15, 4140, 8.60742213152116}, 		// Ŏ 
+	{5, 15, 4155, 6.85546895430889}, 		// ŏ 
+	{7, 15, 4170, 8.60742213152116}, 		// Ő 
+	{5, 15, 4185, 6.85546895430889}, 		// ő 
+	{9, 15, 4200, 11.2670901795354}, 		// Œ 
+	{9, 15, 4230, 11.0449222041643}, 		// œ 
+	{5, 15, 4260, 7.05859396036249}, 		// Ŕ 
+	{3, 15, 4275, 4.53222669757088}, 		// ŕ 
+	{5, 15, 4290, 7.05859396036249}, 		// Ŗ 
+	{4, 15, 4305, 4.53222669757088}, 		// ŗ 
+	{5, 15, 4320, 7.05859396036249}, 		// Ř 
+	{3, 15, 4335, 4.53222669757088}, 		// ř 
+	{5, 15, 4350, 5.97314470926358}, 		// Ś 
+	{4, 15, 4365, 5.08447280777909}, 		// ś 
+	{5, 15, 4380, 5.97314470926358}, 		// Ŝ 
+	{4, 15, 4395, 5.08447280777909}, 		// ŝ 
+	{5, 15, 4410, 5.97314470926358}, 		// Ş 
+	{4, 15, 4425, 5.08447280777909}, 		// ş 
+	{4, 15, 4440, 5.97314470926358}, 		// Š 
+	{4, 15, 4455, 5.08447280777909}, 		// š 
+	{7, 15, 4470, 6.33496112629655}, 		// Ţ 
+	{4, 15, 4485, 4.35449231727398}, 		// ţ 
+	{7, 15, 4500, 6.33496112629655}, 		// Ť 
+	{5, 15, 4515, 4.49414075893583}, 		// ť 
+	{7, 15, 4530, 6.33496112629655}, 		// Ŧ 
+	{4, 15, 4545, 4.44335950742243}, 		// ŧ 
+	{6, 15, 4560, 8.34082056107582}, 		// Ũ 
+	{5, 15, 4575, 6.83007832855219}, 		// ũ 
+	{6, 15, 4590, 8.34082056107582}, 		// Ū 
+	{5, 15, 4605, 6.83007832855219}, 		// ū 
+	{6, 15, 4620, 8.34082056107582}, 		// Ŭ 
+	{5, 15, 4635, 6.83007832855219}, 		// ŭ 
+	{6, 15, 4650, 8.34082056107582}, 		// Ů 
+	{5, 15, 4665, 6.83007832855219}, 		// ů 
+	{6, 15, 4680, 8.34082056107582}, 		// Ű 
+	{5, 15, 4695, 6.83007832855219}, 		// ű 
+	{6, 15, 4710, 8.34082056107582}, 		// Ų 
+	{5, 15, 4725, 6.83007832855219}, 		// ų 
+	{11, 15, 4740, 11.5654300321767}, 		// Ŵ 
+	{8, 15, 4770, 9.29296902695205}, 		// ŵ 
+	{5, 15, 4785, 6.33496112629655}, 		// Ŷ 
+	{6, 15, 4800, 5.88427751911513}, 		// ŷ 
+	{5, 15, 4815, 6.33496112629655}, 		// Ÿ 
+	{6, 15, 4830, 6.08740252516873}, 		// Ź 
+	{5, 15, 4845, 5.13525405929249}, 		// ź 
+	{6, 15, 4860, 6.08740252516873}, 		// Ż 
+	{5, 15, 4875, 5.13525405929249}, 		// ż 
+	{6, 15, 4890, 6.08740252516873}, 		// Ž 
+	{3, 15, 4905, 5.13525405929249}, 		// ž 
+	{3, 15, 4920, 3.15478525026992}, 		// ſ 
+	{6, 15, 4935, 7.17285177626763}, 		// ƀ 
+	{7, 15, 4950, 7.99804711336037}, 		// Ɓ 
+	{5, 15, 4965, 6.98876973953156}, 		// Ƃ 
+	{5, 15, 4980, 6.83007832855219}, 		// ƃ 
+	{6, 15, 4995, 6.90625020582229}, 		// Ƅ 
+	{6, 15, 5010, 6.83007832855219}, 		// ƅ 
+	{6, 15, 5025, 7.12207052475424}, 		// Ɔ 
+	{7, 15, 5040, 7.49658225466555}, 		// Ƈ 
+	{5, 15, 5055, 6.01123064789863}, 		// ƈ 
+	{7, 15, 5070, 8.11865258570469}, 		// Ɖ 
+	{8, 15, 5085, 8.92480495347991}, 		// Ɗ 
+	{5, 15, 5100, 6.98876973953156}, 		// Ƌ 
+	{5, 15, 5115, 6.83007832855219}, 		// ƌ 
+	{6, 15, 5130, 6.80468770279549}, 		// ƍ 
+	{4, 15, 5145, 6.3476564391749}, 		// Ǝ 
+	{7, 15, 5160, 8.35986353039334}, 		// Ə 
+	{5, 15, 5175, 6.15722674599965}, 		// Ɛ 
+	{5, 15, 5190, 5.97314470926358}, 		// Ƒ 
+	{4, 15, 5205, 3.96728527448431}, 		// ƒ 
+	{8, 15, 5220, 8.21386743229232}, 		// Ɠ 
+	{7, 15, 5235, 7.37597678232123}, 		// Ɣ 
+	{8, 15, 5250, 10.1752932719974}, 		// ƕ 
+	{3, 15, 5265, 3.75781261199154}, 		// Ɩ 
+	{3, 15, 5280, 3.49121104154619}, 		// Ɨ 
+	{5, 15, 5295, 6.75390645128209}, 		// Ƙ 
+	{5, 15, 5310, 5.90966814487183}, 		// ƙ 
+	{3, 15, 5325, 3.66259776540392}, 		// ƚ 
+	{6, 15, 5340, 6.0175783043378}, 		// ƛ 
+	{9, 15, 5355, 11.432129246954}, 		// Ɯ 
+	{7, 15, 5385, 8.39160181258922}, 		// Ɲ 
+	{5, 15, 5400, 6.98242208309239}, 		// ƞ 
+	{7, 15, 5415, 8.60742213152116}, 		// Ɵ 
+	{8, 15, 5430, 9.06445339514175}, 		// Ơ 
+	{6, 15, 5445, 7.51562522398308}, 		// ơ 
+	{8, 15, 5460, 10.0483401432139}, 		// Ƣ 
+	{7, 15, 5475, 8.51855494137271}, 		// ƣ 
+	{7, 15, 5490, 7.94726586184697}, 		// Ƥ 
+	{5, 15, 5505, 6.83007832855219}, 		// ƥ 
+	{6, 15, 5520, 7.05859396036249}, 		// Ʀ 
+	{5, 15, 5535, 5.97314470926358}, 		// Ƨ 
+	{4, 15, 5550, 5.08447280777909}, 		// ƨ 
+	{5, 15, 5565, 5.96044939638523}, 		// Ʃ 
+	{5, 15, 5580, 5.59863297935226}, 		// ƪ 
+	{4, 15, 5595, 4.67187513923272}, 		// ƫ 
+	{7, 15, 5610, 6.89990254938311}, 		// Ƭ 
+	{4, 15, 5625, 4.35449231727398}, 		// ƭ 
+	{7, 15, 5640, 6.33496112629655}, 		// Ʈ 
+	{8, 15, 5655, 9.3818362171005}, 		// Ư 
+	{7, 15, 5670, 7.83300804594182}, 		// ư 
+	{7, 15, 5685, 8.63281275727786}, 		// Ʊ 
+	{6, 15, 5700, 8.34082056107582}, 		// Ʋ 
+	{6, 15, 5715, 6.91894551870064}, 		// Ƴ 
+	{6, 15, 5730, 6.4746095679584}, 		// ƴ 
+	{5, 15, 5745, 6.08740252516873}, 		// Ƶ 
+	{4, 15, 5760, 5.13525405929249}, 		// ƶ 
+	{5, 15, 5775, 6.15722674599965}, 		// Ʒ 
+	{5, 15, 5790, 6.15722674599965}, 		// Ƹ 
+	{5, 15, 5805, 6.15722674599965}, 		// ƹ 
+	{5, 15, 5820, 5.52246110208216}, 		// ƺ 
+	{6, 15, 5835, 6.58886738386354}, 		// ƻ 
+	{5, 15, 5850, 6.58886738386354}, 		// Ƽ 
+	{4, 15, 5865, 5.53515641496051}, 		// ƽ 
+	{4, 15, 5880, 5.08447280777909}, 		// ƾ 
+	{5, 15, 5895, 6.83007832855219}, 		// ƿ 
+	{1, 15, 5910, 3.16748056314827}, 		// ǀ 
+	{3, 15, 5925, 5.13525405929249}, 		// ǁ 
+	{5, 15, 5940, 7.45849631603051}, 		// ǂ 
+	{1, 15, 5955, 4.23388684492966}, 		// ǃ 
+	{13, 15, 5970, 14.0854496385291}, 		// Ǆ 
+	{12, 15, 6000, 13.1333011726529}, 		// ǅ 
+	{11, 15, 6030, 11.9653323878447}, 		// ǆ 
+	{8, 15, 6060, 9.76904325989017}, 		// Ǉ 
+	{6, 15, 6075, 8.57568384932529}, 		// ǈ 
+	{4, 15, 6090, 6.0937501816079}, 		// ǉ 
+	{10, 15, 6105, 12.5366214673704}, 		// Ǌ 
+	{9, 15, 6135, 11.5019534677849}, 		// ǋ 
+	{8, 15, 6165, 9.94042998374789}, 		// ǌ 
+	{7, 15, 6180, 7.52197288042225}, 		// Ǎ 
+	{5, 15, 6195, 6.22705096683057}, 		// ǎ 
+	{3, 15, 6210, 3.27539072261425}, 		// Ǐ 
+	{3, 15, 6225, 2.9833985264122}, 		// ǐ 
+	{7, 15, 6240, 8.60742213152116}, 		// Ǒ 
+	{5, 15, 6255, 6.85546895430889}, 		// ǒ 
+	{6, 15, 6270, 8.34082056107582}, 		// Ǔ 
+	{5, 15, 6285, 6.83007832855219}, 		// ǔ 
+	{6, 15, 6300, 8.34082056107582}, 		// Ǖ 
+	{5, 15, 6315, 6.83007832855219}, 		// ǖ 
+	{6, 15, 6330, 8.34082056107582}, 		// Ǘ 
+	{5, 15, 6345, 6.83007832855219}, 		// ǘ 
+	{6, 15, 6360, 8.34082056107582}, 		// Ǚ 
+	{5, 15, 6375, 6.83007832855219}, 		// ǚ 
+	{6, 15, 6390, 8.34082056107582}, 		// Ǜ 
+	{5, 15, 6405, 6.83007832855219}, 		// ǜ 
+	{5, 15, 6420, 6.46826191151922}, 		// ǝ 
+	{7, 15, 6435, 7.52197288042225}, 		// Ǟ 
+	{5, 15, 6450, 6.22705096683057}, 		// ǟ 
+	{7, 15, 6465, 7.52197288042225}, 		// Ǡ 
+	{5, 15, 6480, 6.22705096683057}, 		// ǡ 
+	{10, 15, 6495, 9.92138701443037}, 		// Ǣ 
+	{9, 15, 6525, 10.0483401432139}, 		// ǣ 
+	{8, 15, 6555, 8.20117211941397}, 		// Ǥ 
+	{7, 15, 6570, 6.98242208309239}, 		// ǥ 
+	{6, 15, 6585, 8.20117211941397}, 		// Ǧ 
+	{5, 15, 6600, 6.1191408073646}, 		// ǧ 
+	{5, 15, 6615, 6.75390645128209}, 		// Ǩ 
+	{5, 15, 6630, 5.90966814487183}, 		// ǩ 
+	{7, 15, 6645, 8.60742213152116}, 		// Ǫ 
+	{5, 15, 6660, 6.85546895430889}, 		// ǫ 
+	{7, 15, 6675, 8.60742213152116}, 		// Ǭ 
+	{5, 15, 6690, 6.85546895430889}, 		// ǭ 
+	{5, 15, 6705, 6.15722674599965}, 		// Ǯ 
+	{5, 15, 6720, 6.15722674599965}, 		// ǯ 
+	{3, 15, 6735, 3.1103516551957}, 		// ǰ 
+	{13, 15, 6750, 13.9458011968673}, 		// Ǳ 
+	{12, 15, 6780, 13.1333011726529}, 		// ǲ 
+	{11, 15, 6810, 11.9653323878447}, 		// ǳ 
+	{6, 15, 6840, 8.20117211941397}, 		// Ǵ 
+	{5, 15, 6855, 6.1191408073646}, 		// ǵ 
+	{10, 15, 6870, 11.6289065965684}, 		// Ƕ 
+	{6, 15, 6900, 7.84570335882017}, 		// Ƿ 
+	{6, 15, 6915, 8.39160181258922}, 		// Ǹ 
+	{5, 15, 6930, 6.83007832855219}, 		// ǹ 
+	{7, 15, 6945, 7.52197288042225}, 		// Ǻ 
+	{5, 15, 6960, 6.22705096683057}, 		// ǻ 
+	{10, 15, 6975, 9.92138701443037}, 		// Ǽ 
+	{9, 15, 7005, 10.0483401432139}, 		// ǽ 
+	{7, 15, 7035, 8.62646510083869}, 		// Ǿ 
+	{6, 15, 7050, 6.88085958006559}, 		// ǿ 
+	{7, 15, 7065, 7.52197288042225}, 		// Ȁ 
+	{5, 15, 7080, 6.22705096683057}, 		// ȁ 
+	{7, 15, 7095, 7.52197288042225}, 		// Ȃ 
+	{5, 15, 7110, 6.22705096683057}, 		// ȃ 
+	{5, 15, 7125, 6.3476564391749}, 		// Ȅ 
+	{5, 15, 7140, 6.46826191151922}, 		// ȅ 
+	{5, 15, 7155, 6.3476564391749}, 		// Ȇ 
+	{5, 15, 7170, 6.46826191151922}, 		// ȇ 
+	{4, 15, 7185, 3.27539072261425}, 		// Ȉ 
+	{4, 15, 7200, 2.9833985264122}, 		// ȉ 
+	{4, 15, 7215, 3.27539072261425}, 		// Ȋ 
+	{3, 15, 7230, 2.9833985264122}, 		// ȋ 
+	{7, 15, 7245, 8.60742213152116}, 		// Ȍ 
+	{5, 15, 7260, 6.85546895430889}, 		// ȍ 
+	{7, 15, 7275, 8.60742213152116}, 		// Ȏ 
+	{5, 15, 7290, 6.85546895430889}, 		// ȏ 
+	{5, 15, 7305, 7.05859396036249}, 		// Ȑ 
+	{4, 15, 7320, 4.53222669757088}, 		// ȑ 
+	{5, 15, 7335, 7.05859396036249}, 		// Ȓ 
+	{3, 15, 7350, 4.53222669757088}, 		// ȓ 
+	{6, 15, 7365, 8.34082056107582}, 		// Ȕ 
+	{5, 15, 7380, 6.83007832855219}, 		// ȕ 
+	{6, 15, 7395, 8.34082056107582}, 		// Ȗ 
+	{5, 15, 7410, 6.83007832855219}, 		// ȗ 
+	{5, 15, 7425, 5.97314470926358}, 		// Ș 
+	{4, 15, 7440, 5.08447280777909}, 		// ș 
+	{7, 15, 7455, 6.33496112629655}, 		// Ț 
+	{4, 15, 7470, 4.35449231727398}, 		// ț 
+	{5, 15, 7485, 6.15722674599965}, 		// Ȝ 
+	{5, 15, 7500, 6.15722674599965}, 		// ȝ 
+	{6, 15, 7515, 8.09960961638717}, 		// Ȟ 
+	{5, 15, 7530, 6.83007832855219}, 		// ȟ 
+	{6, 15, 7545, 8.35351587395417}, 		// Ƞ 
+	{7, 15, 7560, 7.80126976374595}, 		// ȡ 
+	{6, 15, 7575, 6.58886738386354}, 		// Ȣ 
+	{6, 15, 7590, 6.58886738386354}, 		// ȣ 
+	{6, 15, 7605, 6.39209003424912}, 		// Ȥ 
+	{4, 15, 7620, 5.35742203466361}, 		// ȥ 
+	{7, 15, 7635, 7.52197288042225}, 		// Ȧ 
+	{5, 15, 7650, 6.22705096683057}, 		// ȧ 
+	{5, 15, 7665, 6.3476564391749}, 		// Ȩ 
+	{5, 15, 7680, 6.46826191151922}, 		// ȩ 
+	{7, 15, 7695, 8.60742213152116}, 		// Ȫ 
+	{5, 15, 7710, 6.85546895430889}, 		// ȫ 
+	{7, 15, 7725, 8.60742213152116}, 		// Ȭ 
+	{5, 15, 7740, 6.85546895430889}, 		// ȭ 
+	{7, 15, 7755, 8.60742213152116}, 		// Ȯ 
+	{5, 15, 7770, 6.85546895430889}, 		// ȯ 
+	{7, 15, 7785, 8.60742213152116}, 		// Ȱ 
+	{5, 15, 7800, 6.85546895430889}, 		// ȱ 
+	{5, 15, 7815, 6.33496112629655}, 		// Ȳ 
+	{6, 15, 7830, 5.88427751911513}, 		// ȳ 
+	{4, 15, 7845, 4.11962902902451}, 		// ȴ 
+	{7, 15, 7860, 7.9916994569212}, 		// ȵ 
+	{4, 15, 7875, 4.35449231727398}, 		// ȶ 
+	{2, 15, 7890, 3.1103516551957}, 		// ȷ 
+	{9, 15, 7905, 10.6831057871314}, 		// ȸ 
+	{9, 15, 7935, 10.6767581306922}, 		// ȹ 
+	{8, 15, 7965, 7.52197288042225}, 		// Ⱥ 
+	{8, 15, 7980, 6.93164083157899}, 		// Ȼ 
+	{6, 15, 7995, 5.49707047632546}, 		// ȼ 
+	{5, 15, 8010, 5.46533219412959}, 		// Ƚ 
+	{8, 15, 8025, 6.33496112629655}, 		// Ⱦ 
+	{4, 15, 8040, 5.08447280777909}, 		// ȿ 
+	{5, 15, 8055, 5.13525405929249}, 		// ɀ 
+	{5, 15, 8070, 5.81445329828421}, 		// Ɂ 
+	{5, 15, 8085, 5.81445329828421}, 		// ɂ 
+	{6, 15, 8100, 7.17919943270681}, 		// Ƀ 
+	{8, 15, 8115, 8.56298853644694}, 		// Ʉ 
+	{5, 15, 8130, 7.44580100315216}, 		// Ʌ 
+	{7, 15, 8145, 6.3476564391749}, 		// Ɇ 
+	{6, 15, 8160, 6.46826191151922}, 		// ɇ 
+	{4, 15, 8175, 4.27197278356471}, 		// Ɉ 
+	{3, 15, 8190, 3.65625010896474}, 		// ɉ 
+	{7, 15, 8205, 8.18847680653562}, 		// Ɋ 
+	{6, 15, 8220, 6.83007832855219}, 		// ɋ 
+	{6, 15, 8235, 7.16650411982846}, 		// Ɍ 
+	{4, 15, 8250, 4.86865248884715}, 		// ɍ 
+	{7, 15, 8265, 7.51562522398308}, 		// Ɏ 
+	{6, 15, 8280, 6.30957050053985}, 		// ɏ 
+	{5, 15, 8295, 6.22705096683057}, 		// ɐ 
+	{5, 15, 8310, 6.83007832855219}, 		// ɑ 
+	{5, 15, 8325, 6.83007832855219}, 		// ɒ 
+	{5, 15, 8340, 6.83007832855219}, 		// ɓ 
+	{5, 15, 8355, 5.49707047632546}, 		// ɔ 
+	{5, 15, 8370, 5.85888689335843}, 		// ɕ 
+	{6, 15, 8385, 6.83007832855219}, 		// ɖ 
+	{6, 15, 8400, 6.83007832855219}, 		// ɗ 
+	{5, 15, 8415, 6.46826191151922}, 		// ɘ 
+	{5, 15, 8430, 6.46826191151922}, 		// ə 
+	{7, 15, 8445, 8.29638696600159}, 		// ɚ 
+	{4, 15, 8460, 5.49707047632546}, 		// ɛ 
+	{4, 15, 8475, 5.49707047632546}, 		// ɜ 
+	{6, 15, 8490, 6.83642598499137}, 		// ɝ 
+	{6, 15, 8505, 6.87451192362641}, 		// ɞ 
+	{3, 15, 8520, 3.66259776540392}, 		// ɟ 
+	{6, 15, 8535, 6.83007832855219}, 		// ɠ 
+	{5, 15, 8550, 6.83007832855219}, 		// ɡ 
+	{6, 15, 8565, 7.01416036528826}, 		// ɢ 
+	{6, 15, 8580, 5.87158220623678}, 		// ɣ 
+	{6, 15, 8595, 6.1953126846347}, 		// ɤ 
+	{5, 15, 8610, 6.82373067211302}, 		// ɥ 
+	{5, 15, 8625, 6.83007832855219}, 		// ɦ 
+	{5, 15, 8640, 6.83007832855219}, 		// ɧ 
+	{3, 15, 8655, 3.66259776540392}, 		// ɨ 
+	{3, 15, 8670, 3.56738291881629}, 		// ɩ 
+	{3, 15, 8685, 3.90380871009256}, 		// ɪ 
+	{4, 15, 8700, 4.71630873430695}, 		// ɫ 
+	{4, 15, 8715, 4.8305665502121}, 		// ɬ 
+	{2, 15, 8730, 2.9833985264122}, 		// ɭ 
+	{6, 15, 8745, 7.35058615656453}, 		// ɮ 
+	{8, 15, 8760, 10.378418278051}, 		// ɯ 
+	{8, 15, 8775, 10.378418278051}, 		// ɰ 
+	{8, 15, 8790, 10.3847659344901}, 		// ɱ 
+	{6, 15, 8805, 6.83007832855219}, 		// ɲ 
+	{6, 15, 8820, 6.83007832855219}, 		// ɳ 
+	{5, 15, 8835, 7.02685567816661}, 		// ɴ 
+	{6, 15, 8850, 6.85546895430889}, 		// ɵ 
+	{8, 15, 8865, 9.26123074475618}, 		// ɶ 
+	{8, 15, 8880, 9.0517580822634}, 		// ɷ 
+	{7, 15, 8895, 8.46777368985931}, 		// ɸ 
+	{3, 15, 8910, 4.53222669757088}, 		// ɹ 
+	{3, 15, 8925, 4.53222669757088}, 		// ɺ 
+	{4, 15, 8940, 4.53222669757088}, 		// ɻ 
+	{3, 15, 8955, 4.53222669757088}, 		// ɼ 
+	{3, 15, 8970, 4.53222669757088}, 		// ɽ 
+	{3, 15, 8985, 4.15136731122038}, 		// ɾ 
+	{3, 15, 9000, 4.15136731122038}, 		// ɿ 
+	{4, 15, 9015, 5.83984392404091}, 		// ʀ 
+	{4, 15, 9030, 5.83984392404091}, 		// ʁ 
+	{4, 15, 9045, 5.08447280777909}, 		// ʂ 
+	{3, 15, 9060, 3.1103516551957}, 		// ʃ 
+	{3, 15, 9075, 3.66894542184309}, 		// ʄ 
+	{3, 15, 9090, 3.1103516551957}, 		// ʅ 
+	{4, 15, 9105, 4.12597668546368}, 		// ʆ 
+	{4, 15, 9120, 4.35449231727398}, 		// ʇ 
+	{4, 15, 9135, 4.35449231727398}, 		// ʈ 
+	{7, 15, 9150, 7.54101584973978}, 		// ʉ 
+	{6, 15, 9165, 7.24902365353773}, 		// ʊ 
+	{5, 15, 9180, 7.03955099104496}, 		// ʋ 
+	{6, 15, 9195, 5.87158220623678}, 		// ʌ 
+	{9, 15, 9210, 9.29296902695205}, 		// ʍ 
+	{6, 15, 9240, 5.88427751911513}, 		// ʎ 
+	{5, 15, 9255, 5.38916031685949}, 		// ʏ 
+	{5, 15, 9270, 5.13525405929249}, 		// ʐ 
+	{5, 15, 9285, 6.21435565395223}, 		// ʑ 
+	{5, 15, 9300, 6.0683595558512}, 		// ʒ 
+	{5, 15, 9315, 6.06201189941203}, 		// ʓ 
+	{5, 15, 9330, 5.81445329828421}, 		// ʔ 
+	{5, 15, 9345, 5.81445329828421}, 		// ʕ 
+	{5, 15, 9360, 5.81445329828421}, 		// ʖ 
+	{5, 15, 9375, 5.49707047632546}, 		// ʗ 
+	{7, 15, 9390, 8.16943383721809}, 		// ʘ 
+	{5, 15, 9405, 6.22705096683057}, 		// ʙ 
+	{6, 15, 9420, 6.87451192362641}, 		// ʚ 
+	{7, 15, 9435, 7.17919943270681}, 		// ʛ 
+	{5, 15, 9450, 6.95068380089651}, 		// ʜ 
+	{4, 15, 9465, 4.12597668546368}, 		// ʝ 
+	{5, 15, 9480, 5.90966814487183}, 		// ʞ 
+	{4, 15, 9495, 5.03369155626569}, 		// ʟ 
+	{6, 15, 9510, 6.83007832855219}, 		// ʠ 
+	{5, 15, 9525, 5.81445329828421}, 		// ʡ 
+	{5, 15, 9540, 5.81445329828421}, 		// ʢ 
+	{9, 15, 9555, 10.4545901553211}, 		// ʣ 
+	{10, 15, 9585, 11.0957034556777}, 		// ʤ 
+	{11, 15, 9615, 11.5336917499808}, 		// ʥ 
+	{7, 15, 9645, 8.0424807084346}, 		// ʦ 
+	{6, 15, 9660, 6.1191408073646}, 		// ʧ 
+	{8, 15, 9675, 8.89941432772321}, 		// ʨ 
+	{9, 15, 9690, 9.82617216784274}, 		// ʩ 
+	{6, 15, 9720, 7.60449241413153}, 		// ʪ 
+	{6, 15, 9735, 7.16650411982846}, 		// ʫ 
+	{5, 15, 9750, 6.39209003424912}, 		// ʬ 
+	{5, 15, 9765, 6.39209003424912}, 		// ʭ 
+	{6, 15, 9780, 6.83007832855219}, 		// ʮ 
+	{7, 15, 9795, 6.98876973953156}, 		// ʯ 
+	{3, 15, 9810, 4.7290040471853}, 		// ʰ 
+	{3, 15, 9825, 4.7290040471853}, 		// ʱ 
+	{2, 15, 9840, 2.31689460029884}, 		// ʲ 
+	{2, 15, 9855, 3.1865235324658}, 		// ʳ 
+	{2, 15, 9870, 3.1865235324658}, 		// ʴ 
+	{3, 15, 9885, 3.26904306617507}, 		// ʵ 
+	{3, 15, 9900, 4.13232434190286}, 		// ʶ 
+	{5, 15, 9915, 6.39209003424912}, 		// ʷ 
+	{3, 15, 9930, 4.10058605970698}, 		// ʸ 
+	{1, 15, 9945, 2.86914071050705}, 		// ʹ 
+	{4, 15, 9960, 5.20507828012342}, 		// ʺ 
+	{2, 15, 9975, 3.24365244041837}, 		// ʻ 
+	{2, 15, 9990, 3.24365244041837}, 		// ʼ 
+	{2, 15, 10005, 3.24365244041837}, 		// ʽ 
+	{2, 15, 10020, 2.9326172748988}, 		// ʾ 
+	{2, 15, 10035, 2.9326172748988}, 		// ʿ 
+	{3, 15, 10050, 4.22119153205131}, 		// ˀ 
+	{3, 15, 10065, 4.22119153205131}, 		// ˁ 
+	{5, 15, 10080, 6.4746095679584}, 		// ˂ 
+	{5, 15, 10095, 6.4746095679584}, 		// ˃ 
+	{5, 15, 10110, 6.97607442665321}, 		// ˄ 
+	{5, 15, 10125, 6.97607442665321}, 		// ˅ 
+	{3, 15, 10140, 5.13525405929249}, 		// ˆ 
+	{3, 15, 10155, 5.13525405929249}, 		// ˇ 
+	{1, 15, 10170, 3.76416026843071}, 		// ˈ 
+	{3, 15, 10185, 5.12255874641414}, 		// ˉ 
+	{2, 15, 10200, 3.79589855062659}, 		// ˊ 
+	{2, 15, 10215, 3.78320323774824}, 		// ˋ 
+	{1, 15, 10230, 3.76416026843071}, 		// ˌ 
+	{3, 15, 10245, 5.12255874641414}, 		// ˍ 
+	{2, 15, 10260, 3.78320323774824}, 		// ˎ 
+	{2, 15, 10275, 3.79589855062659}, 		// ˏ 
+	{2, 15, 10290, 3.61181651389052}, 		// ː 
+	{2, 15, 10305, 3.61181651389052}, 		// ˑ 
+	{2, 15, 10320, 2.9326172748988}, 		// ˒ 
+	{2, 15, 10335, 2.9326172748988}, 		// ˓ 
+	{3, 15, 10350, 4.32910169151728}, 		// ˔ 
+	{3, 15, 10365, 4.32910169151728}, 		// ˕ 
+	{3, 15, 10380, 4.32910169151728}, 		// ˖ 
+	{3, 15, 10395, 4.32910169151728}, 		// ˗ 
+	{3, 15, 10410, 4.95117202255642}, 		// ˘ 
+	{1, 15, 10425, 2.9326172748988}, 		// ˙ 
+	{3, 15, 10440, 4.17041028053791}, 		// ˚ 
+	{2, 15, 10455, 4.05615246463276}, 		// ˛ 
+	{4, 15, 10470, 5.85253923691926}, 		// ˜ 
+	{4, 15, 10485, 6.10009783804708}, 		// ˝ 
+	{3, 15, 10500, 4.32910169151728}, 		// ˞ 
+	{1, 15, 10515, 4.32910169151728}, 		// ˟ 
+	{3, 15, 10530, 3.86572277145751}, 		// ˠ 
+	{1, 15, 10545, 2.22167975371121}, 		// ˡ 
+	{3, 15, 10560, 3.55468760593794}, 		// ˢ 
+	{3, 15, 10575, 4.04980480819358}, 		// ˣ 
+	{3, 15, 10590, 4.22119153205131}, 		// ˤ 
+	{3, 15, 10605, 4.97656264831312}, 		// ˥ 
+	{3, 15, 10620, 4.97656264831312}, 		// ˦ 
+	{3, 15, 10635, 4.97656264831312}, 		// ˧ 
+	{3, 15, 10650, 4.97656264831312}, 		// ˨ 
+	{3, 15, 10665, 4.97656264831312}, 		// ˩ 
+	{3, 15, 10680, 4.32910169151728}, 		// ˪ 
+	{3, 15, 10695, 4.32910169151728}, 		// ˫ 
+	{3, 15, 10710, 5.13525405929249}, 		// ˬ 
+	{6, 15, 10725, 7.47753928534803}, 		// ˭ 
+	{5, 15, 10740, 5.43994156837289}, 		// ˮ 
+	{2, 15, 10755, 4.32910169151728}, 		// ˯ 
+	{2, 15, 10770, 4.32910169151728}, 		// ˰ 
+	{2, 15, 10785, 4.32910169151728}, 		// ˱ 
+	{2, 15, 10800, 4.32910169151728}, 		// ˲ 
+	{3, 15, 10815, 4.17041028053791}, 		// ˳ 
+	{2, 15, 10830, 3.78320323774824}, 		// ˴ 
+	{4, 15, 10845, 6.10009783804708}, 		// ˵ 
+	{4, 15, 10860, 6.10009783804708}, 		// ˶ 
+	{4, 15, 10875, 5.85253923691926}, 		// ˷ 
+	{1, 15, 10890, 3.47851572866784}, 		// ˸ 
+	{2, 15, 10905, 4.32910169151728}, 		// ˹ 
+	{2, 15, 10920, 4.32910169151728}, 		// ˺ 
+	{2, 15, 10935, 4.32910169151728}, 		// ˻ 
+	{2, 15, 10950, 4.32910169151728}, 		// ˼ 
+	{7, 15, 10965, 6.90625020582229}, 		// ˽ 
+	{7, 15, 10980, 6.90625020582229}, 		// ˾ 
+	{3, 15, 10995, 4.88769545816467}, 		// ˿ 
+	{2, 15, 11010, 0}, 		// ̀ 
+	{2, 15, 11025, 0}, 		// ́ 
+	{3, 15, 11040, 0}, 		// ̂ 
+	{4, 15, 11055, 0}, 		// ̃ 
+	{3, 15, 11070, 0}, 		// ̄ 
+	{7, 15, 11085, 0}, 		// ̅ 
+	{3, 15, 11100, 0}, 		// ̆ 
+	{1, 15, 11115, 0}, 		// ̇ 
+	{3, 15, 11130, 0}, 		// ̈ 
+	{2, 15, 11145, 0}, 		// ̉ 
+	{3, 15, 11160, 0}, 		// ̊ 
+	{4, 15, 11175, 0}, 		// ̋ 
+	{3, 15, 11190, 0}, 		// ̌ 
+	{1, 15, 11205, 0}, 		// ̍ 
+	{3, 15, 11220, 0}, 		// ̎ 
+	{4, 15, 11235, 0}, 		// ̏ 
+	{3, 15, 11250, 0}, 		// ̐ 
+	{3, 15, 11265, 0}, 		// ̑ 
+	{2, 15, 11280, 0}, 		// ̒ 
+	{1, 15, 11295, 0}, 		// ̓ 
+	{1, 15, 11310, 0}, 		// ̔ 
+	{2, 15, 11325, 3.24365244041837}, 		// ̕ 
+	{2, 15, 11340, 0}, 		// ̖ 
+	{2, 15, 11355, 0}, 		// ̗ 
+	{3, 15, 11370, 0}, 		// ̘ 
+	{3, 15, 11385, 0}, 		// ̙ 
+	{2, 15, 11400, 0}, 		// ̚ 
+	{2, 15, 11415, 4.32910169151728}, 		// ̛ 
+	{2, 15, 11430, 0}, 		// ̜ 
+	{3, 15, 11445, 0}, 		// ̝ 
+	{3, 15, 11460, 0}, 		// ̞ 
+	{3, 15, 11475, 0}, 		// ̟ 
+	{3, 15, 11490, 0}, 		// ̠ 
+	{2, 15, 11505, 0}, 		// ̡ 
+	{2, 15, 11520, 0}, 		// ̢ 
+	{1, 15, 11535, 0}, 		// ̣ 
+	{3, 15, 11550, 0}, 		// ̤ 
+	{3, 15, 11565, 0}, 		// ̥ 
+	{2, 15, 11580, 0}, 		// ̦ 
+	{2, 15, 11595, 0}, 		// ̧ 
+	{2, 15, 11610, 0}, 		// ̨ 
+	{1, 15, 11625, 0}, 		// ̩ 
+	{2, 15, 11640, 0}, 		// ̪ 
+	{4, 15, 11655, 0}, 		// ̫ 
+	{3, 15, 11670, 0}, 		// ̬ 
+	{3, 15, 11685, 0}, 		// ̭ 
+	{3, 15, 11700, 0}, 		// ̮ 
+	{3, 15, 11715, 0}, 		// ̯ 
+	{4, 15, 11730, 0}, 		// ̰ 
+	{3, 15, 11745, 0}, 		// ̱ 
+	{7, 15, 11760, 0}, 		// ̲ 
+	{7, 15, 11775, 0}, 		// ̳ 
+	{4, 15, 11790, 0}, 		// ̴ 
+	{3, 15, 11805, 0}, 		// ̵ 
+	{7, 15, 11820, 0}, 		// ̶ 
+	{6, 15, 11835, 0}, 		// ̷ 
+	{7, 15, 11850, 0}, 		// ̸ 
+	{2, 15, 11865, 0}, 		// ̹ 
+	{4, 15, 11880, 0}, 		// ̺ 
+	{3, 15, 11895, 0}, 		// ̻ 
+	{4, 15, 11910, 0}, 		// ̼ 
+	{1, 15, 11925, 0}, 		// ̽ 
+	{2, 15, 11940, 0}, 		// ̾ 
+	{7, 15, 11955, 0}, 		// ̿ 
+	{2, 15, 11970, 0}, 		// ̀ 
+	{2, 15, 11985, 0}, 		// ́ 
+	{4, 15, 12000, 0}, 		// ͂ 
+	{1, 15, 12015, 0}, 		// ̓ 
+	{5, 15, 12030, 0}, 		// ̈́ 
+	{2, 15, 12045, 0}, 		// ͅ 
+	{2, 15, 12060, 0}, 		// ͆ 
+	{7, 15, 12075, 0}, 		// ͇ 
+	{3, 15, 12090, 0}, 		// ͈ 
+	{2, 15, 12105, 0}, 		// ͉ 
+	{4, 15, 12120, 0}, 		// ͊ 
+	{4, 15, 12135, 0}, 		// ͋ 
+	{4, 15, 12150, 0}, 		// ͌ 
+	{6, 15, 12165, 0}, 		// ͍ 
+	{1, 15, 12180, 0}, 		// ͎ 
+	{2, 15, 12195, 0}, 		// ͏ 
+	{2, 15, 12210, 0}, 		// ͐ 
+	{2, 15, 12225, 0}, 		// ͑ 
+	{4, 15, 12240, 0}, 		// ͒ 
+	{1, 15, 12255, 0}, 		// ͓ 
+	{2, 15, 12270, 0}, 		// ͔ 
+	{2, 15, 12285, 0}, 		// ͕ 
+	{4, 15, 12300, 0}, 		// ͖ 
+	{2, 15, 12315, 0}, 		// ͗ 
+	{1, 15, 12330, 0}, 		// ͘ 
+	{2, 15, 12345, 0}, 		// ͙ 
+	{4, 15, 12360, 0}, 		// ͚ 
+	{2, 15, 12375, 0}, 		// ͛ 
+	{11, 15, 12390, 0}, 		// ͜ 
+	{11, 15, 12420, 0}, 		// ͝ 
+	{11, 15, 12450, 0}, 		// ͞ 
+	{11, 15, 12480, 0}, 		// ͟ 
+	{10, 15, 12510, 0}, 		// ͠ 
+	{11, 15, 12540, 0}, 		// ͡ 
+	{11, 15, 12570, 0}, 		// ͢ 
+	{2, 15, 12600, 0}, 		// ͣ 
+	{2, 15, 12615, 0}, 		// ͤ 
+	{1, 15, 12630, 0}, 		// ͥ 
+	{3, 15, 12645, 0}, 		// ͦ 
+	{2, 15, 12660, 0}, 		// ͧ 
+	{2, 15, 12675, 0}, 		// ͨ 
+	{3, 15, 12690, 0}, 		// ͩ 
+	{2, 15, 12705, 0}, 		// ͪ 
+	{5, 15, 12720, 0}, 		// ͫ 
+	{2, 15, 12735, 0}, 		// ͬ 
+	{1, 15, 12750, 0}, 		// ͭ 
+	{3, 15, 12765, 0}, 		// ͮ 
+	{3, 15, 12780, 0}, 		// ͯ 
+	{5, 15, 12795, 6.55712910166767}, 		// Ͱ 
+	{4, 15, 12810, 5.56689469715639}, 		// ͱ 
+	{6, 15, 12825, 6.33496112629655}, 		// Ͳ 
+	{5, 15, 12840, 5.03369155626569}, 		// ͳ 
+	{2, 15, 12855, 3.24365244041837}, 		// ʹ 
+	{2, 15, 12870, 3.24365244041837}, 		// ͵ 
+	{6, 15, 12885, 8.34082056107582}, 		// Ͷ 
+	{5, 15, 12900, 7.02685567816661}, 		// ͷ 
+	{0, 0, 0, 0}, 		// ͸ 
+	{0, 0, 0, 0}, 		// ͹ 
+	{2, 15, 12915, 3.56738291881629}, 		// ͺ 
+	{5, 15, 12930, 5.49707047632546}, 		// ͻ 
+	{5, 15, 12945, 5.49707047632546}, 		// ͼ 
+	{5, 15, 12960, 5.49707047632546}, 		// ͽ 
+	{2, 15, 12975, 3.47851572866784}, 		// ; 
+	{3, 15, 12990, 4.14501965478121}, 		// Ϳ 
+	{0, 0, 0, 0}, 		// ΀ 
+	{0, 0, 0, 0}, 		// ΁ 
+	{0, 0, 0, 0}, 		// ΂ 
+	{0, 0, 0, 0}, 		// ΃ 
+	{2, 15, 13005, 4.11962902902451}, 		// ΄ 
+	{5, 15, 13020, 6.423828316445}, 		// ΅ 
+	{7, 15, 13035, 7.52197288042225}, 		// Ά 
+	{1, 15, 13050, 3.28173837905342}, 		// · 
+	{7, 15, 13065, 6.3476564391749}, 		// Έ 
+	{8, 15, 13080, 8.09960961638717}, 		// Ή 
+	{3, 15, 13095, 3.27539072261425}, 		// Ί 
+	{0, 0, 0, 0}, 		// ΋ 
+	{8, 15, 13110, 8.60742213152116}, 		// Ό 
+	{0, 0, 0, 0}, 		// ΍ 
+	{8, 15, 13125, 6.33496112629655}, 		// Ύ 
+	{9, 15, 13140, 8.63281275727786}, 		// Ώ 
+	{5, 15, 13170, 3.56738291881629}, 		// ΐ 
+	{7, 15, 13185, 7.52197288042225}, 		// Α 
+	{5, 15, 13200, 7.07128927324084}, 		// Β 
+	{4, 15, 13215, 5.40185562973784}, 		// Γ 
+	{7, 15, 13230, 7.33789084368618}, 		// Δ 
+	{5, 15, 13245, 6.3476564391749}, 		// Ε 
+	{6, 15, 13260, 6.08740252516873}, 		// Ζ 
+	{6, 15, 13275, 8.09960961638717}, 		// Η 
+	{7, 15, 13290, 8.60742213152116}, 		// Θ 
+	{1, 15, 13305, 3.27539072261425}, 		// Ι 
+	{5, 15, 13320, 6.75390645128209}, 		// Κ 
+	{5, 15, 13335, 7.44580100315216}, 		// Λ 
+	{9, 15, 13350, 11.1147464249952}, 		// Μ 
+	{6, 15, 13380, 8.39160181258922}, 		// Ν 
+	{5, 15, 13395, 6.39209003424912}, 		// Ξ 
+	{7, 15, 13410, 8.60742213152116}, 		// Ο 
+	{6, 15, 13425, 8.09960961638717}, 		// Π 
+	{5, 15, 13440, 6.71582051264704}, 		// Ρ 
+	{0, 0, 0, 0}, 		// ΢ 
+	{5, 15, 13455, 5.96044939638523}, 		// Σ 
+	{7, 15, 13470, 6.33496112629655}, 		// Τ 
+	{5, 15, 13485, 6.33496112629655}, 		// Υ 
+	{9, 15, 13500, 9.87060576291697}, 		// Φ 
+	{6, 15, 13530, 6.74755879484292}, 		// Χ 
+	{7, 15, 13545, 9.75000029057264}, 		// Ψ 
+	{7, 15, 13560, 8.63281275727786}, 		// Ω 
+	{3, 15, 13575, 3.27539072261425}, 		// Ϊ 
+	{5, 15, 13590, 6.33496112629655}, 		// Ϋ 
+	{7, 15, 13605, 7.37597678232123}, 		// ά 
+	{5, 15, 13620, 5.92236345775018}, 		// έ 
+	{5, 15, 13635, 6.98242208309239}, 		// ή 
+	{3, 15, 13650, 3.56738291881629}, 		// ί 
+	{5, 15, 13665, 7.03955099104496}, 		// ΰ 
+	{7, 15, 13680, 7.37597678232123}, 		// α 
+	{5, 15, 13695, 6.90625020582229}, 		// β 
+	{5, 15, 13710, 5.80175798540586}, 		// γ 
+	{6, 15, 13725, 6.80468770279549}, 		// δ 
+	{5, 15, 13740, 5.92236345775018}, 		// ε 
+	{4, 15, 13755, 4.51953138469253}, 		// ζ 
+	{5, 15, 13770, 6.98242208309239}, 		// η 
+	{6, 15, 13785, 6.91259786226146}, 		// θ 
+	{3, 15, 13800, 3.56738291881629}, 		// ι 
+	{5, 15, 13815, 5.90966814487183}, 		// κ 
+	{6, 15, 13830, 6.0175783043378}, 		// λ 
+	{6, 15, 13845, 7.14746115051094}, 		// μ 
+	{5, 15, 13860, 5.83349626760173}, 		// ν 
+	{4, 15, 13875, 4.88769545816467}, 		// ξ 
+	{5, 15, 13890, 6.85546895430889}, 		// ο 
+	{7, 15, 13905, 7.18554708914598}, 		// π 
+	{5, 15, 13920, 6.61425800962024}, 		// ρ 
+	{4, 15, 13935, 5.33837906534609}, 		// ς 
+	{6, 15, 13950, 6.91259786226146}, 		// σ 
+	{5, 15, 13965, 5.03369155626569}, 		// τ 
+	{5, 15, 13980, 7.03955099104496}, 		// υ 
+	{7, 15, 13995, 8.46777368985931}, 		// φ 
+	{5, 15, 14010, 5.54150407139969}, 		// χ 
+	{7, 15, 14025, 9.19775418036443}, 		// ψ 
+	{7, 15, 14040, 9.0517580822634}, 		// ω 
+	{4, 15, 14055, 3.56738291881629}, 		// ϊ 
+	{5, 15, 14070, 7.03955099104496}, 		// ϋ 
+	{5, 15, 14085, 6.85546895430889}, 		// ό 
+	{5, 15, 14100, 7.03955099104496}, 		// ύ 
+	{7, 15, 14115, 9.0517580822634}, 		// ώ 
+	{5, 15, 14130, 6.75390645128209}, 		// Ϗ 
+	{6, 15, 14145, 6.81738301567384}, 		// ϐ 
+	{7, 15, 14160, 7.26171896641608}, 		// ϑ 
+	{7, 15, 14175, 6.33496112629655}, 		// ϒ 
+	{9, 15, 14190, 7.04589864748414}, 		// ϓ 
+	{7, 15, 14220, 6.33496112629655}, 		// ϔ 
+	{7, 15, 14235, 8.49951197205519}, 		// ϕ 
+	{10, 15, 14250, 10.5878909405437}, 		// ϖ 
+	{6, 15, 14280, 7.8647463281377}, 		// ϗ 
+	{7, 15, 14295, 8.60742213152116}, 		// Ϙ 
+	{6, 15, 14310, 6.85546895430889}, 		// ϙ 
+	{6, 15, 14325, 6.93164083157899}, 		// Ϛ 
+	{4, 15, 14340, 5.33837906534609}, 		// ϛ 
+	{4, 15, 14355, 5.97314470926358}, 		// Ϝ 
+	{4, 15, 14370, 5.63671891798731}, 		// ϝ 
+	{7, 15, 14385, 7.09033224255836}, 		// Ϟ 
+	{6, 15, 14400, 5.84619158048008}, 		// ϟ 
+	{7, 15, 14415, 7.52832053686143}, 		// Ϡ 
+	{7, 15, 14430, 7.52832053686143}, 		// ϡ 
+	{9, 15, 14445, 11.432129246954}, 		// Ϣ 
+	{8, 15, 14475, 10.3847659344901}, 		// ϣ 
+	{5, 15, 14490, 7.08398458611919}, 		// Ϥ 
+	{5, 15, 14505, 6.79834004635632}, 		// ϥ 
+	{5, 15, 14520, 7.22363302778103}, 		// Ϧ 
+	{6, 15, 14535, 6.65234394825529}, 		// ϧ 
+	{6, 15, 14550, 6.93164083157899}, 		// Ϩ 
+	{5, 15, 14565, 5.44628922481206}, 		// ϩ 
+	{7, 15, 14580, 7.82031273306347}, 		// Ϫ 
+	{6, 15, 14595, 6.56982441454602}, 		// ϫ 
+	{7, 15, 14610, 8.74707057318301}, 		// Ϭ 
+	{6, 15, 14625, 6.91259786226146}, 		// ϭ 
+	{6, 15, 14640, 6.15087908956048}, 		// Ϯ 
+	{5, 15, 14655, 5.11621108997497}, 		// ϯ 
+	{6, 15, 14670, 7.8647463281377}, 		// ϰ 
+	{5, 15, 14685, 6.61425800962024}, 		// ϱ 
+	{5, 15, 14700, 5.49707047632546}, 		// ϲ 
+	{2, 15, 14715, 3.1103516551957}, 		// ϳ 
+	{7, 15, 14730, 8.60742213152116}, 		// ϴ 
+	{5, 15, 14745, 5.61767594866978}, 		// ϵ 
+	{5, 15, 14760, 5.61767594866978}, 		// ϶ 
+	{5, 15, 14775, 6.71582051264704}, 		// Ϸ 
+	{7, 15, 14790, 7.24902365353773}, 		// ϸ 
+	{6, 15, 14805, 6.93164083157899}, 		// Ϲ 
+	{7, 15, 14820, 9.08349636445928}, 		// Ϻ 
+	{6, 15, 14835, 7.75048851223255}, 		// ϻ 
+	{6, 15, 14850, 6.61425800962024}, 		// ϼ 
+	{6, 15, 14865, 6.93164083157899}, 		// Ͻ 
+	{6, 15, 14880, 6.93164083157899}, 		// Ͼ 
+	{6, 15, 14895, 6.93164083157899}, 		// Ͽ 
+	{5, 15, 14910, 6.3476564391749}, 		// Ѐ 
+	{5, 15, 14925, 6.3476564391749}, 		// Ё 
+	{7, 15, 14940, 8.11865258570469}, 		// Ђ 
+	{4, 15, 14955, 5.58593766647391}, 		// Ѓ 
+	{6, 15, 14970, 7.11572286831506}, 		// Є 
+	{5, 15, 14985, 5.97314470926358}, 		// Ѕ 
+	{1, 15, 15000, 3.27539072261425}, 		// І 
+	{3, 15, 15015, 3.27539072261425}, 		// Ї 
+	{3, 15, 15030, 4.14501965478121}, 		// Ј 
+	{11, 15, 15045, 11.3369144003664}, 		// Љ 
+	{10, 15, 15075, 11.3940433083189}, 		// Њ 
+	{7, 15, 15105, 8.03613305199542}, 		// Ћ 
+	{5, 15, 15120, 7.05859396036249}, 		// Ќ 
+	{6, 15, 15135, 8.34082056107582}, 		// Ѝ 
+	{6, 15, 15150, 6.85546895430889}, 		// Ў 
+	{6, 15, 15165, 8.05517602131295}, 		// Џ 
+	{7, 15, 15180, 7.52197288042225}, 		// А 
+	{5, 15, 15195, 6.98876973953156}, 		// Б 
+	{5, 15, 15210, 7.07128927324084}, 		// В 
+	{4, 15, 15225, 5.58593766647391}, 		// Г 
+	{8, 15, 15240, 8.37255884327169}, 		// Д 
+	{5, 15, 15255, 6.3476564391749}, 		// Е 
+	{9, 15, 15270, 10.4101565602468}, 		// Ж 
+	{5, 15, 15300, 6.15722674599965}, 		// З 
+	{6, 15, 15315, 8.34082056107582}, 		// И 
+	{6, 15, 15330, 8.34082056107582}, 		// Й 
+	{5, 15, 15345, 7.05859396036249}, 		// К 
+	{7, 15, 15360, 7.9409182054078}, 		// Л 
+	{9, 15, 15375, 11.1147464249952}, 		// М 
+	{6, 15, 15405, 8.09960961638717}, 		// Н 
+	{7, 15, 15420, 8.60742213152116}, 		// О 
+	{6, 15, 15435, 8.08056664706965}, 		// П 
+	{5, 15, 15450, 6.71582051264704}, 		// Р 
+	{6, 15, 15465, 6.93164083157899}, 		// С 
+	{7, 15, 15480, 6.33496112629655}, 		// Т 
+	{6, 15, 15495, 6.85546895430889}, 		// У 
+	{7, 15, 15510, 9.06445339514175}, 		// Ф 
+	{6, 15, 15525, 6.74755879484292}, 		// Х 
+	{7, 15, 15540, 8.30273462244077}, 		// Ц 
+	{5, 15, 15555, 7.22363302778103}, 		// Ч 
+	{9, 15, 15570, 11.286133148853}, 		// Ш 
+	{10, 15, 15600, 11.5654300321767}, 		// Щ 
+	{8, 15, 15630, 7.9916994569212}, 		// Ъ 
+	{8, 15, 15645, 9.90234404511284}, 		// Ы 
+	{5, 15, 15660, 6.90625020582229}, 		// Ь 
+	{6, 15, 15675, 7.12207052475424}, 		// Э 
+	{10, 15, 15690, 11.4257815905148}, 		// Ю 
+	{6, 15, 15720, 7.21728537134186}, 		// Я 
+	{5, 15, 15735, 6.22705096683057}, 		// а 
+	{5, 15, 15750, 6.92529317513981}, 		// б 
+	{5, 15, 15765, 6.22705096683057}, 		// в 
+	{3, 15, 15780, 4.49414075893583}, 		// г 
+	{7, 15, 15795, 7.25537130997691}, 		// д 
+	{5, 15, 15810, 6.46826191151922}, 		// е 
+	{9, 15, 15825, 8.95654323567578}, 		// ж 
+	{4, 15, 15855, 5.49707047632546}, 		// з 
+	{5, 15, 15870, 7.02685567816661}, 		// и 
+	{5, 15, 15885, 7.02685567816661}, 		// й 
+	{5, 15, 15900, 6.03027361721615}, 		// к 
+	{6, 15, 15915, 6.63330097893777}, 		// л 
+	{7, 15, 15930, 8.79150416825723}, 		// м 
+	{5, 15, 15945, 6.95068380089651}, 		// н 
+	{5, 15, 15960, 6.85546895430889}, 		// о 
+	{5, 15, 15975, 6.76660176416044}, 		// п 
+	{5, 15, 15990, 6.83007832855219}, 		// р 
+	{5, 15, 16005, 5.49707047632546}, 		// с 
+	{5, 15, 16020, 5.03369155626569}, 		// т 
+	{6, 15, 16035, 5.88427751911513}, 		// у 
+	{7, 15, 16050, 8.11230492926552}, 		// ф 
+	{4, 15, 16065, 5.63037126154813}, 		// х 
+	{6, 15, 16080, 7.03955099104496}, 		// ц 
+	{5, 15, 16095, 6.0937501816079}, 		// ч 
+	{7, 15, 16110, 9.47070340724895}, 		// ш 
+	{8, 15, 16125, 9.73730497769429}, 		// щ 
+	{7, 15, 16140, 6.96972677021404}, 		// ъ 
+	{7, 15, 16155, 8.65820338303456}, 		// ы 
+	{5, 15, 16170, 6.10644549448625}, 		// ь 
+	{5, 15, 16185, 5.75732439033163}, 		// э 
+	{8, 15, 16200, 9.3818362171005}, 		// ю 
+	{5, 15, 16215, 6.16357440243883}, 		// я 
+	{5, 15, 16230, 6.46826191151922}, 		// ѐ 
+	{5, 15, 16245, 6.46826191151922}, 		// ё 
+	{6, 15, 16260, 7.02685567816661}, 		// ђ 
+	{3, 15, 16275, 4.49414075893583}, 		// ѓ 
+	{5, 15, 16290, 5.77001970320998}, 		// є 
+	{4, 15, 16305, 5.08447280777909}, 		// ѕ 
+	{1, 15, 16320, 2.9833985264122}, 		// і 
+	{3, 15, 16335, 2.9833985264122}, 		// ї 
+	{2, 15, 16350, 3.1103516551957}, 		// ј 
+	{9, 15, 16365, 9.76269560345099}, 		// љ 
+	{8, 15, 16395, 10.0039065481396}, 		// њ 
+	{6, 15, 16410, 6.92529317513981}, 		// ћ 
+	{5, 15, 16425, 6.03027361721615}, 		// ќ 
+	{5, 15, 16440, 7.02685567816661}, 		// ѝ 
+	{6, 15, 16455, 5.88427751911513}, 		// ў 
+	{5, 15, 16470, 6.82373067211302}, 		// џ 
+	{11, 15, 16485, 12.0605472344323}, 		// Ѡ 
+	{8, 15, 16515, 8.79785182469641}, 		// ѡ 
+	{7, 15, 16530, 8.15039086790057}, 		// Ѣ 
+	{6, 15, 16545, 6.74755879484292}, 		// ѣ 
+	{9, 15, 16560, 10.162597959119}, 		// Ѥ 
+	{7, 15, 16590, 8.45507837698096}, 		// ѥ 
+	{7, 15, 16605, 8.19482446297479}, 		// Ѧ 
+	{7, 15, 16620, 6.82373067211302}, 		// ѧ 
+	{9, 15, 16635, 10.8100589159149}, 		// Ѩ 
+	{8, 15, 16665, 9.23584011899948}, 		// ѩ 
+	{9, 15, 16680, 9.39453152997885}, 		// Ѫ 
+	{7, 15, 16710, 7.31250021792948}, 		// ѫ 
+	{10, 15, 16725, 11.7749026946694}, 		// Ѭ 
+	{9, 15, 16755, 9.81982451140357}, 		// ѭ 
+	{5, 15, 16785, 6.15722674599965}, 		// Ѯ 
+	{5, 15, 16800, 5.37011734754196}, 		// ѯ 
+	{7, 15, 16815, 9.75000029057264}, 		// Ѱ 
+	{7, 15, 16830, 9.19775418036443}, 		// ѱ 
+	{7, 15, 16845, 8.60742213152116}, 		// Ѳ 
+	{6, 15, 16860, 6.81103535923467}, 		// ѳ 
+	{7, 15, 16875, 7.66796897852328}, 		// Ѵ 
+	{5, 15, 16890, 6.20800799751305}, 		// ѵ 
+	{7, 15, 16905, 7.66796897852328}, 		// Ѷ 
+	{5, 15, 16920, 6.20800799751305}, 		// ѷ 
+	{12, 15, 16935, 13.5839847798343}, 		// Ѹ 
+	{11, 15, 16965, 11.8129886333045}, 		// ѹ 
+	{8, 15, 16995, 8.60742213152116}, 		// Ѻ 
+	{6, 15, 17010, 7.49023459822638}, 		// ѻ 
+	{11, 15, 17025, 12.0605472344323}, 		// Ѽ 
+	{9, 15, 17055, 10.1689456155582}, 		// ѽ 
+	{11, 15, 17085, 12.0605472344323}, 		// Ѿ 
+	{8, 15, 17115, 8.79785182469641}, 		// ѿ 
+	{6, 15, 17130, 6.93164083157899}, 		// Ҁ 
+	{4, 15, 17145, 5.49707047632546}, 		// ҁ 
+	{6, 15, 17160, 7.92187523609027}, 		// ҂ 
+	{5, 15, 17175, 0}, 		// ҃ 
+	{5, 15, 17190, 0}, 		// ҄ 
+	{1, 15, 17205, 0}, 		// ҅ 
+	{1, 15, 17220, 0}, 		// ҆ 
+	{0, 0, 0, 0}, 		// ҇ 
+	{13, 15, 17235, 12.8095706942549}, 		// ҈ 
+	{12, 15, 17265, 12.339844117756}, 		// ҉ 
+	{7, 15, 17295, 8.62011744439951}, 		// Ҋ 
+	{6, 15, 17310, 7.10302755543671}, 		// ҋ 
+	{6, 15, 17325, 6.90625020582229}, 		// Ҍ 
+	{6, 15, 17340, 6.29052753122232}, 		// ҍ 
+	{5, 15, 17355, 6.71582051264704}, 		// Ҏ 
+	{5, 15, 17370, 6.83007832855219}, 		// ҏ 
+	{4, 15, 17385, 5.62402360510896}, 		// Ґ 
+	{3, 15, 17400, 4.6020509184018}, 		// ґ 
+	{5, 15, 17415, 5.52246110208216}, 		// Ғ 
+	{4, 15, 17430, 4.8305665502121}, 		// ғ 
+	{5, 15, 17445, 6.91259786226146}, 		// Ҕ 
+	{5, 15, 17460, 5.88427751911513}, 		// ҕ 
+	{10, 15, 17475, 10.8798831367458}, 		// Җ 
+	{9, 15, 17505, 9.34375027846545}, 		// җ 
+	{5, 15, 17535, 6.15722674599965}, 		// Ҙ 
+	{4, 15, 17550, 5.49707047632546}, 		// ҙ 
+	{6, 15, 17565, 7.54736350617895}, 		// Қ 
+	{5, 15, 17580, 6.423828316445}, 		// қ 
+	{5, 15, 17595, 7.05859396036249}, 		// Ҝ 
+	{5, 15, 17610, 6.03027361721615}, 		// ҝ 
+	{6, 15, 17625, 7.17285177626763}, 		// Ҟ 
+	{6, 15, 17640, 6.36669940849242}, 		// ҟ 
+	{8, 15, 17655, 8.20117211941397}, 		// Ҡ 
+	{7, 15, 17670, 6.95068380089651}, 		// ҡ 
+	{7, 15, 17685, 8.35351587395417}, 		// Ң 
+	{6, 15, 17700, 7.21728537134186}, 		// ң 
+	{8, 15, 17715, 9.24853543187783}, 		// Ҥ 
+	{7, 15, 17730, 7.87109398457687}, 		// ҥ 
+	{10, 15, 17745, 11.7304690995952}, 		// Ҧ 
+	{8, 15, 17775, 9.65478544398502}, 		// ҧ 
+	{6, 15, 17790, 8.39794946902839}, 		// Ҩ 
+	{5, 15, 17805, 7.20459005846351}, 		// ҩ 
+	{6, 15, 17820, 6.93164083157899}, 		// Ҫ 
+	{5, 15, 17835, 5.49707047632546}, 		// ҫ 
+	{7, 15, 17850, 6.33496112629655}, 		// Ҭ 
+	{5, 15, 17865, 5.03369155626569}, 		// ҭ 
+	{5, 15, 17880, 6.33496112629655}, 		// Ү 
+	{5, 15, 17895, 5.87158220623678}, 		// ү 
+	{5, 15, 17910, 6.33496112629655}, 		// Ұ 
+	{5, 15, 17925, 5.87158220623678}, 		// ұ 
+	{7, 15, 17940, 7.24902365353773}, 		// Ҳ 
+	{5, 15, 17955, 6.00488299145945}, 		// ҳ 
+	{9, 15, 17970, 9.4580080943706}, 		// Ҵ 
+	{8, 15, 18000, 7.75048851223255}, 		// ҵ 
+	{6, 15, 18015, 7.47753928534803}, 		// Ҷ 
+	{6, 15, 18030, 6.36035175205325}, 		// ҷ 
+	{5, 15, 18045, 7.22363302778103}, 		// Ҹ 
+	{5, 15, 18060, 6.0937501816079}, 		// ҹ 
+	{5, 15, 18075, 7.22363302778103}, 		// Һ 
+	{5, 15, 18090, 6.0937501816079}, 		// һ 
+	{9, 15, 18105, 9.68652372618089}, 		// Ҽ 
+	{7, 15, 18135, 7.76953148155008}, 		// ҽ 
+	{9, 15, 18150, 9.68652372618089}, 		// Ҿ 
+	{7, 15, 18180, 7.76953148155008}, 		// ҿ 
+	{1, 15, 18195, 3.27539072261425}, 		// Ӏ 
+	{9, 15, 18210, 10.4101565602468}, 		// Ӂ 
+	{9, 15, 18240, 8.95654323567578}, 		// ӂ 
+	{6, 15, 18270, 7.10302755543671}, 		// Ӄ 
+	{5, 15, 18285, 6.18896502819553}, 		// ӄ 
+	{8, 15, 18300, 8.21386743229232}, 		// Ӆ 
+	{7, 15, 18315, 6.70947285620787}, 		// ӆ 
+	{6, 15, 18330, 8.09960961638717}, 		// Ӈ 
+	{5, 15, 18345, 6.95068380089651}, 		// ӈ 
+	{7, 15, 18360, 8.09960961638717}, 		// Ӊ 
+	{6, 15, 18375, 7.03320333460579}, 		// ӊ 
+	{5, 15, 18390, 7.22363302778103}, 		// Ӌ 
+	{5, 15, 18405, 6.0937501816079}, 		// ӌ 
+	{10, 15, 18420, 11.4194339340756}, 		// Ӎ 
+	{8, 15, 18450, 9.2802737140737}, 		// ӎ 
+	{1, 15, 18465, 3.27539072261425}, 		// ӏ 
+	{7, 15, 18480, 7.52197288042225}, 		// Ӑ 
+	{5, 15, 18495, 6.22705096683057}, 		// ӑ 
+	{7, 15, 18510, 7.52197288042225}, 		// Ӓ 
+	{5, 15, 18525, 6.22705096683057}, 		// ӓ 
+	{10, 15, 18540, 9.92138701443037}, 		// Ӕ 
+	{9, 15, 18570, 10.0483401432139}, 		// ӕ 
+	{5, 15, 18600, 6.3476564391749}, 		// Ӗ 
+	{5, 15, 18615, 6.46826191151922}, 		// ӗ 
+	{7, 15, 18630, 8.35986353039334}, 		// Ә 
+	{5, 15, 18645, 6.46826191151922}, 		// ә 
+	{7, 15, 18660, 8.35986353039334}, 		// Ӛ 
+	{5, 15, 18675, 6.46826191151922}, 		// ӛ 
+	{9, 15, 18690, 10.4101565602468}, 		// Ӝ 
+	{9, 15, 18720, 8.95654323567578}, 		// ӝ 
+	{5, 15, 18750, 6.15722674599965}, 		// Ӟ 
+	{4, 15, 18765, 5.49707047632546}, 		// ӟ 
+	{5, 15, 18780, 6.15722674599965}, 		// Ӡ 
+	{5, 15, 18795, 6.0683595558512}, 		// ӡ 
+	{6, 15, 18810, 8.34082056107582}, 		// Ӣ 
+	{5, 15, 18825, 7.02685567816661}, 		// ӣ 
+	{6, 15, 18840, 8.34082056107582}, 		// Ӥ 
+	{5, 15, 18855, 7.02685567816661}, 		// ӥ 
+	{7, 15, 18870, 8.60742213152116}, 		// Ӧ 
+	{5, 15, 18885, 6.85546895430889}, 		// ӧ 
+	{7, 15, 18900, 8.60742213152116}, 		// Ө 
+	{6, 15, 18915, 6.81103535923467}, 		// ө 
+	{7, 15, 18930, 8.60742213152116}, 		// Ӫ 
+	{6, 15, 18945, 6.81103535923467}, 		// ӫ 
+	{6, 15, 18960, 7.12207052475424}, 		// Ӭ 
+	{5, 15, 18975, 5.75732439033163}, 		// ӭ 
+	{6, 15, 18990, 6.85546895430889}, 		// Ӯ 
+	{6, 15, 19005, 5.88427751911513}, 		// ӯ 
+	{6, 15, 19020, 6.85546895430889}, 		// Ӱ 
+	{6, 15, 19035, 5.88427751911513}, 		// ӱ 
+	{6, 15, 19050, 6.85546895430889}, 		// Ӳ 
+	{6, 15, 19065, 5.88427751911513}, 		// ӳ 
+	{5, 15, 19080, 7.22363302778103}, 		// Ӵ 
+	{5, 15, 19095, 6.0937501816079}, 		// ӵ 
+	{4, 15, 19110, 5.40185562973784}, 		// Ӷ 
+	{3, 15, 19125, 4.49414075893583}, 		// ӷ 
+	{8, 15, 19140, 9.90234404511284}, 		// Ӹ 
+	{7, 15, 19155, 8.65820338303456}, 		// ӹ 
+	{5, 15, 19170, 5.52246110208216}, 		// Ӻ 
+	{4, 15, 19185, 4.8305665502121}, 		// ӻ 
+	{7, 15, 19200, 7.34423850012536}, 		// Ӽ 
+	{5, 15, 19215, 5.99853533502028}, 		// ӽ 
+	{6, 15, 19230, 6.74755879484292}, 		// Ӿ 
+	{5, 15, 19245, 5.63037126154813}, 		// ӿ 
+	{5, 15, 19260, 6.90625020582229}, 		// Ԁ 
+	{5, 15, 19275, 6.83007832855219}, 		// ԁ 
+	{9, 15, 19290, 10.3403323394159}, 		// Ԃ 
+	{9, 15, 19320, 10.2895510879025}, 		// ԃ 
+	{8, 15, 19350, 9.93408232730872}, 		// Ԅ 
+	{8, 15, 19365, 9.10888699021598}, 		// ԅ 
+	{6, 15, 19380, 6.66503926113364}, 		// Ԇ 
+	{5, 15, 19395, 6.05566424297285}, 		// ԇ 
+	{10, 15, 19410, 11.470215185589}, 		// Ԉ 
+	{9, 15, 19440, 9.94677764018707}, 		// ԉ 
+	{9, 15, 19470, 11.6289065965684}, 		// Ԋ 
+	{8, 15, 19500, 10.2578128057066}, 		// ԋ 
+	{7, 15, 19515, 8.25830102736654}, 		// Ԍ 
+	{6, 15, 19530, 6.93798848801816}, 		// ԍ 
+	{8, 15, 19545, 8.33447290463664}, 		// Ԏ 
+	{6, 15, 19560, 7.31884787436866}, 		// ԏ 
+	{5, 15, 19575, 6.15722674599965}, 		// Ԑ 
+	{4, 15, 19590, 5.49707047632546}, 		// ԑ 
+	{8, 15, 19605, 8.18212915009644}, 		// Ԓ 
+	{7, 15, 19620, 6.77294942059962}, 		// ԓ 
+	{10, 15, 19635, 10.2895510879025}, 		// Ԕ 
+	{8, 15, 19665, 8.68359400879126}, 		// ԕ 
+	{7, 15, 19680, 8.89306667128403}, 		// Ԗ 
+	{7, 15, 19695, 8.81054713757476}, 		// ԗ 
+	{9, 15, 19710, 10.2895510879025}, 		// Ԙ 
+	{9, 15, 19740, 10.0292971738963}, 		// ԙ 
+	{8, 15, 19770, 8.74707057318301}, 		// Ԛ 
+	{5, 15, 19785, 6.83007832855219}, 		// ԛ 
+	{11, 15, 19800, 11.5654300321767}, 		// Ԝ 
+	{8, 15, 19830, 9.29296902695205}, 		// ԝ 
+	{5, 15, 19845, 6.75390645128209}, 		// Ԟ 
+	{4, 15, 19860, 5.90966814487183}, 		// ԟ 
+	{11, 15, 19875, 11.5844730014942}, 		// Ԡ 
+	{9, 15, 19905, 9.51513700232317}, 		// ԡ 
+	{10, 15, 19935, 11.7304690995952}, 		// Ԣ 
+	{8, 15, 19965, 9.82617216784274}, 		// ԣ 
+	{7, 15, 19980, 8.32177759175829}, 		// Ԥ 
+	{6, 15, 19995, 7.00781270884909}, 		// ԥ 
+	{7, 15, 20010, 7.82666038950265}, 		// Ԧ 
+	{6, 15, 20025, 6.88085958006559}, 		// ԧ 
+	{7, 15, 20040, 8.23925805804902}, 		// Ԩ 
+	{6, 15, 20055, 6.95068380089651}, 		// ԩ 
+	{15, 15, 20070, 15.3232426441682}, 		// Ԫ 
+	{13, 15, 20100, 13.0190433567477}, 		// ԫ 
+	{7, 15, 20130, 7.4838869417872}, 		// Ԭ 
+	{6, 15, 20145, 6.58251972742437}, 		// ԭ 
+	{8, 15, 20160, 8.19482446297479}, 		// Ԯ 
+	{7, 15, 20175, 6.88085958006559}, 		// ԯ 
 };
 
-// Character descriptors for Calibri 8pt(block #1)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block1[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #1)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block1[] PROGMEM = 
 {
-	{3, 20190}, 		// ֑ 
-	{3, 20205}, 		// ֒ 
-	{2, 20220}, 		// ֓ 
-	{1, 20235}, 		// ֔ 
-	{3, 20250}, 		// ֕ 
-	{2, 20265}, 		// ֖ 
-	{1, 20280}, 		// ֗ 
-	{4, 20295}, 		// ֘ 
-	{2, 20310}, 		// ֙ 
-	{2, 20325}, 		// ֚ 
-	{2, 20340}, 		// ֛ 
-	{2, 20355}, 		// ֜ 
-	{2, 20370}, 		// ֝ 
-	{4, 20385}, 		// ֞ 
-	{6, 20400}, 		// ֟ 
-	{3, 20415}, 		// ֠ 
-	{3, 20430}, 		// ֡ 
-	{3, 20445}, 		// ֢ 
-	{2, 20460}, 		// ֣ 
-	{2, 20475}, 		// ֤ 
-	{2, 20490}, 		// ֥ 
-	{4, 20505}, 		// ֦ 
-	{2, 20520}, 		// ֧ 
-	{2, 20535}, 		// ֨ 
-	{3, 20550}, 		// ֩ 
-	{3, 20565}, 		// ֪ 
-	{2, 20580}, 		// ֫ 
-	{2, 20595}, 		// ֬ 
-	{2, 20610}, 		// ֭ 
-	{4, 20625}, 		// ֮ 
-	{3, 20640}, 		// ֯ 
-	{1, 20655}, 		// ְ 
-	{5, 20670}, 		// ֱ 
-	{4, 20685}, 		// ֲ 
-	{4, 20700}, 		// ֳ 
-	{1, 20715}, 		// ִ 
-	{3, 20730}, 		// ֵ 
-	{3, 20745}, 		// ֶ 
-	{3, 20760}, 		// ַ 
-	{3, 20775}, 		// ָ 
-	{1, 20790}, 		// ֹ 
-	{1, 20805}, 		// ֺ 
-	{5, 20820}, 		// ֻ 
-	{1, 20835}, 		// ּ 
-	{1, 20850}, 		// ֽ 
-	{3, 20865}, 		// ־ 
-	{3, 20880}, 		// ֿ 
-	{1, 20895}, 		// ׀ 
-	{7, 20910}, 		// ׁ 
-	{7, 20925}, 		// ׂ 
-	{1, 20940}, 		// ׃ 
-	{1, 20955}, 		// ׄ 
-	{1, 20970}, 		// ׅ 
-	{4, 20985}, 		// ׆ 
-	{3, 21000}, 		// ׇ 
-	{0, 0}, 		// ׈ 
-	{0, 0}, 		// ׉ 
-	{0, 0}, 		// ׊ 
-	{0, 0}, 		// ׋ 
-	{0, 0}, 		// ׌ 
-	{0, 0}, 		// ׍ 
-	{0, 0}, 		// ׎ 
-	{0, 0}, 		// ׏ 
-	{5, 21015}, 		// א 
-	{6, 21030}, 		// ב 
-	{4, 21045}, 		// ג 
-	{5, 21060}, 		// ד 
-	{5, 21075}, 		// ה 
-	{1, 21090}, 		// ו 
-	{3, 21105}, 		// ז 
-	{6, 21120}, 		// ח 
-	{6, 21135}, 		// ט 
-	{1, 21150}, 		// י 
-	{5, 21165}, 		// ך 
-	{5, 21180}, 		// כ 
-	{5, 21195}, 		// ל 
-	{6, 21210}, 		// ם 
-	{6, 21225}, 		// מ 
-	{1, 21240}, 		// ן 
-	{3, 21255}, 		// נ 
-	{6, 21270}, 		// ס 
-	{6, 21285}, 		// ע 
-	{5, 21300}, 		// ף 
-	{5, 21315}, 		// פ 
-	{5, 21330}, 		// ץ 
-	{5, 21345}, 		// צ 
-	{5, 21360}, 		// ק 
-	{5, 21375}, 		// ר 
-	{8, 21390}, 		// ש 
-	{7, 21405}, 		// ת 
-	{0, 0}, 		// ׫ 
-	{0, 0}, 		// ׬ 
-	{0, 0}, 		// ׭ 
-	{0, 0}, 		// ׮ 
-	{0, 0}, 		// ׯ 
-	{4, 21420}, 		// װ 
-	{4, 21435}, 		// ױ 
-	{4, 21450}, 		// ײ 
-	{2, 21465}, 		// ׳ 
-	{5, 21480}, 		// ״ 
-	{0, 0}, 		// ׵ 
-	{0, 0}, 		// ׶ 
-	{0, 0}, 		// ׷ 
-	{0, 0}, 		// ׸ 
-	{0, 0}, 		// ׹ 
-	{0, 0}, 		// ׺ 
-	{0, 0}, 		// ׻ 
-	{0, 0}, 		// ׼ 
-	{0, 0}, 		// ׽ 
-	{0, 0}, 		// ׾ 
-	{0, 0}, 		// ׿ 
-	{12, 21495}, 		// ؀ 
-	{12, 21525}, 		// ؁ 
-	{9, 21555}, 		// ؂ 
-	{15, 21585}, 		// ؃ 
-	{15, 21615}, 		// ؄ 
-	{7, 21645}, 		// ؅ 
-	{5, 21660}, 		// ؆ 
-	{5, 21675}, 		// ؇ 
-	{11, 21690}, 		// ؈ 
-	{8, 21720}, 		// ؉ 
-	{10, 21735}, 		// ؊ 
-	{5, 21765}, 		// ؋ 
-	{2, 21780}, 		// ، 
-	{4, 21795}, 		// ؍ 
-	{11, 21810}, 		// ؎ 
-	{7, 21840}, 		// ؏ 
-	{3, 21855}, 		// ؐ 
-	{3, 21870}, 		// ؑ 
-	{4, 21885}, 		// ؒ 
-	{5, 21900}, 		// ؓ 
-	{6, 21915}, 		// ؔ 
-	{2, 21930}, 		// ؕ 
-	{4, 21945}, 		// ؖ 
-	{2, 21960}, 		// ؗ 
-	{2, 21975}, 		// ؘ 
-	{2, 21990}, 		// ؙ 
-	{2, 22005}, 		// ؚ 
-	{2, 22020}, 		// ؛ 
-	{2, 22035}, 		// ؜ 
-	{0, 0}, 		// ؝ 
-	{4, 22050}, 		// ؞ 
-	{4, 22065}, 		// ؟ 
-	{8, 22080}, 		// ؠ 
-	{3, 22095}, 		// ء 
-	{4, 22110}, 		// آ 
-	{2, 22125}, 		// أ 
-	{5, 22140}, 		// ؤ 
-	{2, 22155}, 		// إ 
-	{8, 22170}, 		// ئ 
-	{1, 22185}, 		// ا 
-	{10, 22200}, 		// ب 
-	{4, 22230}, 		// ة 
-	{10, 22245}, 		// ت 
-	{10, 22275}, 		// ث 
-	{7, 22305}, 		// ج 
-	{7, 22320}, 		// ح 
-	{7, 22335}, 		// خ 
-	{4, 22350}, 		// د 
-	{4, 22365}, 		// ذ 
-	{5, 22380}, 		// ر 
-	{5, 22395}, 		// ز 
-	{11, 22410}, 		// س 
-	{11, 22440}, 		// ش 
-	{13, 22470}, 		// ص 
-	{13, 22500}, 		// ض 
-	{8, 22530}, 		// ط 
-	{8, 22545}, 		// ظ 
-	{7, 22560}, 		// ع 
-	{7, 22575}, 		// غ 
-	{11, 22590}, 		// ػ 
-	{11, 22620}, 		// ؼ 
-	{8, 22650}, 		// ؽ 
-	{8, 22665}, 		// ؾ 
-	{8, 22680}, 		// ؿ 
-	{2, 22695}, 		// ـ 
-	{11, 22710}, 		// ف 
-	{8, 22740}, 		// ق 
-	{8, 22755}, 		// ك 
-	{7, 22770}, 		// ل 
-	{4, 22785}, 		// م 
-	{7, 22800}, 		// ن 
-	{8, 22815}, 		// ه 
-	{5, 22830}, 		// و 
-	{8, 22845}, 		// ى 
-	{8, 22860}, 		// ي 
-	{2, 22875}, 		// ً 
-	{4, 22890}, 		// ٌ 
-	{2, 22905}, 		// ٍ 
-	{2, 22920}, 		// َ 
-	{2, 22935}, 		// ُ 
-	{2, 22950}, 		// ِ 
-	{2, 22965}, 		// ّ 
-	{2, 22980}, 		// ْ 
-	{2, 22995}, 		// ٓ 
-	{2, 23010}, 		// ٔ 
-	{2, 23025}, 		// ٕ 
-	{1, 23040}, 		// ٖ 
-	{2, 23055}, 		// ٗ 
-	{2, 23070}, 		// ٘ 
-	{6, 23085}, 		// ٙ 
-	{6, 23100}, 		// ٚ 
-	{6, 23115}, 		// ٛ 
-	{6, 23130}, 		// ٜ 
-	{6, 23145}, 		// ٝ 
-	{6, 23160}, 		// ٞ 
-	{6, 23175}, 		// ٟ 
-	{1, 23190}, 		// ٠ 
-	{2, 23205}, 		// ١ 
-	{4, 23220}, 		// ٢ 
-	{5, 23235}, 		// ٣ 
-	{4, 23250}, 		// ٤ 
-	{4, 23265}, 		// ٥ 
-	{5, 23280}, 		// ٦ 
-	{5, 23295}, 		// ٧ 
-	{5, 23310}, 		// ٨ 
-	{4, 23325}, 		// ٩ 
-	{7, 23340}, 		// ٪ 
-	{2, 23355}, 		// ٫ 
-	{2, 23370}, 		// ٬ 
-	{3, 23385}, 		// ٭ 
-	{10, 23400}, 		// ٮ 
-	{8, 23430}, 		// ٯ 
-	{1, 23445}, 		// ٰ 
-	{3, 23460}, 		// ٱ 
-	{2, 23475}, 		// ٲ 
-	{2, 23490}, 		// ٳ 
-	{2, 23505}, 		// ٴ 
-	{3, 23520}, 		// ٵ 
-	{6, 23535}, 		// ٶ 
-	{6, 23550}, 		// ٷ 
-	{9, 23565}, 		// ٸ 
-	{10, 23595}, 		// ٹ 
-	{10, 23625}, 		// ٺ 
-	{10, 23655}, 		// ٻ 
-	{10, 23685}, 		// ټ 
-	{10, 23715}, 		// ٽ 
-	{10, 23745}, 		// پ 
-	{10, 23775}, 		// ٿ 
-	{10, 23805}, 		// ڀ 
-	{7, 23835}, 		// ځ 
-	{7, 23850}, 		// ڂ 
-	{7, 23865}, 		// ڃ 
-	{7, 23880}, 		// ڄ 
-	{7, 23895}, 		// څ 
-	{7, 23910}, 		// چ 
-	{7, 23925}, 		// ڇ 
-	{4, 23940}, 		// ڈ 
-	{4, 23955}, 		// ډ 
-	{4, 23970}, 		// ڊ 
-	{4, 23985}, 		// ڋ 
-	{4, 24000}, 		// ڌ 
-	{4, 24015}, 		// ڍ 
-	{4, 24030}, 		// ڎ 
-	{4, 24045}, 		// ڏ 
-	{4, 24060}, 		// ڐ 
-	{5, 24075}, 		// ڑ 
-	{5, 24090}, 		// ڒ 
-	{5, 24105}, 		// ړ 
-	{6, 24120}, 		// ڔ 
-	{5, 24135}, 		// ڕ 
-	{6, 24150}, 		// ږ 
-	{5, 24165}, 		// ڗ 
-	{5, 24180}, 		// ژ 
-	{5, 24195}, 		// ڙ 
-	{11, 24210}, 		// ښ 
-	{11, 24240}, 		// ڛ 
-	{11, 24270}, 		// ڜ 
-	{13, 24300}, 		// ڝ 
-	{13, 24330}, 		// ڞ 
-	{8, 24360}, 		// ڟ 
-	{7, 24375}, 		// ڠ 
-	{11, 24390}, 		// ڡ 
-	{11, 24420}, 		// ڢ 
-	{11, 24450}, 		// ڣ 
-	{11, 24480}, 		// ڤ 
-	{11, 24510}, 		// ڥ 
-	{11, 24540}, 		// ڦ 
-	{8, 24570}, 		// ڧ 
-	{8, 24585}, 		// ڨ 
-	{11, 24600}, 		// ک 
-	{13, 24630}, 		// ڪ 
-	{11, 24660}, 		// ګ 
-	{8, 24690}, 		// ڬ 
-	{8, 24705}, 		// ڭ 
-	{8, 24720}, 		// ڮ 
-	{11, 24735}, 		// گ 
-	{11, 24765}, 		// ڰ 
-	{11, 24795}, 		// ڱ 
-	{11, 24825}, 		// ڲ 
-	{11, 24855}, 		// ڳ 
-	{11, 24885}, 		// ڴ 
-	{7, 24915}, 		// ڵ 
-	{7, 24930}, 		// ڶ 
-	{7, 24945}, 		// ڷ 
-	{7, 24960}, 		// ڸ 
-	{7, 24975}, 		// ڹ 
-	{7, 24990}, 		// ں 
-	{7, 25005}, 		// ڻ 
-	{7, 25020}, 		// ڼ 
-	{7, 25035}, 		// ڽ 
-	{8, 25050}, 		// ھ 
-	{7, 25065}, 		// ڿ 
-	{4, 25080}, 		// ۀ 
-	{4, 25095}, 		// ہ 
-	{4, 25110}, 		// ۂ 
-	{4, 25125}, 		// ۃ 
-	{5, 25140}, 		// ۄ 
-	{5, 25155}, 		// ۅ 
-	{5, 25170}, 		// ۆ 
-	{5, 25185}, 		// ۇ 
-	{5, 25200}, 		// ۈ 
-	{5, 25215}, 		// ۉ 
-	{5, 25230}, 		// ۊ 
-	{5, 25245}, 		// ۋ 
-	{8, 25260}, 		// ی 
-	{10, 25275}, 		// ۍ 
-	{8, 25305}, 		// ێ 
-	{5, 25320}, 		// ۏ 
-	{8, 25335}, 		// ې 
-	{8, 25350}, 		// ۑ 
-	{11, 25365}, 		// ے 
-	{11, 25395}, 		// ۓ 
-	{3, 25425}, 		// ۔ 
-	{4, 25440}, 		// ە 
-	{6, 25455}, 		// ۖ 
-	{4, 25470}, 		// ۗ 
-	{3, 25485}, 		// ۘ 
-	{2, 25500}, 		// ۙ 
-	{3, 25515}, 		// ۚ 
-	{2, 25530}, 		// ۛ 
-	{4, 25545}, 		// ۜ 
-	{15, 25560}, 		// ۝ 
-	{7, 25590}, 		// ۞ 
-	{2, 25605}, 		// ۟ 
-	{2, 25620}, 		// ۠ 
-	{3, 25635}, 		// ۡ 
-	{2, 25650}, 		// ۢ 
-	{4, 25665}, 		// ۣ 
-	{2, 25680}, 		// ۤ 
-	{2, 25695}, 		// ۥ 
-	{4, 25710}, 		// ۦ 
-	{4, 25725}, 		// ۧ 
-	{2, 25740}, 		// ۨ 
-	{5, 25755}, 		// ۩ 
-	{2, 25770}, 		// ۪ 
-	{2, 25785}, 		// ۫ 
-	{2, 25800}, 		// ۬ 
-	{2, 25815}, 		// ۭ 
-	{4, 25830}, 		// ۮ 
-	{5, 25845}, 		// ۯ 
-	{1, 25860}, 		// ۰ 
-	{2, 25875}, 		// ۱ 
-	{4, 25890}, 		// ۲ 
-	{5, 25905}, 		// ۳ 
-	{5, 25920}, 		// ۴ 
-	{5, 25935}, 		// ۵ 
-	{5, 25950}, 		// ۶ 
-	{5, 25965}, 		// ۷ 
-	{5, 25980}, 		// ۸ 
-	{4, 25995}, 		// ۹ 
-	{11, 26010}, 		// ۺ 
-	{13, 26040}, 		// ۻ 
-	{7, 26070}, 		// ۼ 
-	{3, 26085}, 		// ۽ 
-	{4, 26100}, 		// ۾ 
-	{8, 26115}, 		// ۿ 
+	{3, 15, 20190, 0}, 		// ֑ 
+	{3, 15, 20205, 0}, 		// ֒ 
+	{2, 15, 20220, 0}, 		// ֓ 
+	{1, 15, 20235, 0}, 		// ֔ 
+	{3, 15, 20250, 0}, 		// ֕ 
+	{2, 15, 20265, 0}, 		// ֖ 
+	{1, 15, 20280, 0}, 		// ֗ 
+	{4, 15, 20295, 0}, 		// ֘ 
+	{2, 15, 20310, 0}, 		// ֙ 
+	{2, 15, 20325, 0}, 		// ֚ 
+	{2, 15, 20340, 0}, 		// ֛ 
+	{2, 15, 20355, 0}, 		// ֜ 
+	{2, 15, 20370, 0}, 		// ֝ 
+	{4, 15, 20385, 0}, 		// ֞ 
+	{6, 15, 20400, 0}, 		// ֟ 
+	{3, 15, 20415, 0}, 		// ֠ 
+	{3, 15, 20430, 0}, 		// ֡ 
+	{3, 15, 20445, 0}, 		// ֢ 
+	{2, 15, 20460, 0}, 		// ֣ 
+	{2, 15, 20475, 0}, 		// ֤ 
+	{2, 15, 20490, 0}, 		// ֥ 
+	{4, 15, 20505, 0}, 		// ֦ 
+	{2, 15, 20520, 0}, 		// ֧ 
+	{2, 15, 20535, 0}, 		// ֨ 
+	{3, 15, 20550, 0}, 		// ֩ 
+	{3, 15, 20565, 0}, 		// ֪ 
+	{2, 15, 20580, 0}, 		// ֫ 
+	{2, 15, 20595, 0}, 		// ֬ 
+	{2, 15, 20610, 0}, 		// ֭ 
+	{4, 15, 20625, 0}, 		// ֮ 
+	{3, 15, 20640, 0}, 		// ֯ 
+	{1, 15, 20655, 0}, 		// ְ 
+	{5, 15, 20670, 0}, 		// ֱ 
+	{4, 15, 20685, 0}, 		// ֲ 
+	{4, 15, 20700, 0}, 		// ֳ 
+	{1, 15, 20715, 0}, 		// ִ 
+	{3, 15, 20730, 0}, 		// ֵ 
+	{3, 15, 20745, 0}, 		// ֶ 
+	{3, 15, 20760, 0}, 		// ַ 
+	{3, 15, 20775, 0}, 		// ָ 
+	{1, 15, 20790, 0}, 		// ֹ 
+	{1, 15, 20805, 0}, 		// ֺ 
+	{5, 15, 20820, 0}, 		// ֻ 
+	{1, 15, 20835, 0}, 		// ּ 
+	{1, 15, 20850, 0}, 		// ֽ 
+	{3, 15, 20865, 3.97998058736266}, 		// ־ 
+	{3, 15, 20880, 0}, 		// ֿ 
+	{1, 15, 20895, 3.0341797779256}, 		// ׀ 
+	{7, 15, 20910, 0}, 		// ׁ 
+	{7, 15, 20925, 0}, 		// ׂ 
+	{1, 15, 20940, 3.47851572866784}, 		// ׃ 
+	{1, 15, 20955, 0}, 		// ׄ 
+	{1, 15, 20970, 0}, 		// ׅ 
+	{4, 15, 20985, 4.74169936006365}, 		// ׆ 
+	{3, 15, 21000, 0}, 		// ׇ 
+	{0, 0, 0, 0}, 		// ׈ 
+	{0, 0, 0, 0}, 		// ׉ 
+	{0, 0, 0, 0}, 		// ׊ 
+	{0, 0, 0, 0}, 		// ׋ 
+	{0, 0, 0, 0}, 		// ׌ 
+	{0, 0, 0, 0}, 		// ׍ 
+	{0, 0, 0, 0}, 		// ׎ 
+	{0, 0, 0, 0}, 		// ׏ 
+	{5, 15, 21015, 6.97607442665321}, 		// א 
+	{6, 15, 21030, 6.41748066000582}, 		// ב 
+	{4, 15, 21045, 4.79248061157705}, 		// ג 
+	{5, 15, 21060, 5.78271501608833}, 		// ד 
+	{5, 15, 21075, 7.40771506451711}, 		// ה 
+	{1, 15, 21090, 3.0087891521689}, 		// ו 
+	{3, 15, 21105, 3.77685558130906}, 		// ז 
+	{6, 15, 21120, 7.49658225466555}, 		// ח 
+	{6, 15, 21135, 7.19824240202433}, 		// ט 
+	{1, 15, 21150, 3.0087891521689}, 		// י 
+	{5, 15, 21165, 5.78906267252751}, 		// ך 
+	{5, 15, 21180, 6.18261737175635}, 		// כ 
+	{5, 15, 21195, 5.63671891798731}, 		// ל 
+	{6, 15, 21210, 7.60449241413153}, 		// ם 
+	{6, 15, 21225, 7.54736350617895}, 		// מ 
+	{1, 15, 21240, 3.0087891521689}, 		// ן 
+	{3, 15, 21255, 4.74169936006365}, 		// נ 
+	{6, 15, 21270, 7.38232443876041}, 		// ס 
+	{6, 15, 21285, 6.81103535923467}, 		// ע 
+	{5, 15, 21300, 6.74755879484292}, 		// ף 
+	{5, 15, 21315, 7.03320333460579}, 		// פ 
+	{5, 15, 21330, 5.64941423086566}, 		// ץ 
+	{5, 15, 21345, 6.30957050053985}, 		// צ 
+	{5, 15, 21360, 6.97607442665321}, 		// ק 
+	{5, 15, 21375, 5.78906267252751}, 		// ר 
+	{8, 15, 21390, 9.01367214362836}, 		// ש 
+	{7, 15, 21405, 7.8647463281377}, 		// ת 
+	{0, 0, 0, 0}, 		// ׫ 
+	{0, 0, 0, 0}, 		// ׬ 
+	{0, 0, 0, 0}, 		// ׭ 
+	{0, 0, 0, 0}, 		// ׮ 
+	{0, 0, 0, 0}, 		// ׯ 
+	{4, 15, 21420, 6.02392596077698}, 		// װ 
+	{4, 15, 21435, 6.02392596077698}, 		// ױ 
+	{4, 15, 21450, 6.02392596077698}, 		// ײ 
+	{2, 15, 21465, 3.24365244041837}, 		// ׳ 
+	{5, 15, 21480, 5.43994156837289}, 		// ״ 
+	{0, 0, 0, 0}, 		// ׵ 
+	{0, 0, 0, 0}, 		// ׶ 
+	{0, 0, 0, 0}, 		// ׷ 
+	{0, 0, 0, 0}, 		// ׸ 
+	{0, 0, 0, 0}, 		// ׹ 
+	{0, 0, 0, 0}, 		// ׺ 
+	{0, 0, 0, 0}, 		// ׻ 
+	{0, 0, 0, 0}, 		// ׼ 
+	{0, 0, 0, 0}, 		// ׽ 
+	{0, 0, 0, 0}, 		// ׾ 
+	{0, 0, 0, 0}, 		// ׿ 
+	{12, 15, 21495, 13.3745121173415}, 		// ؀ 
+	{12, 15, 21525, 9.36279324778297}, 		// ؁ 
+	{9, 15, 21555, 5.70019548237906}, 		// ؂ 
+	{15, 15, 21585, 16.3833012695104}, 		// ؃ 
+	{15, 15, 21615, 16.4150395517063}, 		// ؄ 
+	{7, 15, 21645, 0}, 		// ؅ 
+	{5, 15, 21660, 6.78564473347797}, 		// ؆ 
+	{5, 15, 21675, 6.78564473347797}, 		// ؇ 
+	{11, 15, 21690, 11.0449222041643}, 		// ؈ 
+	{8, 15, 21720, 9.2041018368036}, 		// ؉ 
+	{10, 15, 21735, 11.2988284617313}, 		// ؊ 
+	{5, 15, 21765, 6.21435565395223}, 		// ؋ 
+	{2, 15, 21780, 3.89746105365339}, 		// ، 
+	{4, 15, 21795, 5.26855484451517}, 		// ؍ 
+	{11, 15, 21810, 12.0097659829189}, 		// ؎ 
+	{7, 15, 21840, 7.06494161680166}, 		// ؏ 
+	{3, 15, 21855, 0}, 		// ؐ 
+	{3, 15, 21870, 0}, 		// ؑ 
+	{4, 15, 21885, 0}, 		// ؒ 
+	{5, 15, 21900, 0}, 		// ؓ 
+	{5, 15, 21915, 0}, 		// ؔ 
+	{2, 15, 21930, 0}, 		// ؕ 
+	{4, 15, 21945, 0}, 		// ؖ 
+	{2, 15, 21960, 0}, 		// ؗ 
+	{2, 15, 21975, 0}, 		// ؘ 
+	{2, 15, 21990, 0}, 		// ؙ 
+	{2, 15, 22005, 0}, 		// ؚ 
+	{2, 15, 22020, 3.89746105365339}, 		// ؛ 
+	{2, 15, 22035, 11.9272464492096}, 		// ؜ 
+	{0, 0, 0, 0}, 		// ؝ 
+	{4, 15, 22050, 5.67480485662236}, 		// ؞ 
+	{4, 15, 22065, 6.15722674599965}, 		// ؟ 
+	{8, 15, 22080, 8.70263697810879}, 		// ؠ 
+	{3, 15, 22095, 4.8813478017255}, 		// ء 
+	{4, 15, 22110, 3.99902355668019}, 		// آ 
+	{2, 15, 22125, 2.39306647756894}, 		// أ 
+	{5, 15, 22140, 5.64941423086566}, 		// ؤ 
+	{2, 15, 22155, 2.46923835483904}, 		// إ 
+	{8, 15, 22170, 8.70263697810879}, 		// ئ 
+	{1, 15, 22185, 2.46923835483904}, 		// ا 
+	{10, 15, 22200, 10.416504216686}, 		// ب 
+	{4, 15, 22230, 4.50683607181418}, 		// ة 
+	{10, 15, 22245, 10.416504216686}, 		// ت 
+	{10, 15, 22275, 10.416504216686}, 		// ث 
+	{7, 15, 22305, 7.78222679442842}, 		// ج 
+	{7, 15, 22320, 7.78222679442842}, 		// ح 
+	{7, 15, 22335, 7.78222679442842}, 		// خ 
+	{4, 15, 22350, 5.32568375246774}, 		// د 
+	{4, 15, 22365, 5.32568375246774}, 		// ذ 
+	{5, 15, 22380, 5.43359391193371}, 		// ر 
+	{5, 15, 22395, 5.43359391193371}, 		// ز 
+	{11, 15, 22410, 11.6479495658859}, 		// س 
+	{11, 15, 22440, 11.6479495658859}, 		// ش 
+	{13, 15, 22470, 13.4443363381724}, 		// ص 
+	{13, 15, 22500, 13.4443363381724}, 		// ض 
+	{8, 15, 22530, 9.92773467086954}, 		// ط 
+	{8, 15, 22545, 9.92773467086954}, 		// ظ 
+	{7, 15, 22560, 7.64892600920575}, 		// ع 
+	{7, 15, 22575, 7.64892600920575}, 		// غ 
+	{11, 15, 22590, 11.578125345055}, 		// ػ 
+	{11, 15, 22620, 11.578125345055}, 		// ؼ 
+	{8, 15, 22650, 8.70263697810879}, 		// ؽ 
+	{8, 15, 22665, 8.70263697810879}, 		// ؾ 
+	{8, 15, 22680, 8.70263697810879}, 		// ؿ 
+	{2, 15, 22695, 0.603027361721615}, 		// ـ 
+	{11, 15, 22710, 11.0195315784076}, 		// ف 
+	{8, 15, 22740, 8.08056664706965}, 		// ق 
+	{8, 15, 22755, 8.67089869591291}, 		// ك 
+	{7, 15, 22770, 7.10302755543671}, 		// ل 
+	{4, 15, 22785, 5.57324235359556}, 		// م 
+	{7, 15, 22800, 7.07763692968001}, 		// ن 
+	{8, 15, 22815, 8.35351587395417}, 		// ه 
+	{5, 15, 22830, 5.64941423086566}, 		// و 
+	{8, 15, 22845, 8.70263697810879}, 		// ى 
+	{8, 15, 22860, 8.70263697810879}, 		// ي 
+	{2, 15, 22875, 0}, 		// ً 
+	{4, 15, 22890, 0}, 		// ٌ 
+	{2, 15, 22905, 0}, 		// ٍ 
+	{2, 15, 22920, 0}, 		// َ 
+	{2, 15, 22935, 0}, 		// ُ 
+	{2, 15, 22950, 0}, 		// ِ 
+	{2, 15, 22965, 0}, 		// ّ 
+	{2, 15, 22980, 0}, 		// ْ 
+	{2, 15, 22995, 0}, 		// ٓ 
+	{2, 15, 23010, 0}, 		// ٔ 
+	{2, 15, 23025, 0}, 		// ٕ 
+	{1, 15, 23040, 0}, 		// ٖ 
+	{2, 15, 23055, 0}, 		// ٗ 
+	{2, 15, 23070, 0}, 		// ٘ 
+	{6, 15, 23085, 0}, 		// ٙ 
+	{6, 15, 23100, 0}, 		// ٚ 
+	{6, 15, 23115, 0}, 		// ٛ 
+	{6, 15, 23130, 0}, 		// ٜ 
+	{6, 15, 23145, 0}, 		// ٝ 
+	{6, 15, 23160, 0}, 		// ٞ 
+	{6, 15, 23175, 0}, 		// ٟ 
+	{1, 15, 23190, 6.60156269674189}, 		// ٠ 
+	{2, 15, 23205, 6.60156269674189}, 		// ١ 
+	{4, 15, 23220, 6.60156269674189}, 		// ٢ 
+	{5, 15, 23235, 6.60156269674189}, 		// ٣ 
+	{4, 15, 23250, 6.60156269674189}, 		// ٤ 
+	{4, 15, 23265, 6.60156269674189}, 		// ٥ 
+	{5, 15, 23280, 6.60156269674189}, 		// ٦ 
+	{5, 15, 23295, 6.60156269674189}, 		// ٧ 
+	{5, 15, 23310, 6.60156269674189}, 		// ٨ 
+	{4, 15, 23325, 6.60156269674189}, 		// ٩ 
+	{7, 15, 23340, 8.85498073264898}, 		// ٪ 
+	{2, 15, 23355, 3.47216807222867}, 		// ٫ 
+	{2, 15, 23370, 3.67529307828227}, 		// ٬ 
+	{3, 15, 23385, 5.28125015739352}, 		// ٭ 
+	{10, 15, 23400, 10.416504216686}, 		// ٮ 
+	{8, 15, 23430, 8.08056664706965}, 		// ٯ 
+	{1, 15, 23445, 0}, 		// ٰ 
+	{3, 15, 23460, 2.39306647756894}, 		// ٱ 
+	{2, 15, 23475, 2.39306647756894}, 		// ٲ 
+	{2, 15, 23490, 2.46923835483904}, 		// ٳ 
+	{2, 15, 23505, 3.68164073472144}, 		// ٴ 
+	{3, 15, 23520, 3.48486338510702}, 		// ٵ 
+	{6, 15, 23535, 5.64941423086566}, 		// ٶ 
+	{6, 15, 23550, 5.64941423086566}, 		// ٷ 
+	{9, 15, 23565, 8.70263697810879}, 		// ٸ 
+	{10, 15, 23595, 10.416504216686}, 		// ٹ 
+	{10, 15, 23625, 10.416504216686}, 		// ٺ 
+	{10, 15, 23655, 10.416504216686}, 		// ٻ 
+	{10, 15, 23685, 10.416504216686}, 		// ټ 
+	{10, 15, 23715, 10.416504216686}, 		// ٽ 
+	{10, 15, 23745, 10.416504216686}, 		// پ 
+	{10, 15, 23775, 10.416504216686}, 		// ٿ 
+	{10, 15, 23805, 10.416504216686}, 		// ڀ 
+	{7, 15, 23835, 7.78222679442842}, 		// ځ 
+	{7, 15, 23850, 7.78222679442842}, 		// ڂ 
+	{7, 15, 23865, 7.78222679442842}, 		// ڃ 
+	{7, 15, 23880, 7.78222679442842}, 		// ڄ 
+	{7, 15, 23895, 7.78222679442842}, 		// څ 
+	{7, 15, 23910, 7.78222679442842}, 		// چ 
+	{7, 15, 23925, 7.78222679442842}, 		// ڇ 
+	{4, 15, 23940, 5.32568375246774}, 		// ڈ 
+	{4, 15, 23955, 5.32568375246774}, 		// ډ 
+	{4, 15, 23970, 5.32568375246774}, 		// ڊ 
+	{4, 15, 23985, 5.32568375246774}, 		// ڋ 
+	{4, 15, 24000, 5.32568375246774}, 		// ڌ 
+	{4, 15, 24015, 5.32568375246774}, 		// ڍ 
+	{4, 15, 24030, 5.32568375246774}, 		// ڎ 
+	{4, 15, 24045, 5.32568375246774}, 		// ڏ 
+	{4, 15, 24060, 5.32568375246774}, 		// ڐ 
+	{5, 15, 24075, 5.43359391193371}, 		// ڑ 
+	{5, 15, 24090, 5.43359391193371}, 		// ڒ 
+	{5, 15, 24105, 5.43359391193371}, 		// ړ 
+	{6, 15, 24120, 5.43359391193371}, 		// ڔ 
+	{5, 15, 24135, 5.43359391193371}, 		// ڕ 
+	{6, 15, 24150, 5.43359391193371}, 		// ږ 
+	{5, 15, 24165, 5.43359391193371}, 		// ڗ 
+	{5, 15, 24180, 5.43359391193371}, 		// ژ 
+	{5, 15, 24195, 5.43359391193371}, 		// ڙ 
+	{11, 15, 24210, 11.6479495658859}, 		// ښ 
+	{11, 15, 24240, 11.6479495658859}, 		// ڛ 
+	{11, 15, 24270, 11.6479495658859}, 		// ڜ 
+	{13, 15, 24300, 13.4443363381724}, 		// ڝ 
+	{13, 15, 24330, 13.4443363381724}, 		// ڞ 
+	{8, 15, 24360, 9.92773467086954}, 		// ڟ 
+	{7, 15, 24375, 7.64892600920575}, 		// ڠ 
+	{11, 15, 24390, 11.0195315784076}, 		// ڡ 
+	{11, 15, 24420, 11.0195315784076}, 		// ڢ 
+	{11, 15, 24450, 11.0195315784076}, 		// ڣ 
+	{11, 15, 24480, 11.0195315784076}, 		// ڤ 
+	{11, 15, 24510, 11.0195315784076}, 		// ڥ 
+	{11, 15, 24540, 11.0195315784076}, 		// ڦ 
+	{8, 15, 24570, 8.08056664706965}, 		// ڧ 
+	{8, 15, 24585, 8.08056664706965}, 		// ڨ 
+	{11, 15, 24600, 11.578125345055}, 		// ک 
+	{13, 15, 24630, 14.3774418347311}, 		// ڪ 
+	{11, 15, 24660, 11.578125345055}, 		// ګ 
+	{8, 15, 24690, 8.67089869591291}, 		// ڬ 
+	{8, 15, 24705, 8.67089869591291}, 		// ڭ 
+	{8, 15, 24720, 8.67089869591291}, 		// ڮ 
+	{11, 15, 24735, 11.578125345055}, 		// گ 
+	{11, 15, 24765, 11.578125345055}, 		// ڰ 
+	{11, 15, 24795, 11.578125345055}, 		// ڱ 
+	{11, 15, 24825, 11.578125345055}, 		// ڲ 
+	{11, 15, 24855, 11.578125345055}, 		// ڳ 
+	{11, 15, 24885, 11.578125345055}, 		// ڴ 
+	{7, 15, 24915, 7.16650411982846}, 		// ڵ 
+	{7, 15, 24930, 7.16650411982846}, 		// ڶ 
+	{7, 15, 24945, 7.16650411982846}, 		// ڷ 
+	{7, 15, 24960, 7.10302755543671}, 		// ڸ 
+	{7, 15, 24975, 7.07763692968001}, 		// ڹ 
+	{7, 15, 24990, 7.07763692968001}, 		// ں 
+	{7, 15, 25005, 7.07763692968001}, 		// ڻ 
+	{7, 15, 25020, 7.07763692968001}, 		// ڼ 
+	{7, 15, 25035, 7.07763692968001}, 		// ڽ 
+	{8, 15, 25050, 8.35351587395417}, 		// ھ 
+	{7, 15, 25065, 7.78222679442842}, 		// ڿ 
+	{4, 15, 25080, 4.50683607181418}, 		// ۀ 
+	{4, 15, 25095, 5.87792986267596}, 		// ہ 
+	{4, 15, 25110, 5.87792986267596}, 		// ۂ 
+	{4, 15, 25125, 5.87792986267596}, 		// ۃ 
+	{5, 15, 25140, 5.64941423086566}, 		// ۄ 
+	{5, 15, 25155, 5.64941423086566}, 		// ۅ 
+	{5, 15, 25170, 5.64941423086566}, 		// ۆ 
+	{5, 15, 25185, 5.64941423086566}, 		// ۇ 
+	{5, 15, 25200, 5.64941423086566}, 		// ۈ 
+	{5, 15, 25215, 5.64941423086566}, 		// ۉ 
+	{5, 15, 25230, 5.64941423086566}, 		// ۊ 
+	{5, 15, 25245, 5.64941423086566}, 		// ۋ 
+	{8, 15, 25260, 8.70263697810879}, 		// ی 
+	{10, 15, 25275, 8.70263697810879}, 		// ۍ 
+	{8, 15, 25305, 8.70263697810879}, 		// ێ 
+	{5, 15, 25320, 5.64941423086566}, 		// ۏ 
+	{8, 15, 25335, 8.70263697810879}, 		// ې 
+	{8, 15, 25350, 8.70263697810879}, 		// ۑ 
+	{11, 15, 25365, 12.7714847556199}, 		// ے 
+	{11, 15, 25395, 12.7714847556199}, 		// ۓ 
+	{3, 15, 25425, 5.45263688125124}, 		// ۔ 
+	{4, 15, 25440, 4.50683607181418}, 		// ە 
+	{6, 15, 25455, 0}, 		// ۖ 
+	{4, 15, 25470, 0}, 		// ۗ 
+	{3, 15, 25485, 0}, 		// ۘ 
+	{2, 15, 25500, 0}, 		// ۙ 
+	{3, 15, 25515, 0}, 		// ۚ 
+	{2, 15, 25530, 0}, 		// ۛ 
+	{4, 15, 25545, 0}, 		// ۜ 
+	{15, 15, 25560, 16.9418950361578}, 		// ۝ 
+	{7, 15, 25590, 9.4326174686139}, 		// ۞ 
+	{2, 15, 25605, 0}, 		// ۟ 
+	{2, 15, 25620, 0}, 		// ۠ 
+	{3, 15, 25635, 0}, 		// ۡ 
+	{2, 15, 25650, 0}, 		// ۢ 
+	{4, 15, 25665, 0}, 		// ۣ 
+	{2, 15, 25680, 0}, 		// ۤ 
+	{2, 15, 25695, 4.07519543395028}, 		// ۥ 
+	{4, 15, 25710, 5.44628922481206}, 		// ۦ 
+	{4, 15, 25725, 0}, 		// ۧ 
+	{2, 15, 25740, 0}, 		// ۨ 
+	{5, 15, 25755, 7.10302755543671}, 		// ۩ 
+	{2, 15, 25770, 0}, 		// ۪ 
+	{2, 15, 25785, 0}, 		// ۫ 
+	{2, 15, 25800, 0}, 		// ۬ 
+	{2, 15, 25815, 0}, 		// ۭ 
+	{4, 15, 25830, 5.32568375246774}, 		// ۮ 
+	{5, 15, 25845, 5.43359391193371}, 		// ۯ 
+	{1, 15, 25860, 6.60156269674189}, 		// ۰ 
+	{2, 15, 25875, 6.60156269674189}, 		// ۱ 
+	{4, 15, 25890, 6.60156269674189}, 		// ۲ 
+	{5, 15, 25905, 6.60156269674189}, 		// ۳ 
+	{5, 15, 25920, 6.60156269674189}, 		// ۴ 
+	{5, 15, 25935, 6.60156269674189}, 		// ۵ 
+	{5, 15, 25950, 6.60156269674189}, 		// ۶ 
+	{5, 15, 25965, 6.60156269674189}, 		// ۷ 
+	{5, 15, 25980, 6.60156269674189}, 		// ۸ 
+	{4, 15, 25995, 6.60156269674189}, 		// ۹ 
+	{11, 15, 26010, 11.6479495658859}, 		// ۺ 
+	{13, 15, 26040, 13.4443363381724}, 		// ۻ 
+	{7, 15, 26070, 7.64892600920575}, 		// ۼ 
+	{3, 15, 26085, 4.8813478017255}, 		// ۽ 
+	{4, 15, 26100, 5.57324235359556}, 		// ۾ 
+	{8, 15, 26115, 8.35351587395417}, 		// ۿ 
 };
 
-// Character descriptors for Calibri 8pt(block #2)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block2[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #2)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block2[] PROGMEM = 
 {
-	{10, 26130}, 		// ݐ 
-	{10, 26160}, 		// ݑ 
-	{10, 26190}, 		// ݒ 
-	{10, 26220}, 		// ݓ 
-	{10, 26250}, 		// ݔ 
-	{10, 26280}, 		// ݕ 
-	{10, 26310}, 		// ݖ 
-	{7, 26340}, 		// ݗ 
-	{7, 26355}, 		// ݘ 
-	{4, 26370}, 		// ݙ 
-	{4, 26385}, 		// ݚ 
-	{6, 26400}, 		// ݛ 
-	{11, 26415}, 		// ݜ 
-	{7, 26445}, 		// ݝ 
-	{7, 26460}, 		// ݞ 
-	{7, 26475}, 		// ݟ 
-	{11, 26490}, 		// ݠ 
-	{11, 26520}, 		// ݡ 
-	{11, 26550}, 		// ݢ 
-	{11, 26580}, 		// ݣ 
-	{11, 26610}, 		// ݤ 
-	{4, 26640}, 		// ݥ 
-	{4, 26655}, 		// ݦ 
-	{7, 26670}, 		// ݧ 
-	{7, 26685}, 		// ݨ 
-	{7, 26700}, 		// ݩ 
-	{7, 26715}, 		// ݪ 
-	{5, 26730}, 		// ݫ 
-	{5, 26745}, 		// ݬ 
-	{11, 26760}, 		// ݭ 
-	{7, 26790}, 		// ݮ 
-	{7, 26805}, 		// ݯ 
-	{11, 26820}, 		// ݰ 
-	{5, 26850}, 		// ݱ 
-	{7, 26865}, 		// ݲ 
-	{2, 26880}, 		// ݳ 
-	{2, 26895}, 		// ݴ 
-	{8, 26910}, 		// ݵ 
-	{8, 26925}, 		// ݶ 
-	{8, 26940}, 		// ݷ 
-	{5, 26955}, 		// ݸ 
-	{5, 26970}, 		// ݹ 
-	{11, 26985}, 		// ݺ 
-	{11, 27015}, 		// ݻ 
-	{7, 27045}, 		// ݼ 
-	{11, 27060}, 		// ݽ 
-	{11, 27090}, 		// ݾ 
-	{8, 27120}, 		// ݿ 
+	{10, 15, 26130, 10.416504216686}, 		// ݐ 
+	{10, 15, 26160, 10.416504216686}, 		// ݑ 
+	{10, 15, 26190, 10.416504216686}, 		// ݒ 
+	{10, 15, 26220, 10.416504216686}, 		// ݓ 
+	{10, 15, 26250, 10.416504216686}, 		// ݔ 
+	{10, 15, 26280, 10.416504216686}, 		// ݕ 
+	{10, 15, 26310, 10.416504216686}, 		// ݖ 
+	{7, 15, 26340, 7.78222679442842}, 		// ݗ 
+	{7, 15, 26355, 7.78222679442842}, 		// ݘ 
+	{4, 15, 26370, 5.32568375246774}, 		// ݙ 
+	{4, 15, 26385, 5.32568375246774}, 		// ݚ 
+	{6, 15, 26400, 5.43359391193371}, 		// ݛ 
+	{11, 15, 26415, 11.6479495658859}, 		// ݜ 
+	{7, 15, 26445, 7.64892600920575}, 		// ݝ 
+	{7, 15, 26460, 7.64892600920575}, 		// ݞ 
+	{7, 15, 26475, 7.64892600920575}, 		// ݟ 
+	{11, 15, 26490, 11.0195315784076}, 		// ݠ 
+	{11, 15, 26520, 11.0195315784076}, 		// ݡ 
+	{11, 15, 26550, 11.578125345055}, 		// ݢ 
+	{11, 15, 26580, 11.578125345055}, 		// ݣ 
+	{11, 15, 26610, 11.578125345055}, 		// ݤ 
+	{4, 15, 26640, 5.57324235359556}, 		// ݥ 
+	{4, 15, 26655, 5.57324235359556}, 		// ݦ 
+	{7, 15, 26670, 7.07763692968001}, 		// ݧ 
+	{7, 15, 26685, 7.07763692968001}, 		// ݨ 
+	{7, 15, 26700, 7.07763692968001}, 		// ݩ 
+	{7, 15, 26715, 7.10302755543671}, 		// ݪ 
+	{5, 15, 26730, 5.43359391193371}, 		// ݫ 
+	{5, 15, 26745, 5.43359391193371}, 		// ݬ 
+	{11, 15, 26760, 11.6479495658859}, 		// ݭ 
+	{7, 15, 26790, 7.78222679442842}, 		// ݮ 
+	{7, 15, 26805, 7.78222679442842}, 		// ݯ 
+	{11, 15, 26820, 11.6479495658859}, 		// ݰ 
+	{5, 15, 26850, 5.43359391193371}, 		// ݱ 
+	{7, 15, 26865, 7.78222679442842}, 		// ݲ 
+	{2, 15, 26880, 2.39306647756894}, 		// ݳ 
+	{2, 15, 26895, 2.39306647756894}, 		// ݴ 
+	{8, 15, 26910, 8.70263697810879}, 		// ݵ 
+	{8, 15, 26925, 8.70263697810879}, 		// ݶ 
+	{8, 15, 26940, 8.70263697810879}, 		// ݷ 
+	{5, 15, 26955, 5.64941423086566}, 		// ݸ 
+	{5, 15, 26970, 5.64941423086566}, 		// ݹ 
+	{11, 15, 26985, 12.7714847556199}, 		// ݺ 
+	{11, 15, 27015, 12.7714847556199}, 		// ݻ 
+	{7, 15, 27045, 7.78222679442842}, 		// ݼ 
+	{11, 15, 27060, 11.6479495658859}, 		// ݽ 
+	{11, 15, 27090, 11.6479495658859}, 		// ݾ 
+	{8, 15, 27120, 8.67089869591291}, 		// ݿ 
 };
 
-// Character descriptors for Calibri 8pt(block #3)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block3[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #3)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block3[] PROGMEM = 
 {
-	{10, 27135}, 		// ࢠ 
-	{10, 27165}, 		// ࢡ 
-	{7, 27195}, 		// ࢢ 
-	{8, 27210}, 		// ࢣ 
-	{11, 27225}, 		// ࢤ 
-	{8, 27255}, 		// ࢥ 
-	{7, 27270}, 		// ࢦ 
-	{4, 27285}, 		// ࢧ 
-	{8, 27300}, 		// ࢨ 
-	{8, 27315}, 		// ࢩ 
-	{5, 27330}, 		// ࢪ 
-	{5, 27345}, 		// ࢫ 
-	{7, 27360}, 		// ࢬ 
-	{1, 27375}, 		// ࢭ 
-	{4, 27390}, 		// ࢮ 
-	{13, 27405}, 		// ࢯ 
-	{11, 27435}, 		// ࢰ 
-	{5, 27465}, 		// ࢱ 
-	{5, 27480}, 		// ࢲ 
-	{7, 27495}, 		// ࢳ 
-	{8, 27510}, 		// ࢴ 
-	{0, 0}, 		// ࢵ 
-	{0, 0}, 		// ࢶ 
-	{0, 0}, 		// ࢷ 
-	{0, 0}, 		// ࢸ 
-	{0, 0}, 		// ࢹ 
-	{0, 0}, 		// ࢺ 
-	{0, 0}, 		// ࢻ 
-	{0, 0}, 		// ࢼ 
-	{0, 0}, 		// ࢽ 
-	{0, 0}, 		// ࢾ 
-	{0, 0}, 		// ࢿ 
-	{0, 0}, 		// ࣀ 
-	{0, 0}, 		// ࣁ 
-	{0, 0}, 		// ࣂ 
-	{0, 0}, 		// ࣃ 
-	{0, 0}, 		// ࣄ 
-	{0, 0}, 		// ࣅ 
-	{0, 0}, 		// ࣆ 
-	{0, 0}, 		// ࣇ 
-	{0, 0}, 		// ࣈ 
-	{0, 0}, 		// ࣉ 
-	{0, 0}, 		// ࣊ 
-	{0, 0}, 		// ࣋ 
-	{0, 0}, 		// ࣌ 
-	{0, 0}, 		// ࣍ 
-	{0, 0}, 		// ࣎ 
-	{0, 0}, 		// ࣏ 
-	{0, 0}, 		// ࣐ 
-	{0, 0}, 		// ࣑ 
-	{0, 0}, 		// ࣒ 
-	{0, 0}, 		// ࣓ 
-	{0, 0}, 		// ࣔ 
-	{0, 0}, 		// ࣕ 
-	{0, 0}, 		// ࣖ 
-	{0, 0}, 		// ࣗ 
-	{0, 0}, 		// ࣘ 
-	{0, 0}, 		// ࣙ 
-	{0, 0}, 		// ࣚ 
-	{0, 0}, 		// ࣛ 
-	{0, 0}, 		// ࣜ 
-	{0, 0}, 		// ࣝ 
-	{0, 0}, 		// ࣞ 
-	{0, 0}, 		// ࣟ 
-	{0, 0}, 		// ࣠ 
-	{0, 0}, 		// ࣡ 
-	{0, 0}, 		// ࣢ 
-	{2, 27525}, 		// ࣣ 
-	{2, 27540}, 		// ࣤ 
-	{2, 27555}, 		// ࣥ 
-	{2, 27570}, 		// ࣦ 
-	{2, 27585}, 		// ࣧ 
-	{2, 27600}, 		// ࣨ 
-	{2, 27615}, 		// ࣩ 
-	{1, 27630}, 		// ࣪ 
-	{2, 27645}, 		// ࣫ 
-	{2, 27660}, 		// ࣬ 
-	{1, 27675}, 		// ࣭ 
-	{2, 27690}, 		// ࣮ 
-	{2, 27705}, 		// ࣯ 
-	{4, 27720}, 		// ࣰ 
-	{3, 27735}, 		// ࣱ 
-	{4, 27750}, 		// ࣲ 
-	{2, 27765}, 		// ࣳ 
-	{2, 27780}, 		// ࣴ 
-	{2, 27795}, 		// ࣵ 
-	{2, 27810}, 		// ࣶ 
-	{2, 27825}, 		// ࣷ 
-	{2, 27840}, 		// ࣸ 
-	{2, 27855}, 		// ࣹ 
-	{2, 27870}, 		// ࣺ 
-	{4, 27885}, 		// ࣻ 
-	{4, 27900}, 		// ࣼ 
-	{4, 27915}, 		// ࣽ 
-	{3, 27930}, 		// ࣾ 
-	{2, 27945}, 		// ࣿ 
+	{10, 15, 27135, 10.416504216686}, 		// ࢠ 
+	{10, 15, 27165, 10.416504216686}, 		// ࢡ 
+	{7, 15, 27195, 7.78222679442842}, 		// ࢢ 
+	{8, 15, 27210, 9.92773467086954}, 		// ࢣ 
+	{11, 15, 27225, 11.0195315784076}, 		// ࢤ 
+	{8, 15, 27255, 8.08056664706965}, 		// ࢥ 
+	{7, 15, 27270, 7.10302755543671}, 		// ࢦ 
+	{4, 15, 27285, 5.57324235359556}, 		// ࢧ 
+	{8, 15, 27300, 8.70263697810879}, 		// ࢨ 
+	{8, 15, 27315, 8.70263697810879}, 		// ࢩ 
+	{5, 15, 27330, 5.56689469715639}, 		// ࢪ 
+	{5, 15, 27345, 5.64941423086566}, 		// ࢫ 
+	{7, 15, 27360, 7.15380880695011}, 		// ࢬ 
+	{1, 15, 27375, 2.36767585181224}, 		// ࢭ 
+	{4, 15, 27390, 5.32568375246774}, 		// ࢮ 
+	{13, 15, 27405, 13.4443363381724}, 		// ࢯ 
+	{11, 15, 27435, 11.578125345055}, 		// ࢰ 
+	{5, 15, 27465, 5.02099624338734}, 		// ࢱ 
+	{5, 15, 27480, 5.43359391193371}, 		// ࢲ 
+	{7, 15, 27495, 7.64892600920575}, 		// ࢳ 
+	{8, 15, 27510, 8.67089869591291}, 		// ࢴ 
+	{0, 0, 0, 0}, 		// ࢵ 
+	{10, 15, 27525, 10.416504216686}, 		// ࢶ 
+	{10, 15, 27555, 10.416504216686}, 		// ࢷ 
+	{10, 15, 27585, 10.416504216686}, 		// ࢸ 
+	{5, 15, 27615, 5.43359391193371}, 		// ࢹ 
+	{8, 15, 27630, 8.70263697810879}, 		// ࢺ 
+	{11, 15, 27645, 11.0195315784076}, 		// ࢻ 
+	{8, 15, 27675, 8.08056664706965}, 		// ࢼ 
+	{7, 15, 27690, 7.07763692968001}, 		// ࢽ 
+	{0, 0, 0, 0}, 		// ࢾ 
+	{0, 0, 0, 0}, 		// ࢿ 
+	{0, 0, 0, 0}, 		// ࣀ 
+	{0, 0, 0, 0}, 		// ࣁ 
+	{0, 0, 0, 0}, 		// ࣂ 
+	{0, 0, 0, 0}, 		// ࣃ 
+	{0, 0, 0, 0}, 		// ࣄ 
+	{0, 0, 0, 0}, 		// ࣅ 
+	{0, 0, 0, 0}, 		// ࣆ 
+	{0, 0, 0, 0}, 		// ࣇ 
+	{0, 0, 0, 0}, 		// ࣈ 
+	{0, 0, 0, 0}, 		// ࣉ 
+	{0, 0, 0, 0}, 		// ࣊ 
+	{0, 0, 0, 0}, 		// ࣋ 
+	{0, 0, 0, 0}, 		// ࣌ 
+	{0, 0, 0, 0}, 		// ࣍ 
+	{0, 0, 0, 0}, 		// ࣎ 
+	{0, 0, 0, 0}, 		// ࣏ 
+	{0, 0, 0, 0}, 		// ࣐ 
+	{0, 0, 0, 0}, 		// ࣑ 
+	{0, 0, 0, 0}, 		// ࣒ 
+	{0, 0, 0, 0}, 		// ࣓ 
+	{8, 15, 27705, 0}, 		// ࣔ 
+	{6, 15, 27720, 0}, 		// ࣕ 
+	{2, 15, 27735, 0}, 		// ࣖ 
+	{4, 15, 27750, 0}, 		// ࣗ 
+	{2, 15, 27765, 0}, 		// ࣘ 
+	{2, 15, 27780, 0}, 		// ࣙ 
+	{10, 15, 27795, 0}, 		// ࣚ 
+	{12, 15, 27825, 0}, 		// ࣛ 
+	{12, 15, 27855, 0}, 		// ࣜ 
+	{10, 15, 27885, 0}, 		// ࣝ 
+	{6, 15, 27915, 0}, 		// ࣞ 
+	{8, 15, 27930, 0}, 		// ࣟ 
+	{4, 15, 27945, 0}, 		// ࣠ 
+	{6, 15, 27960, 0}, 		// ࣡ 
+	{4, 15, 27975, 7.89648461033357}, 		// ࣢ 
+	{2, 15, 27990, 0}, 		// ࣣ 
+	{2, 15, 28005, 0}, 		// ࣤ 
+	{2, 15, 28020, 0}, 		// ࣥ 
+	{2, 15, 28035, 0}, 		// ࣦ 
+	{2, 15, 28050, 0}, 		// ࣧ 
+	{2, 15, 28065, 0}, 		// ࣨ 
+	{2, 15, 28080, 0}, 		// ࣩ 
+	{1, 15, 28095, 0}, 		// ࣪ 
+	{2, 15, 28110, 0}, 		// ࣫ 
+	{2, 15, 28125, 0}, 		// ࣬ 
+	{1, 15, 28140, 0}, 		// ࣭ 
+	{2, 15, 28155, 0}, 		// ࣮ 
+	{2, 15, 28170, 0}, 		// ࣯ 
+	{4, 15, 28185, 0}, 		// ࣰ 
+	{3, 15, 28200, 0}, 		// ࣱ 
+	{4, 15, 28215, 0}, 		// ࣲ 
+	{2, 15, 28230, 0}, 		// ࣳ 
+	{2, 15, 28245, 0}, 		// ࣴ 
+	{2, 15, 28260, 0}, 		// ࣵ 
+	{2, 15, 28275, 0}, 		// ࣶ 
+	{2, 15, 28290, 0}, 		// ࣷ 
+	{2, 15, 28305, 0}, 		// ࣸ 
+	{2, 15, 28320, 0}, 		// ࣹ 
+	{2, 15, 28335, 0}, 		// ࣺ 
+	{4, 15, 28350, 0}, 		// ࣻ 
+	{4, 15, 28365, 0}, 		// ࣼ 
+	{4, 15, 28380, 0}, 		// ࣽ 
+	{3, 15, 28395, 0}, 		// ࣾ 
+	{2, 15, 28410, 0}, 		// ࣿ 
 };
 
-// Character descriptors for Calibri 8pt(block #4)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block4[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #4)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block4[] PROGMEM = 
 {
-	{5, 27960}, 		// ฿ 
+	{5, 15, 28425, 6.58886738386354}, 		// ฿ 
 };
 
-// Character descriptors for Calibri 8pt(block #5)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block5[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #5)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block5[] PROGMEM = 
 {
-	{6, 27975}, 		// ᴀ 
-	{8, 27990}, 		// ᴁ 
-	{9, 28005}, 		// ᴂ 
-	{6, 28035}, 		// ᴃ 
-	{5, 28050}, 		// ᴄ 
-	{5, 28065}, 		// ᴅ 
-	{6, 28080}, 		// ᴆ 
-	{4, 28095}, 		// ᴇ 
-	{4, 28110}, 		// ᴈ 
-	{1, 28125}, 		// ᴉ 
-	{3, 28140}, 		// ᴊ 
-	{4, 28155}, 		// ᴋ 
-	{4, 28170}, 		// ᴌ 
-	{7, 28185}, 		// ᴍ 
-	{5, 28200}, 		// ᴎ 
-	{6, 28215}, 		// ᴏ 
-	{5, 28230}, 		// ᴐ 
-	{6, 28245}, 		// ᴑ 
-	{6, 28260}, 		// ᴒ 
-	{8, 28275}, 		// ᴓ 
-	{10, 28290}, 		// ᴔ 
-	{5, 28320}, 		// ᴕ 
-	{6, 28335}, 		// ᴖ 
-	{6, 28350}, 		// ᴗ 
-	{4, 28365}, 		// ᴘ 
-	{5, 28380}, 		// ᴙ 
-	{4, 28395}, 		// ᴚ 
-	{5, 28410}, 		// ᴛ 
-	{5, 28425}, 		// ᴜ 
-	{6, 28440}, 		// ᴝ 
-	{8, 28455}, 		// ᴞ 
-	{6, 28470}, 		// ᴟ 
-	{6, 28485}, 		// ᴠ 
-	{9, 28500}, 		// ᴡ 
-	{5, 28530}, 		// ᴢ 
-	{4, 28545}, 		// ᴣ 
-	{4, 28560}, 		// ᴤ 
-	{6, 28575}, 		// ᴥ 
-	{4, 28590}, 		// ᴦ 
-	{6, 28605}, 		// ᴧ 
-	{5, 28620}, 		// ᴨ 
-	{4, 28635}, 		// ᴩ 
-	{7, 28650}, 		// ᴪ 
-	{6, 28665}, 		// ᴫ 
-	{5, 28680}, 		// ᴬ 
-	{6, 28695}, 		// ᴭ 
-	{3, 28710}, 		// ᴮ 
-	{4, 28725}, 		// ᴯ 
-	{4, 28740}, 		// ᴰ 
-	{3, 28755}, 		// ᴱ 
-	{3, 28770}, 		// ᴲ 
-	{4, 28785}, 		// ᴳ 
-	{4, 28800}, 		// ᴴ 
-	{1, 28815}, 		// ᴵ 
-	{2, 28830}, 		// ᴶ 
-	{3, 28845}, 		// ᴷ 
-	{3, 28860}, 		// ᴸ 
-	{5, 28875}, 		// ᴹ 
-	{4, 28890}, 		// ᴺ 
-	{4, 28905}, 		// ᴻ 
-	{4, 28920}, 		// ᴼ 
-	{3, 28935}, 		// ᴽ 
-	{3, 28950}, 		// ᴾ 
-	{3, 28965}, 		// ᴿ 
-	{3, 28980}, 		// ᵀ 
-	{4, 28995}, 		// ᵁ 
-	{7, 29010}, 		// ᵂ 
-	{3, 29025}, 		// ᵃ 
-	{3, 29040}, 		// ᵄ 
-	{4, 29055}, 		// ᵅ 
-	{6, 29070}, 		// ᵆ 
-	{4, 29085}, 		// ᵇ 
-	{4, 29100}, 		// ᵈ 
-	{4, 29115}, 		// ᵉ 
-	{1, 29130}, 		// ᵊ 
-	{3, 29145}, 		// ᵋ 
-	{3, 29160}, 		// ᵌ 
-	{4, 29175}, 		// ᵍ 
-	{1, 29190}, 		// ᵎ 
-	{3, 29205}, 		// ᵏ 
-	{6, 29220}, 		// ᵐ 
-	{3, 29235}, 		// ᵑ 
-	{4, 29250}, 		// ᵒ 
-	{3, 29265}, 		// ᵓ 
-	{4, 29280}, 		// ᵔ 
-	{4, 29295}, 		// ᵕ 
-	{4, 29310}, 		// ᵖ 
-	{3, 29325}, 		// ᵗ 
-	{3, 29340}, 		// ᵘ 
-	{4, 29355}, 		// ᵙ 
-	{6, 29370}, 		// ᵚ 
-	{3, 29385}, 		// ᵛ 
-	{4, 29400}, 		// ᵜ 
-	{3, 29415}, 		// ᵝ 
-	{3, 29430}, 		// ᵞ 
-	{3, 29445}, 		// ᵟ 
-	{5, 29460}, 		// ᵠ 
-	{4, 29475}, 		// ᵡ 
-	{1, 29490}, 		// ᵢ 
-	{2, 29505}, 		// ᵣ 
-	{3, 29520}, 		// ᵤ 
-	{3, 29535}, 		// ᵥ 
-	{3, 29550}, 		// ᵦ 
-	{3, 29565}, 		// ᵧ 
-	{4, 29580}, 		// ᵨ 
-	{5, 29595}, 		// ᵩ 
-	{3, 29610}, 		// ᵪ 
-	{9, 29625}, 		// ᵫ 
-	{7, 29655}, 		// ᵬ 
-	{6, 29670}, 		// ᵭ 
-	{5, 29685}, 		// ᵮ 
-	{10, 29700}, 		// ᵯ 
-	{7, 29730}, 		// ᵰ 
-	{7, 29745}, 		// ᵱ 
-	{5, 29760}, 		// ᵲ 
-	{5, 29775}, 		// ᵳ 
-	{6, 29790}, 		// ᵴ 
-	{5, 29805}, 		// ᵵ 
-	{5, 29820}, 		// ᵶ 
-	{5, 29835}, 		// ᵷ 
-	{4, 29850}, 		// ᵸ 
-	{5, 29865}, 		// ᵹ 
-	{10, 29880}, 		// ᵺ 
-	{3, 29910}, 		// ᵻ 
-	{4, 29925}, 		// ᵼ 
-	{6, 29940}, 		// ᵽ 
-	{7, 29955}, 		// ᵾ 
-	{7, 29970}, 		// ᵿ 
-	{5, 29985}, 		// ᶀ 
-	{6, 30000}, 		// ᶁ 
-	{4, 30015}, 		// ᶂ 
-	{7, 30030}, 		// ᶃ 
-	{5, 30045}, 		// ᶄ 
-	{2, 30060}, 		// ᶅ 
-	{9, 30075}, 		// ᶆ 
-	{6, 30105}, 		// ᶇ 
-	{5, 30120}, 		// ᶈ 
-	{3, 30135}, 		// ᶉ 
-	{4, 30150}, 		// ᶊ 
-	{4, 30165}, 		// ᶋ 
-	{6, 30180}, 		// ᶌ 
-	{5, 30195}, 		// ᶍ 
-	{5, 30210}, 		// ᶎ 
-	{6, 30225}, 		// ᶏ 
-	{7, 30240}, 		// ᶐ 
-	{6, 30255}, 		// ᶑ 
-	{6, 30270}, 		// ᶒ 
-	{5, 30285}, 		// ᶓ 
-	{4, 30300}, 		// ᶔ 
-	{6, 30315}, 		// ᶕ 
-	{3, 30330}, 		// ᶖ 
-	{5, 30345}, 		// ᶗ 
-	{3, 30360}, 		// ᶘ 
-	{7, 30375}, 		// ᶙ 
-	{5, 30390}, 		// ᶚ 
-	{4, 30405}, 		// ᶛ 
-	{3, 30420}, 		// ᶜ 
-	{3, 30435}, 		// ᶝ 
-	{4, 30450}, 		// ᶞ 
-	{3, 30465}, 		// ᶟ 
-	{3, 30480}, 		// ᶠ 
-	{3, 30495}, 		// ᶡ 
-	{4, 30510}, 		// ᶢ 
-	{3, 30525}, 		// ᶣ 
-	{3, 30540}, 		// ᶤ 
-	{2, 30555}, 		// ᶥ 
-	{1, 30570}, 		// ᶦ 
-	{3, 30585}, 		// ᶧ 
-	{2, 30600}, 		// ᶨ 
-	{2, 30615}, 		// ᶩ 
-	{2, 30630}, 		// ᶪ 
-	{3, 30645}, 		// ᶫ 
-	{6, 30660}, 		// ᶬ 
-	{5, 30675}, 		// ᶭ 
-	{4, 30690}, 		// ᶮ 
-	{4, 30705}, 		// ᶯ 
-	{4, 30720}, 		// ᶰ 
-	{4, 30735}, 		// ᶱ 
-	{5, 30750}, 		// ᶲ 
-	{3, 30765}, 		// ᶳ 
-	{3, 30780}, 		// ᶴ 
-	{3, 30795}, 		// ᶵ 
-	{5, 30810}, 		// ᶶ 
-	{4, 30825}, 		// ᶷ 
-	{3, 30840}, 		// ᶸ 
-	{3, 30855}, 		// ᶹ 
-	{3, 30870}, 		// ᶺ 
-	{3, 30885}, 		// ᶻ 
-	{4, 30900}, 		// ᶼ 
-	{4, 30915}, 		// ᶽ 
-	{3, 30930}, 		// ᶾ 
-	{4, 30945}, 		// ᶿ 
-	{4, 30960}, 		// ᷀ 
-	{4, 30975}, 		// ᷁ 
-	{1, 30990}, 		// ᷂ 
-	{4, 31005}, 		// ᷃ 
-	{5, 31020}, 		// ᷄ 
-	{4, 31035}, 		// ᷅ 
-	{5, 31050}, 		// ᷆ 
-	{4, 31065}, 		// ᷇ 
-	{5, 31080}, 		// ᷈ 
-	{5, 31095}, 		// ᷉ 
-	{2, 31110}, 		// ᷊ 
-	{0, 0}, 		// ᷋ 
-	{0, 0}, 		// ᷌ 
-	{0, 0}, 		// ᷍ 
-	{0, 0}, 		// ᷎ 
-	{0, 0}, 		// ᷏ 
-	{0, 0}, 		// ᷐ 
-	{0, 0}, 		// ᷑ 
-	{0, 0}, 		// ᷒ 
-	{0, 0}, 		// ᷓ 
-	{0, 0}, 		// ᷔ 
-	{0, 0}, 		// ᷕ 
-	{0, 0}, 		// ᷖ 
-	{0, 0}, 		// ᷗ 
-	{0, 0}, 		// ᷘ 
-	{0, 0}, 		// ᷙ 
-	{0, 0}, 		// ᷚ 
-	{0, 0}, 		// ᷛ 
-	{0, 0}, 		// ᷜ 
-	{0, 0}, 		// ᷝ 
-	{0, 0}, 		// ᷞ 
-	{0, 0}, 		// ᷟ 
-	{0, 0}, 		// ᷠ 
-	{0, 0}, 		// ᷡ 
-	{0, 0}, 		// ᷢ 
-	{0, 0}, 		// ᷣ 
-	{0, 0}, 		// ᷤ 
-	{0, 0}, 		// ᷥ 
-	{0, 0}, 		// ᷦ 
-	{0, 0}, 		// ᷧ 
-	{0, 0}, 		// ᷨ 
-	{0, 0}, 		// ᷩ 
-	{0, 0}, 		// ᷪ 
-	{0, 0}, 		// ᷫ 
-	{0, 0}, 		// ᷬ 
-	{0, 0}, 		// ᷭ 
-	{0, 0}, 		// ᷮ 
-	{0, 0}, 		// ᷯ 
-	{0, 0}, 		// ᷰ 
-	{0, 0}, 		// ᷱ 
-	{0, 0}, 		// ᷲ 
-	{0, 0}, 		// ᷳ 
-	{0, 0}, 		// ᷴ 
-	{0, 0}, 		// ᷵ 
-	{0, 0}, 		// ᷶ 
-	{0, 0}, 		// ᷷ 
-	{0, 0}, 		// ᷸ 
-	{0, 0}, 		// ᷹ 
-	{0, 0}, 		// ᷺ 
-	{0, 0}, 		// ᷻ 
-	{0, 0}, 		// ᷼ 
-	{0, 0}, 		// ᷽ 
-	{2, 31125}, 		// ᷾ 
-	{4, 31140}, 		// ᷿ 
-	{7, 31155}, 		// Ḁ 
-	{5, 31170}, 		// ḁ 
-	{5, 31185}, 		// Ḃ 
-	{5, 31200}, 		// ḃ 
-	{5, 31215}, 		// Ḅ 
-	{5, 31230}, 		// ḅ 
-	{5, 31245}, 		// Ḇ 
-	{5, 31260}, 		// ḇ 
-	{6, 31275}, 		// Ḉ 
-	{5, 31290}, 		// ḉ 
-	{6, 31305}, 		// Ḋ 
-	{5, 31320}, 		// ḋ 
-	{6, 31335}, 		// Ḍ 
-	{5, 31350}, 		// ḍ 
-	{6, 31365}, 		// Ḏ 
-	{5, 31380}, 		// ḏ 
-	{6, 31395}, 		// Ḑ 
-	{5, 31410}, 		// ḑ 
-	{6, 31425}, 		// Ḓ 
-	{5, 31440}, 		// ḓ 
-	{5, 31455}, 		// Ḕ 
-	{5, 31470}, 		// ḕ 
-	{5, 31485}, 		// Ḗ 
-	{5, 31500}, 		// ḗ 
-	{5, 31515}, 		// Ḙ 
-	{5, 31530}, 		// ḙ 
-	{5, 31545}, 		// Ḛ 
-	{5, 31560}, 		// ḛ 
-	{5, 31575}, 		// Ḝ 
-	{5, 31590}, 		// ḝ 
-	{4, 31605}, 		// Ḟ 
-	{4, 31620}, 		// ḟ 
-	{6, 31635}, 		// Ḡ 
-	{5, 31650}, 		// ḡ 
-	{6, 31665}, 		// Ḣ 
-	{5, 31680}, 		// ḣ 
-	{6, 31695}, 		// Ḥ 
-	{5, 31710}, 		// ḥ 
-	{6, 31725}, 		// Ḧ 
-	{5, 31740}, 		// ḧ 
-	{7, 31755}, 		// Ḩ 
-	{6, 31770}, 		// ḩ 
-	{6, 31785}, 		// Ḫ 
-	{5, 31800}, 		// ḫ 
-	{4, 31815}, 		// Ḭ 
-	{4, 31830}, 		// ḭ 
-	{3, 31845}, 		// Ḯ 
-	{3, 31860}, 		// ḯ 
-	{5, 31875}, 		// Ḱ 
-	{5, 31890}, 		// ḱ 
-	{5, 31905}, 		// Ḳ 
-	{5, 31920}, 		// ḳ 
-	{5, 31935}, 		// Ḵ 
-	{5, 31950}, 		// ḵ 
-	{4, 31965}, 		// Ḷ 
-	{1, 31980}, 		// ḷ 
-	{4, 31995}, 		// Ḹ 
-	{3, 32010}, 		// ḹ 
-	{4, 32025}, 		// Ḻ 
-	{3, 32040}, 		// ḻ 
-	{4, 32055}, 		// Ḽ 
-	{3, 32070}, 		// ḽ 
-	{9, 32085}, 		// Ḿ 
-	{8, 32115}, 		// ḿ 
-	{9, 32130}, 		// Ṁ 
-	{8, 32160}, 		// ṁ 
-	{9, 32175}, 		// Ṃ 
-	{8, 32205}, 		// ṃ 
-	{6, 32220}, 		// Ṅ 
-	{5, 32235}, 		// ṅ 
-	{6, 32250}, 		// Ṇ 
-	{5, 32265}, 		// ṇ 
-	{6, 32280}, 		// Ṉ 
-	{5, 32295}, 		// ṉ 
-	{6, 32310}, 		// Ṋ 
-	{5, 32325}, 		// ṋ 
-	{7, 32340}, 		// Ṍ 
-	{5, 32355}, 		// ṍ 
-	{7, 32370}, 		// Ṏ 
-	{5, 32385}, 		// ṏ 
-	{7, 32400}, 		// Ṑ 
-	{5, 32415}, 		// ṑ 
-	{7, 32430}, 		// Ṓ 
-	{5, 32445}, 		// ṓ 
-	{5, 32460}, 		// Ṕ 
-	{5, 32475}, 		// ṕ 
-	{5, 32490}, 		// Ṗ 
-	{5, 32505}, 		// ṗ 
-	{5, 32520}, 		// Ṙ 
-	{3, 32535}, 		// ṙ 
-	{5, 32550}, 		// Ṛ 
-	{3, 32565}, 		// ṛ 
-	{5, 32580}, 		// Ṝ 
-	{3, 32595}, 		// ṝ 
-	{5, 32610}, 		// Ṟ 
-	{3, 32625}, 		// ṟ 
-	{5, 32640}, 		// Ṡ 
-	{4, 32655}, 		// ṡ 
-	{5, 32670}, 		// Ṣ 
-	{4, 32685}, 		// ṣ 
-	{5, 32700}, 		// Ṥ 
-	{4, 32715}, 		// ṥ 
-	{6, 32730}, 		// Ṧ 
-	{4, 32745}, 		// ṧ 
-	{5, 32760}, 		// Ṩ 
-	{4, 32775}, 		// ṩ 
-	{7, 32790}, 		// Ṫ 
-	{4, 32805}, 		// ṫ 
-	{7, 32820}, 		// Ṭ 
-	{4, 32835}, 		// ṭ 
-	{7, 32850}, 		// Ṯ 
-	{4, 32865}, 		// ṯ 
-	{7, 32880}, 		// Ṱ 
-	{4, 32895}, 		// ṱ 
-	{6, 32910}, 		// Ṳ 
-	{5, 32925}, 		// ṳ 
-	{6, 32940}, 		// Ṵ 
-	{5, 32955}, 		// ṵ 
-	{6, 32970}, 		// Ṷ 
-	{5, 32985}, 		// ṷ 
-	{6, 33000}, 		// Ṹ 
-	{5, 33015}, 		// ṹ 
-	{6, 33030}, 		// Ṻ 
-	{5, 33045}, 		// ṻ 
-	{6, 33060}, 		// Ṽ 
-	{6, 33075}, 		// ṽ 
-	{6, 33090}, 		// Ṿ 
-	{6, 33105}, 		// ṿ 
-	{11, 33120}, 		// Ẁ 
-	{8, 33150}, 		// ẁ 
-	{11, 33165}, 		// Ẃ 
-	{8, 33195}, 		// ẃ 
-	{11, 33210}, 		// Ẅ 
-	{8, 33240}, 		// ẅ 
-	{11, 33255}, 		// Ẇ 
-	{8, 33285}, 		// ẇ 
-	{11, 33300}, 		// Ẉ 
-	{8, 33330}, 		// ẉ 
-	{6, 33345}, 		// Ẋ 
-	{4, 33360}, 		// ẋ 
-	{6, 33375}, 		// Ẍ 
-	{4, 33390}, 		// ẍ 
-	{5, 33405}, 		// Ẏ 
-	{6, 33420}, 		// ẏ 
-	{6, 33435}, 		// Ẑ 
-	{5, 33450}, 		// ẑ 
-	{6, 33465}, 		// Ẓ 
-	{5, 33480}, 		// ẓ 
-	{6, 33495}, 		// Ẕ 
-	{5, 33510}, 		// ẕ 
-	{5, 33525}, 		// ẖ 
-	{4, 33540}, 		// ẗ 
-	{8, 33555}, 		// ẘ 
-	{6, 33570}, 		// ẙ 
-	{5, 33585}, 		// ẚ 
-	{3, 33600}, 		// ẛ 
-	{4, 33615}, 		// ẜ 
-	{4, 33630}, 		// ẝ 
-	{6, 33645}, 		// ẞ 
-	{6, 33660}, 		// ẟ 
-	{7, 33675}, 		// Ạ 
-	{5, 33690}, 		// ạ 
-	{7, 33705}, 		// Ả 
-	{5, 33720}, 		// ả 
-	{7, 33735}, 		// Ấ 
-	{6, 33750}, 		// ấ 
-	{7, 33765}, 		// Ầ 
-	{6, 33780}, 		// ầ 
-	{7, 33795}, 		// Ẩ 
-	{5, 33810}, 		// ẩ 
-	{7, 33825}, 		// Ẫ 
-	{5, 33840}, 		// ẫ 
-	{7, 33855}, 		// Ậ 
-	{5, 33870}, 		// ậ 
-	{7, 33885}, 		// Ắ 
-	{5, 33900}, 		// ắ 
-	{7, 33915}, 		// Ằ 
-	{5, 33930}, 		// ằ 
-	{7, 33945}, 		// Ẳ 
-	{5, 33960}, 		// ẳ 
-	{7, 33975}, 		// Ẵ 
-	{5, 33990}, 		// ẵ 
-	{7, 34005}, 		// Ặ 
-	{5, 34020}, 		// ặ 
-	{5, 34035}, 		// Ẹ 
-	{5, 34050}, 		// ẹ 
-	{5, 34065}, 		// Ẻ 
-	{5, 34080}, 		// ẻ 
-	{5, 34095}, 		// Ẽ 
-	{5, 34110}, 		// ẽ 
-	{5, 34125}, 		// Ế 
-	{6, 34140}, 		// ế 
-	{5, 34155}, 		// Ề 
-	{6, 34170}, 		// ề 
-	{6, 34185}, 		// Ể 
-	{5, 34200}, 		// ể 
-	{5, 34215}, 		// Ễ 
-	{5, 34230}, 		// ễ 
-	{5, 34245}, 		// Ệ 
-	{5, 34260}, 		// ệ 
-	{2, 34275}, 		// Ỉ 
-	{2, 34290}, 		// ỉ 
-	{1, 34305}, 		// Ị 
-	{1, 34320}, 		// ị 
-	{7, 34335}, 		// Ọ 
-	{5, 34350}, 		// ọ 
-	{7, 34365}, 		// Ỏ 
-	{5, 34380}, 		// ỏ 
-	{7, 34395}, 		// Ố 
-	{6, 34410}, 		// ố 
-	{7, 34425}, 		// Ồ 
-	{6, 34440}, 		// ồ 
-	{7, 34455}, 		// Ổ 
-	{5, 34470}, 		// ổ 
-	{7, 34485}, 		// Ỗ 
-	{5, 34500}, 		// ỗ 
-	{7, 34515}, 		// Ộ 
-	{5, 34530}, 		// ộ 
-	{8, 34545}, 		// Ớ 
-	{6, 34560}, 		// ớ 
-	{8, 34575}, 		// Ờ 
-	{6, 34590}, 		// ờ 
-	{8, 34605}, 		// Ở 
-	{6, 34620}, 		// ở 
-	{8, 34635}, 		// Ỡ 
-	{6, 34650}, 		// ỡ 
-	{8, 34665}, 		// Ợ 
-	{6, 34680}, 		// ợ 
-	{6, 34695}, 		// Ụ 
-	{5, 34710}, 		// ụ 
-	{6, 34725}, 		// Ủ 
-	{5, 34740}, 		// ủ 
-	{8, 34755}, 		// Ứ 
-	{7, 34770}, 		// ứ 
-	{8, 34785}, 		// Ừ 
-	{7, 34800}, 		// ừ 
-	{8, 34815}, 		// Ử 
-	{7, 34830}, 		// ử 
-	{8, 34845}, 		// Ữ 
-	{7, 34860}, 		// ữ 
-	{8, 34875}, 		// Ự 
-	{7, 34890}, 		// ự 
-	{5, 34905}, 		// Ỳ 
-	{6, 34920}, 		// ỳ 
-	{5, 34935}, 		// Ỵ 
-	{6, 34950}, 		// ỵ 
-	{5, 34965}, 		// Ỷ 
-	{6, 34980}, 		// ỷ 
-	{5, 34995}, 		// Ỹ 
-	{6, 35010}, 		// ỹ 
-	{6, 35025}, 		// Ỻ 
-	{5, 35040}, 		// ỻ 
-	{6, 35055}, 		// Ỽ 
-	{5, 35070}, 		// ỽ 
-	{7, 35085}, 		// Ỿ 
-	{6, 35100}, 		// ỿ 
-	{7, 35115}, 		// ἀ 
-	{7, 35130}, 		// ἁ 
-	{7, 35145}, 		// ἂ 
-	{7, 35160}, 		// ἃ 
-	{7, 35175}, 		// ἄ 
-	{7, 35190}, 		// ἅ 
-	{7, 35205}, 		// ἆ 
-	{7, 35220}, 		// ἇ 
-	{7, 35235}, 		// Ἀ 
-	{7, 35250}, 		// Ἁ 
-	{9, 35265}, 		// Ἂ 
-	{9, 35295}, 		// Ἃ 
-	{8, 35325}, 		// Ἄ 
-	{8, 35340}, 		// Ἅ 
-	{8, 35355}, 		// Ἆ 
-	{8, 35370}, 		// Ἇ 
-	{5, 35385}, 		// ἐ 
-	{5, 35400}, 		// ἑ 
-	{5, 35415}, 		// ἒ 
-	{5, 35430}, 		// ἓ 
-	{5, 35445}, 		// ἔ 
-	{5, 35460}, 		// ἕ 
-	{0, 0}, 		// ἖ 
-	{0, 0}, 		// ἗ 
-	{7, 35475}, 		// Ἐ 
-	{7, 35490}, 		// Ἑ 
-	{8, 35505}, 		// Ἒ 
-	{8, 35520}, 		// Ἓ 
-	{8, 35535}, 		// Ἔ 
-	{8, 35550}, 		// Ἕ 
-	{0, 0}, 		// ἞ 
-	{0, 0}, 		// ἟ 
-	{5, 35565}, 		// ἠ 
-	{5, 35580}, 		// ἡ 
-	{5, 35595}, 		// ἢ 
-	{5, 35610}, 		// ἣ 
-	{5, 35625}, 		// ἤ 
-	{5, 35640}, 		// ἥ 
-	{5, 35655}, 		// ἦ 
-	{5, 35670}, 		// ἧ 
-	{8, 35685}, 		// Ἠ 
-	{8, 35700}, 		// Ἡ 
-	{9, 35715}, 		// Ἢ 
-	{9, 35745}, 		// Ἣ 
-	{9, 35775}, 		// Ἤ 
-	{9, 35805}, 		// Ἥ 
-	{10, 35835}, 		// Ἦ 
-	{10, 35865}, 		// Ἧ 
-	{3, 35895}, 		// ἰ 
-	{3, 35910}, 		// ἱ 
-	{4, 35925}, 		// ἲ 
-	{4, 35940}, 		// ἳ 
-	{4, 35955}, 		// ἴ 
-	{4, 35970}, 		// ἵ 
-	{5, 35985}, 		// ἶ 
-	{5, 36000}, 		// ἷ 
-	{3, 36015}, 		// Ἰ 
-	{3, 36030}, 		// Ἱ 
-	{4, 36045}, 		// Ἲ 
-	{4, 36060}, 		// Ἳ 
-	{4, 36075}, 		// Ἴ 
-	{4, 36090}, 		// Ἵ 
-	{5, 36105}, 		// Ἶ 
-	{5, 36120}, 		// Ἷ 
-	{5, 36135}, 		// ὀ 
-	{5, 36150}, 		// ὁ 
-	{5, 36165}, 		// ὂ 
-	{5, 36180}, 		// ὃ 
-	{5, 36195}, 		// ὄ 
-	{5, 36210}, 		// ὅ 
-	{0, 0}, 		// ὆ 
-	{0, 0}, 		// ὇ 
-	{9, 36225}, 		// Ὀ 
-	{9, 36255}, 		// Ὁ 
-	{10, 36285}, 		// Ὂ 
-	{11, 36315}, 		// Ὃ 
-	{10, 36345}, 		// Ὄ 
-	{10, 36375}, 		// Ὅ 
-	{0, 0}, 		// ὎ 
-	{0, 0}, 		// ὏ 
-	{5, 36405}, 		// ὐ 
-	{5, 36420}, 		// ὑ 
-	{5, 36435}, 		// ὒ 
-	{5, 36450}, 		// ὓ 
-	{5, 36465}, 		// ὔ 
-	{5, 36480}, 		// ὕ 
-	{5, 36495}, 		// ὖ 
-	{5, 36510}, 		// ὗ 
-	{0, 0}, 		// ὘ 
-	{7, 36525}, 		// Ὑ 
-	{0, 0}, 		// ὚ 
-	{9, 36540}, 		// Ὓ 
-	{0, 0}, 		// ὜ 
-	{9, 36570}, 		// Ὕ 
-	{0, 0}, 		// ὞ 
-	{9, 36600}, 		// Ὗ 
-	{7, 36630}, 		// ὠ 
-	{7, 36645}, 		// ὡ 
-	{7, 36660}, 		// ὢ 
-	{7, 36675}, 		// ὣ 
-	{7, 36690}, 		// ὤ 
-	{7, 36705}, 		// ὥ 
-	{7, 36720}, 		// ὦ 
-	{7, 36735}, 		// ὧ 
-	{9, 36750}, 		// Ὠ 
-	{9, 36780}, 		// Ὡ 
-	{10, 36810}, 		// Ὢ 
-	{10, 36840}, 		// Ὣ 
-	{10, 36870}, 		// Ὤ 
-	{10, 36900}, 		// Ὥ 
-	{10, 36930}, 		// Ὦ 
-	{10, 36960}, 		// Ὧ 
-	{7, 36990}, 		// ὰ 
-	{7, 37005}, 		// ά 
-	{5, 37020}, 		// ὲ 
-	{5, 37035}, 		// έ 
-	{5, 37050}, 		// ὴ 
-	{5, 37065}, 		// ή 
-	{4, 37080}, 		// ὶ 
-	{3, 37095}, 		// ί 
-	{5, 37110}, 		// ὸ 
-	{5, 37125}, 		// ό 
-	{5, 37140}, 		// ὺ 
-	{5, 37155}, 		// ύ 
-	{7, 37170}, 		// ὼ 
-	{7, 37185}, 		// ώ 
-	{0, 0}, 		// ὾ 
-	{0, 0}, 		// ὿ 
-	{7, 37200}, 		// ᾀ 
-	{7, 37215}, 		// ᾁ 
-	{7, 37230}, 		// ᾂ 
-	{7, 37245}, 		// ᾃ 
-	{7, 37260}, 		// ᾄ 
-	{7, 37275}, 		// ᾅ 
-	{7, 37290}, 		// ᾆ 
-	{7, 37305}, 		// ᾇ 
-	{7, 37320}, 		// ᾈ 
-	{7, 37335}, 		// ᾉ 
-	{9, 37350}, 		// ᾊ 
-	{9, 37380}, 		// ᾋ 
-	{8, 37410}, 		// ᾌ 
-	{8, 37425}, 		// ᾍ 
-	{8, 37440}, 		// ᾎ 
-	{8, 37455}, 		// ᾏ 
-	{5, 37470}, 		// ᾐ 
-	{5, 37485}, 		// ᾑ 
-	{5, 37500}, 		// ᾒ 
-	{5, 37515}, 		// ᾓ 
-	{5, 37530}, 		// ᾔ 
-	{5, 37545}, 		// ᾕ 
-	{5, 37560}, 		// ᾖ 
-	{5, 37575}, 		// ᾗ 
-	{8, 37590}, 		// ᾘ 
-	{8, 37605}, 		// ᾙ 
-	{9, 37620}, 		// ᾚ 
-	{9, 37650}, 		// ᾛ 
-	{9, 37680}, 		// ᾜ 
-	{9, 37710}, 		// ᾝ 
-	{10, 37740}, 		// ᾞ 
-	{10, 37770}, 		// ᾟ 
-	{7, 37800}, 		// ᾠ 
-	{7, 37815}, 		// ᾡ 
-	{7, 37830}, 		// ᾢ 
-	{7, 37845}, 		// ᾣ 
-	{7, 37860}, 		// ᾤ 
-	{7, 37875}, 		// ᾥ 
-	{7, 37890}, 		// ᾦ 
-	{7, 37905}, 		// ᾧ 
-	{9, 37920}, 		// ᾨ 
-	{9, 37950}, 		// ᾩ 
-	{10, 37980}, 		// ᾪ 
-	{10, 38010}, 		// ᾫ 
-	{10, 38040}, 		// ᾬ 
-	{10, 38070}, 		// ᾭ 
-	{10, 38100}, 		// ᾮ 
-	{10, 38130}, 		// ᾯ 
-	{7, 38160}, 		// ᾰ 
-	{7, 38175}, 		// ᾱ 
-	{7, 38190}, 		// ᾲ 
-	{7, 38205}, 		// ᾳ 
-	{7, 38220}, 		// ᾴ 
-	{0, 0}, 		// ᾵ 
-	{7, 38235}, 		// ᾶ 
-	{7, 38250}, 		// ᾷ 
-	{7, 38265}, 		// Ᾰ 
-	{7, 38280}, 		// Ᾱ 
-	{7, 38295}, 		// Ὰ 
-	{7, 38310}, 		// Ά 
-	{7, 38325}, 		// ᾼ 
-	{1, 38340}, 		// ᾽ 
-	{2, 38355}, 		// ι 
-	{1, 38370}, 		// ᾿ 
-	{4, 38385}, 		// ῀ 
-	{4, 38400}, 		// ῁ 
-	{5, 38415}, 		// ῂ 
-	{5, 38430}, 		// ῃ 
-	{5, 38445}, 		// ῄ 
-	{0, 0}, 		// ῅ 
-	{5, 38460}, 		// ῆ 
-	{5, 38475}, 		// ῇ 
-	{7, 38490}, 		// Ὲ 
-	{7, 38505}, 		// Έ 
-	{8, 38520}, 		// Ὴ 
-	{8, 38535}, 		// Ή 
-	{6, 38550}, 		// ῌ 
-	{4, 38565}, 		// ῍ 
-	{4, 38580}, 		// ῎ 
-	{4, 38595}, 		// ῏ 
-	{4, 38610}, 		// ῐ 
-	{4, 38625}, 		// ῑ 
-	{5, 38640}, 		// ῒ 
-	{5, 38655}, 		// ΐ 
-	{0, 0}, 		// ῔ 
-	{0, 0}, 		// ῕ 
-	{4, 38670}, 		// ῖ 
-	{5, 38685}, 		// ῗ 
-	{3, 38700}, 		// Ῐ 
-	{4, 38715}, 		// Ῑ 
-	{3, 38730}, 		// Ὶ 
-	{3, 38745}, 		// Ί 
-	{0, 0}, 		// ῜ 
-	{4, 38760}, 		// ῝ 
-	{4, 38775}, 		// ῞ 
-	{4, 38790}, 		// ῟ 
-	{5, 38805}, 		// ῠ 
-	{5, 38820}, 		// ῡ 
-	{5, 38835}, 		// ῢ 
-	{5, 38850}, 		// ΰ 
-	{5, 38865}, 		// ῤ 
-	{5, 38880}, 		// ῥ 
-	{5, 38895}, 		// ῦ 
-	{5, 38910}, 		// ῧ 
-	{5, 38925}, 		// Ῠ 
-	{5, 38940}, 		// Ῡ 
-	{8, 38955}, 		// Ὺ 
-	{8, 38970}, 		// Ύ 
-	{7, 38985}, 		// Ῥ 
-	{4, 39000}, 		// ῭ 
-	{4, 39015}, 		// ΅ 
-	{2, 39030}, 		// ` 
-	{0, 0}, 		// ῰ 
-	{0, 0}, 		// ῱ 
-	{7, 39045}, 		// ῲ 
-	{7, 39060}, 		// ῳ 
-	{7, 39075}, 		// ῴ 
-	{0, 0}, 		// ῵ 
-	{7, 39090}, 		// ῶ 
-	{7, 39105}, 		// ῷ 
-	{9, 39120}, 		// Ὸ 
-	{9, 39150}, 		// Ό 
-	{9, 39180}, 		// Ὼ 
-	{9, 39210}, 		// Ώ 
-	{7, 39240}, 		// ῼ 
-	{2, 39255}, 		// ´ 
-	{1, 39270}, 		// ῾ 
-	{0, 0}, 		// ῿ 
-	{2, 39285}, 		//   
-	{2, 39300}, 		//   
-	{2, 39315}, 		//   
-	{2, 39330}, 		//   
-	{2, 39345}, 		//   
-	{2, 39360}, 		//   
-	{2, 39375}, 		//   
-	{2, 39390}, 		//   
-	{2, 39405}, 		//   
-	{2, 39420}, 		//   
-	{2, 39435}, 		//   
-	{2, 39450}, 		// ​ 
-	{2, 39465}, 		// ‌ 
-	{2, 39480}, 		// ‍ 
-	{2, 39495}, 		// ‎ 
-	{2, 39510}, 		// ‏ 
-	{3, 39525}, 		// ‐ 
-	{0, 0}, 		// ‑ 
-	{6, 39540}, 		// ‒ 
-	{6, 39555}, 		// – 
-	{10, 39570}, 		// — 
-	{10, 39600}, 		// ― 
-	{4, 39630}, 		// ‖ 
-	{7, 39645}, 		// ‗ 
-	{2, 39660}, 		// ‘ 
-	{2, 39675}, 		// ’ 
-	{2, 39690}, 		// ‚ 
-	{2, 39705}, 		// ‛ 
-	{4, 39720}, 		// “ 
-	{4, 39735}, 		// ” 
-	{4, 39750}, 		// „ 
-	{4, 39765}, 		// ‟ 
-	{5, 39780}, 		// † 
-	{5, 39795}, 		// ‡ 
-	{4, 39810}, 		// • 
-	{0, 0}, 		// ‣ 
-	{0, 0}, 		// ․ 
-	{0, 0}, 		// ‥ 
-	{7, 39825}, 		// … 
-	{0, 0}, 		// ‧ 
-	{0, 0}, 		// 
+	{6, 15, 28440, 6.23339862326975}, 		// ᴀ 
+	{8, 15, 28455, 8.22021508873149}, 		// ᴁ 
+	{9, 15, 28470, 10.0483401432139}, 		// ᴂ 
+	{6, 15, 28500, 6.61425800962024}, 		// ᴃ 
+	{5, 15, 28515, 6.16357440243883}, 		// ᴄ 
+	{5, 15, 28530, 6.93164083157899}, 		// ᴅ 
+	{6, 15, 28545, 7.06494161680166}, 		// ᴆ 
+	{4, 15, 28560, 5.27490250095434}, 		// ᴇ 
+	{4, 15, 28575, 5.57959001003474}, 		// ᴈ 
+	{1, 15, 28590, 2.9833985264122}, 		// ᴉ 
+	{3, 15, 28605, 3.49755869798537}, 		// ᴊ 
+	{4, 15, 28620, 5.79541032896668}, 		// ᴋ 
+	{4, 15, 28635, 4.77343764225952}, 		// ᴌ 
+	{7, 15, 28650, 8.79150416825723}, 		// ᴍ 
+	{5, 15, 28665, 7.02685567816661}, 		// ᴎ 
+	{6, 15, 28680, 7.23632834065938}, 		// ᴏ 
+	{5, 15, 28695, 6.16357440243883}, 		// ᴐ 
+	{6, 15, 28710, 7.57275413193565}, 		// ᴑ 
+	{6, 15, 28725, 7.56640647549648}, 		// ᴒ 
+	{8, 15, 28740, 8.37890649971087}, 		// ᴓ 
+	{10, 15, 28755, 11.0449222041643}, 		// ᴔ 
+	{5, 15, 28785, 5.53515641496051}, 		// ᴕ 
+	{6, 15, 28800, 6.85546895430889}, 		// ᴖ 
+	{6, 15, 28815, 6.85546895430889}, 		// ᴗ 
+	{4, 15, 28830, 5.9414064270677}, 		// ᴘ 
+	{5, 15, 28845, 6.18896502819553}, 		// ᴙ 
+	{4, 15, 28860, 6.18896502819553}, 		// ᴚ 
+	{5, 15, 28875, 5.27490250095434}, 		// ᴛ 
+	{5, 15, 28890, 7.17285177626763}, 		// ᴜ 
+	{6, 15, 28905, 7.14111349407176}, 		// ᴝ 
+	{8, 15, 28920, 9.38818387353967}, 		// ᴞ 
+	{6, 15, 28935, 10.3847659344901}, 		// ᴟ 
+	{6, 15, 28950, 6.28417987478315}, 		// ᴠ 
+	{9, 15, 28965, 9.83886748072109}, 		// ᴡ 
+	{5, 15, 28995, 5.37646500398114}, 		// ᴢ 
+	{4, 15, 29010, 5.17333999792754}, 		// ᴣ 
+	{4, 15, 29025, 5.08447280777909}, 		// ᴤ 
+	{6, 15, 29040, 6.1953126846347}, 		// ᴥ 
+	{4, 15, 29055, 4.78613295513787}, 		// ᴦ 
+	{6, 15, 29070, 6.28417987478315}, 		// ᴧ 
+	{5, 15, 29085, 7.00781270884909}, 		// ᴨ 
+	{4, 15, 29100, 5.9414064270677}, 		// ᴩ 
+	{7, 15, 29115, 8.42334009478509}, 		// ᴪ 
+	{6, 15, 29130, 6.58886738386354}, 		// ᴫ 
+	{5, 15, 29145, 4.8051759244554}, 		// ᴬ 
+	{6, 15, 29160, 6.40478534712747}, 		// ᴭ 
+	{3, 15, 29175, 4.71630873430695}, 		// ᴮ 
+	{4, 15, 29190, 4.84326186309045}, 		// ᴯ 
+	{4, 15, 29205, 5.35107437822444}, 		// ᴰ 
+	{3, 15, 29220, 4.31640637863893}, 		// ᴱ 
+	{3, 15, 29235, 4.31640637863893}, 		// ᴲ 
+	{4, 15, 29250, 5.30664078315021}, 		// ᴳ 
+	{4, 15, 29265, 5.45263688125124}, 		// ᴴ 
+	{1, 15, 29280, 2.67871101733181}, 		// ᴵ 
+	{2, 15, 29295, 2.91357430558128}, 		// ᴶ 
+	{3, 15, 29310, 4.67187513923272}, 		// ᴷ 
+	{3, 15, 29325, 3.82763683282246}, 		// ᴸ 
+	{5, 15, 29340, 7.19189474558516}, 		// ᴹ 
+	{4, 15, 29355, 5.61767594866978}, 		// ᴺ 
+	{4, 15, 29370, 5.61767594866978}, 		// ᴻ 
+	{4, 15, 29385, 5.61767594866978}, 		// ᴼ 
+	{3, 15, 29400, 4.37988294303068}, 		// ᴽ 
+	{3, 15, 29415, 4.62109388771933}, 		// ᴾ 
+	{3, 15, 29430, 4.23388684492966}, 		// ᴿ 
+	{3, 15, 29445, 3.80224620706576}, 		// ᵀ 
+	{4, 15, 29460, 5.00195327406982}, 		// ᵁ 
+	{7, 15, 29475, 6.93798848801816}, 		// ᵂ 
+	{3, 15, 29490, 4.34179700439563}, 		// ᵃ 
+	{3, 15, 29505, 4.34179700439563}, 		// ᵄ 
+	{4, 15, 29520, 4.7036134214286}, 		// ᵅ 
+	{6, 15, 29535, 6.77294942059962}, 		// ᵆ 
+	{4, 15, 29550, 4.7036134214286}, 		// ᵇ 
+	{4, 15, 29565, 4.7036134214286}, 		// ᵈ 
+	{4, 15, 29580, 4.41796888166573}, 		// ᵉ 
+	{1, 15, 29595, 4.41796888166573}, 		// ᵊ 
+	{3, 15, 29610, 4.00537121311936}, 		// ᵋ 
+	{3, 15, 29625, 4.00537121311936}, 		// ᵌ 
+	{4, 15, 29640, 4.20849621917296}, 		// ᵍ 
+	{1, 15, 29655, 2.25341803590709}, 		// ᵎ 
+	{3, 15, 29670, 4.20849621917296}, 		// ᵏ 
+	{6, 15, 29685, 7.04589864748414}, 		// ᵐ 
+	{3, 15, 29700, 4.70996107786777}, 		// ᵑ 
+	{4, 15, 29715, 4.70996107786777}, 		// ᵒ 
+	{3, 15, 29730, 3.74511729911319}, 		// ᵓ 
+	{4, 15, 29745, 4.70996107786777}, 		// ᵔ 
+	{4, 15, 29760, 4.70996107786777}, 		// ᵕ 
+	{4, 15, 29775, 4.7036134214286}, 		// ᵖ 
+	{3, 15, 29790, 3.06591806012148}, 		// ᵗ 
+	{3, 15, 29805, 4.7290040471853}, 		// ᵘ 
+	{4, 15, 29820, 4.64013685703685}, 		// ᵙ 
+	{6, 15, 29835, 7.04589864748414}, 		// ᵚ 
+	{3, 15, 29850, 4.09423840326781}, 		// ᵛ 
+	{4, 15, 29865, 3.71972667335649}, 		// ᵜ 
+	{3, 15, 29880, 4.45605482030078}, 		// ᵝ 
+	{3, 15, 29895, 3.69433604759979}, 		// ᵞ 
+	{3, 15, 29910, 4.08154309038946}, 		// ᵟ 
+	{5, 15, 29925, 5.51611344564299}, 		// ᵠ 
+	{4, 15, 29940, 3.85302745857916}, 		// ᵡ 
+	{1, 15, 29955, 2.25341803590709}, 		// ᵢ 
+	{2, 15, 29970, 3.1865235324658}, 		// ᵣ 
+	{3, 15, 29985, 4.7290040471853}, 		// ᵤ 
+	{3, 15, 30000, 4.09423840326781}, 		// ᵥ 
+	{3, 15, 30015, 4.45605482030078}, 		// ᵦ 
+	{3, 15, 30030, 3.69433604759979}, 		// ᵧ 
+	{4, 15, 30045, 4.7036134214286}, 		// ᵨ 
+	{5, 15, 30060, 5.51611344564299}, 		// ᵩ 
+	{3, 15, 30075, 3.85302745857916}, 		// ᵪ 
+	{9, 15, 30090, 10.6894534435705}, 		// ᵫ 
+	{7, 15, 30120, 7.6870119478408}, 		// ᵬ 
+	{6, 15, 30135, 7.69970726071915}, 		// ᵭ 
+	{5, 15, 30150, 4.93847670967807}, 		// ᵮ 
+	{10, 15, 30165, 10.7402346950839}, 		// ᵯ 
+	{7, 15, 30195, 7.64257835276658}, 		// ᵰ 
+	{7, 15, 30210, 7.70605491715833}, 		// ᵱ 
+	{5, 15, 30225, 5.39550797329866}, 		// ᵲ 
+	{5, 15, 30240, 5.04003921270487}, 		// ᵳ 
+	{6, 15, 30255, 5.87158220623678}, 		// ᵴ 
+	{5, 15, 30270, 4.97021499187395}, 		// ᵵ 
+	{5, 15, 30285, 5.13525405929249}, 		// ᵶ 
+	{5, 15, 30300, 6.1191408073646}, 		// ᵷ 
+	{4, 15, 30315, 4.90039077104302}, 		// ᵸ 
+	{5, 15, 30330, 6.1191408073646}, 		// ᵹ 
+	{10, 15, 30345, 10.6132815663004}, 		// ᵺ 
+	{3, 15, 30375, 3.66259776540392}, 		// ᵻ 
+	{4, 15, 30390, 3.91650402297091}, 		// ᵼ 
+	{6, 15, 30405, 7.16015646338928}, 		// ᵽ 
+	{7, 15, 30420, 7.8901369538944}, 		// ᵾ 
+	{7, 15, 30435, 7.74414085579338}, 		// ᵿ 
+	{5, 15, 30450, 6.83007832855219}, 		// ᶀ 
+	{6, 15, 30465, 7.01416036528826}, 		// ᶁ 
+	{4, 15, 30480, 3.96728527448431}, 		// ᶂ 
+	{7, 15, 30495, 8.60742213152116}, 		// ᶃ 
+	{5, 15, 30510, 6.69042988689034}, 		// ᶄ 
+	{2, 15, 30525, 3.14843759383075}, 		// ᶅ 
+	{9, 15, 30540, 10.5561526583479}, 		// ᶆ 
+	{6, 15, 30570, 7.01416036528826}, 		// ᶇ 
+	{5, 15, 30585, 6.83007832855219}, 		// ᶈ 
+	{3, 15, 30600, 4.53222669757088}, 		// ᶉ 
+	{4, 15, 30615, 5.65576188730483}, 		// ᶊ 
+	{4, 15, 30630, 4.83691420665127}, 		// ᶋ 
+	{6, 15, 30645, 5.87158220623678}, 		// ᶌ 
+	{5, 15, 30660, 6.37939472137077}, 		// ᶍ 
+	{5, 15, 30675, 5.25585953163682}, 		// ᶎ 
+	{6, 15, 30690, 7.28710959217278}, 		// ᶏ 
+	{7, 15, 30705, 7.87109398457687}, 		// ᶐ 
+	{6, 15, 30720, 6.83007832855219}, 		// ᶑ 
+	{6, 15, 30735, 6.46826191151922}, 		// ᶒ 
+	{5, 15, 30750, 5.49707047632546}, 		// ᶓ 
+	{4, 15, 30765, 5.49707047632546}, 		// ᶔ 
+	{6, 15, 30780, 6.46826191151922}, 		// ᶕ 
+	{3, 15, 30795, 2.9833985264122}, 		// ᶖ 
+	{5, 15, 30810, 5.49707047632546}, 		// ᶗ 
+	{3, 15, 30825, 3.57373057525547}, 		// ᶘ 
+	{7, 15, 30840, 7.87109398457687}, 		// ᶙ 
+	{5, 15, 30855, 5.62402360510896}, 		// ᶚ 
+	{4, 15, 30870, 4.7036134214286}, 		// ᶛ 
+	{3, 15, 30885, 3.74511729911319}, 		// ᶜ 
+	{3, 15, 30900, 3.94824230516679}, 		// ᶝ 
+	{4, 15, 30915, 4.37988294303068}, 		// ᶞ 
+	{3, 15, 30930, 4.00537121311936}, 		// ᶟ 
+	{3, 15, 30945, 2.85009774118953}, 		// ᶠ 
+	{3, 15, 30960, 2.85009774118953}, 		// ᶡ 
+	{4, 15, 30975, 4.20849621917296}, 		// ᶢ 
+	{3, 15, 30990, 4.7290040471853}, 		// ᶣ 
+	{3, 15, 31005, 2.55175788854831}, 		// ᶤ 
+	{2, 15, 31020, 2.70410164308851}, 		// ᶥ 
+	{1, 15, 31035, 2.25341803590709}, 		// ᶦ 
+	{3, 15, 31050, 2.55175788854831}, 		// ᶧ 
+	{2, 15, 31065, 3.07861337299983}, 		// ᶨ 
+	{2, 15, 31080, 2.56445320142666}, 		// ᶩ 
+	{2, 15, 31095, 2.40576179044729}, 		// ᶪ 
+	{3, 15, 31110, 3.47851572866784}, 		// ᶫ 
+	{6, 15, 31125, 7.04589864748414}, 		// ᶬ 
+	{5, 15, 31140, 7.04589864748414}, 		// ᶭ 
+	{4, 15, 31155, 5.04638686914404}, 		// ᶮ 
+	{4, 15, 31170, 5.05273452558322}, 		// ᶯ 
+	{4, 15, 31185, 4.90039077104302}, 		// ᶰ 
+	{4, 15, 31200, 4.70996107786777}, 		// ᶱ 
+	{5, 15, 31215, 5.21777359300177}, 		// ᶲ 
+	{3, 15, 31230, 3.55468760593794}, 		// ᶳ 
+	{3, 15, 31245, 2.31689460029884}, 		// ᶴ 
+	{3, 15, 31260, 3.07226571656065}, 		// ᶵ 
+	{5, 15, 31275, 4.7290040471853}, 		// ᶶ 
+	{4, 15, 31290, 4.41796888166573}, 		// ᶷ 
+	{3, 15, 31305, 4.70996107786777}, 		// ᶸ 
+	{3, 15, 31320, 4.70996107786777}, 		// ᶹ 
+	{3, 15, 31335, 4.09423840326781}, 		// ᶺ 
+	{3, 15, 31350, 3.59912120101217}, 		// ᶻ 
+	{4, 15, 31365, 4.18945324985543}, 		// ᶼ 
+	{4, 15, 31380, 4.30371106576058}, 		// ᶽ 
+	{3, 15, 31395, 3.97363293092349}, 		// ᶾ 
+	{4, 15, 31410, 4.70996107786777}, 		// ᶿ 
+	{4, 15, 31425, 0}, 		// ᷀ 
+	{4, 15, 31440, 0}, 		// ᷁ 
+	{1, 15, 31455, 0}, 		// ᷂ 
+	{4, 15, 31470, 0}, 		// ᷃ 
+	{5, 15, 31485, 0}, 		// ᷄ 
+	{4, 15, 31500, 0}, 		// ᷅ 
+	{5, 15, 31515, 0}, 		// ᷆ 
+	{4, 15, 31530, 0}, 		// ᷇ 
+	{5, 15, 31545, 0}, 		// ᷈ 
+	{5, 15, 31560, 0}, 		// ᷉ 
+	{2, 15, 31575, 0}, 		// ᷊ 
+	{0, 0, 0, 0}, 		// ᷋ 
+	{0, 0, 0, 0}, 		// ᷌ 
+	{0, 0, 0, 0}, 		// ᷍ 
+	{0, 0, 0, 0}, 		// ᷎ 
+	{0, 0, 0, 0}, 		// ᷏ 
+	{0, 0, 0, 0}, 		// ᷐ 
+	{0, 0, 0, 0}, 		// ᷑ 
+	{0, 0, 0, 0}, 		// ᷒ 
+	{0, 0, 0, 0}, 		// ᷓ 
+	{0, 0, 0, 0}, 		// ᷔ 
+	{0, 0, 0, 0}, 		// ᷕ 
+	{0, 0, 0, 0}, 		// ᷖ 
+	{0, 0, 0, 0}, 		// ᷗ 
+	{0, 0, 0, 0}, 		// ᷘ 
+	{0, 0, 0, 0}, 		// ᷙ 
+	{0, 0, 0, 0}, 		// ᷚ 
+	{0, 0, 0, 0}, 		// ᷛ 
+	{0, 0, 0, 0}, 		// ᷜ 
+	{0, 0, 0, 0}, 		// ᷝ 
+	{0, 0, 0, 0}, 		// ᷞ 
+	{0, 0, 0, 0}, 		// ᷟ 
+	{0, 0, 0, 0}, 		// ᷠ 
+	{0, 0, 0, 0}, 		// ᷡ 
+	{0, 0, 0, 0}, 		// ᷢ 
+	{0, 0, 0, 0}, 		// ᷣ 
+	{0, 0, 0, 0}, 		// ᷤ 
+	{0, 0, 0, 0}, 		// ᷥ 
+	{0, 0, 0, 0}, 		// ᷦ 
+	{0, 0, 0, 0}, 		// ᷧ 
+	{0, 0, 0, 0}, 		// ᷨ 
+	{0, 0, 0, 0}, 		// ᷩ 
+	{0, 0, 0, 0}, 		// ᷪ 
+	{0, 0, 0, 0}, 		// ᷫ 
+	{0, 0, 0, 0}, 		// ᷬ 
+	{0, 0, 0, 0}, 		// ᷭ 
+	{0, 0, 0, 0}, 		// ᷮ 
+	{0, 0, 0, 0}, 		// ᷯ 
+	{0, 0, 0, 0}, 		// ᷰ 
+	{0, 0, 0, 0}, 		// ᷱ 
+	{0, 0, 0, 0}, 		// ᷲ 
+	{0, 0, 0, 0}, 		// ᷳ 
+	{0, 0, 0, 0}, 		// ᷴ 
+	{0, 0, 0, 0}, 		// ᷵ 
+	{0, 0, 0, 0}, 		// ᷶ 
+	{0, 0, 0, 0}, 		// ᷷ 
+	{0, 0, 0, 0}, 		// ᷸ 
+	{0, 0, 0, 0}, 		// ᷹ 
+	{0, 0, 0, 0}, 		// ᷺ 
+	{0, 0, 0, 0}, 		// ᷻ 
+	{0, 0, 0, 0}, 		// ᷼ 
+	{0, 0, 0, 0}, 		// ᷽ 
+	{2, 15, 31590, 0}, 		// ᷾ 
+	{4, 15, 31605, 0}, 		// ᷿ 
+	{7, 15, 31620, 7.52197288042225}, 		// Ḁ 
+	{5, 15, 31635, 6.22705096683057}, 		// ḁ 
+	{5, 15, 31650, 7.07128927324084}, 		// Ḃ 
+	{5, 15, 31665, 6.83007832855219}, 		// ḃ 
+	{5, 15, 31680, 7.07128927324084}, 		// Ḅ 
+	{5, 15, 31695, 6.83007832855219}, 		// ḅ 
+	{5, 15, 31710, 7.07128927324084}, 		// Ḇ 
+	{5, 15, 31725, 6.83007832855219}, 		// ḇ 
+	{6, 15, 31740, 6.93164083157899}, 		// Ḉ 
+	{5, 15, 31755, 5.49707047632546}, 		// ḉ 
+	{6, 15, 31770, 7.99804711336037}, 		// Ḋ 
+	{5, 15, 31785, 6.83007832855219}, 		// ḋ 
+	{6, 15, 31800, 7.99804711336037}, 		// Ḍ 
+	{5, 15, 31815, 6.83007832855219}, 		// ḍ 
+	{6, 15, 31830, 7.99804711336037}, 		// Ḏ 
+	{5, 15, 31845, 6.83007832855219}, 		// ḏ 
+	{6, 15, 31860, 7.99804711336037}, 		// Ḑ 
+	{5, 15, 31875, 6.83007832855219}, 		// ḑ 
+	{6, 15, 31890, 7.99804711336037}, 		// Ḓ 
+	{5, 15, 31905, 6.83007832855219}, 		// ḓ 
+	{5, 15, 31920, 6.3476564391749}, 		// Ḕ 
+	{5, 15, 31935, 6.46826191151922}, 		// ḕ 
+	{5, 15, 31950, 6.3476564391749}, 		// Ḗ 
+	{5, 15, 31965, 6.46826191151922}, 		// ḗ 
+	{5, 15, 31980, 6.3476564391749}, 		// Ḙ 
+	{5, 15, 31995, 6.46826191151922}, 		// ḙ 
+	{5, 15, 32010, 6.3476564391749}, 		// Ḛ 
+	{5, 15, 32025, 6.46826191151922}, 		// ḛ 
+	{5, 15, 32040, 6.3476564391749}, 		// Ḝ 
+	{5, 15, 32055, 6.46826191151922}, 		// ḝ 
+	{4, 15, 32070, 5.97314470926358}, 		// Ḟ 
+	{4, 15, 32085, 3.96728527448431}, 		// ḟ 
+	{6, 15, 32100, 8.20117211941397}, 		// Ḡ 
+	{5, 15, 32115, 6.1191408073646}, 		// ḡ 
+	{6, 15, 32130, 8.09960961638717}, 		// Ḣ 
+	{5, 15, 32145, 6.83007832855219}, 		// ḣ 
+	{6, 15, 32160, 8.09960961638717}, 		// Ḥ 
+	{5, 15, 32175, 6.83007832855219}, 		// ḥ 
+	{6, 15, 32190, 8.09960961638717}, 		// Ḧ 
+	{5, 15, 32205, 6.83007832855219}, 		// ḧ 
+	{7, 15, 32220, 8.09960961638717}, 		// Ḩ 
+	{6, 15, 32235, 6.83007832855219}, 		// ḩ 
+	{6, 15, 32250, 8.09960961638717}, 		// Ḫ 
+	{5, 15, 32265, 6.83007832855219}, 		// ḫ 
+	{4, 15, 32280, 3.27539072261425}, 		// Ḭ 
+	{4, 15, 32295, 2.9833985264122}, 		// ḭ 
+	{3, 15, 32310, 3.27539072261425}, 		// Ḯ 
+	{3, 15, 32325, 2.9833985264122}, 		// ḯ 
+	{5, 15, 32340, 6.75390645128209}, 		// Ḱ 
+	{5, 15, 32355, 5.90966814487183}, 		// ḱ 
+	{5, 15, 32370, 6.75390645128209}, 		// Ḳ 
+	{5, 15, 32385, 5.90966814487183}, 		// ḳ 
+	{5, 15, 32400, 6.75390645128209}, 		// Ḵ 
+	{5, 15, 32415, 5.90966814487183}, 		// ḵ 
+	{4, 15, 32430, 5.46533219412959}, 		// Ḷ 
+	{1, 15, 32445, 2.9833985264122}, 		// ḷ 
+	{4, 15, 32460, 5.46533219412959}, 		// Ḹ 
+	{3, 15, 32475, 2.9833985264122}, 		// ḹ 
+	{4, 15, 32490, 5.46533219412959}, 		// Ḻ 
+	{3, 15, 32505, 2.9833985264122}, 		// ḻ 
+	{4, 15, 32520, 5.46533219412959}, 		// Ḽ 
+	{3, 15, 32535, 2.9833985264122}, 		// ḽ 
+	{9, 15, 32550, 11.1147464249952}, 		// Ḿ 
+	{8, 15, 32580, 10.3847659344901}, 		// ḿ 
+	{9, 15, 32595, 11.1147464249952}, 		// Ṁ 
+	{8, 15, 32625, 10.3847659344901}, 		// ṁ 
+	{9, 15, 32640, 11.1147464249952}, 		// Ṃ 
+	{8, 15, 32670, 10.3847659344901}, 		// ṃ 
+	{6, 15, 32685, 8.39160181258922}, 		// Ṅ 
+	{5, 15, 32700, 6.83007832855219}, 		// ṅ 
+	{6, 15, 32715, 8.39160181258922}, 		// Ṇ 
+	{5, 15, 32730, 6.83007832855219}, 		// ṇ 
+	{6, 15, 32745, 8.39160181258922}, 		// Ṉ 
+	{5, 15, 32760, 6.83007832855219}, 		// ṉ 
+	{6, 15, 32775, 8.39160181258922}, 		// Ṋ 
+	{5, 15, 32790, 6.83007832855219}, 		// ṋ 
+	{7, 15, 32805, 8.60742213152116}, 		// Ṍ 
+	{5, 15, 32820, 6.85546895430889}, 		// ṍ 
+	{7, 15, 32835, 8.60742213152116}, 		// Ṏ 
+	{5, 15, 32850, 6.85546895430889}, 		// ṏ 
+	{7, 15, 32865, 8.60742213152116}, 		// Ṑ 
+	{5, 15, 32880, 6.85546895430889}, 		// ṑ 
+	{7, 15, 32895, 8.60742213152116}, 		// Ṓ 
+	{5, 15, 32910, 6.85546895430889}, 		// ṓ 
+	{5, 15, 32925, 6.71582051264704}, 		// Ṕ 
+	{5, 15, 32940, 6.83007832855219}, 		// ṕ 
+	{5, 15, 32955, 6.71582051264704}, 		// Ṗ 
+	{5, 15, 32970, 6.83007832855219}, 		// ṗ 
+	{5, 15, 32985, 7.05859396036249}, 		// Ṙ 
+	{3, 15, 33000, 4.53222669757088}, 		// ṙ 
+	{5, 15, 33015, 7.05859396036249}, 		// Ṛ 
+	{3, 15, 33030, 4.53222669757088}, 		// ṛ 
+	{5, 15, 33045, 7.05859396036249}, 		// Ṝ 
+	{3, 15, 33060, 4.53222669757088}, 		// ṝ 
+	{5, 15, 33075, 7.05859396036249}, 		// Ṟ 
+	{3, 15, 33090, 4.53222669757088}, 		// ṟ 
+	{5, 15, 33105, 5.97314470926358}, 		// Ṡ 
+	{4, 15, 33120, 5.08447280777909}, 		// ṡ 
+	{5, 15, 33135, 5.97314470926358}, 		// Ṣ 
+	{4, 15, 33150, 5.08447280777909}, 		// ṣ 
+	{5, 15, 33165, 5.97314470926358}, 		// Ṥ 
+	{4, 15, 33180, 5.08447280777909}, 		// ṥ 
+	{6, 15, 33195, 5.97314470926358}, 		// Ṧ 
+	{4, 15, 33210, 5.08447280777909}, 		// ṧ 
+	{5, 15, 33225, 5.97314470926358}, 		// Ṩ 
+	{4, 15, 33240, 5.08447280777909}, 		// ṩ 
+	{7, 15, 33255, 6.33496112629655}, 		// Ṫ 
+	{4, 15, 33270, 4.35449231727398}, 		// ṫ 
+	{7, 15, 33285, 6.33496112629655}, 		// Ṭ 
+	{4, 15, 33300, 4.35449231727398}, 		// ṭ 
+	{7, 15, 33315, 6.33496112629655}, 		// Ṯ 
+	{4, 15, 33330, 4.35449231727398}, 		// ṯ 
+	{7, 15, 33345, 6.33496112629655}, 		// Ṱ 
+	{4, 15, 33360, 4.35449231727398}, 		// ṱ 
+	{6, 15, 33375, 8.34082056107582}, 		// Ṳ 
+	{5, 15, 33390, 6.83007832855219}, 		// ṳ 
+	{6, 15, 33405, 8.34082056107582}, 		// Ṵ 
+	{5, 15, 33420, 6.83007832855219}, 		// ṵ 
+	{6, 15, 33435, 8.34082056107582}, 		// Ṷ 
+	{5, 15, 33450, 6.83007832855219}, 		// ṷ 
+	{6, 15, 33465, 8.34082056107582}, 		// Ṹ 
+	{5, 15, 33480, 6.83007832855219}, 		// ṹ 
+	{6, 15, 33495, 8.34082056107582}, 		// Ṻ 
+	{5, 15, 33510, 6.83007832855219}, 		// ṻ 
+	{6, 15, 33525, 7.37597678232123}, 		// Ṽ 
+	{6, 15, 33540, 5.87158220623678}, 		// ṽ 
+	{6, 15, 33555, 7.37597678232123}, 		// Ṿ 
+	{6, 15, 33570, 5.87158220623678}, 		// ṿ 
+	{11, 15, 33585, 11.5654300321767}, 		// Ẁ 
+	{8, 15, 33615, 9.29296902695205}, 		// ẁ 
+	{11, 15, 33630, 11.5654300321767}, 		// Ẃ 
+	{8, 15, 33660, 9.29296902695205}, 		// ẃ 
+	{11, 15, 33675, 11.5654300321767}, 		// Ẅ 
+	{8, 15, 33705, 9.29296902695205}, 		// ẅ 
+	{11, 15, 33720, 11.5654300321767}, 		// Ẇ 
+	{8, 15, 33750, 9.29296902695205}, 		// ẇ 
+	{11, 15, 33765, 11.5654300321767}, 		// Ẉ 
+	{8, 15, 33795, 9.29296902695205}, 		// ẉ 
+	{6, 15, 33810, 6.74755879484292}, 		// Ẋ 
+	{4, 15, 33825, 5.63037126154813}, 		// ẋ 
+	{6, 15, 33840, 6.74755879484292}, 		// Ẍ 
+	{4, 15, 33855, 5.63037126154813}, 		// ẍ 
+	{5, 15, 33870, 6.33496112629655}, 		// Ẏ 
+	{6, 15, 33885, 5.88427751911513}, 		// ẏ 
+	{6, 15, 33900, 6.08740252516873}, 		// Ẑ 
+	{5, 15, 33915, 5.13525405929249}, 		// ẑ 
+	{6, 15, 33930, 6.08740252516873}, 		// Ẓ 
+	{5, 15, 33945, 5.13525405929249}, 		// ẓ 
+	{6, 15, 33960, 6.08740252516873}, 		// Ẕ 
+	{5, 15, 33975, 5.13525405929249}, 		// ẕ 
+	{5, 15, 33990, 6.83007832855219}, 		// ẖ 
+	{4, 15, 34005, 4.35449231727398}, 		// ẗ 
+	{8, 15, 34020, 9.29296902695205}, 		// ẘ 
+	{6, 15, 34035, 5.88427751911513}, 		// ẙ 
+	{5, 15, 34050, 6.22705096683057}, 		// ẚ 
+	{3, 15, 34065, 3.15478525026992}, 		// ẛ 
+	{4, 15, 34080, 3.96728527448431}, 		// ẜ 
+	{4, 15, 34095, 3.96728527448431}, 		// ẝ 
+	{6, 15, 34110, 7.29345724861196}, 		// ẞ 
+	{6, 15, 34125, 6.80468770279549}, 		// ẟ 
+	{7, 15, 34140, 7.52197288042225}, 		// Ạ 
+	{5, 15, 34155, 6.22705096683057}, 		// ạ 
+	{7, 15, 34170, 7.52197288042225}, 		// Ả 
+	{5, 15, 34185, 6.22705096683057}, 		// ả 
+	{7, 15, 34200, 7.52197288042225}, 		// Ấ 
+	{6, 15, 34215, 6.22705096683057}, 		// ấ 
+	{7, 15, 34230, 7.52197288042225}, 		// Ầ 
+	{6, 15, 34245, 6.22705096683057}, 		// ầ 
+	{7, 15, 34260, 7.52197288042225}, 		// Ẩ 
+	{5, 15, 34275, 6.22705096683057}, 		// ẩ 
+	{7, 15, 34290, 7.52197288042225}, 		// Ẫ 
+	{5, 15, 34305, 6.22705096683057}, 		// ẫ 
+	{7, 15, 34320, 7.52197288042225}, 		// Ậ 
+	{5, 15, 34335, 6.22705096683057}, 		// ậ 
+	{7, 15, 34350, 7.52197288042225}, 		// Ắ 
+	{5, 15, 34365, 6.22705096683057}, 		// ắ 
+	{7, 15, 34380, 7.52197288042225}, 		// Ằ 
+	{5, 15, 34395, 6.22705096683057}, 		// ằ 
+	{7, 15, 34410, 7.52197288042225}, 		// Ẳ 
+	{5, 15, 34425, 6.22705096683057}, 		// ẳ 
+	{7, 15, 34440, 7.52197288042225}, 		// Ẵ 
+	{5, 15, 34455, 6.22705096683057}, 		// ẵ 
+	{7, 15, 34470, 7.52197288042225}, 		// Ặ 
+	{5, 15, 34485, 6.22705096683057}, 		// ặ 
+	{5, 15, 34500, 6.3476564391749}, 		// Ẹ 
+	{5, 15, 34515, 6.46826191151922}, 		// ẹ 
+	{5, 15, 34530, 6.3476564391749}, 		// Ẻ 
+	{5, 15, 34545, 6.46826191151922}, 		// ẻ 
+	{5, 15, 34560, 6.3476564391749}, 		// Ẽ 
+	{5, 15, 34575, 6.46826191151922}, 		// ẽ 
+	{5, 15, 34590, 6.3476564391749}, 		// Ế 
+	{6, 15, 34605, 6.46826191151922}, 		// ế 
+	{5, 15, 34620, 6.3476564391749}, 		// Ề 
+	{6, 15, 34635, 6.46826191151922}, 		// ề 
+	{6, 15, 34650, 6.3476564391749}, 		// Ể 
+	{5, 15, 34665, 6.46826191151922}, 		// ể 
+	{5, 15, 34680, 6.3476564391749}, 		// Ễ 
+	{5, 15, 34695, 6.46826191151922}, 		// ễ 
+	{5, 15, 34710, 6.3476564391749}, 		// Ệ 
+	{5, 15, 34725, 6.46826191151922}, 		// ệ 
+	{2, 15, 34740, 3.27539072261425}, 		// Ỉ 
+	{2, 15, 34755, 2.9833985264122}, 		// ỉ 
+	{1, 15, 34770, 3.27539072261425}, 		// Ị 
+	{1, 15, 34785, 2.9833985264122}, 		// ị 
+	{7, 15, 34800, 8.60742213152116}, 		// Ọ 
+	{5, 15, 34815, 6.85546895430889}, 		// ọ 
+	{7, 15, 34830, 8.60742213152116}, 		// Ỏ 
+	{5, 15, 34845, 6.85546895430889}, 		// ỏ 
+	{7, 15, 34860, 8.60742213152116}, 		// Ố 
+	{6, 15, 34875, 6.85546895430889}, 		// ố 
+	{7, 15, 34890, 8.60742213152116}, 		// Ồ 
+	{6, 15, 34905, 6.85546895430889}, 		// ồ 
+	{7, 15, 34920, 8.60742213152116}, 		// Ổ 
+	{5, 15, 34935, 6.85546895430889}, 		// ổ 
+	{7, 15, 34950, 8.60742213152116}, 		// Ỗ 
+	{5, 15, 34965, 6.85546895430889}, 		// ỗ 
+	{7, 15, 34980, 8.60742213152116}, 		// Ộ 
+	{5, 15, 34995, 6.85546895430889}, 		// ộ 
+	{8, 15, 35010, 9.06445339514175}, 		// Ớ 
+	{6, 15, 35025, 7.51562522398308}, 		// ớ 
+	{8, 15, 35040, 9.06445339514175}, 		// Ờ 
+	{6, 15, 35055, 7.51562522398308}, 		// ờ 
+	{8, 15, 35070, 9.06445339514175}, 		// Ở 
+	{6, 15, 35085, 7.51562522398308}, 		// ở 
+	{8, 15, 35100, 9.06445339514175}, 		// Ỡ 
+	{6, 15, 35115, 7.51562522398308}, 		// ỡ 
+	{8, 15, 35130, 9.06445339514175}, 		// Ợ 
+	{6, 15, 35145, 7.51562522398308}, 		// ợ 
+	{6, 15, 35160, 8.34082056107582}, 		// Ụ 
+	{5, 15, 35175, 6.83007832855219}, 		// ụ 
+	{6, 15, 35190, 8.34082056107582}, 		// Ủ 
+	{5, 15, 35205, 6.83007832855219}, 		// ủ 
+	{8, 15, 35220, 9.3818362171005}, 		// Ứ 
+	{7, 15, 35235, 7.83300804594182}, 		// ứ 
+	{8, 15, 35250, 9.3818362171005}, 		// Ừ 
+	{7, 15, 35265, 7.83300804594182}, 		// ừ 
+	{8, 15, 35280, 9.3818362171005}, 		// Ử 
+	{7, 15, 35295, 7.83300804594182}, 		// ử 
+	{8, 15, 35310, 9.3818362171005}, 		// Ữ 
+	{7, 15, 35325, 7.83300804594182}, 		// ữ 
+	{8, 15, 35340, 9.3818362171005}, 		// Ự 
+	{7, 15, 35355, 7.83300804594182}, 		// ự 
+	{5, 15, 35370, 6.33496112629655}, 		// Ỳ 
+	{6, 15, 35385, 5.88427751911513}, 		// ỳ 
+	{5, 15, 35400, 6.33496112629655}, 		// Ỵ 
+	{6, 15, 35415, 5.88427751911513}, 		// ỵ 
+	{5, 15, 35430, 6.33496112629655}, 		// Ỷ 
+	{6, 15, 35445, 5.88427751911513}, 		// ỷ 
+	{5, 15, 35460, 6.33496112629655}, 		// Ỹ 
+	{6, 15, 35475, 5.88427751911513}, 		// ỹ 
+	{6, 15, 35490, 7.9409182054078}, 		// Ỻ 
+	{5, 15, 35505, 5.52246110208216}, 		// ỻ 
+	{6, 15, 35520, 7.24902365353773}, 		// Ỽ 
+	{5, 15, 35535, 6.16357440243883}, 		// ỽ 
+	{7, 15, 35550, 6.85546895430889}, 		// Ỿ 
+	{6, 15, 35565, 5.88427751911513}, 		// ỿ 
+	{7, 15, 35580, 7.37597678232123}, 		// ἀ 
+	{7, 15, 35595, 7.37597678232123}, 		// ἁ 
+	{7, 15, 35610, 7.37597678232123}, 		// ἂ 
+	{7, 15, 35625, 7.37597678232123}, 		// ἃ 
+	{7, 15, 35640, 7.37597678232123}, 		// ἄ 
+	{7, 15, 35655, 7.37597678232123}, 		// ἅ 
+	{7, 15, 35670, 7.37597678232123}, 		// ἆ 
+	{7, 15, 35685, 7.37597678232123}, 		// ἇ 
+	{7, 15, 35700, 7.52197288042225}, 		// Ἀ 
+	{7, 15, 35715, 7.52197288042225}, 		// Ἁ 
+	{9, 15, 35730, 7.52197288042225}, 		// Ἂ 
+	{9, 15, 35760, 7.52197288042225}, 		// Ἃ 
+	{8, 15, 35790, 7.52197288042225}, 		// Ἄ 
+	{8, 15, 35805, 7.52197288042225}, 		// Ἅ 
+	{8, 15, 35820, 7.52197288042225}, 		// Ἆ 
+	{8, 15, 35835, 7.52197288042225}, 		// Ἇ 
+	{5, 15, 35850, 5.92236345775018}, 		// ἐ 
+	{5, 15, 35865, 5.92236345775018}, 		// ἑ 
+	{5, 15, 35880, 5.92236345775018}, 		// ἒ 
+	{5, 15, 35895, 5.92236345775018}, 		// ἓ 
+	{5, 15, 35910, 5.92236345775018}, 		// ἔ 
+	{5, 15, 35925, 5.92236345775018}, 		// ἕ 
+	{0, 0, 0, 0}, 		// ἖ 
+	{0, 0, 0, 0}, 		// ἗ 
+	{7, 15, 35940, 6.3476564391749}, 		// Ἐ 
+	{7, 15, 35955, 6.3476564391749}, 		// Ἑ 
+	{8, 15, 35970, 7.69970726071915}, 		// Ἒ 
+	{8, 15, 35985, 7.69970726071915}, 		// Ἓ 
+	{8, 15, 36000, 7.69970726071915}, 		// Ἔ 
+	{8, 15, 36015, 7.72509788647585}, 		// Ἕ 
+	{0, 0, 0, 0}, 		// ἞ 
+	{0, 0, 0, 0}, 		// ἟ 
+	{5, 15, 36030, 6.98242208309239}, 		// ἠ 
+	{5, 15, 36045, 6.98242208309239}, 		// ἡ 
+	{5, 15, 36060, 6.98242208309239}, 		// ἢ 
+	{5, 15, 36075, 6.98242208309239}, 		// ἣ 
+	{5, 15, 36090, 6.98242208309239}, 		// ἤ 
+	{5, 15, 36105, 6.98242208309239}, 		// ἥ 
+	{5, 15, 36120, 6.98242208309239}, 		// ἦ 
+	{5, 15, 36135, 6.98242208309239}, 		// ἧ 
+	{8, 15, 36150, 8.09960961638717}, 		// Ἠ 
+	{8, 15, 36165, 8.09960961638717}, 		// Ἡ 
+	{9, 15, 36180, 9.45166043793142}, 		// Ἢ 
+	{9, 15, 36210, 9.45166043793142}, 		// Ἣ 
+	{9, 15, 36240, 9.45166043793142}, 		// Ἤ 
+	{9, 15, 36270, 9.45166043793142}, 		// Ἥ 
+	{10, 15, 36300, 8.68994166523044}, 		// Ἦ 
+	{10, 15, 36330, 8.68994166523044}, 		// Ἧ 
+	{3, 15, 36360, 3.56738291881629}, 		// ἰ 
+	{3, 15, 36375, 3.56738291881629}, 		// ἱ 
+	{4, 15, 36390, 3.56738291881629}, 		// ἲ 
+	{4, 15, 36405, 3.56738291881629}, 		// ἳ 
+	{4, 15, 36420, 3.56738291881629}, 		// ἴ 
+	{4, 15, 36435, 3.56738291881629}, 		// ἵ 
+	{5, 15, 36450, 3.56738291881629}, 		// ἶ 
+	{5, 15, 36465, 3.56738291881629}, 		// ἷ 
+	{3, 15, 36480, 3.27539072261425}, 		// Ἰ 
+	{3, 15, 36495, 3.27539072261425}, 		// Ἱ 
+	{4, 15, 36510, 4.6274415441585}, 		// Ἲ 
+	{4, 15, 36525, 4.6274415441585}, 		// Ἳ 
+	{4, 15, 36540, 4.6274415441585}, 		// Ἴ 
+	{4, 15, 36555, 4.6274415441585}, 		// Ἵ 
+	{5, 15, 36570, 3.86572277145751}, 		// Ἶ 
+	{5, 15, 36585, 3.86572277145751}, 		// Ἷ 
+	{5, 15, 36600, 6.85546895430889}, 		// ὀ 
+	{5, 15, 36615, 6.85546895430889}, 		// ὁ 
+	{5, 15, 36630, 6.85546895430889}, 		// ὂ 
+	{5, 15, 36645, 6.85546895430889}, 		// ὃ 
+	{5, 15, 36660, 6.85546895430889}, 		// ὄ 
+	{5, 15, 36675, 6.85546895430889}, 		// ὅ 
+	{0, 0, 0, 0}, 		// ὆ 
+	{0, 0, 0, 0}, 		// ὇ 
+	{9, 15, 36690, 8.60742213152116}, 		// Ὀ 
+	{9, 15, 36720, 8.60742213152116}, 		// Ὁ 
+	{10, 15, 36750, 9.82617216784274}, 		// Ὂ 
+	{11, 15, 36780, 9.78173857276852}, 		// Ὃ 
+	{10, 15, 36810, 9.68017606974172}, 		// Ὄ 
+	{10, 15, 36840, 9.66113310042419}, 		// Ὅ 
+	{0, 0, 0, 0}, 		// ὎ 
+	{0, 0, 0, 0}, 		// ὏ 
+	{5, 15, 36870, 7.03955099104496}, 		// ὐ 
+	{5, 15, 36885, 7.03955099104496}, 		// ὑ 
+	{5, 15, 36900, 7.03955099104496}, 		// ὒ 
+	{5, 15, 36915, 7.03955099104496}, 		// ὓ 
+	{5, 15, 36930, 7.03955099104496}, 		// ὔ 
+	{5, 15, 36945, 7.03955099104496}, 		// ὕ 
+	{5, 15, 36960, 7.03955099104496}, 		// ὖ 
+	{5, 15, 36975, 7.03955099104496}, 		// ὗ 
+	{0, 0, 0, 0}, 		// ὘ 
+	{7, 15, 36990, 6.33496112629655}, 		// Ὑ 
+	{0, 0, 0, 0}, 		// ὚ 
+	{9, 15, 37005, 8.24560571448819}, 		// Ὓ 
+	{0, 0, 0, 0}, 		// ὜ 
+	{9, 15, 37035, 8.27099634024489}, 		// Ὕ 
+	{0, 0, 0, 0}, 		// ὞ 
+	{9, 15, 37065, 7.5092775675439}, 		// Ὗ 
+	{7, 15, 37095, 9.0517580822634}, 		// ὠ 
+	{7, 15, 37110, 9.0517580822634}, 		// ὡ 
+	{7, 15, 37125, 9.0517580822634}, 		// ὢ 
+	{7, 15, 37140, 9.0517580822634}, 		// ὣ 
+	{7, 15, 37155, 9.0517580822634}, 		// ὤ 
+	{7, 15, 37170, 9.0517580822634}, 		// ὥ 
+	{7, 15, 37185, 9.0517580822634}, 		// ὦ 
+	{7, 15, 37200, 9.0517580822634}, 		// ὧ 
+	{9, 15, 37215, 8.63281275727786}, 		// Ὠ 
+	{9, 15, 37245, 8.63281275727786}, 		// Ὡ 
+	{10, 15, 37275, 9.83251982428192}, 		// Ὢ 
+	{10, 15, 37305, 9.85791045003862}, 		// Ὣ 
+	{10, 15, 37335, 9.66113310042419}, 		// Ὤ 
+	{10, 15, 37365, 9.66113310042419}, 		// Ὥ 
+	{10, 15, 37395, 9.09619167733763}, 		// Ὦ 
+	{10, 15, 37425, 9.09619167733763}, 		// Ὧ 
+	{7, 15, 37455, 7.37597678232123}, 		// ὰ 
+	{7, 15, 37470, 7.37597678232123}, 		// ά 
+	{5, 15, 37485, 5.92236345775018}, 		// ὲ 
+	{5, 15, 37500, 5.92236345775018}, 		// έ 
+	{5, 15, 37515, 6.98242208309239}, 		// ὴ 
+	{5, 15, 37530, 6.98242208309239}, 		// ή 
+	{4, 15, 37545, 3.56738291881629}, 		// ὶ 
+	{3, 15, 37560, 3.56738291881629}, 		// ί 
+	{5, 15, 37575, 6.85546895430889}, 		// ὸ 
+	{5, 15, 37590, 6.85546895430889}, 		// ό 
+	{5, 15, 37605, 7.03955099104496}, 		// ὺ 
+	{5, 15, 37620, 7.03955099104496}, 		// ύ 
+	{7, 15, 37635, 9.0517580822634}, 		// ὼ 
+	{7, 15, 37650, 9.0517580822634}, 		// ώ 
+	{0, 0, 0, 0}, 		// ὾ 
+	{0, 0, 0, 0}, 		// ὿ 
+	{7, 15, 37665, 7.37597678232123}, 		// ᾀ 
+	{7, 15, 37680, 7.37597678232123}, 		// ᾁ 
+	{7, 15, 37695, 7.37597678232123}, 		// ᾂ 
+	{7, 15, 37710, 7.37597678232123}, 		// ᾃ 
+	{7, 15, 37725, 7.37597678232123}, 		// ᾄ 
+	{7, 15, 37740, 7.37597678232123}, 		// ᾅ 
+	{7, 15, 37755, 7.37597678232123}, 		// ᾆ 
+	{7, 15, 37770, 7.37597678232123}, 		// ᾇ 
+	{7, 15, 37785, 7.52197288042225}, 		// ᾈ 
+	{7, 15, 37800, 7.52197288042225}, 		// ᾉ 
+	{9, 15, 37815, 7.52197288042225}, 		// ᾊ 
+	{9, 15, 37845, 7.52197288042225}, 		// ᾋ 
+	{8, 15, 37875, 7.52197288042225}, 		// ᾌ 
+	{8, 15, 37890, 7.52197288042225}, 		// ᾍ 
+	{8, 15, 37905, 7.52197288042225}, 		// ᾎ 
+	{8, 15, 37920, 7.52197288042225}, 		// ᾏ 
+	{5, 15, 37935, 6.98242208309239}, 		// ᾐ 
+	{5, 15, 37950, 6.98242208309239}, 		// ᾑ 
+	{5, 15, 37965, 6.98242208309239}, 		// ᾒ 
+	{5, 15, 37980, 6.98242208309239}, 		// ᾓ 
+	{5, 15, 37995, 6.98242208309239}, 		// ᾔ 
+	{5, 15, 38010, 6.98242208309239}, 		// ᾕ 
+	{5, 15, 38025, 6.98242208309239}, 		// ᾖ 
+	{5, 15, 38040, 6.98242208309239}, 		// ᾗ 
+	{8, 15, 38055, 8.09960961638717}, 		// ᾘ 
+	{8, 15, 38070, 8.09960961638717}, 		// ᾙ 
+	{9, 15, 38085, 9.45166043793142}, 		// ᾚ 
+	{9, 15, 38115, 9.45166043793142}, 		// ᾛ 
+	{9, 15, 38145, 9.45166043793142}, 		// ᾜ 
+	{9, 15, 38175, 9.45166043793142}, 		// ᾝ 
+	{10, 15, 38205, 8.68994166523044}, 		// ᾞ 
+	{10, 15, 38235, 8.68994166523044}, 		// ᾟ 
+	{7, 15, 38265, 9.0517580822634}, 		// ᾠ 
+	{7, 15, 38280, 9.0517580822634}, 		// ᾡ 
+	{7, 15, 38295, 9.0517580822634}, 		// ᾢ 
+	{7, 15, 38310, 9.0517580822634}, 		// ᾣ 
+	{7, 15, 38325, 9.0517580822634}, 		// ᾤ 
+	{7, 15, 38340, 9.0517580822634}, 		// ᾥ 
+	{7, 15, 38355, 9.0517580822634}, 		// ᾦ 
+	{7, 15, 38370, 9.0517580822634}, 		// ᾧ 
+	{9, 15, 38385, 8.63281275727786}, 		// ᾨ 
+	{9, 15, 38415, 8.63281275727786}, 		// ᾩ 
+	{10, 15, 38445, 9.83251982428192}, 		// ᾪ 
+	{10, 15, 38475, 9.85791045003862}, 		// ᾫ 
+	{10, 15, 38505, 9.66113310042419}, 		// ᾬ 
+	{10, 15, 38535, 9.66113310042419}, 		// ᾭ 
+	{10, 15, 38565, 9.09619167733763}, 		// ᾮ 
+	{10, 15, 38595, 9.09619167733763}, 		// ᾯ 
+	{7, 15, 38625, 7.37597678232123}, 		// ᾰ 
+	{7, 15, 38640, 7.37597678232123}, 		// ᾱ 
+	{7, 15, 38655, 7.37597678232123}, 		// ᾲ 
+	{7, 15, 38670, 7.37597678232123}, 		// ᾳ 
+	{7, 15, 38685, 7.37597678232123}, 		// ᾴ 
+	{0, 0, 0, 0}, 		// ᾵ 
+	{7, 15, 38700, 7.37597678232123}, 		// ᾶ 
+	{7, 15, 38715, 7.37597678232123}, 		// ᾷ 
+	{7, 15, 38730, 7.52197288042225}, 		// Ᾰ 
+	{7, 15, 38745, 7.52197288042225}, 		// Ᾱ 
+	{7, 15, 38760, 7.52197288042225}, 		// Ὰ 
+	{7, 15, 38775, 7.52197288042225}, 		// Ά 
+	{7, 15, 38790, 7.52197288042225}, 		// ᾼ 
+	{1, 15, 38805, 3.00244149572973}, 		// ᾽ 
+	{2, 15, 38820, 3.56738291881629}, 		// ι 
+	{1, 15, 38835, 3.00244149572973}, 		// ᾿ 
+	{4, 15, 38850, 5.85253923691926}, 		// ῀ 
+	{4, 15, 38865, 5.10351577709662}, 		// ῁ 
+	{5, 15, 38880, 6.98242208309239}, 		// ῂ 
+	{5, 15, 38895, 6.98242208309239}, 		// ῃ 
+	{5, 15, 38910, 6.98242208309239}, 		// ῄ 
+	{0, 0, 0, 0}, 		// ῅ 
+	{5, 15, 38925, 6.98242208309239}, 		// ῆ 
+	{5, 15, 38940, 6.98242208309239}, 		// ῇ 
+	{7, 15, 38955, 6.3476564391749}, 		// Ὲ 
+	{7, 15, 38970, 6.3476564391749}, 		// Έ 
+	{8, 15, 38985, 8.09960961638717}, 		// Ὴ 
+	{8, 15, 39000, 8.09960961638717}, 		// Ή 
+	{6, 15, 39015, 8.09960961638717}, 		// ῌ 
+	{4, 15, 39030, 5.13525405929249}, 		// ῍ 
+	{4, 15, 39045, 5.13525405929249}, 		// ῎ 
+	{4, 15, 39060, 5.10351577709662}, 		// ῏ 
+	{4, 15, 39075, 3.56738291881629}, 		// ῐ 
+	{4, 15, 39090, 3.56738291881629}, 		// ῑ 
+	{5, 15, 39105, 3.56738291881629}, 		// ῒ 
+	{5, 15, 39120, 3.56738291881629}, 		// ΐ 
+	{0, 0, 0, 0}, 		// ῔ 
+	{0, 0, 0, 0}, 		// ῕ 
+	{4, 15, 39135, 3.56738291881629}, 		// ῖ 
+	{5, 15, 39150, 3.56738291881629}, 		// ῗ 
+	{3, 15, 39165, 3.27539072261425}, 		// Ῐ 
+	{4, 15, 39180, 3.27539072261425}, 		// Ῑ 
+	{3, 15, 39195, 3.27539072261425}, 		// Ὶ 
+	{3, 15, 39210, 3.27539072261425}, 		// Ί 
+	{0, 0, 0, 0}, 		// ῜ 
+	{4, 15, 39225, 5.13525405929249}, 		// ῝ 
+	{4, 15, 39240, 5.13525405929249}, 		// ῞ 
+	{4, 15, 39255, 5.10351577709662}, 		// ῟ 
+	{5, 15, 39270, 7.03955099104496}, 		// ῠ 
+	{5, 15, 39285, 7.03955099104496}, 		// ῡ 
+	{5, 15, 39300, 7.03955099104496}, 		// ῢ 
+	{5, 15, 39315, 7.03955099104496}, 		// ΰ 
+	{5, 15, 39330, 6.61425800962024}, 		// ῤ 
+	{5, 15, 39345, 6.61425800962024}, 		// ῥ 
+	{5, 15, 39360, 7.03955099104496}, 		// ῦ 
+	{5, 15, 39375, 7.03955099104496}, 		// ῧ 
+	{5, 15, 39390, 6.33496112629655}, 		// Ῠ 
+	{5, 15, 39405, 6.33496112629655}, 		// Ῡ 
+	{8, 15, 39420, 6.33496112629655}, 		// Ὺ 
+	{8, 15, 39435, 6.33496112629655}, 		// Ύ 
+	{7, 15, 39450, 6.71582051264704}, 		// Ῥ 
+	{4, 15, 39465, 6.423828316445}, 		// ῭ 
+	{4, 15, 39480, 6.423828316445}, 		// ΅ 
+	{2, 15, 39495, 4.11962902902451}, 		// ` 
+	{0, 0, 0, 0}, 		// ῰ 
+	{0, 0, 0, 0}, 		// ῱ 
+	{7, 15, 39510, 9.0517580822634}, 		// ῲ 
+	{7, 15, 39525, 9.0517580822634}, 		// ῳ 
+	{7, 15, 39540, 9.0517580822634}, 		// ῴ 
+	{0, 0, 0, 0}, 		// ῵ 
+	{7, 15, 39555, 9.0517580822634}, 		// ῶ 
+	{7, 15, 39570, 9.0517580822634}, 		// ῷ 
+	{9, 15, 39585, 8.60742213152116}, 		// Ὸ 
+	{9, 15, 39615, 8.60742213152116}, 		// Ό 
+	{9, 15, 39645, 8.63281275727786}, 		// Ὼ 
+	{9, 15, 39675, 8.63281275727786}, 		// Ώ 
+	{7, 15, 39705, 8.63281275727786}, 		// ῼ 
+	{2, 15, 39720, 4.11962902902451}, 		// ´ 
+	{1, 15, 39735, 3.00244149572973}, 		// ῾ 
+	{0, 0, 0, 0}, 		// ῿ 
+	{2, 15, 39750, 6.5000001937151}, 		//   
+	{2, 15, 39765, 13.0000003874302}, 		//   
+	{2, 15, 39780, 6.5000001937151}, 		//   
+	{2, 15, 39795, 13.0000003874302}, 		//   
+	{2, 15, 39810, 4.36083997371315}, 		//   
+	{2, 15, 39825, 3.25000009685755}, 		//   
+	{2, 15, 39840, 2.16455084575864}, 		//   
+	{2, 15, 39855, 7.00781270884909}, 		//   
+	{2, 15, 39870, 2.81835945899365}, 		//   
+	{2, 15, 39885, 2.59619148362253}, 		//   
+	{2, 15, 39900, 1.62500004842877}, 		//   
+	{2, 15, 39915, 0}, 		// ​ 
+	{2, 15, 39930, 0}, 		// ‌ 
+	{2, 15, 39945, 0}, 		// ‍ 
+	{2, 15, 39960, 0}, 		// ‎ 
+	{2, 15, 39975, 0}, 		// ‏ 
+	{3, 15, 39990, 3.97998058736266}, 		// ‐ 
+	{0, 0, 0, 0}, 		// ‑ 
+	{6, 15, 40005, 6.58886738386354}, 		// ‒ 
+	{6, 15, 40020, 6.4746095679584}, 		// – 
+	{10, 15, 40035, 11.7685550382303}, 		// — 
+	{10, 15, 40065, 11.7685550382303}, 		// ― 
+	{4, 15, 40095, 5.13525405929249}, 		// ‖ 
+	{7, 15, 40110, 6.4746095679584}, 		// ‗ 
+	{2, 15, 40125, 3.24365244041837}, 		// ‘ 
+	{2, 15, 40140, 3.24365244041837}, 		// ’ 
+	{2, 15, 40155, 3.24365244041837}, 		// ‚ 
+	{2, 15, 40170, 3.24365244041837}, 		// ‛ 
+	{4, 15, 40185, 5.43994156837289}, 		// “ 
+	{4, 15, 40200, 5.43994156837289}, 		// ” 
+	{4, 15, 40215, 5.43994156837289}, 		// „ 
+	{4, 15, 40230, 5.43359391193371}, 		// ‟ 
+	{5, 15, 40245, 6.4746095679584}, 		// † 
+	{5, 15, 40260, 6.4746095679584}, 		// ‡ 
+	{4, 15, 40275, 6.4746095679584}, 		// • 
+	{0, 0, 0, 0}, 		// ‣ 
+	{0, 0, 0, 0}, 		// ․ 
+	{0, 0, 0, 0}, 		// ‥ 
+	{7, 15, 40290, 8.97558620499331}, 		// … 
+	{0, 0, 0, 0}, 		// ‧ 
+	{0, 0, 0, 0}, 		// 
  
-	{0, 0}, 		// 
+	{0, 0, 0, 0}, 		// 
  
-	{2, 39840}, 		// ‪ 
-	{2, 39855}, 		// ‫ 
-	{3, 39870}, 		// ‬ 
-	{4, 39885}, 		// ‭ 
-	{4, 39900}, 		// ‮ 
-	{2, 39915}, 		//   
-	{14, 39930}, 		// ‰ 
-	{0, 0}, 		// ‱ 
-	{1, 39960}, 		// ′ 
-	{4, 39975}, 		// ″ 
-	{6, 39990}, 		// ‴ 
-	{0, 0}, 		// ‵ 
-	{0, 0}, 		// ‶ 
-	{0, 0}, 		// ‷ 
-	{3, 40005}, 		// ‸ 
-	{2, 40020}, 		// ‹ 
-	{2, 40035}, 		// › 
-	{0, 0}, 		// ※ 
-	{4, 40050}, 		// ‼ 
-	{5, 40065}, 		// ‽ 
-	{7, 40080}, 		// ‾ 
-	{0, 0}, 		// ‿ 
-	{0, 0}, 		// ⁀ 
-	{0, 0}, 		// ⁁ 
-	{0, 0}, 		// ⁂ 
-	{0, 0}, 		// ⁃ 
-	{7, 40095}, 		// ⁄ 
-	{0, 0}, 		// ⁅ 
-	{0, 0}, 		// ⁆ 
-	{0, 0}, 		// ⁇ 
-	{0, 0}, 		// ⁈ 
-	{0, 0}, 		// ⁉ 
-	{0, 0}, 		// ⁊ 
-	{0, 0}, 		// ⁋ 
-	{0, 0}, 		// ⁌ 
-	{0, 0}, 		// ⁍ 
-	{0, 0}, 		// ⁎ 
-	{0, 0}, 		// ⁏ 
-	{0, 0}, 		// ⁐ 
-	{0, 0}, 		// ⁑ 
-	{0, 0}, 		// ⁒ 
-	{0, 0}, 		// ⁓ 
-	{0, 0}, 		// ⁔ 
-	{0, 0}, 		// ⁕ 
-	{0, 0}, 		// ⁖ 
-	{0, 0}, 		// ⁗ 
-	{0, 0}, 		// ⁘ 
-	{0, 0}, 		// ⁙ 
-	{0, 0}, 		// ⁚ 
-	{0, 0}, 		// ⁛ 
-	{0, 0}, 		// ⁜ 
-	{0, 0}, 		// ⁝ 
-	{1, 40110}, 		// ⁞ 
-	{2, 40125}, 		//   
-	{0, 0}, 		// ⁠ 
-	{0, 0}, 		// ⁡ 
-	{0, 0}, 		// ⁢ 
-	{0, 0}, 		// ⁣ 
-	{0, 0}, 		// ⁤ 
-	{0, 0}, 		// ⁥ 
-	{0, 0}, 		// ⁦ 
-	{0, 0}, 		// ⁧ 
-	{0, 0}, 		// ⁨ 
-	{0, 0}, 		// ⁩ 
-	{0, 0}, 		// ⁪ 
-	{0, 0}, 		// ⁫ 
-	{0, 0}, 		// ⁬ 
-	{0, 0}, 		// ⁭ 
-	{0, 0}, 		// ⁮ 
-	{0, 0}, 		// ⁯ 
-	{4, 40140}, 		// ⁰ 
-	{1, 40155}, 		// ⁱ 
-	{0, 0}, 		// ⁲ 
-	{0, 0}, 		// ⁳ 
-	{4, 40170}, 		// ⁴ 
-	{3, 40185}, 		// ⁵ 
-	{4, 40200}, 		// ⁶ 
-	{4, 40215}, 		// ⁷ 
-	{4, 40230}, 		// ⁸ 
-	{4, 40245}, 		// ⁹ 
-	{3, 40260}, 		// ⁺ 
-	{4, 40275}, 		// ⁻ 
-	{3, 40290}, 		// ⁼ 
-	{2, 40305}, 		// ⁽ 
-	{2, 40320}, 		// ⁾ 
-	{3, 40335}, 		// ⁿ 
-	{4, 40350}, 		// ₀ 
-	{2, 40365}, 		// ₁ 
-	{3, 40380}, 		// ₂ 
-	{3, 40395}, 		// ₃ 
-	{4, 40410}, 		// ₄ 
-	{3, 40425}, 		// ₅ 
-	{4, 40440}, 		// ₆ 
-	{4, 40455}, 		// ₇ 
-	{4, 40470}, 		// ₈ 
-	{4, 40485}, 		// ₉ 
-	{3, 40500}, 		// ₊ 
-	{4, 40515}, 		// ₋ 
-	{3, 40530}, 		// ₌ 
-	{2, 40545}, 		// ₍ 
-	{2, 40560}, 		// ₎ 
-	{0, 0}, 		// ₏ 
-	{3, 40575}, 		// ₐ 
-	{4, 40590}, 		// ₑ 
-	{4, 40605}, 		// ₒ 
-	{3, 40620}, 		// ₓ 
-	{4, 40635}, 		// ₔ 
-	{0, 0}, 		// ₕ 
-	{0, 0}, 		// ₖ 
-	{0, 0}, 		// ₗ 
-	{0, 0}, 		// ₘ 
-	{0, 0}, 		// ₙ 
-	{0, 0}, 		// ₚ 
-	{0, 0}, 		// ₛ 
-	{0, 0}, 		// ₜ 
-	{0, 0}, 		// ₝ 
-	{0, 0}, 		// ₞ 
-	{0, 0}, 		// ₟ 
-	{7, 40650}, 		// ₠ 
-	{6, 40665}, 		// ₡ 
-	{6, 40680}, 		// ₢ 
-	{5, 40695}, 		// ₣ 
-	{6, 40710}, 		// ₤ 
-	{8, 40725}, 		// ₥ 
-	{8, 40740}, 		// ₦ 
-	{10, 40755}, 		// ₧ 
-	{8, 40785}, 		// ₨ 
-	{11, 40800}, 		// ₩ 
-	{8, 40830}, 		// ₪ 
-	{6, 40845}, 		// ₫ 
-	{7, 40860}, 		// € 
-	{6, 40875}, 		// ₭ 
-	{7, 40890}, 		// ₮ 
-	{13, 40905}, 		// ₯ 
-	{6, 40935}, 		// ₰ 
-	{7, 40950}, 		// ₱ 
-	{6, 40965}, 		// ₲ 
-	{7, 40980}, 		// ₳ 
-	{6, 40995}, 		// ₴ 
-	{6, 41010}, 		// ₵ 
-	{0, 0}, 		// ₶ 
-	{0, 0}, 		// ₷ 
-	{7, 41025}, 		// ₸ 
-	{6, 41040}, 		// ₹ 
-	{7, 41055}, 		// ₺ 
-	{8, 41070}, 		// ₻ 
-	{9, 41085}, 		// ₼ 
-	{6, 41115}, 		// ₽ 
-	{8, 41130}, 		// ₾ 
-	{6, 41145}, 		// ₿ 
-	{0, 0}, 		// ⃀ 
-	{0, 0}, 		// ⃁ 
-	{0, 0}, 		// ⃂ 
-	{0, 0}, 		// ⃃ 
-	{0, 0}, 		// ⃄ 
-	{0, 0}, 		// ⃅ 
-	{0, 0}, 		// ⃆ 
-	{0, 0}, 		// ⃇ 
-	{0, 0}, 		// ⃈ 
-	{0, 0}, 		// ⃉ 
-	{0, 0}, 		// ⃊ 
-	{0, 0}, 		// ⃋ 
-	{0, 0}, 		// ⃌ 
-	{0, 0}, 		// ⃍ 
-	{0, 0}, 		// ⃎ 
-	{0, 0}, 		// ⃏ 
-	{0, 0}, 		// ⃐ 
-	{0, 0}, 		// ⃑ 
-	{0, 0}, 		// ⃒ 
-	{0, 0}, 		// ⃓ 
-	{0, 0}, 		// ⃔ 
-	{0, 0}, 		// ⃕ 
-	{0, 0}, 		// ⃖ 
-	{0, 0}, 		// ⃗ 
-	{0, 0}, 		// ⃘ 
-	{0, 0}, 		// ⃙ 
-	{0, 0}, 		// ⃚ 
-	{0, 0}, 		// ⃛ 
-	{0, 0}, 		// ⃜ 
-	{13, 41160}, 		// ⃝ 
-	{0, 0}, 		// ⃞ 
-	{0, 0}, 		// ⃟ 
-	{0, 0}, 		// ⃠ 
-	{0, 0}, 		// ⃡ 
-	{0, 0}, 		// ⃢ 
-	{0, 0}, 		// ⃣ 
-	{0, 0}, 		// ⃤ 
-	{0, 0}, 		// ⃥ 
-	{0, 0}, 		// ⃦ 
-	{0, 0}, 		// ⃧ 
-	{0, 0}, 		// ⃨ 
-	{0, 0}, 		// ⃩ 
-	{0, 0}, 		// ⃪ 
-	{0, 0}, 		// ⃫ 
-	{0, 0}, 		// ⃬ 
-	{0, 0}, 		// ⃭ 
-	{0, 0}, 		// ⃮ 
-	{0, 0}, 		// ⃯ 
-	{0, 0}, 		// ⃰ 
-	{0, 0}, 		// ⃱ 
-	{0, 0}, 		// ⃲ 
-	{0, 0}, 		// ⃳ 
-	{0, 0}, 		// ⃴ 
-	{0, 0}, 		// ⃵ 
-	{0, 0}, 		// ⃶ 
-	{0, 0}, 		// ⃷ 
-	{0, 0}, 		// ⃸ 
-	{0, 0}, 		// ⃹ 
-	{0, 0}, 		// ⃺ 
-	{0, 0}, 		// ⃻ 
-	{0, 0}, 		// ⃼ 
-	{0, 0}, 		// ⃽ 
-	{0, 0}, 		// ⃾ 
-	{0, 0}, 		// ⃿ 
-	{0, 0}, 		// ℀ 
-	{0, 0}, 		// ℁ 
-	{0, 0}, 		// ℂ 
-	{0, 0}, 		// ℃ 
-	{0, 0}, 		// ℄ 
-	{9, 41190}, 		// ℅ 
-	{0, 0}, 		// ℆ 
-	{0, 0}, 		// ℇ 
-	{0, 0}, 		// ℈ 
-	{0, 0}, 		// ℉ 
-	{0, 0}, 		// ℊ 
-	{0, 0}, 		// ℋ 
-	{0, 0}, 		// ℌ 
-	{0, 0}, 		// ℍ 
-	{0, 0}, 		// ℎ 
-	{0, 0}, 		// ℏ 
-	{0, 0}, 		// ℐ 
-	{0, 0}, 		// ℑ 
-	{0, 0}, 		// ℒ 
-	{6, 41220}, 		// ℓ 
-	{0, 0}, 		// ℔ 
-	{0, 0}, 		// ℕ 
-	{12, 41235}, 		// № 
-	{9, 41265}, 		// ℗ 
-	{0, 0}, 		// ℘ 
-	{0, 0}, 		// ℙ 
-	{0, 0}, 		// ℚ 
-	{0, 0}, 		// ℛ 
-	{0, 0}, 		// ℜ 
-	{0, 0}, 		// ℝ 
-	{0, 0}, 		// ℞ 
-	{0, 0}, 		// ℟ 
-	{9, 41295}, 		// ℠ 
-	{0, 0}, 		// ℡ 
-	{9, 41325}, 		// ™ 
-	{0, 0}, 		// ℣ 
-	{0, 0}, 		// ℤ 
-	{0, 0}, 		// ℥ 
-	{7, 41355}, 		// Ω 
-	{0, 0}, 		// ℧ 
-	{0, 0}, 		// ℨ 
-	{0, 0}, 		// ℩ 
-	{0, 0}, 		// K 
-	{0, 0}, 		// Å 
-	{0, 0}, 		// ℬ 
-	{0, 0}, 		// ℭ 
-	{9, 41370}, 		// ℮ 
-	{0, 0}, 		// ℯ 
-	{0, 0}, 		// ℰ 
-	{0, 0}, 		// ℱ 
-	{4, 41400}, 		// Ⅎ 
-	{0, 0}, 		// ℳ 
-	{0, 0}, 		// ℴ 
-	{0, 0}, 		// ℵ 
-	{0, 0}, 		// ℶ 
-	{0, 0}, 		// ℷ 
-	{0, 0}, 		// ℸ 
-	{0, 0}, 		// ℹ 
-	{0, 0}, 		// ℺ 
-	{0, 0}, 		// ℻ 
-	{0, 0}, 		// ℼ 
-	{0, 0}, 		// ℽ 
-	{0, 0}, 		// ℾ 
-	{0, 0}, 		// ℿ 
-	{0, 0}, 		// ⅀ 
-	{0, 0}, 		// ⅁ 
-	{0, 0}, 		// ⅂ 
-	{0, 0}, 		// ⅃ 
-	{0, 0}, 		// ⅄ 
-	{0, 0}, 		// ⅅ 
-	{0, 0}, 		// ⅆ 
-	{0, 0}, 		// ⅇ 
-	{0, 0}, 		// ⅈ 
-	{0, 0}, 		// ⅉ 
-	{0, 0}, 		// ⅊ 
-	{0, 0}, 		// ⅋ 
-	{0, 0}, 		// ⅌ 
-	{9, 41415}, 		// ⅍ 
-	{3, 41445}, 		// ⅎ 
-	{0, 0}, 		// ⅏ 
-	{0, 0}, 		// ⅐ 
-	{0, 0}, 		// ⅑ 
-	{0, 0}, 		// ⅒ 
-	{7, 41460}, 		// ⅓ 
-	{8, 41475}, 		// ⅔ 
-	{7, 41490}, 		// ⅕ 
-	{8, 41505}, 		// ⅖ 
-	{8, 41520}, 		// ⅗ 
-	{8, 41535}, 		// ⅘ 
-	{7, 41550}, 		// ⅙ 
-	{8, 41565}, 		// ⅚ 
-	{7, 41580}, 		// ⅛ 
-	{8, 41595}, 		// ⅜ 
-	{8, 41610}, 		// ⅝ 
-	{8, 41625}, 		// ⅞ 
-	{7, 41640}, 		// ⅟ 
-	{0, 0}, 		// Ⅰ 
-	{0, 0}, 		// Ⅱ 
-	{0, 0}, 		// Ⅲ 
-	{0, 0}, 		// Ⅳ 
-	{0, 0}, 		// Ⅴ 
-	{0, 0}, 		// Ⅵ 
-	{0, 0}, 		// Ⅶ 
-	{0, 0}, 		// Ⅷ 
-	{0, 0}, 		// Ⅸ 
-	{0, 0}, 		// Ⅹ 
-	{0, 0}, 		// Ⅺ 
-	{0, 0}, 		// Ⅻ 
-	{0, 0}, 		// Ⅼ 
-	{0, 0}, 		// Ⅽ 
-	{0, 0}, 		// Ⅾ 
-	{0, 0}, 		// Ⅿ 
-	{0, 0}, 		// ⅰ 
-	{0, 0}, 		// ⅱ 
-	{0, 0}, 		// ⅲ 
-	{0, 0}, 		// ⅳ 
-	{0, 0}, 		// ⅴ 
-	{0, 0}, 		// ⅵ 
-	{0, 0}, 		// ⅶ 
-	{0, 0}, 		// ⅷ 
-	{0, 0}, 		// ⅸ 
-	{0, 0}, 		// ⅹ 
-	{0, 0}, 		// ⅺ 
-	{0, 0}, 		// ⅻ 
-	{0, 0}, 		// ⅼ 
-	{0, 0}, 		// ⅽ 
-	{0, 0}, 		// ⅾ 
-	{0, 0}, 		// ⅿ 
-	{0, 0}, 		// ↀ 
-	{0, 0}, 		// ↁ 
-	{0, 0}, 		// ↂ 
-	{6, 41655}, 		// Ↄ 
-	{5, 41670}, 		// ↄ 
-	{0, 0}, 		// ↅ 
-	{0, 0}, 		// ↆ 
-	{0, 0}, 		// ↇ 
-	{0, 0}, 		// ↈ 
-	{0, 0}, 		// ↉ 
-	{0, 0}, 		// ↊ 
-	{0, 0}, 		// ↋ 
-	{0, 0}, 		// ↌ 
-	{0, 0}, 		// ↍ 
-	{0, 0}, 		// ↎ 
-	{0, 0}, 		// ↏ 
-	{10, 41685}, 		// ← 
-	{9, 41715}, 		// ↑ 
-	{10, 41745}, 		// → 
-	{9, 41775}, 		// ↓ 
-	{15, 41805}, 		// ↔ 
-	{7, 41835}, 		// ↕ 
-	{8, 41850}, 		// ↖ 
-	{8, 41865}, 		// ↗ 
-	{8, 41880}, 		// ↘ 
-	{8, 41895}, 		// ↙ 
-	{0, 0}, 		// ↚ 
-	{0, 0}, 		// ↛ 
-	{0, 0}, 		// ↜ 
-	{0, 0}, 		// ↝ 
-	{0, 0}, 		// ↞ 
-	{0, 0}, 		// ↟ 
-	{0, 0}, 		// ↠ 
-	{0, 0}, 		// ↡ 
-	{0, 0}, 		// ↢ 
-	{0, 0}, 		// ↣ 
-	{0, 0}, 		// ↤ 
-	{0, 0}, 		// ↥ 
-	{0, 0}, 		// ↦ 
-	{0, 0}, 		// ↧ 
-	{5, 41910}, 		// ↨ 
+	{2, 15, 40305, 0}, 		// ‪ 
+	{2, 15, 40320, 0}, 		// ‫ 
+	{3, 15, 40335, 0}, 		// ‬ 
+	{4, 15, 40350, 0}, 		// ‭ 
+	{4, 15, 40365, 0}, 		// ‮ 
+	{2, 15, 40380, 2.93896493133798}, 		//   
+	{14, 15, 40395, 13.4951175896858}, 		// ‰ 
+	{0, 0, 0, 0}, 		// ‱ 
+	{1, 15, 40425, 2.86914071050705}, 		// ′ 
+	{4, 15, 40440, 5.20507828012342}, 		// ″ 
+	{6, 15, 40455, 7.54101584973978}, 		// ‴ 
+	{0, 0, 0, 0}, 		// ‵ 
+	{0, 0, 0, 0}, 		// ‶ 
+	{0, 0, 0, 0}, 		// ‷ 
+	{3, 15, 40470, 5.07812515133992}, 		// ‸ 
+	{2, 15, 40485, 4.40527356878738}, 		// ‹ 
+	{2, 15, 40500, 4.40527356878738}, 		// › 
+	{0, 0, 0, 0}, 		// ※ 
+	{4, 15, 40515, 7.24902365353773}, 		// ‼ 
+	{5, 15, 40530, 6.28417987478315}, 		// ‽ 
+	{7, 15, 40545, 6.4746095679584}, 		// ‾ 
+	{0, 0, 0, 0}, 		// ‿ 
+	{0, 0, 0, 0}, 		// ⁀ 
+	{0, 0, 0, 0}, 		// ⁁ 
+	{0, 0, 0, 0}, 		// ⁂ 
+	{0, 0, 0, 0}, 		// ⁃ 
+	{7, 15, 40560, 4.3735352865915}, 		// ⁄ 
+	{0, 0, 0, 0}, 		// ⁅ 
+	{0, 0, 0, 0}, 		// ⁆ 
+	{0, 0, 0, 0}, 		// ⁇ 
+	{0, 0, 0, 0}, 		// ⁈ 
+	{0, 0, 0, 0}, 		// ⁉ 
+	{0, 0, 0, 0}, 		// ⁊ 
+	{0, 0, 0, 0}, 		// ⁋ 
+	{0, 0, 0, 0}, 		// ⁌ 
+	{0, 0, 0, 0}, 		// ⁍ 
+	{0, 0, 0, 0}, 		// ⁎ 
+	{0, 0, 0, 0}, 		// ⁏ 
+	{0, 0, 0, 0}, 		// ⁐ 
+	{0, 0, 0, 0}, 		// ⁑ 
+	{0, 0, 0, 0}, 		// ⁒ 
+	{0, 0, 0, 0}, 		// ⁓ 
+	{0, 0, 0, 0}, 		// ⁔ 
+	{0, 0, 0, 0}, 		// ⁕ 
+	{0, 0, 0, 0}, 		// ⁖ 
+	{0, 0, 0, 0}, 		// ⁗ 
+	{0, 0, 0, 0}, 		// ⁘ 
+	{0, 0, 0, 0}, 		// ⁙ 
+	{0, 0, 0, 0}, 		// ⁚ 
+	{0, 0, 0, 0}, 		// ⁛ 
+	{0, 0, 0, 0}, 		// ⁜ 
+	{0, 0, 0, 0}, 		// ⁝ 
+	{1, 15, 40575, 3.47851572866784}, 		// ⁞ 
+	{2, 15, 40590, 2.88818367982458}, 		//   
+	{0, 0, 0, 0}, 		// ⁠ 
+	{0, 0, 0, 0}, 		// ⁡ 
+	{0, 0, 0, 0}, 		// ⁢ 
+	{0, 0, 0, 0}, 		// ⁣ 
+	{0, 0, 0, 0}, 		// ⁤ 
+	{0, 0, 0, 0}, 		// ⁥ 
+	{0, 0, 0, 0}, 		// ⁦ 
+	{0, 0, 0, 0}, 		// ⁧ 
+	{0, 0, 0, 0}, 		// ⁨ 
+	{0, 0, 0, 0}, 		// ⁩ 
+	{0, 0, 0, 0}, 		// ⁪ 
+	{0, 0, 0, 0}, 		// ⁫ 
+	{0, 0, 0, 0}, 		// ⁬ 
+	{0, 0, 0, 0}, 		// ⁭ 
+	{0, 0, 0, 0}, 		// ⁮ 
+	{0, 0, 0, 0}, 		// ⁯ 
+	{4, 15, 40605, 5.08447280777909}, 		// ⁰ 
+	{1, 15, 40620, 2.25341803590709}, 		// ⁱ 
+	{0, 0, 0, 0}, 		// ⁲ 
+	{0, 0, 0, 0}, 		// ⁳ 
+	{4, 15, 40635, 4.64013685703685}, 		// ⁴ 
+	{3, 15, 40650, 4.30371106576058}, 		// ⁵ 
+	{4, 15, 40665, 4.66552748279355}, 		// ⁶ 
+	{4, 15, 40680, 4.17041028053791}, 		// ⁷ 
+	{4, 15, 40695, 4.6782227956719}, 		// ⁸ 
+	{4, 15, 40710, 4.66552748279355}, 		// ⁹ 
+	{3, 15, 40725, 4.73535170362447}, 		// ⁺ 
+	{4, 15, 40740, 4.66552748279355}, 		// ⁻ 
+	{3, 15, 40755, 4.57031263620593}, 		// ⁼ 
+	{2, 15, 40770, 2.81835945899365}, 		// ⁽ 
+	{2, 15, 40785, 2.81835945899365}, 		// ⁾ 
+	{3, 15, 40800, 4.70996107786777}, 		// ⁿ 
+	{4, 15, 40815, 5.08447280777909}, 		// ₀ 
+	{2, 15, 40830, 3.19921884534415}, 		// ₁ 
+	{3, 15, 40845, 4.36718763015233}, 		// ₂ 
+	{3, 15, 40860, 4.34814466083481}, 		// ₃ 
+	{4, 15, 40875, 4.64013685703685}, 		// ₄ 
+	{3, 15, 40890, 4.30371106576058}, 		// ₅ 
+	{4, 15, 40905, 4.66552748279355}, 		// ₆ 
+	{4, 15, 40920, 4.17041028053791}, 		// ₇ 
+	{4, 15, 40935, 4.6782227956719}, 		// ₈ 
+	{4, 15, 40950, 4.66552748279355}, 		// ₉ 
+	{3, 15, 40965, 4.73535170362447}, 		// ₊ 
+	{4, 15, 40980, 4.66552748279355}, 		// ₋ 
+	{3, 15, 40995, 4.57031263620593}, 		// ₌ 
+	{2, 15, 41010, 2.81835945899365}, 		// ₍ 
+	{2, 15, 41025, 2.81835945899365}, 		// ₎ 
+	{0, 0, 0, 0}, 		// ₏ 
+	{3, 15, 41040, 4.34179700439563}, 		// ₐ 
+	{4, 15, 41055, 4.41796888166573}, 		// ₑ 
+	{4, 15, 41070, 4.70996107786777}, 		// ₒ 
+	{3, 15, 41085, 4.04980480819358}, 		// ₓ 
+	{4, 15, 41100, 4.41796888166573}, 		// ₔ 
+	{0, 0, 0, 0}, 		// ₕ 
+	{0, 0, 0, 0}, 		// ₖ 
+	{0, 0, 0, 0}, 		// ₗ 
+	{0, 0, 0, 0}, 		// ₘ 
+	{0, 0, 0, 0}, 		// ₙ 
+	{0, 0, 0, 0}, 		// ₚ 
+	{0, 0, 0, 0}, 		// ₛ 
+	{0, 0, 0, 0}, 		// ₜ 
+	{0, 0, 0, 0}, 		// ₝ 
+	{0, 0, 0, 0}, 		// ₞ 
+	{0, 0, 0, 0}, 		// ₟ 
+	{7, 15, 41115, 8.01074242623872}, 		// ₠ 
+	{6, 15, 41130, 6.93164083157899}, 		// ₡ 
+	{6, 15, 41145, 6.93164083157899}, 		// ₢ 
+	{5, 15, 41160, 5.97314470926358}, 		// ₣ 
+	{6, 15, 41175, 6.58886738386354}, 		// ₤ 
+	{8, 15, 41190, 10.3847659344901}, 		// ₥ 
+	{8, 15, 41205, 8.39160181258922}, 		// ₦ 
+	{10, 15, 41220, 11.9843753571622}, 		// ₧ 
+	{8, 15, 41250, 10.2070315541932}, 		// ₨ 
+	{11, 15, 41265, 11.5654300321767}, 		// ₩ 
+	{8, 15, 41295, 9.68017606974172}, 		// ₪ 
+	{6, 15, 41310, 7.17285177626763}, 		// ₫ 
+	{7, 15, 41325, 6.58886738386354}, 		// € 
+	{6, 15, 41340, 6.75390645128209}, 		// ₭ 
+	{7, 15, 41355, 6.33496112629655}, 		// ₮ 
+	{13, 15, 41370, 14.0664066692116}, 		// ₯ 
+	{6, 15, 41400, 6.86816426718724}, 		// ₰ 
+	{7, 15, 41415, 7.32519553080783}, 		// ₱ 
+	{6, 15, 41430, 7.62988303988823}, 		// ₲ 
+	{7, 15, 41445, 7.44580100315216}, 		// ₳ 
+	{6, 15, 41460, 5.97314470926358}, 		// ₴ 
+	{6, 15, 41475, 6.93164083157899}, 		// ₵ 
+	{0, 0, 0, 0}, 		// ₶ 
+	{0, 0, 0, 0}, 		// ₷ 
+	{7, 15, 41490, 6.58886738386354}, 		// ₸ 
+	{6, 15, 41505, 6.58886738386354}, 		// ₹ 
+	{7, 15, 41520, 6.58886738386354}, 		// ₺ 
+	{8, 15, 41535, 8.35351587395417}, 		// ₻ 
+	{9, 15, 41550, 8.67724635235209}, 		// ₼ 
+	{6, 15, 41580, 6.58886738386354}, 		// ₽ 
+	{8, 15, 41595, 8.51220728493354}, 		// ₾ 
+	{6, 15, 41610, 7.62353538344905}, 		// ₿ 
+	{0, 0, 0, 0}, 		// ⃀ 
+	{0, 0, 0, 0}, 		// ⃁ 
+	{0, 0, 0, 0}, 		// ⃂ 
+	{0, 0, 0, 0}, 		// ⃃ 
+	{0, 0, 0, 0}, 		// ⃄ 
+	{0, 0, 0, 0}, 		// ⃅ 
+	{0, 0, 0, 0}, 		// ⃆ 
+	{0, 0, 0, 0}, 		// ⃇ 
+	{0, 0, 0, 0}, 		// ⃈ 
+	{0, 0, 0, 0}, 		// ⃉ 
+	{0, 0, 0, 0}, 		// ⃊ 
+	{0, 0, 0, 0}, 		// ⃋ 
+	{0, 0, 0, 0}, 		// ⃌ 
+	{0, 0, 0, 0}, 		// ⃍ 
+	{0, 0, 0, 0}, 		// ⃎ 
+	{0, 0, 0, 0}, 		// ⃏ 
+	{0, 0, 0, 0}, 		// ⃐ 
+	{0, 0, 0, 0}, 		// ⃑ 
+	{0, 0, 0, 0}, 		// ⃒ 
+	{0, 0, 0, 0}, 		// ⃓ 
+	{0, 0, 0, 0}, 		// ⃔ 
+	{0, 0, 0, 0}, 		// ⃕ 
+	{0, 0, 0, 0}, 		// ⃖ 
+	{0, 0, 0, 0}, 		// ⃗ 
+	{0, 0, 0, 0}, 		// ⃘ 
+	{0, 0, 0, 0}, 		// ⃙ 
+	{0, 0, 0, 0}, 		// ⃚ 
+	{0, 0, 0, 0}, 		// ⃛ 
+	{0, 0, 0, 0}, 		// ⃜ 
+	{13, 15, 41625, 12.9238285101601}, 		// ⃝ 
+	{0, 0, 0, 0}, 		// ⃞ 
+	{0, 0, 0, 0}, 		// ⃟ 
+	{0, 0, 0, 0}, 		// ⃠ 
+	{0, 0, 0, 0}, 		// ⃡ 
+	{0, 0, 0, 0}, 		// ⃢ 
+	{0, 0, 0, 0}, 		// ⃣ 
+	{0, 0, 0, 0}, 		// ⃤ 
+	{0, 0, 0, 0}, 		// ⃥ 
+	{0, 0, 0, 0}, 		// ⃦ 
+	{0, 0, 0, 0}, 		// ⃧ 
+	{0, 0, 0, 0}, 		// ⃨ 
+	{0, 0, 0, 0}, 		// ⃩ 
+	{0, 0, 0, 0}, 		// ⃪ 
+	{0, 0, 0, 0}, 		// ⃫ 
+	{0, 0, 0, 0}, 		// ⃬ 
+	{0, 0, 0, 0}, 		// ⃭ 
+	{0, 0, 0, 0}, 		// ⃮ 
+	{0, 0, 0, 0}, 		// ⃯ 
+	{0, 0, 0, 0}, 		// ⃰ 
+	{0, 0, 0, 0}, 		// ⃱ 
+	{0, 0, 0, 0}, 		// ⃲ 
+	{0, 0, 0, 0}, 		// ⃳ 
+	{0, 0, 0, 0}, 		// ⃴ 
+	{0, 0, 0, 0}, 		// ⃵ 
+	{0, 0, 0, 0}, 		// ⃶ 
+	{0, 0, 0, 0}, 		// ⃷ 
+	{0, 0, 0, 0}, 		// ⃸ 
+	{0, 0, 0, 0}, 		// ⃹ 
+	{0, 0, 0, 0}, 		// ⃺ 
+	{0, 0, 0, 0}, 		// ⃻ 
+	{0, 0, 0, 0}, 		// ⃼ 
+	{0, 0, 0, 0}, 		// ⃽ 
+	{0, 0, 0, 0}, 		// ⃾ 
+	{0, 0, 0, 0}, 		// ⃿ 
+	{0, 0, 0, 0}, 		// ℀ 
+	{0, 0, 0, 0}, 		// ℁ 
+	{0, 0, 0, 0}, 		// ℂ 
+	{0, 0, 0, 0}, 		// ℃ 
+	{0, 0, 0, 0}, 		// ℄ 
+	{9, 15, 41655, 9.95947295306541}, 		// ℅ 
+	{0, 0, 0, 0}, 		// ℆ 
+	{0, 0, 0, 0}, 		// ℇ 
+	{0, 0, 0, 0}, 		// ℈ 
+	{0, 0, 0, 0}, 		// ℉ 
+	{0, 0, 0, 0}, 		// ℊ 
+	{0, 0, 0, 0}, 		// ℋ 
+	{0, 0, 0, 0}, 		// ℌ 
+	{0, 0, 0, 0}, 		// ℍ 
+	{0, 0, 0, 0}, 		// ℎ 
+	{0, 0, 0, 0}, 		// ℏ 
+	{0, 0, 0, 0}, 		// ℐ 
+	{0, 0, 0, 0}, 		// ℑ 
+	{0, 0, 0, 0}, 		// ℒ 
+	{6, 15, 41685, 6.53173847591097}, 		// ℓ 
+	{0, 0, 0, 0}, 		// ℔ 
+	{0, 0, 0, 0}, 		// ℕ 
+	{12, 15, 41700, 13.3237308658281}, 		// № 
+	{9, 15, 41730, 10.8481448545499}, 		// ℗ 
+	{0, 0, 0, 0}, 		// ℘ 
+	{0, 0, 0, 0}, 		// ℙ 
+	{0, 0, 0, 0}, 		// ℚ 
+	{0, 0, 0, 0}, 		// ℛ 
+	{0, 0, 0, 0}, 		// ℜ 
+	{0, 0, 0, 0}, 		// ℝ 
+	{0, 0, 0, 0}, 		// ℞ 
+	{0, 0, 0, 0}, 		// ℟ 
+	{9, 15, 41760, 9.21679714968195}, 		// ℠ 
+	{0, 0, 0, 0}, 		// ℡ 
+	{9, 15, 41790, 9.16601589816855}, 		// ™ 
+	{0, 0, 0, 0}, 		// ℣ 
+	{0, 0, 0, 0}, 		// ℤ 
+	{0, 0, 0, 0}, 		// ℥ 
+	{7, 15, 41820, 8.63281275727786}, 		// Ω 
+	{0, 0, 0, 0}, 		// ℧ 
+	{0, 0, 0, 0}, 		// ℨ 
+	{0, 0, 0, 0}, 		// ℩ 
+	{0, 0, 0, 0}, 		// K 
+	{0, 0, 0, 0}, 		// Å 
+	{0, 0, 0, 0}, 		// ℬ 
+	{0, 0, 0, 0}, 		// ℭ 
+	{9, 15, 41835, 9.60400419247162}, 		// ℮ 
+	{0, 0, 0, 0}, 		// ℯ 
+	{0, 0, 0, 0}, 		// ℰ 
+	{0, 0, 0, 0}, 		// ℱ 
+	{4, 15, 41865, 5.97314470926358}, 		// Ⅎ 
+	{0, 0, 0, 0}, 		// ℳ 
+	{0, 0, 0, 0}, 		// ℴ 
+	{0, 0, 0, 0}, 		// ℵ 
+	{0, 0, 0, 0}, 		// ℶ 
+	{0, 0, 0, 0}, 		// ℷ 
+	{0, 0, 0, 0}, 		// ℸ 
+	{0, 0, 0, 0}, 		// ℹ 
+	{0, 0, 0, 0}, 		// ℺ 
+	{0, 0, 0, 0}, 		// ℻ 
+	{0, 0, 0, 0}, 		// ℼ 
+	{0, 0, 0, 0}, 		// ℽ 
+	{0, 0, 0, 0}, 		// ℾ 
+	{0, 0, 0, 0}, 		// ℿ 
+	{0, 0, 0, 0}, 		// ⅀ 
+	{0, 0, 0, 0}, 		// ⅁ 
+	{0, 0, 0, 0}, 		// ⅂ 
+	{0, 0, 0, 0}, 		// ⅃ 
+	{0, 0, 0, 0}, 		// ⅄ 
+	{0, 0, 0, 0}, 		// ⅅ 
+	{0, 0, 0, 0}, 		// ⅆ 
+	{0, 0, 0, 0}, 		// ⅇ 
+	{0, 0, 0, 0}, 		// ⅈ 
+	{0, 0, 0, 0}, 		// ⅉ 
+	{0, 0, 0, 0}, 		// ⅊ 
+	{0, 0, 0, 0}, 		// ⅋ 
+	{0, 0, 0, 0}, 		// ⅌ 
+	{9, 15, 41880, 9.95947295306541}, 		// ⅍ 
+	{3, 15, 41910, 4.76074232938117}, 		// ⅎ 
+	{0, 0, 0, 0}, 		// ⅏ 
+	{0, 0, 0, 0}, 		// ⅐ 
+	{0, 0, 0, 0}, 		// ⅑ 
+	{0, 0, 0, 0}, 		// ⅒ 
+	{7, 15, 41925, 8.79150416825723}, 		// ⅓ 
+	{8, 15, 41940, 9.40087918641802}, 		// ⅔ 
+	{7, 15, 41955, 8.79150416825723}, 		// ⅕ 
+	{8, 15, 41970, 9.40087918641802}, 		// ⅖ 
+	{8, 15, 41985, 9.28662137051288}, 		// ⅗ 
+	{8, 15, 42000, 9.42626981217472}, 		// ⅘ 
+	{7, 15, 42015, 8.41699243834591}, 		// ⅙ 
+	{8, 15, 42030, 8.91845729704073}, 		// ⅚ 
+	{7, 15, 42045, 8.65185572659539}, 		// ⅛ 
+	{8, 15, 42060, 9.1533205852902}, 		// ⅜ 
+	{8, 15, 42075, 9.1533205852902}, 		// ⅝ 
+	{8, 15, 42090, 8.39160181258922}, 		// ⅞ 
+	{7, 15, 42105, 4.99560561763064}, 		// ⅟ 
+	{0, 0, 0, 0}, 		// Ⅰ 
+	{0, 0, 0, 0}, 		// Ⅱ 
+	{0, 0, 0, 0}, 		// Ⅲ 
+	{0, 0, 0, 0}, 		// Ⅳ 
+	{0, 0, 0, 0}, 		// Ⅴ 
+	{0, 0, 0, 0}, 		// Ⅵ 
+	{0, 0, 0, 0}, 		// Ⅶ 
+	{0, 0, 0, 0}, 		// Ⅷ 
+	{0, 0, 0, 0}, 		// Ⅸ 
+	{0, 0, 0, 0}, 		// Ⅹ 
+	{0, 0, 0, 0}, 		// Ⅺ 
+	{0, 0, 0, 0}, 		// Ⅻ 
+	{0, 0, 0, 0}, 		// Ⅼ 
+	{0, 0, 0, 0}, 		// Ⅽ 
+	{0, 0, 0, 0}, 		// Ⅾ 
+	{0, 0, 0, 0}, 		// Ⅿ 
+	{0, 0, 0, 0}, 		// ⅰ 
+	{0, 0, 0, 0}, 		// ⅱ 
+	{0, 0, 0, 0}, 		// ⅲ 
+	{0, 0, 0, 0}, 		// ⅳ 
+	{0, 0, 0, 0}, 		// ⅴ 
+	{0, 0, 0, 0}, 		// ⅵ 
+	{0, 0, 0, 0}, 		// ⅶ 
+	{0, 0, 0, 0}, 		// ⅷ 
+	{0, 0, 0, 0}, 		// ⅸ 
+	{0, 0, 0, 0}, 		// ⅹ 
+	{0, 0, 0, 0}, 		// ⅺ 
+	{0, 0, 0, 0}, 		// ⅻ 
+	{0, 0, 0, 0}, 		// ⅼ 
+	{0, 0, 0, 0}, 		// ⅽ 
+	{0, 0, 0, 0}, 		// ⅾ 
+	{0, 0, 0, 0}, 		// ⅿ 
+	{0, 0, 0, 0}, 		// ↀ 
+	{0, 0, 0, 0}, 		// ↁ 
+	{0, 0, 0, 0}, 		// ↂ 
+	{6, 15, 42120, 6.93164083157899}, 		// Ↄ 
+	{5, 15, 42135, 5.49707047632546}, 		// ↄ 
+	{0, 0, 0, 0}, 		// ↅ 
+	{0, 0, 0, 0}, 		// ↆ 
+	{0, 0, 0, 0}, 		// ↇ 
+	{0, 0, 0, 0}, 		// ↈ 
+	{0, 0, 0, 0}, 		// ↉ 
+	{0, 0, 0, 0}, 		// ↊ 
+	{0, 0, 0, 0}, 		// ↋ 
+	{0, 0, 0, 0}, 		// ↌ 
+	{0, 0, 0, 0}, 		// ↍ 
+	{0, 0, 0, 0}, 		// ↎ 
+	{0, 0, 0, 0}, 		// ↏ 
+	{10, 15, 42150, 11.7685550382303}, 		// ← 
+	{9, 15, 42180, 11.7685550382303}, 		// ↑ 
+	{10, 15, 42210, 11.7685550382303}, 		// → 
+	{9, 15, 42240, 11.7685550382303}, 		// ↓ 
+	{15, 15, 42270, 16.7451176865434}, 		// ↔ 
+	{7, 15, 42300, 10.1054690511664}, 		// ↕ 
+	{8, 15, 42315, 11.4638675291499}, 		// ↖ 
+	{8, 15, 42330, 11.4638675291499}, 		// ↗ 
+	{8, 15, 42345, 11.4638675291499}, 		// ↘ 
+	{8, 15, 42360, 11.4638675291499}, 		// ↙ 
+	{0, 0, 0, 0}, 		// ↚ 
+	{0, 0, 0, 0}, 		// ↛ 
+	{0, 0, 0, 0}, 		// ↜ 
+	{0, 0, 0, 0}, 		// ↝ 
+	{0, 0, 0, 0}, 		// ↞ 
+	{0, 0, 0, 0}, 		// ↟ 
+	{0, 0, 0, 0}, 		// ↠ 
+	{0, 0, 0, 0}, 		// ↡ 
+	{0, 0, 0, 0}, 		// ↢ 
+	{0, 0, 0, 0}, 		// ↣ 
+	{0, 0, 0, 0}, 		// ↤ 
+	{0, 0, 0, 0}, 		// ↥ 
+	{0, 0, 0, 0}, 		// ↦ 
+	{0, 0, 0, 0}, 		// ↧ 
+	{5, 15, 42375, 6.13818377668213}, 		// ↨ 
 };
 
-// Character descriptors for Calibri 8pt(block #6)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block6[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #6)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block6[] PROGMEM = 
 {
-	{5, 41925}, 		// ∂ 
-	{0, 0}, 		// ∃ 
-	{0, 0}, 		// ∄ 
-	{0, 0}, 		// ∅ 
-	{7, 41940}, 		// ∆ 
-	{0, 0}, 		// ∇ 
-	{0, 0}, 		// ∈ 
-	{0, 0}, 		// ∉ 
-	{0, 0}, 		// ∊ 
-	{0, 0}, 		// ∋ 
-	{0, 0}, 		// ∌ 
-	{0, 0}, 		// ∍ 
-	{0, 0}, 		// ∎ 
-	{9, 41955}, 		// ∏ 
-	{0, 0}, 		// ∐ 
-	{6, 41985}, 		// ∑ 
-	{5, 42000}, 		// − 
-	{0, 0}, 		// ∓ 
-	{0, 0}, 		// ∔ 
-	{7, 42015}, 		// ∕ 
-	{0, 0}, 		// ∖ 
-	{0, 0}, 		// ∗ 
-	{0, 0}, 		// ∘ 
-	{1, 42030}, 		// ∙ 
-	{6, 42045}, 		// √ 
-	{0, 0}, 		// ∛ 
-	{0, 0}, 		// ∜ 
-	{0, 0}, 		// ∝ 
-	{10, 42060}, 		// ∞ 
-	{6, 42090}, 		// ∟ 
-	{0, 0}, 		// ∠ 
-	{0, 0}, 		// ∡ 
-	{0, 0}, 		// ∢ 
-	{0, 0}, 		// ∣ 
-	{0, 0}, 		// ∤ 
-	{0, 0}, 		// ∥ 
-	{0, 0}, 		// ∦ 
-	{0, 0}, 		// ∧ 
-	{0, 0}, 		// ∨ 
-	{6, 42105}, 		// ∩ 
-	{0, 0}, 		// ∪ 
-	{5, 42120}, 		// ∫ 
-	{0, 0}, 		// ∬ 
-	{0, 0}, 		// ∭ 
-	{0, 0}, 		// ∮ 
-	{0, 0}, 		// ∯ 
-	{0, 0}, 		// ∰ 
-	{0, 0}, 		// ∱ 
-	{0, 0}, 		// ∲ 
-	{0, 0}, 		// ∳ 
-	{0, 0}, 		// ∴ 
-	{0, 0}, 		// ∵ 
-	{0, 0}, 		// ∶ 
-	{0, 0}, 		// ∷ 
-	{0, 0}, 		// ∸ 
-	{0, 0}, 		// ∹ 
-	{0, 0}, 		// ∺ 
-	{0, 0}, 		// ∻ 
-	{0, 0}, 		// ∼ 
-	{0, 0}, 		// ∽ 
-	{0, 0}, 		// ∾ 
-	{0, 0}, 		// ∿ 
-	{0, 0}, 		// ≀ 
-	{0, 0}, 		// ≁ 
-	{0, 0}, 		// ≂ 
-	{0, 0}, 		// ≃ 
-	{0, 0}, 		// ≄ 
-	{0, 0}, 		// ≅ 
-	{0, 0}, 		// ≆ 
-	{0, 0}, 		// ≇ 
-	{5, 42135}, 		// ≈ 
-	{0, 0}, 		// ≉ 
-	{0, 0}, 		// ≊ 
-	{0, 0}, 		// ≋ 
-	{0, 0}, 		// ≌ 
-	{0, 0}, 		// ≍ 
-	{0, 0}, 		// ≎ 
-	{0, 0}, 		// ≏ 
-	{0, 0}, 		// ≐ 
-	{0, 0}, 		// ≑ 
-	{0, 0}, 		// ≒ 
-	{0, 0}, 		// ≓ 
-	{0, 0}, 		// ≔ 
-	{0, 0}, 		// ≕ 
-	{0, 0}, 		// ≖ 
-	{0, 0}, 		// ≗ 
-	{0, 0}, 		// ≘ 
-	{0, 0}, 		// ≙ 
-	{0, 0}, 		// ≚ 
-	{0, 0}, 		// ≛ 
-	{0, 0}, 		// ≜ 
-	{0, 0}, 		// ≝ 
-	{0, 0}, 		// ≞ 
-	{0, 0}, 		// ≟ 
-	{5, 42150}, 		// ≠ 
-	{5, 42165}, 		// ≡ 
-	{0, 0}, 		// ≢ 
-	{0, 0}, 		// ≣ 
-	{5, 42180}, 		// ≤ 
-	{5, 42195}, 		// ≥ 
+	{5, 15, 42390, 6.92529317513981}, 		// ∂ 
+	{0, 0, 0, 0}, 		// ∃ 
+	{0, 0, 0, 0}, 		// ∄ 
+	{0, 0, 0, 0}, 		// ∅ 
+	{7, 15, 42405, 7.33789084368618}, 		// ∆ 
+	{0, 0, 0, 0}, 		// ∇ 
+	{0, 0, 0, 0}, 		// ∈ 
+	{0, 0, 0, 0}, 		// ∉ 
+	{0, 0, 0, 0}, 		// ∊ 
+	{0, 0, 0, 0}, 		// ∋ 
+	{0, 0, 0, 0}, 		// ∌ 
+	{0, 0, 0, 0}, 		// ∍ 
+	{0, 0, 0, 0}, 		// ∎ 
+	{9, 15, 42420, 10.3911135909293}, 		// ∏ 
+	{0, 0, 0, 0}, 		// ∐ 
+	{6, 15, 42450, 7.03320333460579}, 		// ∑ 
+	{5, 15, 42465, 6.4746095679584}, 		// − 
+	{0, 0, 0, 0}, 		// ∓ 
+	{0, 0, 0, 0}, 		// ∔ 
+	{7, 15, 42480, 4.3735352865915}, 		// ∕ 
+	{0, 0, 0, 0}, 		// ∖ 
+	{0, 0, 0, 0}, 		// ∗ 
+	{0, 0, 0, 0}, 		// ∘ 
+	{1, 15, 42495, 3.28173837905342}, 		// ∙ 
+	{6, 15, 42510, 6.4746095679584}, 		// √ 
+	{0, 0, 0, 0}, 		// ∛ 
+	{0, 0, 0, 0}, 		// ∜ 
+	{0, 0, 0, 0}, 		// ∝ 
+	{10, 15, 42525, 11.0893557992385}, 		// ∞ 
+	{6, 15, 42555, 8.88671901484486}, 		// ∟ 
+	{0, 0, 0, 0}, 		// ∠ 
+	{0, 0, 0, 0}, 		// ∡ 
+	{0, 0, 0, 0}, 		// ∢ 
+	{0, 0, 0, 0}, 		// ∣ 
+	{0, 0, 0, 0}, 		// ∤ 
+	{0, 0, 0, 0}, 		// ∥ 
+	{0, 0, 0, 0}, 		// ∦ 
+	{0, 0, 0, 0}, 		// ∧ 
+	{0, 0, 0, 0}, 		// ∨ 
+	{6, 15, 42570, 9.12158230309433}, 		// ∩ 
+	{0, 0, 0, 0}, 		// ∪ 
+	{5, 15, 42585, 4.754394672942}, 		// ∫ 
+	{0, 0, 0, 0}, 		// ∬ 
+	{0, 0, 0, 0}, 		// ∭ 
+	{0, 0, 0, 0}, 		// ∮ 
+	{0, 0, 0, 0}, 		// ∯ 
+	{0, 0, 0, 0}, 		// ∰ 
+	{0, 0, 0, 0}, 		// ∱ 
+	{0, 0, 0, 0}, 		// ∲ 
+	{0, 0, 0, 0}, 		// ∳ 
+	{0, 0, 0, 0}, 		// ∴ 
+	{0, 0, 0, 0}, 		// ∵ 
+	{0, 0, 0, 0}, 		// ∶ 
+	{0, 0, 0, 0}, 		// ∷ 
+	{0, 0, 0, 0}, 		// ∸ 
+	{0, 0, 0, 0}, 		// ∹ 
+	{0, 0, 0, 0}, 		// ∺ 
+	{0, 0, 0, 0}, 		// ∻ 
+	{0, 0, 0, 0}, 		// ∼ 
+	{0, 0, 0, 0}, 		// ∽ 
+	{0, 0, 0, 0}, 		// ∾ 
+	{0, 0, 0, 0}, 		// ∿ 
+	{0, 0, 0, 0}, 		// ≀ 
+	{0, 0, 0, 0}, 		// ≁ 
+	{0, 0, 0, 0}, 		// ≂ 
+	{0, 0, 0, 0}, 		// ≃ 
+	{0, 0, 0, 0}, 		// ≄ 
+	{0, 0, 0, 0}, 		// ≅ 
+	{0, 0, 0, 0}, 		// ≆ 
+	{0, 0, 0, 0}, 		// ≇ 
+	{5, 15, 42600, 6.4746095679584}, 		// ≈ 
+	{0, 0, 0, 0}, 		// ≉ 
+	{0, 0, 0, 0}, 		// ≊ 
+	{0, 0, 0, 0}, 		// ≋ 
+	{0, 0, 0, 0}, 		// ≌ 
+	{0, 0, 0, 0}, 		// ≍ 
+	{0, 0, 0, 0}, 		// ≎ 
+	{0, 0, 0, 0}, 		// ≏ 
+	{0, 0, 0, 0}, 		// ≐ 
+	{0, 0, 0, 0}, 		// ≑ 
+	{0, 0, 0, 0}, 		// ≒ 
+	{0, 0, 0, 0}, 		// ≓ 
+	{0, 0, 0, 0}, 		// ≔ 
+	{0, 0, 0, 0}, 		// ≕ 
+	{0, 0, 0, 0}, 		// ≖ 
+	{0, 0, 0, 0}, 		// ≗ 
+	{0, 0, 0, 0}, 		// ≘ 
+	{0, 0, 0, 0}, 		// ≙ 
+	{0, 0, 0, 0}, 		// ≚ 
+	{0, 0, 0, 0}, 		// ≛ 
+	{0, 0, 0, 0}, 		// ≜ 
+	{0, 0, 0, 0}, 		// ≝ 
+	{0, 0, 0, 0}, 		// ≞ 
+	{0, 0, 0, 0}, 		// ≟ 
+	{5, 15, 42615, 6.4746095679584}, 		// ≠ 
+	{5, 15, 42630, 6.4746095679584}, 		// ≡ 
+	{0, 0, 0, 0}, 		// ≢ 
+	{0, 0, 0, 0}, 		// ≣ 
+	{5, 15, 42645, 6.4746095679584}, 		// ≤ 
+	{5, 15, 42660, 6.4746095679584}, 		// ≥ 
 };
 
-// Character descriptors for Calibri 8pt(block #7)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block7[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #7)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block7[] PROGMEM = 
 {
-	{9, 42210}, 		// ⌂ 
-	{0, 0}, 		// ⌃ 
-	{0, 0}, 		// ⌄ 
-	{0, 0}, 		// ⌅ 
-	{0, 0}, 		// ⌆ 
-	{0, 0}, 		// ⌇ 
-	{0, 0}, 		// ⌈ 
-	{0, 0}, 		// ⌉ 
-	{0, 0}, 		// ⌊ 
-	{0, 0}, 		// ⌋ 
-	{0, 0}, 		// ⌌ 
-	{0, 0}, 		// ⌍ 
-	{0, 0}, 		// ⌎ 
-	{0, 0}, 		// ⌏ 
-	{5, 42240}, 		// ⌐ 
-	{0, 0}, 		// ⌑ 
-	{0, 0}, 		// ⌒ 
-	{0, 0}, 		// ⌓ 
-	{0, 0}, 		// ⌔ 
-	{0, 0}, 		// ⌕ 
-	{0, 0}, 		// ⌖ 
-	{0, 0}, 		// ⌗ 
-	{0, 0}, 		// ⌘ 
-	{0, 0}, 		// ⌙ 
-	{0, 0}, 		// ⌚ 
-	{0, 0}, 		// ⌛ 
-	{0, 0}, 		// ⌜ 
-	{0, 0}, 		// ⌝ 
-	{0, 0}, 		// ⌞ 
-	{0, 0}, 		// ⌟ 
-	{3, 42255}, 		// ⌠ 
-	{3, 42270}, 		// ⌡ 
+	{9, 15, 42675, 11.3813479954406}, 		// ⌂ 
+	{0, 0, 0, 0}, 		// ⌃ 
+	{0, 0, 0, 0}, 		// ⌄ 
+	{0, 0, 0, 0}, 		// ⌅ 
+	{0, 0, 0, 0}, 		// ⌆ 
+	{0, 0, 0, 0}, 		// ⌇ 
+	{0, 0, 0, 0}, 		// ⌈ 
+	{0, 0, 0, 0}, 		// ⌉ 
+	{0, 0, 0, 0}, 		// ⌊ 
+	{0, 0, 0, 0}, 		// ⌋ 
+	{0, 0, 0, 0}, 		// ⌌ 
+	{0, 0, 0, 0}, 		// ⌍ 
+	{0, 0, 0, 0}, 		// ⌎ 
+	{0, 0, 0, 0}, 		// ⌏ 
+	{5, 15, 42705, 6.4746095679584}, 		// ⌐ 
+	{0, 0, 0, 0}, 		// ⌑ 
+	{0, 0, 0, 0}, 		// ⌒ 
+	{0, 0, 0, 0}, 		// ⌓ 
+	{0, 0, 0, 0}, 		// ⌔ 
+	{0, 0, 0, 0}, 		// ⌕ 
+	{0, 0, 0, 0}, 		// ⌖ 
+	{0, 0, 0, 0}, 		// ⌗ 
+	{0, 0, 0, 0}, 		// ⌘ 
+	{0, 0, 0, 0}, 		// ⌙ 
+	{0, 0, 0, 0}, 		// ⌚ 
+	{0, 0, 0, 0}, 		// ⌛ 
+	{0, 0, 0, 0}, 		// ⌜ 
+	{0, 0, 0, 0}, 		// ⌝ 
+	{0, 0, 0, 0}, 		// ⌞ 
+	{0, 0, 0, 0}, 		// ⌟ 
+	{3, 15, 42720, 7.02050802172744}, 		// ⌠ 
+	{3, 15, 42735, 7.02050802172744}, 		// ⌡ 
 };
 
-// Character descriptors for Calibri 8pt(block #8)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block8[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #8)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block8[] PROGMEM = 
 {
-	{15, 42285}, 		// ① 
-	{15, 42315}, 		// ② 
-	{15, 42345}, 		// ③ 
-	{15, 42375}, 		// ④ 
-	{15, 42405}, 		// ⑤ 
-	{15, 42435}, 		// ⑥ 
-	{15, 42465}, 		// ⑦ 
-	{15, 42495}, 		// ⑧ 
-	{15, 42525}, 		// ⑨ 
-	{15, 42555}, 		// ⑩ 
-	{15, 42585}, 		// ⑪ 
-	{15, 42615}, 		// ⑫ 
-	{15, 42645}, 		// ⑬ 
-	{15, 42675}, 		// ⑭ 
-	{15, 42705}, 		// ⑮ 
-	{15, 42735}, 		// ⑯ 
-	{15, 42765}, 		// ⑰ 
-	{15, 42795}, 		// ⑱ 
-	{15, 42825}, 		// ⑲ 
-	{15, 42855}, 		// ⑳ 
+	{15, 15, 42750, 17.2656255145557}, 		// ① 
+	{15, 15, 42780, 17.2656255145557}, 		// ② 
+	{15, 15, 42810, 17.2656255145557}, 		// ③ 
+	{15, 15, 42840, 17.2656255145557}, 		// ④ 
+	{15, 15, 42870, 17.2656255145557}, 		// ⑤ 
+	{15, 15, 42900, 17.2656255145557}, 		// ⑥ 
+	{15, 15, 42930, 17.2656255145557}, 		// ⑦ 
+	{15, 15, 42960, 17.2656255145557}, 		// ⑧ 
+	{15, 15, 42990, 17.2656255145557}, 		// ⑨ 
+	{15, 15, 43020, 17.2656255145557}, 		// ⑩ 
+	{15, 15, 43050, 17.2656255145557}, 		// ⑪ 
+	{15, 15, 43080, 17.2656255145557}, 		// ⑫ 
+	{15, 15, 43110, 17.2656255145557}, 		// ⑬ 
+	{15, 15, 43140, 17.2656255145557}, 		// ⑭ 
+	{15, 15, 43170, 17.2656255145557}, 		// ⑮ 
+	{15, 15, 43200, 17.2656255145557}, 		// ⑯ 
+	{15, 15, 43230, 17.2656255145557}, 		// ⑰ 
+	{15, 15, 43260, 17.2656255145557}, 		// ⑱ 
+	{15, 15, 43290, 17.2656255145557}, 		// ⑲ 
+	{15, 15, 43320, 17.2656255145557}, 		// ⑳ 
 };
 
-// Character descriptors for Calibri 8pt(block #9)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block9[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #9)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block9[] PROGMEM = 
 {
-	{15, 42885}, 		// ⓪ 
-	{15, 42915}, 		// ⓫ 
-	{15, 42945}, 		// ⓬ 
-	{15, 42975}, 		// ⓭ 
-	{15, 43005}, 		// ⓮ 
-	{15, 43035}, 		// ⓯ 
-	{15, 43065}, 		// ⓰ 
-	{15, 43095}, 		// ⓱ 
-	{15, 43125}, 		// ⓲ 
-	{15, 43155}, 		// ⓳ 
-	{15, 43185}, 		// ⓴ 
-	{0, 0}, 		// ⓵ 
-	{0, 0}, 		// ⓶ 
-	{0, 0}, 		// ⓷ 
-	{0, 0}, 		// ⓸ 
-	{0, 0}, 		// ⓹ 
-	{0, 0}, 		// ⓺ 
-	{0, 0}, 		// ⓻ 
-	{0, 0}, 		// ⓼ 
-	{0, 0}, 		// ⓽ 
-	{0, 0}, 		// ⓾ 
-	{15, 43215}, 		// ⓿ 
-	{7, 43245}, 		// ─ 
-	{0, 0}, 		// ━ 
-	{1, 43260}, 		// │ 
-	{0, 0}, 		// ┃ 
-	{0, 0}, 		// ┄ 
-	{0, 0}, 		// ┅ 
-	{0, 0}, 		// ┆ 
-	{0, 0}, 		// ┇ 
-	{0, 0}, 		// ┈ 
-	{0, 0}, 		// ┉ 
-	{0, 0}, 		// ┊ 
-	{0, 0}, 		// ┋ 
-	{4, 43275}, 		// ┌ 
-	{0, 0}, 		// ┍ 
-	{0, 0}, 		// ┎ 
-	{0, 0}, 		// ┏ 
-	{4, 43290}, 		// ┐ 
-	{0, 0}, 		// ┑ 
-	{0, 0}, 		// ┒ 
-	{0, 0}, 		// ┓ 
-	{4, 43305}, 		// └ 
-	{0, 0}, 		// ┕ 
-	{0, 0}, 		// ┖ 
-	{0, 0}, 		// ┗ 
-	{4, 43320}, 		// ┘ 
+	{15, 15, 43350, 17.2656255145557}, 		// ⓪ 
+	{15, 15, 43380, 17.2656255145557}, 		// ⓫ 
+	{15, 15, 43410, 17.2656255145557}, 		// ⓬ 
+	{15, 15, 43440, 17.2656255145557}, 		// ⓭ 
+	{15, 15, 43470, 17.2656255145557}, 		// ⓮ 
+	{15, 15, 43500, 17.2656255145557}, 		// ⓯ 
+	{15, 15, 43530, 17.2656255145557}, 		// ⓰ 
+	{15, 15, 43560, 17.2656255145557}, 		// ⓱ 
+	{15, 15, 43590, 17.2656255145557}, 		// ⓲ 
+	{15, 15, 43620, 17.2656255145557}, 		// ⓳ 
+	{15, 15, 43650, 17.2656255145557}, 		// ⓴ 
+	{0, 0, 0, 0}, 		// ⓵ 
+	{0, 0, 0, 0}, 		// ⓶ 
+	{0, 0, 0, 0}, 		// ⓷ 
+	{0, 0, 0, 0}, 		// ⓸ 
+	{0, 0, 0, 0}, 		// ⓹ 
+	{0, 0, 0, 0}, 		// ⓺ 
+	{0, 0, 0, 0}, 		// ⓻ 
+	{0, 0, 0, 0}, 		// ⓼ 
+	{0, 0, 0, 0}, 		// ⓽ 
+	{0, 0, 0, 0}, 		// ⓾ 
+	{15, 15, 43680, 17.2656255145557}, 		// ⓿ 
+	{7, 15, 43710, 6.5000001937151}, 		// ─ 
+	{0, 0, 0, 0}, 		// ━ 
+	{1, 15, 43725, 6.5000001937151}, 		// │ 
+	{0, 0, 0, 0}, 		// ┃ 
+	{0, 0, 0, 0}, 		// ┄ 
+	{0, 0, 0, 0}, 		// ┅ 
+	{0, 0, 0, 0}, 		// ┆ 
+	{0, 0, 0, 0}, 		// ┇ 
+	{0, 0, 0, 0}, 		// ┈ 
+	{0, 0, 0, 0}, 		// ┉ 
+	{0, 0, 0, 0}, 		// ┊ 
+	{0, 0, 0, 0}, 		// ┋ 
+	{4, 15, 43740, 6.5000001937151}, 		// ┌ 
+	{0, 0, 0, 0}, 		// ┍ 
+	{0, 0, 0, 0}, 		// ┎ 
+	{0, 0, 0, 0}, 		// ┏ 
+	{4, 15, 43755, 6.5000001937151}, 		// ┐ 
+	{0, 0, 0, 0}, 		// ┑ 
+	{0, 0, 0, 0}, 		// ┒ 
+	{0, 0, 0, 0}, 		// ┓ 
+	{4, 15, 43770, 6.5000001937151}, 		// └ 
+	{0, 0, 0, 0}, 		// ┕ 
+	{0, 0, 0, 0}, 		// ┖ 
+	{0, 0, 0, 0}, 		// ┗ 
+	{4, 15, 43785, 6.5000001937151}, 		// ┘ 
 };
 
-// Character descriptors for Calibri 8pt(block #10)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block10[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #10)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block10[] PROGMEM = 
 {
-	{6, 43335}, 		// □ 
-	{0, 0}, 		// ▢ 
-	{0, 0}, 		// ▣ 
-	{0, 0}, 		// ▤ 
-	{0, 0}, 		// ▥ 
-	{0, 0}, 		// ▦ 
-	{0, 0}, 		// ▧ 
-	{0, 0}, 		// ▨ 
-	{0, 0}, 		// ▩ 
-	{3, 43350}, 		// ▪ 
-	{3, 43365}, 		// ▫ 
-	{0, 0}, 		// ▬ 
-	{0, 0}, 		// ▭ 
-	{0, 0}, 		// ▮ 
-	{0, 0}, 		// ▯ 
-	{0, 0}, 		// ▰ 
-	{0, 0}, 		// ▱ 
-	{0, 0}, 		// ▲ 
-	{0, 0}, 		// △ 
-	{0, 0}, 		// ▴ 
-	{0, 0}, 		// ▵ 
-	{0, 0}, 		// ▶ 
-	{0, 0}, 		// ▷ 
-	{0, 0}, 		// ▸ 
-	{0, 0}, 		// ▹ 
-	{0, 0}, 		// ► 
-	{0, 0}, 		// ▻ 
-	{0, 0}, 		// ▼ 
-	{0, 0}, 		// ▽ 
-	{0, 0}, 		// ▾ 
-	{0, 0}, 		// ▿ 
-	{0, 0}, 		// ◀ 
-	{0, 0}, 		// ◁ 
-	{0, 0}, 		// ◂ 
-	{0, 0}, 		// ◃ 
-	{0, 0}, 		// ◄ 
-	{0, 0}, 		// ◅ 
-	{0, 0}, 		// ◆ 
-	{0, 0}, 		// ◇ 
-	{0, 0}, 		// ◈ 
-	{0, 0}, 		// ◉ 
-	{5, 43380}, 		// ◊ 
-	{6, 43395}, 		// ○ 
-	{6, 43410}, 		// ◌ 
-	{0, 0}, 		// ◍ 
-	{0, 0}, 		// ◎ 
-	{6, 43425}, 		// ● 
-	{0, 0}, 		// ◐ 
-	{0, 0}, 		// ◑ 
-	{0, 0}, 		// ◒ 
-	{0, 0}, 		// ◓ 
-	{0, 0}, 		// ◔ 
-	{0, 0}, 		// ◕ 
-	{0, 0}, 		// ◖ 
-	{0, 0}, 		// ◗ 
-	{0, 0}, 		// ◘ 
-	{0, 0}, 		// ◙ 
-	{0, 0}, 		// ◚ 
-	{0, 0}, 		// ◛ 
-	{0, 0}, 		// ◜ 
-	{0, 0}, 		// ◝ 
-	{0, 0}, 		// ◞ 
-	{0, 0}, 		// ◟ 
-	{0, 0}, 		// ◠ 
-	{0, 0}, 		// ◡ 
-	{0, 0}, 		// ◢ 
-	{0, 0}, 		// ◣ 
-	{0, 0}, 		// ◤ 
-	{0, 0}, 		// ◥ 
-	{3, 43440}, 		// ◦ 
+	{6, 15, 43800, 7.85205101525935}, 		// □ 
+	{0, 0, 0, 0}, 		// ▢ 
+	{0, 0, 0, 0}, 		// ▣ 
+	{0, 0, 0, 0}, 		// ▤ 
+	{0, 0, 0, 0}, 		// ▥ 
+	{0, 0, 0, 0}, 		// ▦ 
+	{0, 0, 0, 0}, 		// ▧ 
+	{0, 0, 0, 0}, 		// ▨ 
+	{0, 0, 0, 0}, 		// ▩ 
+	{3, 15, 43815, 4.6020509184018}, 		// ▪ 
+	{3, 15, 43830, 4.6020509184018}, 		// ▫ 
+	{0, 0, 0, 0}, 		// ▬ 
+	{0, 0, 0, 0}, 		// ▭ 
+	{0, 0, 0, 0}, 		// ▮ 
+	{0, 0, 0, 0}, 		// ▯ 
+	{0, 0, 0, 0}, 		// ▰ 
+	{0, 0, 0, 0}, 		// ▱ 
+	{0, 0, 0, 0}, 		// ▲ 
+	{0, 0, 0, 0}, 		// △ 
+	{0, 0, 0, 0}, 		// ▴ 
+	{0, 0, 0, 0}, 		// ▵ 
+	{0, 0, 0, 0}, 		// ▶ 
+	{0, 0, 0, 0}, 		// ▷ 
+	{0, 0, 0, 0}, 		// ▸ 
+	{0, 0, 0, 0}, 		// ▹ 
+	{0, 0, 0, 0}, 		// ► 
+	{0, 0, 0, 0}, 		// ▻ 
+	{0, 0, 0, 0}, 		// ▼ 
+	{0, 0, 0, 0}, 		// ▽ 
+	{0, 0, 0, 0}, 		// ▾ 
+	{0, 0, 0, 0}, 		// ▿ 
+	{0, 0, 0, 0}, 		// ◀ 
+	{0, 0, 0, 0}, 		// ◁ 
+	{0, 0, 0, 0}, 		// ◂ 
+	{0, 0, 0, 0}, 		// ◃ 
+	{0, 0, 0, 0}, 		// ◄ 
+	{0, 0, 0, 0}, 		// ◅ 
+	{0, 0, 0, 0}, 		// ◆ 
+	{0, 0, 0, 0}, 		// ◇ 
+	{0, 0, 0, 0}, 		// ◈ 
+	{0, 0, 0, 0}, 		// ◉ 
+	{5, 15, 43845, 6.63964863537694}, 		// ◊ 
+	{6, 15, 43860, 7.14746115051094}, 		// ○ 
+	{6, 15, 43875, 7.72509788647585}, 		// ◌ 
+	{0, 0, 0, 0}, 		// ◍ 
+	{0, 0, 0, 0}, 		// ◎ 
+	{6, 15, 43890, 7.85205101525935}, 		// ● 
+	{0, 0, 0, 0}, 		// ◐ 
+	{0, 0, 0, 0}, 		// ◑ 
+	{0, 0, 0, 0}, 		// ◒ 
+	{0, 0, 0, 0}, 		// ◓ 
+	{0, 0, 0, 0}, 		// ◔ 
+	{0, 0, 0, 0}, 		// ◕ 
+	{0, 0, 0, 0}, 		// ◖ 
+	{0, 0, 0, 0}, 		// ◗ 
+	{0, 0, 0, 0}, 		// ◘ 
+	{0, 0, 0, 0}, 		// ◙ 
+	{0, 0, 0, 0}, 		// ◚ 
+	{0, 0, 0, 0}, 		// ◛ 
+	{0, 0, 0, 0}, 		// ◜ 
+	{0, 0, 0, 0}, 		// ◝ 
+	{0, 0, 0, 0}, 		// ◞ 
+	{0, 0, 0, 0}, 		// ◟ 
+	{0, 0, 0, 0}, 		// ◠ 
+	{0, 0, 0, 0}, 		// ◡ 
+	{0, 0, 0, 0}, 		// ◢ 
+	{0, 0, 0, 0}, 		// ◣ 
+	{0, 0, 0, 0}, 		// ◤ 
+	{0, 0, 0, 0}, 		// ◥ 
+	{3, 15, 43905, 4.6020509184018}, 		// ◦ 
 };
 
-// Character descriptors for Calibri 8pt(block #11)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block11[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #11)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block11[] PROGMEM = 
 {
-	{15, 43455}, 		// ❶ 
-	{15, 43485}, 		// ❷ 
-	{15, 43515}, 		// ❸ 
-	{15, 43545}, 		// ❹ 
-	{15, 43575}, 		// ❺ 
-	{15, 43605}, 		// ❻ 
-	{15, 43635}, 		// ❼ 
-	{15, 43665}, 		// ❽ 
-	{15, 43695}, 		// ❾ 
-	{15, 43725}, 		// ❿ 
+	{15, 15, 43920, 17.2656255145557}, 		// ❶ 
+	{15, 15, 43950, 17.2656255145557}, 		// ❷ 
+	{15, 15, 43980, 17.2656255145557}, 		// ❸ 
+	{15, 15, 44010, 17.2656255145557}, 		// ❹ 
+	{15, 15, 44040, 17.2656255145557}, 		// ❺ 
+	{15, 15, 44070, 17.2656255145557}, 		// ❻ 
+	{15, 15, 44100, 17.2656255145557}, 		// ❼ 
+	{15, 15, 44130, 17.2656255145557}, 		// ❽ 
+	{15, 15, 44160, 17.2656255145557}, 		// ❾ 
+	{15, 15, 44190, 17.2656255145557}, 		// ❿ 
 };
 
-// Character descriptors for Calibri 8pt(block #12)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block12[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #12)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block12[] PROGMEM = 
 {
-	{5, 43755}, 		// Ⱡ 
-	{3, 43770}, 		// ⱡ 
-	{6, 43785}, 		// Ɫ 
-	{6, 43800}, 		// Ᵽ 
-	{5, 43815}, 		// Ɽ 
-	{6, 43830}, 		// ⱥ 
-	{6, 43845}, 		// ⱦ 
-	{7, 43860}, 		// Ⱨ 
-	{6, 43875}, 		// ⱨ 
-	{6, 43890}, 		// Ⱪ 
-	{5, 43905}, 		// ⱪ 
-	{6, 43920}, 		// Ⱬ 
-	{4, 43935}, 		// ⱬ 
-	{0, 0}, 		// Ɑ 
-	{9, 43950}, 		// Ɱ 
-	{7, 43980}, 		// Ɐ 
-	{7, 43995}, 		// Ɒ 
-	{0, 0}, 		// ⱱ 
-	{0, 0}, 		// Ⱳ 
-	{0, 0}, 		// ⱳ 
-	{6, 44010}, 		// ⱴ 
-	{5, 44025}, 		// Ⱶ 
-	{4, 44040}, 		// ⱶ 
-	{7, 44055}, 		// ⱷ 
-	{8, 44070}, 		// ⱸ 
-	{4, 44085}, 		// ⱹ 
-	{5, 44100}, 		// ⱺ 
-	{4, 44115}, 		// ⱻ 
-	{1, 44130}, 		// ⱼ 
-	{5, 44145}, 		// ⱽ 
-	{5, 44160}, 		// Ȿ 
-	{7, 44175}, 		// Ɀ 
+	{5, 15, 44220, 5.46533219412959}, 		// Ⱡ 
+	{3, 15, 44235, 3.66259776540392}, 		// ⱡ 
+	{6, 15, 44250, 6.10644549448625}, 		// Ɫ 
+	{6, 15, 44265, 6.82373067211302}, 		// Ᵽ 
+	{5, 15, 44280, 7.05859396036249}, 		// Ɽ 
+	{6, 15, 44295, 6.22705096683057}, 		// ⱥ 
+	{6, 15, 44310, 4.35449231727398}, 		// ⱦ 
+	{7, 15, 44325, 8.35351587395417}, 		// Ⱨ 
+	{6, 15, 44340, 7.12841818119341}, 		// ⱨ 
+	{6, 15, 44355, 7.21728537134186}, 		// Ⱪ 
+	{5, 15, 44370, 6.26513690546562}, 		// ⱪ 
+	{6, 15, 44385, 6.30957050053985}, 		// Ⱬ 
+	{4, 15, 44400, 5.30664078315021}, 		// ⱬ 
+	{0, 0, 0, 0}, 		// Ɑ 
+	{9, 15, 44415, 11.1147464249952}, 		// Ɱ 
+	{7, 15, 44445, 7.52197288042225}, 		// Ɐ 
+	{7, 15, 44460, 8.52490259781189}, 		// Ɒ 
+	{0, 0, 0, 0}, 		// ⱱ 
+	{0, 0, 0, 0}, 		// Ⱳ 
+	{0, 0, 0, 0}, 		// ⱳ 
+	{6, 15, 44475, 6.10644549448625}, 		// ⱴ 
+	{5, 15, 44490, 6.02392596077698}, 		// Ⱶ 
+	{4, 15, 44505, 5.03369155626569}, 		// ⱶ 
+	{7, 15, 44520, 8.49951197205519}, 		// ⱷ 
+	{8, 15, 44535, 9.1533205852902}, 		// ⱸ 
+	{4, 15, 44550, 4.53222669757088}, 		// ⱹ 
+	{5, 15, 44565, 6.85546895430889}, 		// ⱺ 
+	{4, 15, 44580, 5.68750016950071}, 		// ⱻ 
+	{1, 15, 44595, 2.31689460029884}, 		// ⱼ 
+	{5, 15, 44610, 4.8051759244554}, 		// ⱽ 
+	{5, 15, 44625, 5.97314470926358}, 		// Ȿ 
+	{7, 15, 44640, 6.08740252516873}, 		// Ɀ 
 };
 
-// Character descriptors for Calibri 8pt(block #13)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block13[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #13)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block13[] PROGMEM = 
 {
-	{3, 44190}, 		// ⸗ 
+	{3, 15, 44655, 3.97998058736266}, 		// ⸗ 
 };
 
-// Character descriptors for Calibri 8pt(block #14)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block14[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #14)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block14[] PROGMEM = 
 {
-	{5, 44205}, 		// ꓐ 
-	{5, 44220}, 		// ꓑ 
-	{5, 44235}, 		// ꓒ 
-	{6, 44250}, 		// ꓓ 
-	{7, 44265}, 		// ꓔ 
-	{6, 44280}, 		// ꓕ 
-	{6, 44295}, 		// ꓖ 
-	{5, 44310}, 		// ꓗ 
-	{6, 44325}, 		// ꓘ 
-	{3, 44340}, 		// ꓙ 
-	{0, 0}, 		// ꓚ 
-	{6, 44355}, 		// ꓛ 
-	{6, 44370}, 		// ꓜ 
-	{4, 44385}, 		// ꓝ 
-	{4, 44400}, 		// ꓞ 
-	{9, 44415}, 		// ꓟ 
-	{6, 44445}, 		// ꓠ 
-	{4, 44460}, 		// ꓡ 
-	{5, 44475}, 		// ꓢ 
-	{5, 44490}, 		// ꓣ 
-	{5, 44505}, 		// ꓤ 
-	{5, 44520}, 		// ꓥ 
-	{6, 44535}, 		// ꓦ 
-	{6, 44550}, 		// ꓧ 
-	{7, 44565}, 		// ꓨ 
-	{3, 44580}, 		// ꓩ 
-	{11, 44595}, 		// ꓪ 
-	{6, 44625}, 		// ꓫ 
-	{5, 44640}, 		// ꓬ 
-	{5, 44655}, 		// ꓭ 
-	{7, 44670}, 		// ꓮ 
-	{7, 44685}, 		// ꓯ 
-	{5, 44700}, 		// ꓰ 
-	{4, 44715}, 		// ꓱ 
-	{1, 44730}, 		// ꓲ 
-	{7, 44745}, 		// ꓳ 
-	{6, 44760}, 		// ꓴ 
-	{6, 44775}, 		// ꓵ 
-	{4, 44790}, 		// ꓶ 
-	{6, 44805}, 		// ꓷ 
-	{1, 44820}, 		// ꓸ 
-	{1, 44835}, 		// ꓹ 
-	{4, 44850}, 		// ꓺ 
-	{4, 44865}, 		// ꓻ 
-	{1, 44880}, 		// ꓼ 
-	{1, 44895}, 		// ꓽ 
-	{5, 44910}, 		// ꓾ 
-	{4, 44925}, 		// ꓿ 
+	{5, 15, 44670, 7.07128927324084}, 		// ꓐ 
+	{5, 15, 44685, 6.71582051264704}, 		// ꓑ 
+	{5, 15, 44700, 6.71582051264704}, 		// ꓒ 
+	{6, 15, 44715, 7.99804711336037}, 		// ꓓ 
+	{7, 15, 44730, 6.33496112629655}, 		// ꓔ 
+	{6, 15, 44745, 6.33496112629655}, 		// ꓕ 
+	{6, 15, 44760, 8.20117211941397}, 		// ꓖ 
+	{5, 15, 44775, 6.75390645128209}, 		// ꓗ 
+	{6, 15, 44790, 6.75390645128209}, 		// ꓘ 
+	{3, 15, 44805, 4.14501965478121}, 		// ꓙ 
+	{0, 0, 0, 0}, 		// ꓚ 
+	{6, 15, 44820, 6.93164083157899}, 		// ꓛ 
+	{6, 15, 44835, 6.08740252516873}, 		// ꓜ 
+	{4, 15, 44850, 5.97314470926358}, 		// ꓝ 
+	{4, 15, 44865, 5.97314470926358}, 		// ꓞ 
+	{9, 15, 44880, 11.1147464249952}, 		// ꓟ 
+	{6, 15, 44910, 8.39160181258922}, 		// ꓠ 
+	{4, 15, 44925, 5.46533219412959}, 		// ꓡ 
+	{5, 15, 44940, 5.97314470926358}, 		// ꓢ 
+	{5, 15, 44955, 7.05859396036249}, 		// ꓣ 
+	{5, 15, 44970, 7.05859396036249}, 		// ꓤ 
+	{5, 15, 44985, 7.44580100315216}, 		// ꓥ 
+	{6, 15, 45000, 7.37597678232123}, 		// ꓦ 
+	{6, 15, 45015, 8.09960961638717}, 		// ꓧ 
+	{7, 15, 45030, 8.20117211941397}, 		// ꓨ 
+	{3, 15, 45045, 4.14501965478121}, 		// ꓩ 
+	{11, 15, 45060, 11.5654300321767}, 		// ꓪ 
+	{6, 15, 45090, 6.74755879484292}, 		// ꓫ 
+	{5, 15, 45105, 6.33496112629655}, 		// ꓬ 
+	{5, 15, 45120, 7.07128927324084}, 		// ꓭ 
+	{7, 15, 45135, 7.52197288042225}, 		// ꓮ 
+	{7, 15, 45150, 7.52197288042225}, 		// ꓯ 
+	{5, 15, 45165, 6.3476564391749}, 		// ꓰ 
+	{4, 15, 45180, 6.3476564391749}, 		// ꓱ 
+	{1, 15, 45195, 3.27539072261425}, 		// ꓲ 
+	{7, 15, 45210, 8.60742213152116}, 		// ꓳ 
+	{6, 15, 45225, 8.34082056107582}, 		// ꓴ 
+	{6, 15, 45240, 8.34082056107582}, 		// ꓵ 
+	{4, 15, 45255, 5.46533219412959}, 		// ꓶ 
+	{6, 15, 45270, 7.99804711336037}, 		// ꓷ 
+	{1, 15, 45285, 3.28173837905342}, 		// ꓸ 
+	{1, 15, 45300, 3.28173837905342}, 		// ꓹ 
+	{4, 15, 45315, 5.82080095472338}, 		// ꓺ 
+	{4, 15, 45330, 5.82080095472338}, 		// ꓻ 
+	{1, 15, 45345, 3.25000009685755}, 		// ꓼ 
+	{1, 15, 45360, 3.25000009685755}, 		// ꓽ 
+	{5, 15, 45375, 7.03320333460579}, 		// ꓾ 
+	{4, 15, 45390, 5.83349626760173}, 		// ꓿ 
 };
 
-// Character descriptors for Calibri 8pt(block #15)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block15[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #15)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block15[] PROGMEM = 
 {
-	{6, 44940}, 		// Ꙁ 
-	{4, 44955}, 		// ꙁ 
-	{6, 44970}, 		// Ꙃ 
-	{4, 44985}, 		// ꙃ 
-	{4, 45000}, 		// Ꙅ 
-	{3, 45015}, 		// ꙅ 
-	{3, 45030}, 		// Ꙇ 
-	{3, 45045}, 		// ꙇ 
-	{6, 45060}, 		// Ꙉ 
-	{5, 45075}, 		// ꙉ 
-	{7, 45090}, 		// Ꙋ 
-	{5, 45105}, 		// ꙋ 
-	{12, 45120}, 		// Ꙍ 
-	{10, 45150}, 		// ꙍ 
-	{7, 45180}, 		// Ꙏ 
-	{6, 45195}, 		// ꙏ 
-	{10, 45210}, 		// Ꙑ 
-	{9, 45240}, 		// ꙑ 
-	{8, 45270}, 		// Ꙓ 
-	{7, 45285}, 		// ꙓ 
-	{9, 45300}, 		// Ꙕ 
-	{7, 45330}, 		// ꙕ 
-	{10, 45345}, 		// Ꙗ 
-	{7, 45375}, 		// ꙗ 
-	{7, 45390}, 		// Ꙙ 
-	{6, 45405}, 		// ꙙ 
-	{9, 45420}, 		// Ꙛ 
-	{7, 45450}, 		// ꙛ 
-	{10, 45465}, 		// Ꙝ 
-	{8, 45495}, 		// ꙝ 
-	{7, 45510}, 		// Ꙟ 
-	{6, 45525}, 		// ꙟ 
-	{7, 45540}, 		// Ꙡ 
-	{6, 45555}, 		// ꙡ 
-	{9, 45570}, 		// Ꙣ 
-	{8, 45600}, 		// ꙣ 
-	{9, 45615}, 		// Ꙥ 
-	{8, 45645}, 		// ꙥ 
-	{11, 45660}, 		// Ꙧ 
-	{8, 45690}, 		// ꙧ 
-	{7, 45705}, 		// Ꙩ 
-	{5, 45720}, 		// ꙩ 
-	{7, 45735}, 		// Ꙫ 
-	{5, 45750}, 		// ꙫ 
-	{13, 45765}, 		// Ꙭ 
-	{10, 45795}, 		// ꙭ 
-	{8, 45825}, 		// ꙮ 
-	{4, 45840}, 		// ꙯ 
-	{11, 45855}, 		// ꙰ 
-	{10, 45885}, 		// ꙱ 
-	{13, 45915}, 		// ꙲ 
-	{4, 45945}, 		// ꙳ 
-	{3, 45960}, 		// ꙴ 
-	{3, 45975}, 		// ꙵ 
-	{2, 45990}, 		// ꙶ 
-	{3, 46005}, 		// ꙷ 
-	{4, 46020}, 		// ꙸ 
-	{5, 46035}, 		// ꙹ 
-	{3, 46050}, 		// ꙺ 
-	{5, 46065}, 		// ꙻ 
-	{4, 46080}, 		// ꙼ 
-	{2, 46095}, 		// ꙽ 
-	{4, 46110}, 		// ꙾ 
-	{2, 46125}, 		// ꙿ 
-	{8, 46140}, 		// Ꚁ 
-	{7, 46155}, 		// ꚁ 
-	{6, 46170}, 		// Ꚃ 
-	{4, 46185}, 		// ꚃ 
-	{12, 46200}, 		// Ꚅ 
-	{11, 46230}, 		// ꚅ 
-	{9, 46260}, 		// Ꚇ 
-	{9, 46290}, 		// ꚇ 
-	{9, 46320}, 		// Ꚉ 
-	{8, 46350}, 		// ꚉ 
-	{8, 46365}, 		// Ꚋ 
-	{6, 46380}, 		// ꚋ 
-	{6, 46395}, 		// Ꚍ 
-	{5, 46410}, 		// ꚍ 
-	{7, 46425}, 		// Ꚏ 
-	{6, 46440}, 		// ꚏ 
-	{6, 46455}, 		// Ꚑ 
-	{5, 46470}, 		// ꚑ 
-	{7, 46485}, 		// Ꚓ 
-	{6, 46500}, 		// ꚓ 
-	{5, 46515}, 		// Ꚕ 
-	{5, 46530}, 		// ꚕ 
-	{11, 46545}, 		// Ꚗ 
-	{9, 46575}, 		// ꚗ 
-	{13, 46605}, 		// Ꚙ 
-	{10, 46635}, 		// ꚙ 
-	{7, 46665}, 		// Ꚛ 
-	{5, 46680}, 		// ꚛ 
-	{4, 46695}, 		// ꚜ 
-	{3, 46710}, 		// ꚝ 
-	{0, 0}, 		// ꚞ 
-	{5, 46725}, 		// ꚟ 
+	{6, 15, 45405, 6.08740252516873}, 		// Ꙁ 
+	{4, 15, 45420, 5.13525405929249}, 		// ꙁ 
+	{6, 15, 45435, 6.08740252516873}, 		// Ꙃ 
+	{4, 15, 45450, 5.13525405929249}, 		// ꙃ 
+	{4, 15, 45465, 5.97314470926358}, 		// Ꙅ 
+	{3, 15, 45480, 5.08447280777909}, 		// ꙅ 
+	{3, 15, 45495, 3.75781261199154}, 		// Ꙇ 
+	{3, 15, 45510, 3.56738291881629}, 		// ꙇ 
+	{6, 15, 45525, 8.21386743229232}, 		// Ꙉ 
+	{5, 15, 45540, 6.50634785015427}, 		// ꙉ 
+	{7, 15, 45555, 8.72167994742631}, 		// Ꙋ 
+	{5, 15, 45570, 5.66845720018318}, 		// ꙋ 
+	{12, 15, 45585, 13.7680668165704}, 		// Ꙍ 
+	{10, 15, 45615, 11.7114261302777}, 		// ꙍ 
+	{7, 15, 45645, 6.90625020582229}, 		// Ꙏ 
+	{6, 15, 45660, 6.10644549448625}, 		// ꙏ 
+	{10, 15, 45675, 11.1147464249952}, 		// Ꙑ 
+	{9, 15, 45705, 9.54052762807987}, 		// ꙑ 
+	{8, 15, 45735, 9.99121123526129}, 		// Ꙓ 
+	{7, 15, 45750, 8.90576198416238}, 		// ꙓ 
+	{9, 15, 45765, 11.4257815905148}, 		// Ꙕ 
+	{7, 15, 45795, 9.3818362171005}, 		// ꙕ 
+	{10, 15, 45810, 11.2734378359746}, 		// Ꙗ 
+	{7, 15, 45840, 9.02001980006753}, 		// ꙗ 
+	{7, 15, 45855, 7.52197288042225}, 		// Ꙙ 
+	{6, 15, 45870, 5.87158220623678}, 		// ꙙ 
+	{9, 15, 45885, 9.39453152997885}, 		// Ꙛ 
+	{7, 15, 45915, 7.31250021792948}, 		// ꙛ 
+	{10, 15, 45930, 11.2734378359746}, 		// Ꙝ 
+	{8, 15, 45960, 9.10888699021598}, 		// ꙝ 
+	{7, 15, 45975, 7.76953148155008}, 		// Ꙟ 
+	{6, 15, 45990, 6.20800799751305}, 		// ꙟ 
+	{7, 15, 46005, 8.30273462244077}, 		// Ꙡ 
+	{6, 15, 46020, 7.03955099104496}, 		// ꙡ 
+	{9, 15, 46035, 9.4580080943706}, 		// Ꙣ 
+	{8, 15, 46065, 8.20751977585314}, 		// ꙣ 
+	{9, 15, 46080, 9.28662137051288}, 		// Ꙥ 
+	{8, 15, 46110, 7.82666038950265}, 		// ꙥ 
+	{11, 15, 46125, 12.447754277222}, 		// Ꙧ 
+	{8, 15, 46155, 9.69287138262007}, 		// ꙧ 
+	{7, 15, 46170, 8.60742213152116}, 		// Ꙩ 
+	{5, 15, 46185, 6.85546895430889}, 		// ꙩ 
+	{7, 15, 46200, 8.60742213152116}, 		// Ꙫ 
+	{5, 15, 46215, 6.85546895430889}, 		// ꙫ 
+	{13, 15, 46230, 14.7963871597167}, 		// Ꙭ 
+	{10, 15, 46260, 11.470215185589}, 		// ꙭ 
+	{8, 15, 46290, 10.2895510879025}, 		// ꙮ 
+	{4, 15, 46305, 0}, 		// ꙯ 
+	{11, 15, 46320, 12.8095706942549}, 		// ꙰ 
+	{10, 15, 46350, 11.8510745719395}, 		// ꙱ 
+	{13, 15, 46380, 12.8095706942549}, 		// ꙲ 
+	{4, 15, 46410, 6.20166034107388}, 		// ꙳ 
+	{3, 15, 46425, 0}, 		// ꙴ 
+	{3, 15, 46440, 0}, 		// ꙵ 
+	{2, 15, 46455, 0}, 		// ꙶ 
+	{3, 15, 46470, 0}, 		// ꙷ 
+	{4, 15, 46485, 0}, 		// ꙸ 
+	{5, 15, 46500, 0}, 		// ꙹ 
+	{3, 15, 46515, 0}, 		// ꙺ 
+	{5, 15, 46530, 0}, 		// ꙻ 
+	{4, 15, 46545, 0}, 		// ꙼ 
+	{2, 15, 46560, 0}, 		// ꙽ 
+	{4, 15, 46575, 5.57324235359556}, 		// ꙾ 
+	{2, 15, 46590, 3.82763683282246}, 		// ꙿ 
+	{8, 15, 46605, 8.37255884327169}, 		// Ꚁ 
+	{7, 15, 46620, 7.25537130997691}, 		// ꚁ 
+	{6, 15, 46635, 6.03662127365533}, 		// Ꚃ 
+	{4, 15, 46650, 5.23046890588012}, 		// ꚃ 
+	{12, 15, 46665, 12.6508792832756}, 		// Ꚅ 
+	{11, 15, 46695, 10.9814456397726}, 		// ꚅ 
+	{9, 15, 46725, 11.4130862776365}, 		// Ꚇ 
+	{9, 15, 46755, 9.5849612231541}, 		// ꚇ 
+	{9, 15, 46785, 9.27392605763453}, 		// Ꚉ 
+	{8, 15, 46815, 8.00439476979955}, 		// ꚉ 
+	{8, 15, 46830, 8.42968775122426}, 		// Ꚋ 
+	{6, 15, 46845, 6.88720723650476}, 		// ꚋ 
+	{6, 15, 46860, 6.33496112629655}, 		// Ꚍ 
+	{5, 15, 46875, 5.03369155626569}, 		// ꚍ 
+	{7, 15, 46890, 8.30273462244077}, 		// Ꚏ 
+	{6, 15, 46905, 7.16015646338928}, 		// ꚏ 
+	{6, 15, 46920, 6.33496112629655}, 		// Ꚑ 
+	{5, 15, 46935, 5.03369155626569}, 		// ꚑ 
+	{7, 15, 46950, 8.45507837698096}, 		// Ꚓ 
+	{6, 15, 46965, 7.38867209519958}, 		// ꚓ 
+	{5, 15, 46980, 7.22363302778103}, 		// Ꚕ 
+	{5, 15, 46995, 6.83007832855219}, 		// ꚕ 
+	{11, 15, 47010, 11.54003940642}, 		// Ꚗ 
+	{9, 15, 47040, 9.84521513716027}, 		// ꚗ 
+	{13, 15, 47070, 14.7963871597167}, 		// Ꚙ 
+	{10, 15, 47100, 11.470215185589}, 		// ꚙ 
+	{7, 15, 47130, 8.60742213152116}, 		// Ꚛ 
+	{5, 15, 47145, 6.81103535923467}, 		// ꚛ 
+	{4, 15, 47160, 5.90332048843266}, 		// ꚜ 
+	{3, 15, 47175, 4.7036134214286}, 		// ꚝ 
+	{0, 0, 0, 0}, 		// ꚞ 
+	{5, 15, 47190, 0}, 		// ꚟ 
 };
 
-// Character descriptors for Calibri 8pt(block #16)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block16[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #16)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block16[] PROGMEM = 
 {
-	{3, 46740}, 		// ꜗ 
-	{4, 46755}, 		// ꜘ 
-	{3, 46770}, 		// ꜙ 
-	{4, 46785}, 		// ꜚ 
-	{0, 0}, 		// ꜛ 
-	{0, 0}, 		// ꜜ 
-	{0, 0}, 		// ꜝ 
-	{0, 0}, 		// ꜞ 
-	{0, 0}, 		// ꜟ 
-	{9, 46800}, 		// ꜠ 
-	{9, 46830}, 		// ꜡ 
-	{2, 46860}, 		// Ꜣ 
-	{1, 46875}, 		// ꜣ 
-	{2, 46890}, 		// Ꜥ 
-	{1, 46905}, 		// ꜥ 
-	{6, 46920}, 		// Ꜧ 
-	{5, 46935}, 		// ꜧ 
-	{8, 46950}, 		// Ꜩ 
-	{8, 46965}, 		// ꜩ 
-	{6, 46980}, 		// Ꜫ 
-	{4, 46995}, 		// ꜫ 
-	{5, 47010}, 		// Ꜭ 
-	{5, 47025}, 		// ꜭ 
-	{7, 47040}, 		// Ꜯ 
-	{6, 47055}, 		// ꜯ 
-	{4, 47070}, 		// ꜰ 
-	{4, 47085}, 		// ꜱ 
-	{13, 47100}, 		// Ꜳ 
-	{8, 47130}, 		// ꜳ 
-	{12, 47145}, 		// Ꜵ 
-	{9, 47175}, 		// ꜵ 
-	{12, 47205}, 		// Ꜷ 
-	{8, 47235}, 		// ꜷ 
-	{10, 47250}, 		// Ꜹ 
-	{7, 47280}, 		// ꜹ 
-	{11, 47295}, 		// Ꜻ 
-	{7, 47325}, 		// ꜻ 
-	{10, 47340}, 		// Ꜽ 
-	{7, 47370}, 		// ꜽ 
-	{6, 47385}, 		// Ꜿ 
-	{4, 47400}, 		// ꜿ 
-	{6, 47415}, 		// Ꝁ 
-	{6, 47430}, 		// ꝁ 
-	{5, 47445}, 		// Ꝃ 
-	{5, 47460}, 		// ꝃ 
-	{6, 47475}, 		// Ꝅ 
-	{6, 47490}, 		// ꝅ 
-	{5, 47505}, 		// Ꝇ 
-	{2, 47520}, 		// ꝇ 
-	{5, 47535}, 		// Ꝉ 
-	{3, 47550}, 		// ꝉ 
-	{9, 47565}, 		// Ꝋ 
-	{7, 47595}, 		// ꝋ 
-	{8, 47610}, 		// Ꝍ 
-	{7, 47625}, 		// ꝍ 
-	{13, 47640}, 		// Ꝏ 
-	{10, 47670}, 		// ꝏ 
-	{6, 47700}, 		// Ꝑ 
-	{6, 47715}, 		// ꝑ 
-	{8, 47730}, 		// Ꝓ 
-	{8, 47745}, 		// ꝓ 
-	{9, 47760}, 		// Ꝕ 
-	{10, 47790}, 		// ꝕ 
-	{8, 47820}, 		// Ꝗ 
-	{6, 47835}, 		// ꝗ 
-	{10, 47850}, 		// Ꝙ 
-	{8, 47880}, 		// ꝙ 
-	{5, 47895}, 		// Ꝛ 
-	{4, 47910}, 		// ꝛ 
-	{6, 47925}, 		// Ꝝ 
-	{6, 47940}, 		// ꝝ 
-	{7, 47955}, 		// Ꝟ 
-	{6, 47970}, 		// ꝟ 
-	{11, 47985}, 		// Ꝡ 
-	{9, 48015}, 		// ꝡ 
-	{4, 48045}, 		// Ꝣ 
-	{4, 48060}, 		// ꝣ 
-	{6, 48075}, 		// Ꝥ 
-	{6, 48090}, 		// ꝥ 
-	{6, 48105}, 		// Ꝧ 
-	{6, 48120}, 		// ꝧ 
-	{5, 48135}, 		// Ꝩ 
-	{4, 48150}, 		// ꝩ 
-	{5, 48165}, 		// Ꝫ 
-	{5, 48180}, 		// ꝫ 
-	{6, 48195}, 		// Ꝭ 
-	{5, 48210}, 		// ꝭ 
-	{5, 48225}, 		// Ꝯ 
-	{5, 48240}, 		// ꝯ 
-	{3, 48255}, 		// ꝰ 
-	{8, 48270}, 		// ꝱ 
-	{4, 48285}, 		// ꝲ 
-	{11, 48300}, 		// ꝳ 
-	{8, 48330}, 		// ꝴ 
-	{3, 48345}, 		// ꝵ 
-	{7, 48360}, 		// ꝶ 
-	{5, 48375}, 		// ꝷ 
-	{4, 48390}, 		// ꝸ 
-	{8, 48405}, 		// Ꝺ 
-	{5, 48420}, 		// ꝺ 
-	{4, 48435}, 		// Ꝼ 
-	{3, 48450}, 		// ꝼ 
-	{5, 48465}, 		// Ᵹ 
-	{6, 48480}, 		// Ꝿ 
-	{6, 48495}, 		// ꝿ 
-	{4, 48510}, 		// Ꞁ 
-	{1, 48525}, 		// ꞁ 
-	{6, 48540}, 		// Ꞃ 
-	{5, 48555}, 		// ꞃ 
-	{4, 48570}, 		// Ꞅ 
-	{3, 48585}, 		// ꞅ 
-	{6, 48600}, 		// Ꞇ 
-	{4, 48615}, 		// ꞇ 
-	{0, 0}, 		// ꞈ 
-	{0, 0}, 		// ꞉ 
-	{0, 0}, 		// ꞊ 
-	{0, 0}, 		// Ꞌ 
-	{0, 0}, 		// ꞌ 
-	{6, 48630}, 		// Ɥ 
-	{4, 48645}, 		// ꞎ 
-	{0, 0}, 		// ꞏ 
-	{7, 48660}, 		// Ꞑ 
-	{6, 48675}, 		// ꞑ 
-	{7, 48690}, 		// Ꞓ 
-	{5, 48705}, 		// ꞓ 
-	{5, 48720}, 		// ꞔ 
-	{6, 48735}, 		// ꞕ 
-	{8, 48750}, 		// Ꞗ 
-	{7, 48765}, 		// ꞗ 
-	{5, 48780}, 		// Ꞙ 
-	{4, 48795}, 		// ꞙ 
-	{6, 48810}, 		// Ꞛ 
-	{5, 48825}, 		// ꞛ 
-	{7, 48840}, 		// Ꞝ 
-	{5, 48855}, 		// ꞝ 
-	{6, 48870}, 		// Ꞟ 
-	{5, 48885}, 		// ꞟ 
-	{7, 48900}, 		// Ꞡ 
-	{6, 48915}, 		// ꞡ 
-	{6, 48930}, 		// Ꞣ 
-	{6, 48945}, 		// ꞣ 
-	{8, 48960}, 		// Ꞥ 
-	{7, 48975}, 		// ꞥ 
-	{7, 48990}, 		// Ꞧ 
-	{4, 49005}, 		// ꞧ 
-	{6, 49020}, 		// Ꞩ 
-	{4, 49035}, 		// ꞩ 
-	{8, 49050}, 		// Ɦ 
-	{5, 49065}, 		// Ɜ 
-	{6, 49080}, 		// Ɡ 
-	{6, 49095}, 		// Ɬ 
-	{0, 0}, 		// Ɪ 
-	{0, 0}, 		// ꞯ 
-	{6, 49110}, 		// Ʞ 
-	{6, 49125}, 		// Ʇ 
-	{0, 0}, 		// Ʝ 
-	{0, 0}, 		// Ꭓ 
-	{0, 0}, 		// Ꞵ 
-	{0, 0}, 		// ꞵ 
-	{0, 0}, 		// Ꞷ 
-	{0, 0}, 		// ꞷ 
-	{0, 0}, 		// Ꞹ 
-	{0, 0}, 		// ꞹ 
-	{0, 0}, 		// Ꞻ 
-	{0, 0}, 		// ꞻ 
-	{0, 0}, 		// Ꞽ 
-	{0, 0}, 		// ꞽ 
-	{0, 0}, 		// Ꞿ 
-	{0, 0}, 		// ꞿ 
-	{0, 0}, 		// Ꟁ 
-	{0, 0}, 		// ꟁ 
-	{0, 0}, 		// Ꟃ 
-	{0, 0}, 		// ꟃ 
-	{0, 0}, 		// Ꞔ 
-	{0, 0}, 		// Ʂ 
-	{0, 0}, 		// Ᶎ 
-	{0, 0}, 		// Ꟈ 
-	{0, 0}, 		// ꟈ 
-	{0, 0}, 		// Ꟊ 
-	{0, 0}, 		// ꟊ 
-	{0, 0}, 		// Ɤ 
-	{0, 0}, 		// Ꟍ 
-	{0, 0}, 		// ꟍ 
-	{0, 0}, 		// ꟎ 
-	{0, 0}, 		// ꟏ 
-	{0, 0}, 		// Ꟑ 
-	{0, 0}, 		// ꟑ 
-	{0, 0}, 		// ꟒ 
-	{0, 0}, 		// ꟓ 
-	{0, 0}, 		// ꟔ 
-	{0, 0}, 		// ꟕ 
-	{0, 0}, 		// Ꟗ 
-	{0, 0}, 		// ꟗ 
-	{0, 0}, 		// Ꟙ 
-	{0, 0}, 		// ꟙ 
-	{0, 0}, 		// Ꟛ 
-	{0, 0}, 		// ꟛ 
-	{0, 0}, 		// Ƛ 
-	{0, 0}, 		// ꟝ 
-	{0, 0}, 		// ꟞ 
-	{0, 0}, 		// ꟟ 
-	{0, 0}, 		// ꟠ 
-	{0, 0}, 		// ꟡ 
-	{0, 0}, 		// ꟢ 
-	{0, 0}, 		// ꟣ 
-	{0, 0}, 		// ꟤ 
-	{0, 0}, 		// ꟥ 
-	{0, 0}, 		// ꟦ 
-	{0, 0}, 		// ꟧ 
-	{0, 0}, 		// ꟨ 
-	{0, 0}, 		// ꟩ 
-	{0, 0}, 		// ꟪ 
-	{0, 0}, 		// ꟫ 
-	{0, 0}, 		// ꟬ 
-	{0, 0}, 		// ꟭ 
-	{0, 0}, 		// ꟮ 
-	{0, 0}, 		// ꟯ 
-	{0, 0}, 		// ꟰ 
-	{0, 0}, 		// ꟱ 
-	{0, 0}, 		// ꟲ 
-	{0, 0}, 		// ꟳ 
-	{0, 0}, 		// ꟴ 
-	{0, 0}, 		// Ꟶ 
-	{0, 0}, 		// ꟶ 
-	{8, 49140}, 		// ꟷ 
-	{5, 49155}, 		// ꟸ 
-	{7, 49170}, 		// ꟹ 
-	{8, 49185}, 		// ꟺ 
-	{4, 49200}, 		// ꟻ 
-	{5, 49215}, 		// ꟼ 
-	{9, 49230}, 		// ꟽ 
-	{1, 49260}, 		// ꟾ 
-	{14, 49275}, 		// ꟿ 
+	{3, 15, 47205, 5.12255874641414}, 		// ꜗ 
+	{4, 15, 47220, 5.12255874641414}, 		// ꜘ 
+	{3, 15, 47235, 5.10351577709662}, 		// ꜙ 
+	{4, 15, 47250, 4.32910169151728}, 		// ꜚ 
+	{0, 0, 0, 0}, 		// ꜛ 
+	{0, 0, 0, 0}, 		// ꜜ 
+	{0, 0, 0, 0}, 		// ꜝ 
+	{0, 0, 0, 0}, 		// ꜞ 
+	{0, 0, 0, 0}, 		// ꜟ 
+	{9, 15, 47265, 11.4892581549066}, 		// ꜠ 
+	{9, 15, 47295, 11.4892581549066}, 		// ꜡ 
+	{2, 15, 47325, 3.78320323774824}, 		// Ꜣ 
+	{1, 15, 47340, 3.0341797779256}, 		// ꜣ 
+	{2, 15, 47355, 3.78320323774824}, 		// Ꜥ 
+	{1, 15, 47370, 3.0341797779256}, 		// ꜥ 
+	{6, 15, 47385, 8.09960961638717}, 		// Ꜧ 
+	{5, 15, 47400, 6.83007832855219}, 		// ꜧ 
+	{8, 15, 47415, 9.00732448718918}, 		// Ꜩ 
+	{8, 15, 47430, 8.81689479401393}, 		// ꜩ 
+	{6, 15, 47445, 6.15722674599965}, 		// Ꜫ 
+	{4, 15, 47460, 5.78271501608833}, 		// ꜫ 
+	{5, 15, 47475, 6.10009783804708}, 		// Ꜭ 
+	{5, 15, 47490, 5.52246110208216}, 		// ꜭ 
+	{7, 15, 47505, 7.16015646338928}, 		// Ꜯ 
+	{6, 15, 47520, 6.60791035318107}, 		// ꜯ 
+	{4, 15, 47535, 5.38281266042031}, 		// ꜰ 
+	{4, 15, 47550, 5.37646500398114}, 		// ꜱ 
+	{13, 15, 47565, 13.46337930749}, 		// Ꜳ 
+	{8, 15, 47595, 9.85156279359944}, 		// ꜳ 
+	{12, 15, 47610, 13.1269535162137}, 		// Ꜵ 
+	{9, 15, 47640, 10.4672854681994}, 		// ꜵ 
+	{12, 15, 47670, 12.6699222525931}, 		// Ꜷ 
+	{8, 15, 47700, 10.124512020484}, 		// ꜷ 
+	{10, 15, 47715, 10.6132815663004}, 		// Ꜹ 
+	{7, 15, 47745, 8.56298853644694}, 		// ꜹ 
+	{11, 15, 47760, 10.6132815663004}, 		// Ꜻ 
+	{7, 15, 47790, 8.56298853644694}, 		// ꜻ 
+	{10, 15, 47805, 10.6132815663004}, 		// Ꜽ 
+	{7, 15, 47835, 8.56298853644694}, 		// ꜽ 
+	{6, 15, 47850, 6.93164083157899}, 		// Ꜿ 
+	{4, 15, 47865, 5.49707047632546}, 		// ꜿ 
+	{6, 15, 47880, 6.75390645128209}, 		// Ꝁ 
+	{6, 15, 47895, 5.90966814487183}, 		// ꝁ 
+	{5, 15, 47910, 6.75390645128209}, 		// Ꝃ 
+	{5, 15, 47925, 5.90966814487183}, 		// ꝃ 
+	{6, 15, 47940, 6.75390645128209}, 		// Ꝅ 
+	{6, 15, 47955, 5.90966814487183}, 		// ꝅ 
+	{5, 15, 47970, 6.55712910166767}, 		// Ꝇ 
+	{2, 15, 47985, 4.03076183887606}, 		// ꝇ 
+	{5, 15, 48000, 5.46533219412959}, 		// Ꝉ 
+	{3, 15, 48015, 2.9833985264122}, 		// ꝉ 
+	{9, 15, 48030, 8.60742213152116}, 		// Ꝋ 
+	{7, 15, 48060, 6.85546895430889}, 		// ꝋ 
+	{8, 15, 48075, 9.39453152997885}, 		// Ꝍ 
+	{7, 15, 48090, 7.67431663496245}, 		// ꝍ 
+	{13, 15, 48105, 14.7963871597167}, 		// Ꝏ 
+	{10, 15, 48135, 11.470215185589}, 		// ꝏ 
+	{6, 15, 48165, 6.71582051264704}, 		// Ꝑ 
+	{6, 15, 48180, 6.83007832855219}, 		// ꝑ 
+	{8, 15, 48195, 8.62011744439951}, 		// Ꝓ 
+	{8, 15, 48210, 8.41699243834591}, 		// ꝓ 
+	{9, 15, 48225, 9.41992215573555}, 		// Ꝕ 
+	{10, 15, 48255, 10.5117190632736}, 		// ꝕ 
+	{8, 15, 48285, 8.74707057318301}, 		// Ꝗ 
+	{6, 15, 48300, 6.83007832855219}, 		// ꝗ 
+	{10, 15, 48315, 11.4511722162715}, 		// Ꝙ 
+	{8, 15, 48345, 9.16601589816855}, 		// ꝙ 
+	{5, 15, 48360, 6.69042988689034}, 		// Ꝛ 
+	{4, 15, 48375, 5.21142593656259}, 		// ꝛ 
+	{6, 15, 48390, 7.5600588190573}, 		// Ꝝ 
+	{6, 15, 48405, 6.48095722439757}, 		// ꝝ 
+	{7, 15, 48420, 7.37597678232123}, 		// Ꝟ 
+	{6, 15, 48435, 5.87158220623678}, 		// ꝟ 
+	{11, 15, 48450, 11.5654300321767}, 		// Ꝡ 
+	{9, 15, 48480, 9.29296902695205}, 		// ꝡ 
+	{4, 15, 48510, 6.0683595558512}, 		// Ꝣ 
+	{4, 15, 48525, 5.93505877062853}, 		// ꝣ 
+	{6, 15, 48540, 6.71582051264704}, 		// Ꝥ 
+	{6, 15, 48555, 6.83007832855219}, 		// ꝥ 
+	{6, 15, 48570, 6.71582051264704}, 		// Ꝧ 
+	{6, 15, 48585, 6.83007832855219}, 		// ꝧ 
+	{5, 15, 48600, 5.90966814487183}, 		// Ꝩ 
+	{4, 15, 48615, 5.07812515133992}, 		// ꝩ 
+	{5, 15, 48630, 5.31933609602856}, 		// Ꝫ 
+	{5, 15, 48645, 5.31933609602856}, 		// ꝫ 
+	{6, 15, 48660, 6.29052753122232}, 		// Ꝭ 
+	{5, 15, 48675, 5.58593766647391}, 		// ꝭ 
+	{5, 15, 48690, 6.77294942059962}, 		// Ꝯ 
+	{5, 15, 48705, 6.77294942059962}, 		// ꝯ 
+	{3, 15, 48720, 3.87207042789669}, 		// ꝰ 
+	{8, 15, 48735, 8.79150416825723}, 		// ꝱ 
+	{4, 15, 48750, 5.04638686914404}, 		// ꝲ 
+	{11, 15, 48765, 12.4096683385869}, 		// ꝳ 
+	{8, 15, 48795, 8.79150416825723}, 		// ꝴ 
+	{3, 15, 48810, 4.53222669757088}, 		// ꝵ 
+	{7, 15, 48825, 8.28369165312324}, 		// ꝶ 
+	{5, 15, 48840, 5.37011734754196}, 		// ꝷ 
+	{4, 15, 48855, 6.03662127365533}, 		// ꝸ 
+	{8, 15, 48870, 8.60742213152116}, 		// Ꝺ 
+	{5, 15, 48885, 6.83007832855219}, 		// ꝺ 
+	{4, 15, 48900, 5.47802750700794}, 		// Ꝼ 
+	{3, 15, 48915, 4.53222669757088}, 		// ꝼ 
+	{5, 15, 48930, 6.1191408073646}, 		// Ᵹ 
+	{6, 15, 48945, 6.1191408073646}, 		// Ꝿ 
+	{6, 15, 48960, 6.1191408073646}, 		// ꝿ 
+	{4, 15, 48975, 5.46533219412959}, 		// Ꞁ 
+	{1, 15, 48990, 2.9833985264122}, 		// ꞁ 
+	{6, 15, 49005, 8.35351587395417}, 		// Ꞃ 
+	{5, 15, 49020, 6.83007832855219}, 		// ꞃ 
+	{4, 15, 49035, 5.47802750700794}, 		// Ꞅ 
+	{3, 15, 49050, 4.53222669757088}, 		// ꞅ 
+	{6, 15, 49065, 7.5092775675439}, 		// Ꞇ 
+	{4, 15, 49080, 6.03662127365533}, 		// ꞇ 
+	{0, 0, 0, 0}, 		// ꞈ 
+	{0, 0, 0, 0}, 		// ꞉ 
+	{0, 0, 0, 0}, 		// ꞊ 
+	{0, 0, 0, 0}, 		// Ꞌ 
+	{0, 0, 0, 0}, 		// ꞌ 
+	{6, 15, 49095, 8.09960961638717}, 		// Ɥ 
+	{4, 15, 49110, 4.86230483240797}, 		// ꞎ 
+	{0, 0, 0, 0}, 		// ꞏ 
+	{7, 15, 49125, 8.62646510083869}, 		// Ꞑ 
+	{6, 15, 49140, 7.12207052475424}, 		// ꞑ 
+	{7, 15, 49155, 7.11572286831506}, 		// Ꞓ 
+	{5, 15, 49170, 5.77001970320998}, 		// ꞓ 
+	{5, 15, 49185, 5.49707047632546}, 		// ꞔ 
+	{6, 15, 49200, 6.83007832855219}, 		// ꞕ 
+	{8, 15, 49215, 8.15039086790057}, 		// Ꞗ 
+	{7, 15, 49230, 8.52490259781189}, 		// ꞗ 
+	{5, 15, 49245, 5.97314470926358}, 		// Ꞙ 
+	{4, 15, 49260, 3.96728527448431}, 		// ꞙ 
+	{6, 15, 49275, 8.31542993531912}, 		// Ꞛ 
+	{5, 15, 49290, 6.93164083157899}, 		// ꞛ 
+	{7, 15, 49305, 8.48046900273766}, 		// Ꞝ 
+	{5, 15, 49320, 6.84912129786971}, 		// ꞝ 
+	{6, 15, 49335, 8.31542993531912}, 		// Ꞟ 
+	{5, 15, 49350, 6.93164083157899}, 		// ꞟ 
+	{7, 15, 49365, 8.20117211941397}, 		// Ꞡ 
+	{6, 15, 49380, 6.1191408073646}, 		// ꞡ 
+	{6, 15, 49395, 6.75390645128209}, 		// Ꞣ 
+	{6, 15, 49410, 5.90966814487183}, 		// ꞣ 
+	{8, 15, 49425, 8.39160181258922}, 		// Ꞥ 
+	{7, 15, 49440, 6.83007832855219}, 		// ꞥ 
+	{7, 15, 49455, 7.05859396036249}, 		// Ꞧ 
+	{4, 15, 49470, 4.53222669757088}, 		// ꞧ 
+	{6, 15, 49485, 5.97314470926358}, 		// Ꞩ 
+	{4, 15, 49500, 5.08447280777909}, 		// ꞩ 
+	{8, 15, 49515, 9.02001980006753}, 		// Ɦ 
+	{5, 15, 49530, 6.15722674599965}, 		// Ɜ 
+	{6, 15, 49545, 8.50585962849436}, 		// Ɡ 
+	{6, 15, 49560, 6.3730470649316}, 		// Ɬ 
+	{0, 0, 0, 0}, 		// Ɪ 
+	{0, 0, 0, 0}, 		// ꞯ 
+	{6, 15, 49575, 6.75390645128209}, 		// Ʞ 
+	{6, 15, 49590, 6.33496112629655}, 		// Ʇ 
+	{0, 0, 0, 0}, 		// Ʝ 
+	{0, 0, 0, 0}, 		// Ꭓ 
+	{0, 0, 0, 0}, 		// Ꞵ 
+	{0, 0, 0, 0}, 		// ꞵ 
+	{0, 0, 0, 0}, 		// Ꞷ 
+	{0, 0, 0, 0}, 		// ꞷ 
+	{0, 0, 0, 0}, 		// Ꞹ 
+	{0, 0, 0, 0}, 		// ꞹ 
+	{0, 0, 0, 0}, 		// Ꞻ 
+	{0, 0, 0, 0}, 		// ꞻ 
+	{0, 0, 0, 0}, 		// Ꞽ 
+	{0, 0, 0, 0}, 		// ꞽ 
+	{0, 0, 0, 0}, 		// Ꞿ 
+	{0, 0, 0, 0}, 		// ꞿ 
+	{0, 0, 0, 0}, 		// Ꟁ 
+	{0, 0, 0, 0}, 		// ꟁ 
+	{0, 0, 0, 0}, 		// Ꟃ 
+	{0, 0, 0, 0}, 		// ꟃ 
+	{0, 0, 0, 0}, 		// Ꞔ 
+	{0, 0, 0, 0}, 		// Ʂ 
+	{0, 0, 0, 0}, 		// Ᶎ 
+	{0, 0, 0, 0}, 		// Ꟈ 
+	{0, 0, 0, 0}, 		// ꟈ 
+	{0, 0, 0, 0}, 		// Ꟊ 
+	{0, 0, 0, 0}, 		// ꟊ 
+	{0, 0, 0, 0}, 		// Ɤ 
+	{0, 0, 0, 0}, 		// Ꟍ 
+	{0, 0, 0, 0}, 		// ꟍ 
+	{0, 0, 0, 0}, 		// ꟎ 
+	{0, 0, 0, 0}, 		// ꟏ 
+	{0, 0, 0, 0}, 		// Ꟑ 
+	{0, 0, 0, 0}, 		// ꟑ 
+	{0, 0, 0, 0}, 		// ꟒ 
+	{0, 0, 0, 0}, 		// ꟓ 
+	{0, 0, 0, 0}, 		// ꟔ 
+	{0, 0, 0, 0}, 		// ꟕ 
+	{0, 0, 0, 0}, 		// Ꟗ 
+	{0, 0, 0, 0}, 		// ꟗ 
+	{0, 0, 0, 0}, 		// Ꟙ 
+	{0, 0, 0, 0}, 		// ꟙ 
+	{0, 0, 0, 0}, 		// Ꟛ 
+	{0, 0, 0, 0}, 		// ꟛ 
+	{0, 0, 0, 0}, 		// Ƛ 
+	{0, 0, 0, 0}, 		// ꟝ 
+	{0, 0, 0, 0}, 		// ꟞ 
+	{0, 0, 0, 0}, 		// ꟟ 
+	{0, 0, 0, 0}, 		// ꟠ 
+	{0, 0, 0, 0}, 		// ꟡ 
+	{0, 0, 0, 0}, 		// ꟢ 
+	{0, 0, 0, 0}, 		// ꟣ 
+	{0, 0, 0, 0}, 		// ꟤ 
+	{0, 0, 0, 0}, 		// ꟥ 
+	{0, 0, 0, 0}, 		// ꟦ 
+	{0, 0, 0, 0}, 		// ꟧ 
+	{0, 0, 0, 0}, 		// ꟨ 
+	{0, 0, 0, 0}, 		// ꟩ 
+	{0, 0, 0, 0}, 		// ꟪ 
+	{0, 0, 0, 0}, 		// ꟫ 
+	{0, 0, 0, 0}, 		// ꟬ 
+	{0, 0, 0, 0}, 		// ꟭ 
+	{0, 0, 0, 0}, 		// ꟮ 
+	{0, 0, 0, 0}, 		// ꟯ 
+	{0, 0, 0, 0}, 		// ꟰ 
+	{0, 0, 0, 0}, 		// ꟱ 
+	{0, 0, 0, 0}, 		// ꟲ 
+	{0, 0, 0, 0}, 		// ꟳ 
+	{0, 0, 0, 0}, 		// ꟴ 
+	{0, 0, 0, 0}, 		// Ꟶ 
+	{0, 0, 0, 0}, 		// ꟶ 
+	{8, 15, 49605, 8.41699243834591}, 		// ꟷ 
+	{5, 15, 49620, 5.45263688125124}, 		// ꟸ 
+	{7, 15, 49635, 7.28076193573361}, 		// ꟹ 
+	{8, 15, 49650, 10.3847659344901}, 		// ꟺ 
+	{4, 15, 49665, 5.97314470926358}, 		// ꟻ 
+	{5, 15, 49680, 6.71582051264704}, 		// ꟼ 
+	{9, 15, 49695, 11.1147464249952}, 		// ꟽ 
+	{1, 15, 49725, 3.27539072261425}, 		// ꟾ 
+	{14, 15, 49740, 14.3520512089744}, 		// ꟿ 
 };
 
-// Character descriptors for Calibri 8pt(block #17)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block17[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #17)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block17[] PROGMEM = 
 {
-	{7, 49305}, 		// ꬰ 
-	{8, 49320}, 		// ꬱ 
-	{4, 49335}, 		// ꬲ 
-	{6, 49350}, 		// ꬳ 
-	{7, 49365}, 		// ꬴ 
-	{4, 49380}, 		// ꬵ 
-	{5, 49395}, 		// ꬶ 
-	{4, 49410}, 		// ꬷ 
-	{4, 49425}, 		// ꬸ 
-	{3, 49440}, 		// ꬹ 
-	{9, 49455}, 		// ꬺ 
-	{6, 49485}, 		// ꬻ 
-	{5, 49500}, 		// ꬼ 
-	{5, 49515}, 		// ꬽ 
-	{5, 49530}, 		// ꬾ 
-	{5, 49545}, 		// ꬿ 
-	{9, 49560}, 		// ꭀ 
-	{9, 49590}, 		// ꭁ 
-	{9, 49620}, 		// ꭂ 
-	{10, 49650}, 		// ꭃ 
-	{10, 49680}, 		// ꭄ 
-	{5, 49710}, 		// ꭅ 
-	{6, 49725}, 		// ꭆ 
-	{2, 49740}, 		// ꭇ 
-	{5, 49755}, 		// ꭈ 
-	{6, 49770}, 		// ꭉ 
-	{7, 49785}, 		// ꭊ 
-	{5, 49800}, 		// ꭋ 
-	{8, 49815}, 		// ꭌ 
-	{3, 49830}, 		// ꭍ 
-	{5, 49845}, 		// ꭎ 
-	{7, 49860}, 		// ꭏ 
-	{8, 49875}, 		// ꭐ 
-	{8, 49890}, 		// ꭑ 
-	{6, 49905}, 		// ꭒ 
-	{5, 49920}, 		// ꭓ 
-	{6, 49935}, 		// ꭔ 
-	{6, 49950}, 		// ꭕ 
-	{7, 49965}, 		// ꭖ 
-	{6, 49980}, 		// ꭗ 
-	{8, 49995}, 		// ꭘ 
-	{7, 50010}, 		// ꭙ 
-	{5, 50025}, 		// ꭚ 
-	{3, 50040}, 		// ꭛ 
-	{3, 50055}, 		// ꭜ 
-	{3, 50070}, 		// ꭝ 
-	{3, 50085}, 		// ꭞ 
-	{4, 50100}, 		// ꭟ 
-	{0, 0}, 		// ꭠ 
-	{0, 0}, 		// ꭡ 
-	{0, 0}, 		// ꭢ 
-	{0, 0}, 		// ꭣ 
-	{5, 50115}, 		// ꭤ 
-	{6, 50130}, 		// ꭥ 
+	{7, 15, 49770, 7.37597678232123}, 		// ꬰ 
+	{8, 15, 49785, 10.0483401432139}, 		// ꬱ 
+	{4, 15, 49800, 5.916015801311}, 		// ꬲ 
+	{6, 15, 49815, 6.46826191151922}, 		// ꬳ 
+	{7, 15, 49830, 7.76953148155008}, 		// ꬴ 
+	{4, 15, 49845, 3.96728527448431}, 		// ꬵ 
+	{5, 15, 49860, 6.83007832855219}, 		// ꬶ 
+	{4, 15, 49875, 4.30371106576058}, 		// ꬷ 
+	{4, 15, 49890, 2.9833985264122}, 		// ꬸ 
+	{3, 15, 49905, 2.9833985264122}, 		// ꬹ 
+	{9, 15, 49920, 10.3847659344901}, 		// ꬺ 
+	{6, 15, 49950, 6.83007832855219}, 		// ꬻ 
+	{5, 15, 49965, 6.83007832855219}, 		// ꬼ 
+	{5, 15, 49980, 6.13818377668213}, 		// ꬽ 
+	{5, 15, 49995, 6.13818377668213}, 		// ꬾ 
+	{5, 15, 50010, 6.88085958006559}, 		// ꬿ 
+	{9, 15, 50025, 11.0449222041643}, 		// ꭀ 
+	{9, 15, 50055, 11.0449222041643}, 		// ꭁ 
+	{9, 15, 50085, 11.0449222041643}, 		// ꭂ 
+	{10, 15, 50115, 11.470215185589}, 		// ꭃ 
+	{10, 15, 50145, 11.470215185589}, 		// ꭄ 
+	{5, 15, 50175, 6.50634785015427}, 		// ꭅ 
+	{6, 15, 50190, 6.37939472137077}, 		// ꭆ 
+	{2, 15, 50205, 4.14501965478121}, 		// ꭇ 
+	{5, 15, 50220, 6.27783221834397}, 		// ꭈ 
+	{6, 15, 50235, 5.80810564184503}, 		// ꭉ 
+	{7, 15, 50250, 7.55371116261813}, 		// ꭊ 
+	{5, 15, 50265, 6.00488299145945}, 		// ꭋ 
+	{8, 15, 50280, 8.90576198416238}, 		// ꭌ 
+	{3, 15, 50295, 3.1103516551957}, 		// ꭍ 
+	{5, 15, 50310, 6.83007832855219}, 		// ꭎ 
+	{7, 15, 50325, 7.54101584973978}, 		// ꭏ 
+	{8, 15, 50340, 10.3847659344901}, 		// ꭐ 
+	{8, 15, 50355, 10.3847659344901}, 		// ꭑ 
+	{6, 15, 50370, 7.21093771490268}, 		// ꭒ 
+	{5, 15, 50385, 5.54150407139969}, 		// ꭓ 
+	{6, 15, 50400, 6.08105486872955}, 		// ꭔ 
+	{6, 15, 50415, 5.54150407139969}, 		// ꭕ 
+	{7, 15, 50430, 6.66503926113364}, 		// ꭖ 
+	{6, 15, 50445, 5.63037126154813}, 		// ꭗ 
+	{8, 15, 50460, 6.66503926113364}, 		// ꭘ 
+	{7, 15, 50475, 5.63037126154813}, 		// ꭙ 
+	{5, 15, 50490, 5.38916031685949}, 		// ꭚ 
+	{3, 15, 50505, 4.95117202255642}, 		// ꭛ 
+	{3, 15, 50520, 4.7290040471853}, 		// ꭜ 
+	{3, 15, 50535, 3.1357422809524}, 		// ꭝ 
+	{3, 15, 50550, 2.22167975371121}, 		// ꭞ 
+	{4, 15, 50565, 5.05908218202239}, 		// ꭟ 
+	{0, 0, 0, 0}, 		// ꭠ 
+	{0, 0, 0, 0}, 		// ꭡ 
+	{0, 0, 0, 0}, 		// ꭢ 
+	{0, 0, 0, 0}, 		// ꭣ 
+	{5, 15, 50580, 6.83007832855219}, 		// ꭤ 
+	{6, 15, 50595, 7.62353538344905}, 		// ꭥ 
 };
 
-// Character descriptors for Calibri 8pt(block #18)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block18[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #18)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block18[] PROGMEM = 
 {
-	{7, 50145}, 		// ﬀ 
-	{6, 50160}, 		// ﬁ 
-	{6, 50175}, 		// ﬂ 
-	{9, 50190}, 		// ﬃ 
-	{9, 50220}, 		// ﬄ 
-	{0, 0}, 		// ﬅ 
-	{0, 0}, 		// ﬆ 
-	{0, 0}, 		// ﬇ 
-	{0, 0}, 		// ﬈ 
-	{0, 0}, 		// ﬉ 
-	{0, 0}, 		// ﬊ 
-	{0, 0}, 		// ﬋ 
-	{0, 0}, 		// ﬌ 
-	{0, 0}, 		// ﬍ 
-	{0, 0}, 		// ﬎ 
-	{0, 0}, 		// ﬏ 
-	{0, 0}, 		// ﬐ 
-	{0, 0}, 		// ﬑ 
-	{0, 0}, 		// ﬒ 
-	{0, 0}, 		// ﬓ 
-	{0, 0}, 		// ﬔ 
-	{0, 0}, 		// ﬕ 
-	{0, 0}, 		// ﬖ 
-	{0, 0}, 		// ﬗ 
-	{0, 0}, 		// ﬘ 
-	{0, 0}, 		// ﬙ 
-	{0, 0}, 		// ﬚ 
-	{0, 0}, 		// ﬛ 
-	{0, 0}, 		// ﬜ 
-	{1, 50250}, 		// יִ 
-	{4, 50265}, 		// ﬞ 
-	{4, 50280}, 		// ײַ 
-	{6, 50295}, 		// ﬠ 
-	{8, 50310}, 		// ﬡ 
-	{7, 50325}, 		// ﬢ 
-	{7, 50340}, 		// ﬣ 
-	{7, 50355}, 		// ﬤ 
-	{7, 50370}, 		// ﬥ 
-	{8, 50385}, 		// ﬦ 
-	{7, 50400}, 		// ﬧ 
-	{8, 50415}, 		// ﬨ 
-	{5, 50430}, 		// ﬩ 
-	{8, 50445}, 		// שׁ 
-	{8, 50460}, 		// שׂ 
-	{8, 50475}, 		// שּׁ 
-	{8, 50490}, 		// שּׂ 
-	{5, 50505}, 		// אַ 
-	{5, 50520}, 		// אָ 
-	{6, 50535}, 		// אּ 
-	{6, 50550}, 		// בּ 
-	{4, 50565}, 		// גּ 
-	{5, 50580}, 		// דּ 
-	{6, 50595}, 		// הּ 
-	{2, 50610}, 		// וּ 
-	{3, 50625}, 		// זּ 
-	{0, 0}, 		// ﬷ 
-	{6, 50640}, 		// טּ 
-	{2, 50655}, 		// יּ 
-	{5, 50670}, 		// ךּ 
-	{5, 50685}, 		// כּ 
-	{5, 50700}, 		// לּ 
-	{0, 0}, 		// ﬽ 
-	{6, 50715}, 		// מּ 
-	{0, 0}, 		// ﬿ 
-	{3, 50730}, 		// נּ 
-	{6, 50745}, 		// סּ 
-	{0, 0}, 		// ﭂ 
-	{5, 50760}, 		// ףּ 
-	{5, 50775}, 		// פּ 
-	{0, 0}, 		// ﭅ 
-	{5, 50790}, 		// צּ 
-	{5, 50805}, 		// קּ 
-	{5, 50820}, 		// רּ 
-	{8, 50835}, 		// שּ 
-	{7, 50850}, 		// תּ 
-	{1, 50865}, 		// וֹ 
-	{6, 50880}, 		// בֿ 
-	{5, 50895}, 		// כֿ 
-	{5, 50910}, 		// פֿ 
-	{5, 50925}, 		// ﭏ 
-	{3, 50940}, 		// ﭐ 
-	{3, 50955}, 		// ﭑ 
-	{10, 50970}, 		// ﭒ 
-	{11, 51000}, 		// ﭓ 
-	{4, 51030}, 		// ﭔ 
-	{5, 51045}, 		// ﭕ 
-	{10, 51060}, 		// ﭖ 
-	{11, 51090}, 		// ﭗ 
-	{4, 51120}, 		// ﭘ 
-	{5, 51135}, 		// ﭙ 
-	{10, 51150}, 		// ﭚ 
-	{11, 51180}, 		// ﭛ 
-	{4, 51210}, 		// ﭜ 
-	{5, 51225}, 		// ﭝ 
-	{10, 51240}, 		// ﭞ 
-	{11, 51270}, 		// ﭟ 
-	{4, 51300}, 		// ﭠ 
-	{5, 51315}, 		// ﭡ 
-	{10, 51330}, 		// ﭢ 
-	{11, 51360}, 		// ﭣ 
-	{4, 51390}, 		// ﭤ 
-	{5, 51405}, 		// ﭥ 
-	{10, 51420}, 		// ﭦ 
-	{11, 51450}, 		// ﭧ 
-	{4, 51480}, 		// ﭨ 
-	{5, 51495}, 		// ﭩ 
-	{11, 51510}, 		// ﭪ 
-	{12, 51540}, 		// ﭫ 
-	{5, 51570}, 		// ﭬ 
-	{6, 51585}, 		// ﭭ 
-	{11, 51600}, 		// ﭮ 
-	{12, 51630}, 		// ﭯ 
-	{5, 51660}, 		// ﭰ 
-	{6, 51675}, 		// ﭱ 
-	{7, 51690}, 		// ﭲ 
-	{8, 51705}, 		// ﭳ 
-	{8, 51720}, 		// ﭴ 
-	{9, 51735}, 		// ﭵ 
-	{7, 51765}, 		// ﭶ 
-	{8, 51780}, 		// ﭷ 
-	{8, 51795}, 		// ﭸ 
-	{9, 51810}, 		// ﭹ 
-	{7, 51840}, 		// ﭺ 
-	{8, 51855}, 		// ﭻ 
-	{8, 51870}, 		// ﭼ 
-	{9, 51885}, 		// ﭽ 
-	{7, 51915}, 		// ﭾ 
-	{8, 51930}, 		// ﭿ 
-	{8, 51945}, 		// ﮀ 
-	{9, 51960}, 		// ﮁ 
-	{4, 51990}, 		// ﮂ 
-	{5, 52005}, 		// ﮃ 
-	{4, 52020}, 		// ﮄ 
-	{5, 52035}, 		// ﮅ 
-	{4, 52050}, 		// ﮆ 
-	{5, 52065}, 		// ﮇ 
-	{4, 52080}, 		// ﮈ 
-	{5, 52095}, 		// ﮉ 
-	{5, 52110}, 		// ﮊ 
-	{6, 52125}, 		// ﮋ 
-	{5, 52140}, 		// ﮌ 
-	{6, 52155}, 		// ﮍ 
-	{11, 52170}, 		// ﮎ 
-	{12, 52200}, 		// ﮏ 
-	{7, 52230}, 		// ﮐ 
-	{7, 52245}, 		// ﮑ 
-	{11, 52260}, 		// ﮒ 
-	{12, 52290}, 		// ﮓ 
-	{7, 52320}, 		// ﮔ 
-	{7, 52335}, 		// ﮕ 
-	{11, 52350}, 		// ﮖ 
-	{12, 52380}, 		// ﮗ 
-	{7, 52410}, 		// ﮘ 
-	{7, 52425}, 		// ﮙ 
-	{11, 52440}, 		// ﮚ 
-	{12, 52470}, 		// ﮛ 
-	{7, 52500}, 		// ﮜ 
-	{7, 52515}, 		// ﮝ 
-	{7, 52530}, 		// ﮞ 
-	{8, 52545}, 		// ﮟ 
-	{7, 52560}, 		// ﮠ 
-	{8, 52575}, 		// ﮡ 
-	{4, 52590}, 		// ﮢ 
-	{5, 52605}, 		// ﮣ 
-	{4, 52620}, 		// ﮤ 
-	{5, 52635}, 		// ﮥ 
-	{4, 52650}, 		// ﮦ 
-	{5, 52665}, 		// ﮧ 
-	{4, 52680}, 		// ﮨ 
-	{6, 52695}, 		// ﮩ 
-	{8, 52710}, 		// ﮪ 
-	{8, 52725}, 		// ﮫ 
-	{7, 52740}, 		// ﮬ 
-	{6, 52755}, 		// ﮭ 
-	{11, 52770}, 		// ﮮ 
-	{8, 52800}, 		// ﮯ 
-	{11, 52815}, 		// ﮰ 
-	{8, 52845}, 		// ﮱ 
-	{2, 52860}, 		// ﮲ 
-	{2, 52875}, 		// ﮳ 
-	{2, 52890}, 		// ﮴ 
-	{2, 52905}, 		// ﮵ 
-	{2, 52920}, 		// ﮶ 
-	{2, 52935}, 		// ﮷ 
-	{2, 52950}, 		// ﮸ 
-	{2, 52965}, 		// ﮹ 
-	{2, 52980}, 		// ﮺ 
-	{2, 52995}, 		// ﮻ 
-	{2, 53010}, 		// ﮼ 
-	{2, 53025}, 		// ﮽ 
-	{2, 53040}, 		// ﮾ 
-	{2, 53055}, 		// ﮿ 
-	{2, 53070}, 		// ﯀ 
-	{2, 53085}, 		// ﯁ 
-	{0, 0}, 		// ﯂ 
-	{0, 0}, 		// ﯃ 
-	{0, 0}, 		// ﯄ 
-	{0, 0}, 		// ﯅ 
-	{0, 0}, 		// ﯆ 
-	{0, 0}, 		// ﯇ 
-	{0, 0}, 		// ﯈ 
-	{0, 0}, 		// ﯉ 
-	{0, 0}, 		// ﯊ 
-	{0, 0}, 		// ﯋ 
-	{0, 0}, 		// ﯌ 
-	{0, 0}, 		// ﯍ 
-	{0, 0}, 		// ﯎ 
-	{0, 0}, 		// ﯏ 
-	{0, 0}, 		// ﯐ 
-	{0, 0}, 		// ﯑ 
-	{0, 0}, 		// ﯒ 
-	{8, 53100}, 		// ﯓ 
-	{10, 53115}, 		// ﯔ 
-	{7, 53145}, 		// ﯕ 
-	{7, 53160}, 		// ﯖ 
-	{5, 53175}, 		// ﯗ 
-	{6, 53190}, 		// ﯘ 
-	{5, 53205}, 		// ﯙ 
-	{6, 53220}, 		// ﯚ 
-	{5, 53235}, 		// ﯛ 
-	{6, 53250}, 		// ﯜ 
-	{6, 53265}, 		// ﯝ 
-	{5, 53280}, 		// ﯞ 
-	{6, 53295}, 		// ﯟ 
-	{5, 53310}, 		// ﯠ 
-	{6, 53325}, 		// ﯡ 
-	{5, 53340}, 		// ﯢ 
-	{6, 53355}, 		// ﯣ 
-	{8, 53370}, 		// ﯤ 
-	{8, 53385}, 		// ﯥ 
-	{4, 53400}, 		// ﯦ 
-	{5, 53415}, 		// ﯧ 
-	{4, 53430}, 		// ﯨ 
-	{5, 53445}, 		// ﯩ 
-	{5, 53460}, 		// ﯪ 
-	{6, 53475}, 		// ﯫ 
-	{8, 53490}, 		// ﯬ 
-	{9, 53505}, 		// ﯭ 
-	{9, 53535}, 		// ﯮ 
-	{10, 53565}, 		// ﯯ 
-	{9, 53595}, 		// ﯰ 
-	{10, 53625}, 		// ﯱ 
-	{9, 53655}, 		// ﯲ 
-	{10, 53685}, 		// ﯳ 
-	{9, 53715}, 		// ﯴ 
-	{10, 53745}, 		// ﯵ 
-	{8, 53775}, 		// ﯶ 
-	{10, 53790}, 		// ﯷ 
-	{8, 53820}, 		// ﯸ 
-	{8, 53835}, 		// ﯹ 
-	{10, 53850}, 		// ﯺ 
-	{8, 53880}, 		// ﯻ 
-	{8, 53895}, 		// ﯼ 
-	{8, 53910}, 		// ﯽ 
-	{4, 53925}, 		// ﯾ 
-	{5, 53940}, 		// ﯿ 
+	{7, 15, 50610, 7.585449444814}, 		// ﬀ 
+	{6, 15, 50625, 6.88085958006559}, 		// ﬁ 
+	{6, 15, 50640, 6.88085958006559}, 		// ﬂ 
+	{9, 15, 50655, 10.4990237503953}, 		// ﬃ 
+	{9, 15, 50685, 10.4990237503953}, 		// ﬄ 
+	{0, 0, 0, 0}, 		// ﬅ 
+	{0, 0, 0, 0}, 		// ﬆ 
+	{0, 0, 0, 0}, 		// ﬇ 
+	{0, 0, 0, 0}, 		// ﬈ 
+	{0, 0, 0, 0}, 		// ﬉ 
+	{0, 0, 0, 0}, 		// ﬊ 
+	{0, 0, 0, 0}, 		// ﬋ 
+	{0, 0, 0, 0}, 		// ﬌ 
+	{0, 0, 0, 0}, 		// ﬍ 
+	{0, 0, 0, 0}, 		// ﬎ 
+	{0, 0, 0, 0}, 		// ﬏ 
+	{0, 0, 0, 0}, 		// ﬐ 
+	{0, 0, 0, 0}, 		// ﬑ 
+	{0, 0, 0, 0}, 		// ﬒ 
+	{0, 0, 0, 0}, 		// ﬓ 
+	{0, 0, 0, 0}, 		// ﬔ 
+	{0, 0, 0, 0}, 		// ﬕ 
+	{0, 0, 0, 0}, 		// ﬖ 
+	{0, 0, 0, 0}, 		// ﬗ 
+	{0, 0, 0, 0}, 		// ﬘ 
+	{0, 0, 0, 0}, 		// ﬙ 
+	{0, 0, 0, 0}, 		// ﬚ 
+	{0, 0, 0, 0}, 		// ﬛ 
+	{0, 0, 0, 0}, 		// ﬜ 
+	{1, 15, 50715, 3.0087891521689}, 		// יִ 
+	{4, 15, 50730, 0}, 		// ﬞ 
+	{4, 15, 50745, 6.02392596077698}, 		// ײַ 
+	{6, 15, 50760, 6.81103535923467}, 		// ﬠ 
+	{8, 15, 50775, 8.88037135840568}, 		// ﬡ 
+	{7, 15, 50790, 7.6870119478408}, 		// ﬢ 
+	{7, 15, 50805, 9.31201199626958}, 		// ﬣ 
+	{7, 15, 50820, 8.08691430350882}, 		// ﬤ 
+	{7, 15, 50835, 7.54101584973978}, 		// ﬥ 
+	{8, 15, 50850, 9.508789345884}, 		// ﬦ 
+	{7, 15, 50865, 7.69335960427998}, 		// ﬧ 
+	{8, 15, 50880, 9.76904325989017}, 		// ﬨ 
+	{5, 15, 50895, 6.4746095679584}, 		// ﬩ 
+	{8, 15, 50910, 9.01367214362836}, 		// שׁ 
+	{8, 15, 50925, 9.01367214362836}, 		// שׂ 
+	{8, 15, 50940, 9.04541042582423}, 		// שּׁ 
+	{8, 15, 50955, 9.04541042582423}, 		// שּׂ 
+	{5, 15, 50970, 6.97607442665321}, 		// אַ 
+	{5, 15, 50985, 6.97607442665321}, 		// אָ 
+	{6, 15, 51000, 7.17919943270681}, 		// אּ 
+	{6, 15, 51015, 6.41748066000582}, 		// בּ 
+	{4, 15, 51030, 4.79248061157705}, 		// גּ 
+	{5, 15, 51045, 5.78271501608833}, 		// דּ 
+	{6, 15, 51060, 7.47753928534803}, 		// הּ 
+	{2, 15, 51075, 3.66894542184309}, 		// וּ 
+	{3, 15, 51090, 4.22119153205131}, 		// זּ 
+	{0, 0, 0, 0}, 		// ﬷ 
+	{6, 15, 51105, 7.25537130997691}, 		// טּ 
+	{2, 15, 51120, 3.66894542184309}, 		// יּ 
+	{5, 15, 51135, 5.78906267252751}, 		// ךּ 
+	{5, 15, 51150, 6.18261737175635}, 		// כּ 
+	{5, 15, 51165, 5.63671891798731}, 		// לּ 
+	{0, 0, 0, 0}, 		// ﬽ 
+	{6, 15, 51180, 7.59814475769235}, 		// מּ 
+	{0, 0, 0, 0}, 		// ﬿ 
+	{3, 15, 51195, 4.74169936006365}, 		// נּ 
+	{6, 15, 51210, 7.38232443876041}, 		// סּ 
+	{0, 0, 0, 0}, 		// ﭂ 
+	{5, 15, 51225, 6.86181661074806}, 		// ףּ 
+	{5, 15, 51240, 7.13476583763259}, 		// פּ 
+	{0, 0, 0, 0}, 		// ﭅ 
+	{5, 15, 51255, 6.30957050053985}, 		// צּ 
+	{5, 15, 51270, 7.01416036528826}, 		// קּ 
+	{5, 15, 51285, 5.78906267252751}, 		// רּ 
+	{8, 15, 51300, 9.04541042582423}, 		// שּ 
+	{7, 15, 51315, 7.95361351828615}, 		// תּ 
+	{1, 15, 51330, 3.0087891521689}, 		// וֹ 
+	{6, 15, 51345, 6.41748066000582}, 		// בֿ 
+	{5, 15, 51360, 6.18261737175635}, 		// כֿ 
+	{5, 15, 51375, 7.03320333460579}, 		// פֿ 
+	{5, 15, 51390, 6.3476564391749}, 		// ﭏ 
+	{3, 15, 51405, 2.39306647756894}, 		// ﭐ 
+	{3, 15, 51420, 3.02783212148643}, 		// ﭑ 
+	{10, 15, 51435, 10.416504216686}, 		// ﭒ 
+	{11, 15, 51465, 11.1845706458262}, 		// ﭓ 
+	{4, 15, 51495, 3.1865235324658}, 		// ﭔ 
+	{5, 15, 51510, 3.76416026843071}, 		// ﭕ 
+	{10, 15, 51525, 10.416504216686}, 		// ﭖ 
+	{11, 15, 51555, 11.1845706458262}, 		// ﭗ 
+	{4, 15, 51585, 3.1865235324658}, 		// ﭘ 
+	{5, 15, 51600, 3.76416026843071}, 		// ﭙ 
+	{10, 15, 51615, 10.416504216686}, 		// ﭚ 
+	{11, 15, 51645, 11.1845706458262}, 		// ﭛ 
+	{4, 15, 51675, 3.1865235324658}, 		// ﭜ 
+	{5, 15, 51690, 3.76416026843071}, 		// ﭝ 
+	{10, 15, 51705, 10.416504216686}, 		// ﭞ 
+	{11, 15, 51735, 11.1845706458262}, 		// ﭟ 
+	{4, 15, 51765, 3.1865235324658}, 		// ﭠ 
+	{5, 15, 51780, 3.76416026843071}, 		// ﭡ 
+	{10, 15, 51795, 10.416504216686}, 		// ﭢ 
+	{11, 15, 51825, 11.1845706458262}, 		// ﭣ 
+	{4, 15, 51855, 3.1865235324658}, 		// ﭤ 
+	{5, 15, 51870, 3.76416026843071}, 		// ﭥ 
+	{10, 15, 51885, 10.416504216686}, 		// ﭦ 
+	{11, 15, 51915, 11.1845706458262}, 		// ﭧ 
+	{4, 15, 51945, 3.1865235324658}, 		// ﭨ 
+	{5, 15, 51960, 3.76416026843071}, 		// ﭩ 
+	{11, 15, 51975, 11.0195315784076}, 		// ﭪ 
+	{12, 15, 52005, 11.6733401916426}, 		// ﭫ 
+	{5, 15, 52035, 4.64013685703685}, 		// ﭬ 
+	{6, 15, 52050, 5.38916031685949}, 		// ﭭ 
+	{11, 15, 52065, 11.0195315784076}, 		// ﭮ 
+	{12, 15, 52095, 11.6733401916426}, 		// ﭯ 
+	{5, 15, 52125, 4.64013685703685}, 		// ﭰ 
+	{6, 15, 52140, 5.38916031685949}, 		// ﭱ 
+	{7, 15, 52155, 7.78222679442842}, 		// ﭲ 
+	{8, 15, 52170, 7.68066429140163}, 		// ﭳ 
+	{8, 15, 52185, 7.75048851223255}, 		// ﭴ 
+	{9, 15, 52200, 8.30908227887994}, 		// ﭵ 
+	{7, 15, 52230, 7.78222679442842}, 		// ﭶ 
+	{8, 15, 52245, 7.68066429140163}, 		// ﭷ 
+	{8, 15, 52260, 7.75048851223255}, 		// ﭸ 
+	{9, 15, 52275, 8.30908227887994}, 		// ﭹ 
+	{7, 15, 52305, 7.78222679442842}, 		// ﭺ 
+	{8, 15, 52320, 7.68066429140163}, 		// ﭻ 
+	{8, 15, 52335, 7.75048851223255}, 		// ﭼ 
+	{9, 15, 52350, 8.30908227887994}, 		// ﭽ 
+	{7, 15, 52380, 7.78222679442842}, 		// ﭾ 
+	{8, 15, 52395, 7.68066429140163}, 		// ﭿ 
+	{8, 15, 52410, 7.75048851223255}, 		// ﮀ 
+	{9, 15, 52425, 8.30908227887994}, 		// ﮁ 
+	{4, 15, 52455, 5.32568375246774}, 		// ﮂ 
+	{5, 15, 52470, 6.40478534712747}, 		// ﮃ 
+	{4, 15, 52485, 5.32568375246774}, 		// ﮄ 
+	{5, 15, 52500, 6.40478534712747}, 		// ﮅ 
+	{4, 15, 52515, 5.32568375246774}, 		// ﮆ 
+	{5, 15, 52530, 6.40478534712747}, 		// ﮇ 
+	{4, 15, 52545, 5.32568375246774}, 		// ﮈ 
+	{5, 15, 52560, 6.40478534712747}, 		// ﮉ 
+	{5, 15, 52575, 5.43359391193371}, 		// ﮊ 
+	{6, 15, 52590, 5.94775408350688}, 		// ﮋ 
+	{5, 15, 52605, 5.43359391193371}, 		// ﮌ 
+	{6, 15, 52620, 5.94775408350688}, 		// ﮍ 
+	{11, 15, 52635, 11.578125345055}, 		// ﮎ 
+	{12, 15, 52665, 11.7177737867169}, 		// ﮏ 
+	{7, 15, 52695, 6.07470721229038}, 		// ﮐ 
+	{7, 15, 52710, 6.05566424297285}, 		// ﮑ 
+	{11, 15, 52725, 11.578125345055}, 		// ﮒ 
+	{12, 15, 52755, 11.7177737867169}, 		// ﮓ 
+	{7, 15, 52785, 6.08105486872955}, 		// ﮔ 
+	{7, 15, 52800, 6.05566424297285}, 		// ﮕ 
+	{11, 15, 52815, 11.578125345055}, 		// ﮖ 
+	{12, 15, 52845, 11.7177737867169}, 		// ﮗ 
+	{7, 15, 52875, 6.08105486872955}, 		// ﮘ 
+	{7, 15, 52890, 6.05566424297285}, 		// ﮙ 
+	{11, 15, 52905, 11.578125345055}, 		// ﮚ 
+	{12, 15, 52935, 11.7177737867169}, 		// ﮛ 
+	{7, 15, 52965, 6.08105486872955}, 		// ﮜ 
+	{7, 15, 52980, 6.05566424297285}, 		// ﮝ 
+	{7, 15, 52995, 7.07763692968001}, 		// ﮞ 
+	{8, 15, 53010, 7.44580100315216}, 		// ﮟ 
+	{7, 15, 53025, 7.07763692968001}, 		// ﮠ 
+	{8, 15, 53040, 7.44580100315216}, 		// ﮡ 
+	{4, 15, 53055, 3.1865235324658}, 		// ﮢ 
+	{5, 15, 53070, 3.76416026843071}, 		// ﮣ 
+	{4, 15, 53085, 4.50683607181418}, 		// ﮤ 
+	{5, 15, 53100, 5.63671891798731}, 		// ﮥ 
+	{4, 15, 53115, 4.50683607181418}, 		// ﮦ 
+	{5, 15, 53130, 5.63671891798731}, 		// ﮧ 
+	{4, 15, 53145, 3.1865235324658}, 		// ﮨ 
+	{6, 15, 53160, 4.64648451347603}, 		// ﮩ 
+	{8, 15, 53175, 8.35351587395417}, 		// ﮪ 
+	{8, 15, 53190, 8.41699243834591}, 		// ﮫ 
+	{7, 15, 53205, 6.60791035318107}, 		// ﮬ 
+	{6, 15, 53220, 5.26855484451517}, 		// ﮭ 
+	{11, 15, 53235, 12.7714847556199}, 		// ﮮ 
+	{8, 15, 53265, 4.91308608392137}, 		// ﮯ 
+	{11, 15, 53280, 12.7714847556199}, 		// ﮰ 
+	{8, 15, 53310, 4.57031263620593}, 		// ﮱ 
+	{2, 15, 53325, 3.25000009685755}, 		// ﮲ 
+	{2, 15, 53340, 3.25000009685755}, 		// ﮳ 
+	{2, 15, 53355, 4.46240247673995}, 		// ﮴ 
+	{2, 15, 53370, 4.46240247673995}, 		// ﮵ 
+	{2, 15, 53385, 4.46240247673995}, 		// ﮶ 
+	{2, 15, 53400, 4.46240247673995}, 		// ﮷ 
+	{2, 15, 53415, 4.46240247673995}, 		// ﮸ 
+	{2, 15, 53430, 4.46240247673995}, 		// ﮹ 
+	{2, 15, 53445, 4.57031263620593}, 		// ﮺ 
+	{2, 15, 53460, 4.57031263620593}, 		// ﮻ 
+	{2, 15, 53475, 3.34521494344517}, 		// ﮼ 
+	{2, 15, 53490, 3.25634775329672}, 		// ﮽ 
+	{2, 15, 53505, 3.25634775329672}, 		// ﮾ 
+	{2, 15, 53520, 3.40234385139775}, 		// ﮿ 
+	{2, 15, 53535, 5.06542983846157}, 		// ﯀ 
+	{2, 15, 53550, 5.06542983846157}, 		// ﯁ 
+	{0, 0, 0, 0}, 		// ﯂ 
+	{0, 0, 0, 0}, 		// ﯃ 
+	{0, 0, 0, 0}, 		// ﯄ 
+	{0, 0, 0, 0}, 		// ﯅ 
+	{0, 0, 0, 0}, 		// ﯆ 
+	{0, 0, 0, 0}, 		// ﯇ 
+	{0, 0, 0, 0}, 		// ﯈ 
+	{0, 0, 0, 0}, 		// ﯉ 
+	{0, 0, 0, 0}, 		// ﯊ 
+	{0, 0, 0, 0}, 		// ﯋ 
+	{0, 0, 0, 0}, 		// ﯌ 
+	{0, 0, 0, 0}, 		// ﯍ 
+	{0, 0, 0, 0}, 		// ﯎ 
+	{0, 0, 0, 0}, 		// ﯏ 
+	{0, 0, 0, 0}, 		// ﯐ 
+	{0, 0, 0, 0}, 		// ﯑ 
+	{0, 0, 0, 0}, 		// ﯒ 
+	{8, 15, 53565, 8.67089869591291}, 		// ﯓ 
+	{10, 15, 53580, 10.0864260818489}, 		// ﯔ 
+	{7, 15, 53610, 6.07470721229038}, 		// ﯕ 
+	{7, 15, 53625, 6.05566424297285}, 		// ﯖ 
+	{5, 15, 53640, 5.64941423086566}, 		// ﯗ 
+	{6, 15, 53655, 6.16357440243883}, 		// ﯘ 
+	{5, 15, 53670, 5.64941423086566}, 		// ﯙ 
+	{6, 15, 53685, 6.16357440243883}, 		// ﯚ 
+	{5, 15, 53700, 5.64941423086566}, 		// ﯛ 
+	{6, 15, 53715, 6.16357440243883}, 		// ﯜ 
+	{6, 15, 53730, 5.64941423086566}, 		// ﯝ 
+	{5, 15, 53745, 5.64941423086566}, 		// ﯞ 
+	{6, 15, 53760, 6.16357440243883}, 		// ﯟ 
+	{5, 15, 53775, 5.64941423086566}, 		// ﯠ 
+	{6, 15, 53790, 6.16357440243883}, 		// ﯡ 
+	{5, 15, 53805, 5.64941423086566}, 		// ﯢ 
+	{6, 15, 53820, 6.16357440243883}, 		// ﯣ 
+	{8, 15, 53835, 8.70263697810879}, 		// ﯤ 
+	{8, 15, 53850, 7.45849631603051}, 		// ﯥ 
+	{4, 15, 53865, 3.1865235324658}, 		// ﯦ 
+	{5, 15, 53880, 3.76416026843071}, 		// ﯧ 
+	{4, 15, 53895, 3.1865235324658}, 		// ﯨ 
+	{5, 15, 53910, 3.76416026843071}, 		// ﯩ 
+	{5, 15, 53925, 6.2460939361481}, 		// ﯪ 
+	{6, 15, 53940, 6.82373067211302}, 		// ﯫ 
+	{8, 15, 53955, 8.74707057318301}, 		// ﯬ 
+	{9, 15, 53970, 9.31835965270875}, 		// ﯭ 
+	{9, 15, 54000, 9.19775418036443}, 		// ﯮ 
+	{10, 15, 54030, 9.81982451140357}, 		// ﯯ 
+	{9, 15, 54060, 9.19775418036443}, 		// ﯰ 
+	{10, 15, 54090, 9.81982451140357}, 		// ﯱ 
+	{9, 15, 54120, 9.19775418036443}, 		// ﯲ 
+	{10, 15, 54150, 9.81982451140357}, 		// ﯳ 
+	{9, 15, 54180, 9.19775418036443}, 		// ﯴ 
+	{10, 15, 54210, 9.81982451140357}, 		// ﯵ 
+	{8, 15, 54240, 8.08691430350882}, 		// ﯶ 
+	{10, 15, 54255, 9.21044949324278}, 		// ﯷ 
+	{8, 15, 54285, 6.91259786226146}, 		// ﯸ 
+	{8, 15, 54300, 8.08691430350882}, 		// ﯹ 
+	{10, 15, 54315, 9.21044949324278}, 		// ﯺ 
+	{8, 15, 54345, 6.91259786226146}, 		// ﯻ 
+	{8, 15, 54360, 8.70263697810879}, 		// ﯼ 
+	{8, 15, 54375, 7.45849631603051}, 		// ﯽ 
+	{4, 15, 54390, 3.1865235324658}, 		// ﯾ 
+	{5, 15, 54405, 3.76416026843071}, 		// ﯿ 
 };
 
-// Character descriptors for Calibri 8pt(block #19)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block19[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #19)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block19[] PROGMEM = 
 {
-	{4, 53955}, 		// ﱞ 
-	{2, 53970}, 		// ﱟ 
-	{2, 53985}, 		// ﱠ 
-	{2, 54000}, 		// ﱡ 
-	{2, 54015}, 		// ﱢ 
-	{2, 54030}, 		// ﱣ 
+	{4, 15, 54420, 0}, 		// ﱞ 
+	{2, 15, 54435, 0}, 		// ﱟ 
+	{2, 15, 54450, 0}, 		// ﱠ 
+	{2, 15, 54465, 0}, 		// ﱡ 
+	{2, 15, 54480, 0}, 		// ﱢ 
+	{2, 15, 54495, 0}, 		// ﱣ 
 };
 
-// Character descriptors for Calibri 8pt(block #20)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block20[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #20)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block20[] PROGMEM = 
 {
-	{5, 54045}, 		// ﳲ 
-	{5, 54060}, 		// ﳳ 
-	{5, 54075}, 		// ﳴ 
-	{0, 0}, 		// ﳵ 
-	{0, 0}, 		// ﳶ 
-	{0, 0}, 		// ﳷ 
-	{0, 0}, 		// ﳸ 
-	{0, 0}, 		// ﳹ 
-	{0, 0}, 		// ﳺ 
-	{0, 0}, 		// ﳻ 
-	{0, 0}, 		// ﳼ 
-	{0, 0}, 		// ﳽ 
-	{0, 0}, 		// ﳾ 
-	{0, 0}, 		// ﳿ 
-	{0, 0}, 		// ﴀ 
-	{0, 0}, 		// ﴁ 
-	{0, 0}, 		// ﴂ 
-	{0, 0}, 		// ﴃ 
-	{0, 0}, 		// ﴄ 
-	{0, 0}, 		// ﴅ 
-	{0, 0}, 		// ﴆ 
-	{0, 0}, 		// ﴇ 
-	{0, 0}, 		// ﴈ 
-	{0, 0}, 		// ﴉ 
-	{0, 0}, 		// ﴊ 
-	{0, 0}, 		// ﴋ 
-	{0, 0}, 		// ﴌ 
-	{0, 0}, 		// ﴍ 
-	{0, 0}, 		// ﴎ 
-	{0, 0}, 		// ﴏ 
-	{0, 0}, 		// ﴐ 
-	{0, 0}, 		// ﴑ 
-	{0, 0}, 		// ﴒ 
-	{0, 0}, 		// ﴓ 
-	{0, 0}, 		// ﴔ 
-	{0, 0}, 		// ﴕ 
-	{0, 0}, 		// ﴖ 
-	{0, 0}, 		// ﴗ 
-	{0, 0}, 		// ﴘ 
-	{0, 0}, 		// ﴙ 
-	{0, 0}, 		// ﴚ 
-	{0, 0}, 		// ﴛ 
-	{0, 0}, 		// ﴜ 
-	{0, 0}, 		// ﴝ 
-	{0, 0}, 		// ﴞ 
-	{0, 0}, 		// ﴟ 
-	{0, 0}, 		// ﴠ 
-	{0, 0}, 		// ﴡ 
-	{0, 0}, 		// ﴢ 
-	{0, 0}, 		// ﴣ 
-	{0, 0}, 		// ﴤ 
-	{0, 0}, 		// ﴥ 
-	{0, 0}, 		// ﴦ 
-	{0, 0}, 		// ﴧ 
-	{0, 0}, 		// ﴨ 
-	{0, 0}, 		// ﴩ 
-	{0, 0}, 		// ﴪ 
-	{0, 0}, 		// ﴫ 
-	{0, 0}, 		// ﴬ 
-	{0, 0}, 		// ﴭ 
-	{0, 0}, 		// ﴮ 
-	{0, 0}, 		// ﴯ 
-	{0, 0}, 		// ﴰ 
-	{0, 0}, 		// ﴱ 
-	{0, 0}, 		// ﴲ 
-	{0, 0}, 		// ﴳ 
-	{0, 0}, 		// ﴴ 
-	{0, 0}, 		// ﴵ 
-	{0, 0}, 		// ﴶ 
-	{0, 0}, 		// ﴷ 
-	{0, 0}, 		// ﴸ 
-	{0, 0}, 		// ﴹ 
-	{0, 0}, 		// ﴺ 
-	{0, 0}, 		// ﴻ 
-	{3, 54090}, 		// ﴼ 
-	{3, 54105}, 		// ﴽ 
-	{5, 54120}, 		// ﴾ 
-	{6, 54135}, 		// ﴿ 
+	{5, 15, 54510, 4.07519543395028}, 		// ﳲ 
+	{5, 15, 54525, 4.07519543395028}, 		// ﳳ 
+	{5, 15, 54540, 4.07519543395028}, 		// ﳴ 
+	{0, 0, 0, 0}, 		// ﳵ 
+	{0, 0, 0, 0}, 		// ﳶ 
+	{0, 0, 0, 0}, 		// ﳷ 
+	{0, 0, 0, 0}, 		// ﳸ 
+	{0, 0, 0, 0}, 		// ﳹ 
+	{0, 0, 0, 0}, 		// ﳺ 
+	{0, 0, 0, 0}, 		// ﳻ 
+	{0, 0, 0, 0}, 		// ﳼ 
+	{0, 0, 0, 0}, 		// ﳽ 
+	{0, 0, 0, 0}, 		// ﳾ 
+	{0, 0, 0, 0}, 		// ﳿ 
+	{0, 0, 0, 0}, 		// ﴀ 
+	{0, 0, 0, 0}, 		// ﴁ 
+	{0, 0, 0, 0}, 		// ﴂ 
+	{0, 0, 0, 0}, 		// ﴃ 
+	{0, 0, 0, 0}, 		// ﴄ 
+	{0, 0, 0, 0}, 		// ﴅ 
+	{0, 0, 0, 0}, 		// ﴆ 
+	{0, 0, 0, 0}, 		// ﴇ 
+	{0, 0, 0, 0}, 		// ﴈ 
+	{0, 0, 0, 0}, 		// ﴉ 
+	{0, 0, 0, 0}, 		// ﴊ 
+	{0, 0, 0, 0}, 		// ﴋ 
+	{0, 0, 0, 0}, 		// ﴌ 
+	{0, 0, 0, 0}, 		// ﴍ 
+	{0, 0, 0, 0}, 		// ﴎ 
+	{0, 0, 0, 0}, 		// ﴏ 
+	{0, 0, 0, 0}, 		// ﴐ 
+	{0, 0, 0, 0}, 		// ﴑ 
+	{0, 0, 0, 0}, 		// ﴒ 
+	{0, 0, 0, 0}, 		// ﴓ 
+	{0, 0, 0, 0}, 		// ﴔ 
+	{0, 0, 0, 0}, 		// ﴕ 
+	{0, 0, 0, 0}, 		// ﴖ 
+	{0, 0, 0, 0}, 		// ﴗ 
+	{0, 0, 0, 0}, 		// ﴘ 
+	{0, 0, 0, 0}, 		// ﴙ 
+	{0, 0, 0, 0}, 		// ﴚ 
+	{0, 0, 0, 0}, 		// ﴛ 
+	{0, 0, 0, 0}, 		// ﴜ 
+	{0, 0, 0, 0}, 		// ﴝ 
+	{0, 0, 0, 0}, 		// ﴞ 
+	{0, 0, 0, 0}, 		// ﴟ 
+	{0, 0, 0, 0}, 		// ﴠ 
+	{0, 0, 0, 0}, 		// ﴡ 
+	{0, 0, 0, 0}, 		// ﴢ 
+	{0, 0, 0, 0}, 		// ﴣ 
+	{0, 0, 0, 0}, 		// ﴤ 
+	{0, 0, 0, 0}, 		// ﴥ 
+	{0, 0, 0, 0}, 		// ﴦ 
+	{0, 0, 0, 0}, 		// ﴧ 
+	{0, 0, 0, 0}, 		// ﴨ 
+	{0, 0, 0, 0}, 		// ﴩ 
+	{0, 0, 0, 0}, 		// ﴪ 
+	{0, 0, 0, 0}, 		// ﴫ 
+	{0, 0, 0, 0}, 		// ﴬ 
+	{0, 0, 0, 0}, 		// ﴭ 
+	{0, 0, 0, 0}, 		// ﴮ 
+	{0, 0, 0, 0}, 		// ﴯ 
+	{0, 0, 0, 0}, 		// ﴰ 
+	{0, 0, 0, 0}, 		// ﴱ 
+	{0, 0, 0, 0}, 		// ﴲ 
+	{0, 0, 0, 0}, 		// ﴳ 
+	{0, 0, 0, 0}, 		// ﴴ 
+	{0, 0, 0, 0}, 		// ﴵ 
+	{0, 0, 0, 0}, 		// ﴶ 
+	{0, 0, 0, 0}, 		// ﴷ 
+	{0, 0, 0, 0}, 		// ﴸ 
+	{0, 0, 0, 0}, 		// ﴹ 
+	{0, 0, 0, 0}, 		// ﴺ 
+	{0, 0, 0, 0}, 		// ﴻ 
+	{3, 15, 54555, 3.0341797779256}, 		// ﴼ 
+	{3, 15, 54570, 2.46923835483904}, 		// ﴽ 
+	{5, 15, 54585, 7.70605491715833}, 		// ﴾ 
+	{6, 15, 54600, 7.70605491715833}, 		// ﴿ 
 };
 
-// Character descriptors for Calibri 8pt(block #21)
-// { [Char width in bits], [Offset into calibri_8ptCharBitmaps in bytes] }
-const FONT_CHAR_INFO calibri_8ptDescriptors_Block21[] PROGMEM = 
+// Character descriptors for Calibri 10pt(block #21)
+// { [Char width in bits], [Char height in bits], [Offset into calibri_10ptCharBitmaps in bytes] }
+const FONT_CHAR_INFO calibri_10ptDescriptors_Block21[] PROGMEM = 
 {
-	{16, 54150}, 		// ﷴ 
-	{0, 0}, 		// ﷵ 
-	{0, 0}, 		// ﷶ 
-	{0, 0}, 		// ﷷ 
-	{0, 0}, 		// ﷸ 
-	{0, 0}, 		// ﷹ 
-	{12, 54180}, 		// ﷺ 
-	{10, 54210}, 		// ﷻ 
-	{10, 54240}, 		// ﷼ 
-	{15, 54270}, 		// ﷽ 
-	{0, 0}, 		// ﷾ 
-	{0, 0}, 		// ﷿ 
-	{0, 0}, 		// ︀ 
-	{0, 0}, 		// ︁ 
-	{0, 0}, 		// ︂ 
-	{0, 0}, 		// ︃ 
-	{0, 0}, 		// ︄ 
-	{0, 0}, 		// ︅ 
-	{0, 0}, 		// ︆ 
-	{0, 0}, 		// ︇ 
-	{0, 0}, 		// ︈ 
-	{0, 0}, 		// ︉ 
-	{0, 0}, 		// ︊ 
-	{0, 0}, 		// ︋ 
-	{0, 0}, 		// ︌ 
-	{0, 0}, 		// ︍ 
-	{0, 0}, 		// ︎ 
-	{0, 0}, 		// ️ 
-	{0, 0}, 		// ︐ 
-	{0, 0}, 		// ︑ 
-	{0, 0}, 		// ︒ 
-	{0, 0}, 		// ︓ 
-	{0, 0}, 		// ︔ 
-	{0, 0}, 		// ︕ 
-	{0, 0}, 		// ︖ 
-	{0, 0}, 		// ︗ 
-	{0, 0}, 		// ︘ 
-	{0, 0}, 		// ︙ 
-	{0, 0}, 		// ︚ 
-	{0, 0}, 		// ︛ 
-	{0, 0}, 		// ︜ 
-	{0, 0}, 		// ︝ 
-	{0, 0}, 		// ︞ 
-	{0, 0}, 		// ︟ 
-	{6, 54300}, 		// ︠ 
-	{6, 54315}, 		// ︡ 
-	{4, 54330}, 		// ︢ 
-	{4, 54345}, 		// ︣ 
-	{0, 0}, 		// ︤ 
-	{0, 0}, 		// ︥ 
-	{0, 0}, 		// ︦ 
-	{0, 0}, 		// ︧ 
-	{0, 0}, 		// ︨ 
-	{0, 0}, 		// ︩ 
-	{0, 0}, 		// ︪ 
-	{0, 0}, 		// ︫ 
-	{0, 0}, 		// ︬ 
-	{0, 0}, 		// ︭ 
-	{0, 0}, 		// ︮ 
-	{0, 0}, 		// ︯ 
-	{0, 0}, 		// ︰ 
-	{0, 0}, 		// ︱ 
-	{0, 0}, 		// ︲ 
-	{0, 0}, 		// ︳ 
-	{0, 0}, 		// ︴ 
-	{0, 0}, 		// ︵ 
-	{0, 0}, 		// ︶ 
-	{0, 0}, 		// ︷ 
-	{0, 0}, 		// ︸ 
-	{0, 0}, 		// ︹ 
-	{0, 0}, 		// ︺ 
-	{0, 0}, 		// ︻ 
-	{0, 0}, 		// ︼ 
-	{0, 0}, 		// ︽ 
-	{0, 0}, 		// ︾ 
-	{0, 0}, 		// ︿ 
-	{0, 0}, 		// ﹀ 
-	{0, 0}, 		// ﹁ 
-	{0, 0}, 		// ﹂ 
-	{0, 0}, 		// ﹃ 
-	{0, 0}, 		// ﹄ 
-	{0, 0}, 		// ﹅ 
-	{0, 0}, 		// ﹆ 
-	{0, 0}, 		// ﹇ 
-	{0, 0}, 		// ﹈ 
-	{0, 0}, 		// ﹉ 
-	{0, 0}, 		// ﹊ 
-	{0, 0}, 		// ﹋ 
-	{0, 0}, 		// ﹌ 
-	{0, 0}, 		// ﹍ 
-	{0, 0}, 		// ﹎ 
-	{0, 0}, 		// ﹏ 
-	{0, 0}, 		// ﹐ 
-	{0, 0}, 		// ﹑ 
-	{0, 0}, 		// ﹒ 
-	{0, 0}, 		// ﹓ 
-	{0, 0}, 		// ﹔ 
-	{0, 0}, 		// ﹕ 
-	{0, 0}, 		// ﹖ 
-	{0, 0}, 		// ﹗ 
-	{0, 0}, 		// ﹘ 
-	{0, 0}, 		// ﹙ 
-	{0, 0}, 		// ﹚ 
-	{0, 0}, 		// ﹛ 
-	{0, 0}, 		// ﹜ 
-	{0, 0}, 		// ﹝ 
-	{0, 0}, 		// ﹞ 
-	{0, 0}, 		// ﹟ 
-	{0, 0}, 		// ﹠ 
-	{0, 0}, 		// ﹡ 
-	{0, 0}, 		// ﹢ 
-	{0, 0}, 		// ﹣ 
-	{0, 0}, 		// ﹤ 
-	{0, 0}, 		// ﹥ 
-	{0, 0}, 		// ﹦ 
-	{0, 0}, 		// ﹧ 
-	{0, 0}, 		// ﹨ 
-	{0, 0}, 		// ﹩ 
-	{0, 0}, 		// ﹪ 
-	{0, 0}, 		// ﹫ 
-	{0, 0}, 		// ﹬ 
-	{0, 0}, 		// ﹭ 
-	{0, 0}, 		// ﹮ 
-	{0, 0}, 		// ﹯ 
-	{2, 54360}, 		// ﹰ 
-	{5, 54375}, 		// ﹱ 
-	{4, 54390}, 		// ﹲ 
-	{4, 54405}, 		// ﹳ 
-	{2, 54420}, 		// ﹴ 
-	{0, 0}, 		// ﹵ 
-	{2, 54435}, 		// ﹶ 
-	{5, 54450}, 		// ﹷ 
-	{2, 54465}, 		// ﹸ 
-	{5, 54480}, 		// ﹹ 
-	{2, 54495}, 		// ﹺ 
-	{5, 54510}, 		// ﹻ 
-	{2, 54525}, 		// ﹼ 
-	{5, 54540}, 		// ﹽ 
-	{2, 54555}, 		// ﹾ 
-	{5, 54570}, 		// ﹿ 
-	{3, 54585}, 		// ﺀ 
-	{4, 54600}, 		// ﺁ 
-	{0, 0}, 		// ﺂ 
-	{2, 54615}, 		// ﺃ 
-	{3, 54630}, 		// ﺄ 
-	{5, 54645}, 		// ﺅ 
-	{6, 54660}, 		// ﺆ 
-	{2, 54675}, 		// ﺇ 
-	{2, 54690}, 		// ﺈ 
-	{8, 54705}, 		// ﺉ 
-	{8, 54720}, 		// ﺊ 
-	{4, 54735}, 		// ﺋ 
-	{5, 54750}, 		// ﺌ 
-	{1, 54765}, 		// ﺍ 
-	{2, 54780}, 		// ﺎ 
-	{10, 54795}, 		// ﺏ 
-	{11, 54825}, 		// ﺐ 
-	{4, 54855}, 		// ﺑ 
-	{5, 54870}, 		// ﺒ 
-	{4, 54885}, 		// ﺓ 
-	{5, 54900}, 		// ﺔ 
-	{10, 54915}, 		// ﺕ 
-	{11, 54945}, 		// ﺖ 
-	{4, 54975}, 		// ﺗ 
-	{5, 54990}, 		// ﺘ 
-	{10, 55005}, 		// ﺙ 
-	{11, 55035}, 		// ﺚ 
-	{4, 55065}, 		// ﺛ 
-	{5, 55080}, 		// ﺜ 
-	{7, 55095}, 		// ﺝ 
-	{8, 55110}, 		// ﺞ 
-	{8, 55125}, 		// ﺟ 
-	{9, 55140}, 		// ﺠ 
-	{7, 55170}, 		// ﺡ 
-	{8, 55185}, 		// ﺢ 
-	{8, 55200}, 		// ﺣ 
-	{9, 55215}, 		// ﺤ 
-	{7, 55245}, 		// ﺥ 
-	{8, 55260}, 		// ﺦ 
-	{8, 55275}, 		// ﺧ 
-	{9, 55290}, 		// ﺨ 
-	{4, 55320}, 		// ﺩ 
-	{5, 55335}, 		// ﺪ 
-	{4, 55350}, 		// ﺫ 
-	{5, 55365}, 		// ﺬ 
-	{5, 55380}, 		// ﺭ 
-	{6, 55395}, 		// ﺮ 
-	{5, 55410}, 		// ﺯ 
-	{6, 55425}, 		// ﺰ 
-	{11, 55440}, 		// ﺱ 
-	{12, 55470}, 		// ﺲ 
-	{9, 55500}, 		// ﺳ 
-	{10, 55530}, 		// ﺴ 
-	{11, 55560}, 		// ﺵ 
-	{12, 55590}, 		// ﺶ 
-	{9, 55620}, 		// ﺷ 
-	{10, 55650}, 		// ﺸ 
-	{13, 55680}, 		// ﺹ 
-	{14, 55710}, 		// ﺺ 
-	{10, 55740}, 		// ﺻ 
-	{11, 55770}, 		// ﺼ 
-	{13, 55800}, 		// ﺽ 
-	{14, 55830}, 		// ﺾ 
-	{10, 55860}, 		// ﺿ 
-	{11, 55890}, 		// ﻀ 
-	{8, 55920}, 		// ﻁ 
-	{9, 55935}, 		// ﻂ 
-	{8, 55965}, 		// ﻃ 
-	{9, 55980}, 		// ﻄ 
-	{8, 56010}, 		// ﻅ 
-	{9, 56025}, 		// ﻆ 
-	{8, 56055}, 		// ﻇ 
-	{9, 56070}, 		// ﻈ 
-	{7, 56100}, 		// ﻉ 
-	{7, 56115}, 		// ﻊ 
-	{7, 56130}, 		// ﻋ 
-	{7, 56145}, 		// ﻌ 
-	{7, 56160}, 		// ﻍ 
-	{7, 56175}, 		// ﻎ 
-	{7, 56190}, 		// ﻏ 
-	{7, 56205}, 		// ﻐ 
-	{11, 56220}, 		// ﻑ 
-	{12, 56250}, 		// ﻒ 
-	{5, 56280}, 		// ﻓ 
-	{6, 56295}, 		// ﻔ 
-	{8, 56310}, 		// ﻕ 
-	{8, 56325}, 		// ﻖ 
-	{5, 56340}, 		// ﻗ 
-	{6, 56355}, 		// ﻘ 
-	{8, 56370}, 		// ﻙ 
-	{10, 56385}, 		// ﻚ 
-	{7, 56415}, 		// ﻛ 
-	{7, 56430}, 		// ﻜ 
-	{7, 56445}, 		// ﻝ 
-	{8, 56460}, 		// ﻞ 
-	{3, 56475}, 		// ﻟ 
-	{4, 56490}, 		// ﻠ 
-	{4, 56505}, 		// ﻡ 
-	{6, 56520}, 		// ﻢ 
-	{6, 56535}, 		// ﻣ 
-	{7, 56550}, 		// ﻤ 
-	{7, 56565}, 		// ﻥ 
-	{8, 56580}, 		// ﻦ 
-	{4, 56595}, 		// ﻧ 
-	{5, 56610}, 		// ﻨ 
-	{4, 56625}, 		// ﻩ 
-	{5, 56640}, 		// ﻪ 
-	{7, 56655}, 		// ﻫ 
-	{6, 56670}, 		// ﻬ 
-	{5, 56685}, 		// ﻭ 
-	{6, 56700}, 		// ﻮ 
-	{8, 56715}, 		// ﻯ 
-	{8, 56730}, 		// ﻰ 
-	{8, 56745}, 		// ﻱ 
-	{8, 56760}, 		// ﻲ 
-	{4, 56775}, 		// ﻳ 
-	{5, 56790}, 		// ﻴ 
-	{6, 56805}, 		// ﻵ 
-	{8, 56820}, 		// ﻶ 
-	{6, 56835}, 		// ﻷ 
-	{8, 56850}, 		// ﻸ 
-	{6, 56865}, 		// ﻹ 
-	{8, 56880}, 		// ﻺ 
-	{6, 56895}, 		// ﻻ 
-	{8, 56910}, 		// ﻼ 
-	{0, 0}, 		// ﻽ 
-	{0, 0}, 		// ﻾ 
-	{2, 56925}, 		// ﻿ 
+	{12, 15, 54615, 14.0410160434549}, 		// ﷲ 
+	{0, 0, 0, 0}, 		// ﷳ 
+	{16, 15, 54645, 16.1040043861867}, 		// ﷴ 
+	{0, 0, 0, 0}, 		// ﷵ 
+	{0, 0, 0, 0}, 		// ﷶ 
+	{0, 0, 0, 0}, 		// ﷷ 
+	{0, 0, 0, 0}, 		// ﷸ 
+	{0, 0, 0, 0}, 		// ﷹ 
+	{12, 15, 54675, 13.3999027430982}, 		// ﷺ 
+	{10, 15, 54705, 12.0034183264797}, 		// ﷻ 
+	{10, 15, 54735, 11.0512698606035}, 		// ﷼ 
+	{15, 15, 54765, 15.1645512331888}, 		// ﷽ 
+	{0, 0, 0, 0}, 		// ﷾ 
+	{0, 0, 0, 0}, 		// ﷿ 
+	{0, 0, 0, 0}, 		// ︀ 
+	{0, 0, 0, 0}, 		// ︁ 
+	{0, 0, 0, 0}, 		// ︂ 
+	{0, 0, 0, 0}, 		// ︃ 
+	{0, 0, 0, 0}, 		// ︄ 
+	{0, 0, 0, 0}, 		// ︅ 
+	{0, 0, 0, 0}, 		// ︆ 
+	{0, 0, 0, 0}, 		// ︇ 
+	{0, 0, 0, 0}, 		// ︈ 
+	{0, 0, 0, 0}, 		// ︉ 
+	{0, 0, 0, 0}, 		// ︊ 
+	{0, 0, 0, 0}, 		// ︋ 
+	{0, 0, 0, 0}, 		// ︌ 
+	{0, 0, 0, 0}, 		// ︍ 
+	{0, 0, 0, 0}, 		// ︎ 
+	{0, 0, 0, 0}, 		// ️ 
+	{0, 0, 0, 0}, 		// ︐ 
+	{0, 0, 0, 0}, 		// ︑ 
+	{0, 0, 0, 0}, 		// ︒ 
+	{0, 0, 0, 0}, 		// ︓ 
+	{0, 0, 0, 0}, 		// ︔ 
+	{0, 0, 0, 0}, 		// ︕ 
+	{0, 0, 0, 0}, 		// ︖ 
+	{0, 0, 0, 0}, 		// ︗ 
+	{0, 0, 0, 0}, 		// ︘ 
+	{0, 0, 0, 0}, 		// ︙ 
+	{0, 0, 0, 0}, 		// ︚ 
+	{0, 0, 0, 0}, 		// ︛ 
+	{0, 0, 0, 0}, 		// ︜ 
+	{0, 0, 0, 0}, 		// ︝ 
+	{0, 0, 0, 0}, 		// ︞ 
+	{0, 0, 0, 0}, 		// ︟ 
+	{6, 15, 54795, 0}, 		// ︠ 
+	{6, 15, 54810, 0}, 		// ︡ 
+	{4, 15, 54825, 0}, 		// ︢ 
+	{4, 15, 54840, 0}, 		// ︣ 
+	{0, 0, 0, 0}, 		// ︤ 
+	{0, 0, 0, 0}, 		// ︥ 
+	{0, 0, 0, 0}, 		// ︦ 
+	{0, 0, 0, 0}, 		// ︧ 
+	{0, 0, 0, 0}, 		// ︨ 
+	{0, 0, 0, 0}, 		// ︩ 
+	{0, 0, 0, 0}, 		// ︪ 
+	{0, 0, 0, 0}, 		// ︫ 
+	{0, 0, 0, 0}, 		// ︬ 
+	{0, 0, 0, 0}, 		// ︭ 
+	{0, 0, 0, 0}, 		// ︮ 
+	{0, 0, 0, 0}, 		// ︯ 
+	{0, 0, 0, 0}, 		// ︰ 
+	{0, 0, 0, 0}, 		// ︱ 
+	{0, 0, 0, 0}, 		// ︲ 
+	{0, 0, 0, 0}, 		// ︳ 
+	{0, 0, 0, 0}, 		// ︴ 
+	{0, 0, 0, 0}, 		// ︵ 
+	{0, 0, 0, 0}, 		// ︶ 
+	{0, 0, 0, 0}, 		// ︷ 
+	{0, 0, 0, 0}, 		// ︸ 
+	{0, 0, 0, 0}, 		// ︹ 
+	{0, 0, 0, 0}, 		// ︺ 
+	{0, 0, 0, 0}, 		// ︻ 
+	{0, 0, 0, 0}, 		// ︼ 
+	{0, 0, 0, 0}, 		// ︽ 
+	{0, 0, 0, 0}, 		// ︾ 
+	{0, 0, 0, 0}, 		// ︿ 
+	{0, 0, 0, 0}, 		// ﹀ 
+	{0, 0, 0, 0}, 		// ﹁ 
+	{0, 0, 0, 0}, 		// ﹂ 
+	{0, 0, 0, 0}, 		// ﹃ 
+	{0, 0, 0, 0}, 		// ﹄ 
+	{0, 0, 0, 0}, 		// ﹅ 
+	{0, 0, 0, 0}, 		// ﹆ 
+	{0, 0, 0, 0}, 		// ﹇ 
+	{0, 0, 0, 0}, 		// ﹈ 
+	{0, 0, 0, 0}, 		// ﹉ 
+	{0, 0, 0, 0}, 		// ﹊ 
+	{0, 0, 0, 0}, 		// ﹋ 
+	{0, 0, 0, 0}, 		// ﹌ 
+	{0, 0, 0, 0}, 		// ﹍ 
+	{0, 0, 0, 0}, 		// ﹎ 
+	{0, 0, 0, 0}, 		// ﹏ 
+	{0, 0, 0, 0}, 		// ﹐ 
+	{0, 0, 0, 0}, 		// ﹑ 
+	{0, 0, 0, 0}, 		// ﹒ 
+	{0, 0, 0, 0}, 		// ﹓ 
+	{0, 0, 0, 0}, 		// ﹔ 
+	{0, 0, 0, 0}, 		// ﹕ 
+	{0, 0, 0, 0}, 		// ﹖ 
+	{0, 0, 0, 0}, 		// ﹗ 
+	{0, 0, 0, 0}, 		// ﹘ 
+	{0, 0, 0, 0}, 		// ﹙ 
+	{0, 0, 0, 0}, 		// ﹚ 
+	{0, 0, 0, 0}, 		// ﹛ 
+	{0, 0, 0, 0}, 		// ﹜ 
+	{0, 0, 0, 0}, 		// ﹝ 
+	{0, 0, 0, 0}, 		// ﹞ 
+	{0, 0, 0, 0}, 		// ﹟ 
+	{0, 0, 0, 0}, 		// ﹠ 
+	{0, 0, 0, 0}, 		// ﹡ 
+	{0, 0, 0, 0}, 		// ﹢ 
+	{0, 0, 0, 0}, 		// ﹣ 
+	{0, 0, 0, 0}, 		// ﹤ 
+	{0, 0, 0, 0}, 		// ﹥ 
+	{0, 0, 0, 0}, 		// ﹦ 
+	{0, 0, 0, 0}, 		// ﹧ 
+	{0, 0, 0, 0}, 		// ﹨ 
+	{0, 0, 0, 0}, 		// ﹩ 
+	{0, 0, 0, 0}, 		// ﹪ 
+	{0, 0, 0, 0}, 		// ﹫ 
+	{0, 0, 0, 0}, 		// ﹬ 
+	{0, 0, 0, 0}, 		// ﹭ 
+	{0, 0, 0, 0}, 		// ﹮ 
+	{0, 0, 0, 0}, 		// ﹯ 
+	{2, 15, 54855, 4.07519543395028}, 		// ﹰ 
+	{5, 15, 54870, 4.07519543395028}, 		// ﹱ 
+	{4, 15, 54885, 4.07519543395028}, 		// ﹲ 
+	{4, 15, 54900, 4.26562512712553}, 		// ﹳ 
+	{2, 15, 54915, 4.07519543395028}, 		// ﹴ 
+	{0, 0, 0, 0}, 		// ﹵ 
+	{2, 15, 54930, 4.07519543395028}, 		// ﹶ 
+	{5, 15, 54945, 4.07519543395028}, 		// ﹷ 
+	{2, 15, 54960, 4.07519543395028}, 		// ﹸ 
+	{5, 15, 54975, 4.07519543395028}, 		// ﹹ 
+	{2, 15, 54990, 4.07519543395028}, 		// ﹺ 
+	{5, 15, 55005, 4.07519543395028}, 		// ﹻ 
+	{2, 15, 55020, 4.07519543395028}, 		// ﹼ 
+	{5, 15, 55035, 4.07519543395028}, 		// ﹽ 
+	{2, 15, 55050, 4.07519543395028}, 		// ﹾ 
+	{5, 15, 55065, 4.07519543395028}, 		// ﹿ 
+	{3, 15, 55080, 4.8813478017255}, 		// ﺀ 
+	{4, 15, 55095, 3.99902355668019}, 		// ﺁ 
+	{0, 0, 0, 0}, 		// ﺂ 
+	{2, 15, 55110, 2.39306647756894}, 		// ﺃ 
+	{3, 15, 55125, 3.02783212148643}, 		// ﺄ 
+	{5, 15, 55140, 5.64941423086566}, 		// ﺅ 
+	{6, 15, 55155, 6.16357440243883}, 		// ﺆ 
+	{2, 15, 55170, 2.46923835483904}, 		// ﺇ 
+	{2, 15, 55185, 3.0341797779256}, 		// ﺈ 
+	{8, 15, 55200, 8.70263697810879}, 		// ﺉ 
+	{8, 15, 55215, 7.45849631603051}, 		// ﺊ 
+	{4, 15, 55230, 3.1865235324658}, 		// ﺋ 
+	{5, 15, 55245, 3.76416026843071}, 		// ﺌ 
+	{1, 15, 55260, 2.46923835483904}, 		// ﺍ 
+	{2, 15, 55275, 3.0341797779256}, 		// ﺎ 
+	{10, 15, 55290, 10.416504216686}, 		// ﺏ 
+	{11, 15, 55320, 11.1845706458262}, 		// ﺐ 
+	{4, 15, 55350, 3.1865235324658}, 		// ﺑ 
+	{5, 15, 55365, 3.76416026843071}, 		// ﺒ 
+	{4, 15, 55380, 4.50683607181418}, 		// ﺓ 
+	{5, 15, 55395, 5.63671891798731}, 		// ﺔ 
+	{10, 15, 55410, 10.416504216686}, 		// ﺕ 
+	{11, 15, 55440, 11.1845706458262}, 		// ﺖ 
+	{4, 15, 55470, 3.1865235324658}, 		// ﺗ 
+	{5, 15, 55485, 3.76416026843071}, 		// ﺘ 
+	{10, 15, 55500, 10.416504216686}, 		// ﺙ 
+	{11, 15, 55530, 11.1845706458262}, 		// ﺚ 
+	{4, 15, 55560, 3.1865235324658}, 		// ﺛ 
+	{5, 15, 55575, 3.76416026843071}, 		// ﺜ 
+	{7, 15, 55590, 7.78222679442842}, 		// ﺝ 
+	{8, 15, 55605, 7.68066429140163}, 		// ﺞ 
+	{8, 15, 55620, 7.75048851223255}, 		// ﺟ 
+	{9, 15, 55635, 8.30908227887994}, 		// ﺠ 
+	{7, 15, 55665, 7.78222679442842}, 		// ﺡ 
+	{8, 15, 55680, 7.68066429140163}, 		// ﺢ 
+	{8, 15, 55695, 7.75048851223255}, 		// ﺣ 
+	{9, 15, 55710, 8.30908227887994}, 		// ﺤ 
+	{7, 15, 55740, 7.78222679442842}, 		// ﺥ 
+	{8, 15, 55755, 7.68066429140163}, 		// ﺦ 
+	{8, 15, 55770, 7.75048851223255}, 		// ﺧ 
+	{9, 15, 55785, 8.30908227887994}, 		// ﺨ 
+	{4, 15, 55815, 5.32568375246774}, 		// ﺩ 
+	{5, 15, 55830, 6.40478534712747}, 		// ﺪ 
+	{4, 15, 55845, 5.32568375246774}, 		// ﺫ 
+	{5, 15, 55860, 6.40478534712747}, 		// ﺬ 
+	{5, 15, 55875, 5.43359391193371}, 		// ﺭ 
+	{6, 15, 55890, 5.94775408350688}, 		// ﺮ 
+	{5, 15, 55905, 5.43359391193371}, 		// ﺯ 
+	{6, 15, 55920, 5.94775408350688}, 		// ﺰ 
+	{11, 15, 55935, 11.6479495658859}, 		// ﺱ 
+	{12, 15, 55965, 12.2954105226818}, 		// ﺲ 
+	{9, 15, 55995, 8.16943383721809}, 		// ﺳ 
+	{10, 15, 56025, 8.77246119893971}, 		// ﺴ 
+	{11, 15, 56055, 11.6479495658859}, 		// ﺵ 
+	{12, 15, 56085, 12.2954105226818}, 		// ﺶ 
+	{9, 15, 56115, 8.16943383721809}, 		// ﺷ 
+	{10, 15, 56145, 8.77246119893971}, 		// ﺸ 
+	{13, 15, 56175, 13.4443363381724}, 		// ﺹ 
+	{14, 15, 56205, 13.6411136877869}, 		// ﺺ 
+	{10, 15, 56235, 9.88964873223449}, 		// ﺻ 
+	{11, 15, 56265, 10.1181643640448}, 		// ﺼ 
+	{13, 15, 56295, 13.4443363381724}, 		// ﺽ 
+	{14, 15, 56325, 13.6411136877869}, 		// ﺾ 
+	{10, 15, 56355, 9.88964873223449}, 		// ﺿ 
+	{11, 15, 56385, 10.1181643640448}, 		// ﻀ 
+	{8, 15, 56415, 9.92773467086954}, 		// ﻁ 
+	{9, 15, 56430, 10.124512020484}, 		// ﻂ 
+	{8, 15, 56460, 7.85205101525935}, 		// ﻃ 
+	{9, 15, 56475, 8.04882836487377}, 		// ﻄ 
+	{8, 15, 56505, 9.92773467086954}, 		// ﻅ 
+	{9, 15, 56520, 10.124512020484}, 		// ﻆ 
+	{8, 15, 56550, 7.85205101525935}, 		// ﻇ 
+	{9, 15, 56565, 8.04882836487377}, 		// ﻈ 
+	{7, 15, 56595, 7.64892600920575}, 		// ﻉ 
+	{7, 15, 56610, 6.50634785015427}, 		// ﻊ 
+	{7, 15, 56625, 6.29052753122232}, 		// ﻋ 
+	{7, 15, 56640, 5.77636735964916}, 		// ﻌ 
+	{7, 15, 56655, 7.64892600920575}, 		// ﻍ 
+	{7, 15, 56670, 6.50634785015427}, 		// ﻎ 
+	{7, 15, 56685, 6.29052753122232}, 		// ﻏ 
+	{7, 15, 56700, 5.77636735964916}, 		// ﻐ 
+	{11, 15, 56715, 11.0195315784076}, 		// ﻑ 
+	{12, 15, 56745, 11.6733401916426}, 		// ﻒ 
+	{5, 15, 56775, 4.64013685703685}, 		// ﻓ 
+	{6, 15, 56790, 5.38916031685949}, 		// ﻔ 
+	{8, 15, 56805, 8.08056664706965}, 		// ﻕ 
+	{8, 15, 56820, 8.16308618077892}, 		// ﻖ 
+	{5, 15, 56835, 4.64013685703685}, 		// ﻗ 
+	{6, 15, 56850, 5.38916031685949}, 		// ﻘ 
+	{8, 15, 56865, 8.67089869591291}, 		// ﻙ 
+	{10, 15, 56880, 10.0864260818489}, 		// ﻚ 
+	{7, 15, 56910, 6.07470721229038}, 		// ﻛ 
+	{7, 15, 56925, 6.05566424297285}, 		// ﻜ 
+	{7, 15, 56940, 7.10302755543671}, 		// ﻝ 
+	{8, 15, 56955, 7.59814475769235}, 		// ﻞ 
+	{3, 15, 56970, 2.92626961845963}, 		// ﻟ 
+	{4, 15, 56985, 3.32617197412765}, 		// ﻠ 
+	{4, 15, 57000, 5.57324235359556}, 		// ﻡ 
+	{6, 15, 57015, 6.62695332249859}, 		// ﻢ 
+	{6, 15, 57030, 5.17333999792754}, 		// ﻣ 
+	{7, 15, 57045, 5.80175798540586}, 		// ﻤ 
+	{7, 15, 57060, 7.07763692968001}, 		// ﻥ 
+	{8, 15, 57075, 7.44580100315216}, 		// ﻦ 
+	{4, 15, 57090, 3.1865235324658}, 		// ﻧ 
+	{5, 15, 57105, 3.76416026843071}, 		// ﻨ 
+	{4, 15, 57120, 4.50683607181418}, 		// ﻩ 
+	{5, 15, 57135, 5.63671891798731}, 		// ﻪ 
+	{7, 15, 57150, 6.59521504030272}, 		// ﻫ 
+	{6, 15, 57165, 5.26855484451517}, 		// ﻬ 
+	{5, 15, 57180, 5.64941423086566}, 		// ﻭ 
+	{6, 15, 57195, 6.16357440243883}, 		// ﻮ 
+	{8, 15, 57210, 8.70263697810879}, 		// ﻯ 
+	{8, 15, 57225, 7.45849631603051}, 		// ﻰ 
+	{8, 15, 57240, 8.70263697810879}, 		// ﻱ 
+	{8, 15, 57255, 7.45849631603051}, 		// ﻲ 
+	{4, 15, 57270, 3.1865235324658}, 		// ﻳ 
+	{5, 15, 57285, 3.76416026843071}, 		// ﻴ 
+	{6, 15, 57300, 6.86816426718724}, 		// ﻵ 
+	{8, 15, 57315, 7.84570335882017}, 		// ﻶ 
+	{6, 15, 57330, 6.86816426718724}, 		// ﻷ 
+	{8, 15, 57345, 7.84570335882017}, 		// ﻸ 
+	{6, 15, 57360, 7.05859396036249}, 		// ﻹ 
+	{8, 15, 57375, 8.03613305199542}, 		// ﻺ 
+	{6, 15, 57390, 7.05859396036249}, 		// ﻻ 
+	{8, 15, 57405, 8.03613305199542}, 		// ﻼ 
+	{0, 0, 0, 0}, 		// ﻽ 
+	{0, 0, 0, 0}, 		// ﻾ 
+	{2, 15, 57420, 0}, 		// ﻿ 
 };
 
-// Block lookup array for Calibri 8pt 
+// Block lookup array for Calibri 10pt 
 // { start character, end character, ptr to descriptor block array }
-const FONT_CHAR_INFO_LOOKUP calibri_8ptBlockLookup[] = 
+const FONT_CHAR_INFO_LOOKUP calibri_10ptBlockLookup[] = 
 {
-	{'!', 1327, &calibri_8ptDescriptors_Block0},
-	{1425, 1791, &calibri_8ptDescriptors_Block1},
-	{1872, 1919, &calibri_8ptDescriptors_Block2},
-	{2208, 2303, &calibri_8ptDescriptors_Block3},
-	{3647, 3647, &calibri_8ptDescriptors_Block4},
-	{7424, 8616, &calibri_8ptDescriptors_Block5},
-	{8706, 8805, &calibri_8ptDescriptors_Block6},
-	{8962, 8993, &calibri_8ptDescriptors_Block7},
-	{9312, 9331, &calibri_8ptDescriptors_Block8},
-	{9450, 9496, &calibri_8ptDescriptors_Block9},
-	{9633, 9702, &calibri_8ptDescriptors_Block10},
-	{10102, 10111, &calibri_8ptDescriptors_Block11},
-	{11360, 11391, &calibri_8ptDescriptors_Block12},
-	{11799, 11799, &calibri_8ptDescriptors_Block13},
-	{42192, 42239, &calibri_8ptDescriptors_Block14},
-	{42560, 42655, &calibri_8ptDescriptors_Block15},
-	{42775, 43007, &calibri_8ptDescriptors_Block16},
-	{43824, 43877, &calibri_8ptDescriptors_Block17},
-	{64256, 64511, &calibri_8ptDescriptors_Block18},
-	{64606, 64611, &calibri_8ptDescriptors_Block19},
-	{64754, 64831, &calibri_8ptDescriptors_Block20},
-	{65012, 65279, &calibri_8ptDescriptors_Block21},
+	{'!', 1327, &calibri_10ptDescriptors_Block0},
+	{1425, 1791, &calibri_10ptDescriptors_Block1},
+	{1872, 1919, &calibri_10ptDescriptors_Block2},
+	{2208, 2303, &calibri_10ptDescriptors_Block3},
+	{3647, 3647, &calibri_10ptDescriptors_Block4},
+	{7424, 8616, &calibri_10ptDescriptors_Block5},
+	{8706, 8805, &calibri_10ptDescriptors_Block6},
+	{8962, 8993, &calibri_10ptDescriptors_Block7},
+	{9312, 9331, &calibri_10ptDescriptors_Block8},
+	{9450, 9496, &calibri_10ptDescriptors_Block9},
+	{9633, 9702, &calibri_10ptDescriptors_Block10},
+	{10102, 10111, &calibri_10ptDescriptors_Block11},
+	{11360, 11391, &calibri_10ptDescriptors_Block12},
+	{11799, 11799, &calibri_10ptDescriptors_Block13},
+	{42192, 42239, &calibri_10ptDescriptors_Block14},
+	{42560, 42655, &calibri_10ptDescriptors_Block15},
+	{42775, 43007, &calibri_10ptDescriptors_Block16},
+	{43824, 43877, &calibri_10ptDescriptors_Block17},
+	{64256, 64511, &calibri_10ptDescriptors_Block18},
+	{64606, 64611, &calibri_10ptDescriptors_Block19},
+	{64754, 64831, &calibri_10ptDescriptors_Block20},
+	{65010, 65279, &calibri_10ptDescriptors_Block21},
 };
 
-// Font information for Calibri 8pt
-FONT_INFO calibri_8pt =
+// Font information for Calibri 10pt
+FONT_INFO calibri_10pt =
 {
 	15, //  Character height
 	'!', //  Start character
 	65279, //  End character
 	2, //  Width, in pixels, of space character
-	calibri_8ptBlockLookup, //  Character block lookup
-	22, // number of blocks
+	calibri_10ptBlockLookup, //  Character block lookup
 	NULL, //  Character descriptor array
-	calibri_8ptBitmaps //  Character bitmap array
+	22, //  Character block count
+	calibri_10ptBitmaps, //  Character bitmap array
+	9.283447265625, //  Font ascent size (px)
+	2.618408203125, //  Font descent size (px)
+	11.90185546875, //  Font line spacing (px)
 };
-

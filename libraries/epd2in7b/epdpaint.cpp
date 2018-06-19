@@ -347,68 +347,6 @@ void Paint::DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored
 }
 
 
-/*
-bool Paint::doRtlStrings(String* s, bool right_to_left) {
-	int i = 0;
-	int strlen = s->length();
-	uint16_t blockToCheckFirst = 0;
-	DiskFont_FontCharInfo fci;
-	String outstr = "";
-	String strtoreverse = "";
-	String ch = "";
-	int chlen = 0;
-	
-	while (i < strlen) {				
-		if (i == 0) {
-			strtoreverse = "";
-			ch = "";
-		}
-				
-		ch = utf8CharAt(*s, i);
-		chlen = ch.length();
-
-		I2CSerial.printf("ch=%s ", ch.c_str());
-		
-		if (codepointUtf8(ch) == 32) { // is space char
-			fci.rtlflag = 0; // fudge the rtl flag, since spaces are not encoded in font bitmaps, so don't have a font char info associated with them
-		} else {			// spaces will not be reversed
-			if (!getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci)) {
-				I2CSerial.printf("returning false\n");
-				return false;
-			}
-		}
-
-		I2CSerial.printf("rtl:%d\n", fci.rtlflag);
-		
-		if ((!right_to_left && fci.rtlflag > 0) || (right_to_left && fci.rtlflag == 0)) {
-			strtoreverse = ch + strtoreverse;
-			I2CSerial.printf(".");
-		}
-		else {
-			if (strtoreverse.length() > 0) {
-				outstr += strtoreverse;
-				strtoreverse = "";
-				I2CSerial.printf("^");
-			}
-			outstr += ch; // ltr char, just add to string in order.
-			I2CSerial.printf("+");
-		}				
-
-		i+= chlen;
-	}
-	
-	if (strtoreverse.length() > 0) {
-		outstr += strtoreverse; // add leftover reverse string or ltr character (if string ends in an rtl char, it drop out of loop before it has been added)
-	} 
-	else {
-		outstr += ch;
-	}
-	
-	*s = outstr;
-	return true;
-}
-*/
-
 int Paint::GetTextWidth(const char* text, FONT_INFO* font) {
     const char* p_text = text;
     unsigned int counter = 0;
