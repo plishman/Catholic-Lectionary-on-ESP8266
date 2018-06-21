@@ -265,6 +265,8 @@ void loop(void) {
     bool b_G = false;
   
     l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
+
+    I2CSerial.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
     
     Lectionary::ReadingsFromEnum r;
     
@@ -281,7 +283,12 @@ void loop(void) {
             
       /************************************************/ 
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
-      display_calendar(datetime, &c, refs);
+      if (!display_calendar(datetime, &c, refs)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
+        I2CSerial.printf("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n");
+        r=Lectionary::READINGS_G;
+        l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
+        display_calendar(datetime, &c, refs);
+      }
     }
     else {
       I2CSerial.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
@@ -628,7 +635,7 @@ void init_panel() {
   }
 }
 
-void display_calendar(String date, Calendar* c, String refs) {  
+bool display_calendar(String date, Calendar* c, String refs) {  
   DiskFont diskfont;
   
   if (diskfont.begin(c->_I18n->configparams)) {
@@ -641,7 +648,6 @@ void display_calendar(String date, Calendar* c, String refs) {
   FONT_INFO* font = &calibri_10pt;
   
   //FONT_INFO* font_bold = &calibri_8ptBold;
-  init_panel();
   Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
   paint.SetRotate(ROTATE_90);
   paint.Clear(UNCOLORED);
@@ -653,6 +659,16 @@ void display_calendar(String date, Calendar* c, String refs) {
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
   I2CSerial.println("Displaying calendar");
+  I2CSerial.println("Displaying verses");
+//  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
+//  //refs="1 Chr 29:9-10bc";              //debugging
+//  refs="John 3:16"; // debugging
+//  refs="2 John 1:1"; // debugging
+  if (!display_verses(c, refs, &paint, &paint_red, font, &diskfont)) {
+    I2CSerial.printf("display_verses returned false\n");
+    return false;
+  }
+
   if (c->day.is_sanctorale) {
     display_day(c->day.sanctorale, &paint, &paint_red, font, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
     if (c->day.sanctorale == c->day.day) {                                     // otherwise the liturgical day is shown at the top of the screen.
@@ -665,15 +681,16 @@ void display_calendar(String date, Calendar* c, String refs) {
     display_date(date, "", &paint, font, &diskfont);
   }
 
-  I2CSerial.println("Displaying verses");
-//  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
-//  //refs="1 Chr 29:9-10bc";              //debugging
-//  refs="John 3:16"; // debugging
-//  refs="2 John 1:1"; // debugging
-  display_verses(c, refs, &paint, &paint_red, font, &diskfont);
-
+//  I2CSerial.println("Displaying verses");
+////  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
+////  //refs="1 Chr 29:9-10bc";              //debugging
+////  refs="John 3:16"; // debugging
+////  refs="2 John 1:1"; // debugging
+//  display_verses(c, refs, &paint, &paint_red, font, &diskfont);
+  
   //diskfont.end();
 
+  init_panel();
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
   epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
   epd.DisplayFrame();
@@ -681,7 +698,9 @@ void display_calendar(String date, Calendar* c, String refs) {
   epd.Sleep();
   uint32_t free = system_get_free_heap_size();
   I2CSerial.println("free memory = " + String(free));
-  I2CSerial.println("done");  
+  I2CSerial.println("done"); 
+
+  return true;
 }
 
 void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont, bool bRed) {
@@ -751,7 +770,10 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   I2CSerial.printf("refs from lectionary: [%s]\n", refs.c_str());
   
   Bible b(c->_I18n);
-  if (!b.get(refs)) return false;
+  if (!b.get(refs)) {
+    I2CSerial.printf("Couldn't get refs (Apocrypha?)\n");
+    return false;
+  }
     
   b.dump_refs();
 
@@ -846,7 +868,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
         }
         else {
           I2CSerial.printf("Error\n");
-          bDone = true;
+          return false;
+          //bDone = true;
         }
       }
       if (bEndOfScreen) break; // out of chapter for loop
