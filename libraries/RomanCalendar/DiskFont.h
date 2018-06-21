@@ -100,9 +100,21 @@ public:
 	bool Read(double* var);
 	bool Read(void* array, uint32_t bytecount);
 	
-	int DrawCharAt(int x, int y, char ascii_char, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, char ascii_char,    Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, String ch,          Paint* paint, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, double& advanceWidth, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);	
+	
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);	
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+
+	int DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
 
 	void DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
@@ -111,17 +123,29 @@ public:
 	void DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
 	
-	//bool doRtlStrings(String* s, bool right_to_left); // will process input string so that substrings are in correct rtl or ltr order, depending on characterset
 	
 	void GetTextWidth(String text, int& width, double& advanceWidth);
 	int GetTextWidth(const char* text);
 	int GetTextWidth(String text);
-	double GetTextWidthA(String text);
-	double GetTextWidthA(const char* text);
-	
+
 	double GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width);
 //	double GetAdvanceWidth(int bitmapwidth, double advanceWidth);
 	
+	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
+	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci);
+                                          
+	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
+	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci);
+
+	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
+	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci);
+
+	double GetCharWidth(String ch, 			DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
+	double GetCharWidth(String ch, 			DiskFont_FontCharInfo& fci);
+	
+	double GetTextWidthA(String text);
+	double GetTextWidthA(const char* text);
+		
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
 	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
