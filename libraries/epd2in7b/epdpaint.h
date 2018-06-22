@@ -61,26 +61,6 @@ public:
     void DrawCharAt(int x, int y, char ascii_char, sFONT* font, int colored);
     void DrawStringAt(int x, int y, const char* text, sFONT* font, int colored);
 	
-	int DrawCharAt(int x, int y, char ascii_char, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, uint32_t codepoint, FONT_INFO* font, int colored, uint16_t* blockToCheckFirst);
-
-	void DrawStringAt(int x, int y, const char* text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string);
-	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left, bool reverse_string);
-	void DrawStringAt(int x, int y, String text, FONT_INFO* font, int colored, bool right_to_left);
-
-	//bool doRtlStrings(String* s, bool right_to_left);
-
-	int GetTextWidth(const char* text, FONT_INFO* font);
-	int GetTextWidth(String text, FONT_INFO* font);
-	
-	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
-/*	
-	String Utf8ReverseString(String instr);
-	int codepointUtf8(String c);
-	String utf8fromCodepoint(int c);
-	String utf8CharAt(String s, int pos);
-	int charLenBytesUTF8(char s);
-*/	
     void DrawLine(int x0, int y0, int x1, int y1, int colored);
     void DrawHorizontalLine(int x, int y, int width, int colored);
     void DrawVerticalLine(int x, int y, int height, int colored);

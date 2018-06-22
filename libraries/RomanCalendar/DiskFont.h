@@ -3,10 +3,10 @@
 #ifndef _FONT_H
 #define _FONT_H
 
-#include "Arduino.h"
-#include "SD.h"
+#include <Arduino.h>
+#include <SD.h>
 #define FS_NO_GLOBALS
-#include "FS.h"
+#include <FS.h>
 #include <math.h>
 #include <epd2in7b.h>
 #include <epdpaint.h>
@@ -49,9 +49,14 @@ typedef struct {
 
 const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 
+//#include "romfont.h"
+#include "calibri10pt.h"
+
+
 class DiskFont {
 public:
-	//I18n* _I18n;
+	FONT_INFO* romfont = &calibri_10pt;
+
 	String _fontfilename;
 	
 	File _file_sd;
@@ -100,6 +105,8 @@ public:
 	bool Read(double* var);
 	bool Read(void* array, uint32_t bytecount);
 	
+	
+	// for diskfont characters (will fail over to romfont rendering if diskfont is not available)
 	int DrawCharAt(int x, int y, char ascii_char,    Paint* paint, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, String ch,          Paint* paint, int colored, uint16_t* blockToCheckFirst);
 	int DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
@@ -116,12 +123,14 @@ public:
 	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
 	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
 
-	void DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
+	// for romfont characters
+	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+
+	
+	
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
-	
-	void DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
-	void DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
 	
 	
 	void GetTextWidth(String text, int& width, double& advanceWidth);
@@ -149,6 +158,8 @@ public:
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
 	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
+	
+	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
 };
 
 class FontBlockTable {

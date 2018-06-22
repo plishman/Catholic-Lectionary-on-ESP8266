@@ -198,12 +198,22 @@ bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
 }
 
 bool DiskFont::begin(String fontfilename) {
-	if (fontfilename == "builtin") {
-		I2CSerial.printf("Diskfont is not selected (fontfilename is 'builtin'\n");
+	_fontfilename = fontfilename;
+
+	if (_fontfilename == "builtin" || !OpenFontFile()) {
+		I2CSerial.printf("Diskfont is not selected (fontfilename is 'builtin' or font file not found\n");
+
+		_FontHeader.charheight = romfont->heightPages;
+		_FontHeader.startchar = romfont->startChar;
+		_FontHeader.endchar = romfont->endChar;
+		_FontHeader.numlookupblocks = romfont->blockCount;
+		_FontHeader.spacecharwidth = romfont->spacePixels;
+		_FontHeader.ascent = romfont->ascent;
+		_FontHeader.descent = romfont->descent;
+		_FontHeader.linespacing = romfont->lineheight;
+		
 		return false;
 	}
-	
-	_fontfilename = fontfilename;
 	
 /*
 	_file = SD.open(_fontfilename.c_str(), FILE_READ);
@@ -213,7 +223,7 @@ bool DiskFont::begin(String fontfilename) {
 		return false;
 	}
 */
-	if (!OpenFontFile()) return false;
+	//if (!OpenFontFile()) return false;
 
 	/*
             const unsigned long FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
@@ -362,8 +372,8 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	//if (codepoint == 32) return _FontHeader.spacecharwidth; // space character
 
 	if(!available) {
-		Serial.printf("DrawCharAt() Diskfont is not available.\n");
-		return 0;
+		//Serial.printf("DrawCharAt() Diskfont is not available.\n");
+		return DrawCharAt(x, y, codepoint, advanceWidth, romfont, fci, paint, colored);
 	}
 	
 //	DiskFont_FontCharInfo fci;
@@ -489,120 +499,83 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 */
 }
 
+
+
+/**
+ *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
+ */
+int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
+	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), advanceWidth, font, fci, paint, colored);
+}
+ 
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
+	uint16_t char_width = fci.widthbits;
+
+	if (codepoint == 32) {
+		//Serial.printf("DrawCharAt: space char width = %d\n", (int)fci.advanceWidth);
+		advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth;
+		return char_width; //fci.widthbits;
+	}
+	else {
+		//Serial.printf("ch=%s, u+%x advanceWidth=%d\n", utf8fromCodepoint(codepoint).c_str(), codepoint, (int)fci.advanceWidth);
+	}
+	
+	uint16_t char_height = (uint16_t)font->heightPages;
+	//printf("char_height=%d\n", char_height);
+
+	uint32_t char_offset = fci.bitmapfileoffset;
+	//printf("char_offset=%d\n", char_offset);
+	
+    int i, j;
+    //unsigned int char_offset = (ascii_char - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
+    const uint8_t* ptr = &font->data[char_offset];
+	
+    for (j = 0; j < char_height; j++) {
+		//printf("\n%d:\t|", j);
+        for (i = 0; i < char_width; i++) {
+            if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
+                paint->DrawPixel(x + i, y + j, colored);
+				//Serial.printf("#");
+            } else {
+				//Serial.printf(" ");
+			}
+			
+            if (i % 8 == 7) {
+                ptr++;
+            }
+        }
+        if (char_width % 8 != 0) {
+            ptr++;
+        }
+    }
+	
+	//printf("char width=%d\n", char_width);
+	
+	unsigned int bidi_info = getBidiDirection((uint16_t)codepoint);
+
+	advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth; bitmapwidth, advancewidth, isSpaceChar, bidi_info
+	
+	return char_width;
+
+//	return char_width + 1;
+}
+
+
+
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, const char* text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
-	DrawStringAt(x, y, String(text), paint, colored, right_to_left, reverse_string);
+void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
+	DrawStringAt(x, y, text, paint, colored, right_to_left, false);
 }
 
 void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
 	Serial.printf("DrawStringAt: String is %s\n", text.c_str());
 
-	if (!available) {
-		Serial.printf("Diskfont is not available.\n");
-		return;
-	}
-		
-	int charIndex = 0;
-	int len = text.length(); //Utf8CharCount(text); //text.length();
-	
-    int refcolumn = x;
-	String ch = "";
-	String ch_next = "";
-	
-	uint16_t blockToCheckFirst = 0;
-	
-	DiskFont_FontCharInfo fci;
-	
-	if (reverse_string) {
-		text = Utf8ReverseString(text); // BUG: this is going to cause a bug when composing characters. The diacritic will appear left justified over the character to which it 
-	}									// applies because it's code will be encountered first in the text string, before the width of the character to which it applies is known.
-										// Will have to look ahead to the first non-NSM mark when a compositing diacritic is found, get the width, then use this for compositing.
-	//printf("text=%s\n", text.c_str());
-    
-    /* Send the string character by character on EPD */	
-	
-	if (!right_to_left) {
-		int charwidth = 0;
-		while (charIndex != len) {
-			//printf("refcolumn=%d\n", refcolumn);
-			/* Display one character on EPD */
-			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
-			
-			byte bidi_info = getBidiDirection(ch);
-			
-			if (bidi_info == BIDI_NSM) { // position at refcolumn + (charwidth / 2) to get the composited diacritic centred over the character to which it applies
-				int overlaycharwidth = GetCharWidth(ch, fci); //GetTextWidth(ch);
-				
-				refcolumn -= charwidth; // if string has been reversed in memory (eg. for ltr substrings in rtl text and vv), the composing diacritics will be
-				//Serial.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
-				int refcolumnoverlaychar =(int)(float)(refcolumn + ((charwidth - overlaycharwidth) / 2));
-
-				DrawCharAt(refcolumnoverlaychar, y, codepointUtf8(ch), fci, paint, colored); // first, so they will apply to the next non-nsm character to print, not the previous
-				
-				refcolumn += charwidth;									// one. In that case, do not need to subtract the last printed char width (ie do 
-			}																					// backspace over it before overprinting the diacritic).
-			else { 
-				charwidth = DrawCharAt(refcolumn, y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
-				refcolumn += charwidth;
-			}
-						
-			//refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
-			/* Point on the next character */
-			charIndex += ch.length(); //charIndex++; // += ch.length();
-		}
-	}
-	else {
-		int charwidth = 0;
-		while (charIndex != len) {
-			//printf("refcolumn=%d\n", refcolumn);
-			/* Display one character on EPD */
-			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
-			
-			byte bidi_info = getBidiDirection(ch);
-			
-			if (bidi_info == BIDI_NSM) {
-				int overlaycharwidth = (int)GetCharWidth(ch, fci, blockToCheckFirst); //GetTextWidth(ch);
-				refcolumn -= charwidth; // position at refcolumn + (charwidth / 2) to get the diacritic centred over the character to which it applies
-				//Serial.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
-				int refcolumnoverlaychar =(int)(float)(refcolumn + ((charwidth - overlaycharwidth) / 2));
-
-				DrawCharAt(PANEL_SIZE_X - (refcolumnoverlaychar + overlaycharwidth), y, ch, fci, paint, colored);
-				
-				refcolumn += charwidth;
-			}
-			else {
-				int currcharwidth = (int)GetCharWidth(ch, fci, blockToCheckFirst);
-				charwidth = DrawCharAt(PANEL_SIZE_X - (refcolumn + currcharwidth), y, ch, fci, paint, colored);
-				refcolumn += charwidth;
-			}
-			
-			//refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
-			/* Point on the next character */
-			charIndex += ch.length(); //charIndex++; //+= ch.length();
-			wdt_reset();
-		}		
-	}
-	
-	//Serial.printf("----\n\n");
-}
-
-void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
-	DrawStringAt(x, y, text, paint, colored, right_to_left, false);
-}
-
-void DiskFont::DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
-	DrawStringAtA(x, y, text, paint, colored, right_to_left, false);
-}
-
-void DiskFont::DrawStringAtA(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
-	Serial.printf("DrawStringAt: String is %s\n", text.c_str());
-
-	if (!available) {
-		Serial.printf("Diskfont is not available.\n");
-		return;
-	}
+	//if (!available) {
+	//	Serial.printf("Diskfont is not available.\n");
+	//	return;
+	//}
 	
 	int charIndex = 0;
 	int len = text.length(); // Utf8CharCount(text); //text.length();
@@ -739,7 +712,7 @@ void DiskFont::DrawStringAtA(int x, int y, String text, Paint* paint, int colore
 
 
 double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width) {
-	Serial.printf("ch = %s\t", utf8fromCodepoint(codepoint).c_str());
+	//Serial.printf("ch = %s\t", utf8fromCodepoint(codepoint).c_str());
 	
 	// if using fixed (integer) pixel width space character, and character is a space
 	//byte bidi_info = getBidiDirection(codepoint);
@@ -861,7 +834,7 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 		int codepoint = codepointUtf8(ch);
 		bresult = getCharInfo(codepoint, &blockToCheckFirst, &fci);
 
-		//if (!bresult) Serial.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());
+		if (!bresult) Serial.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());
 		
 		if (bresult){
 			uint16_t char_width = 0;
@@ -883,36 +856,13 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 
 int DiskFont::GetTextWidth(const char* text) {
 	return GetTextWidth(String(text));
-/*    const char* p_text = text;
-    unsigned int counter = 0;
-    int refcolumn = 0;
-	int charIndex;
-
-	uint16_t blockToCheckFirst = 0;
-	
-    while (*p_text != 0) {
-		if (*p_text == 32) {
-			refcolumn += _FontHeader.spacecharwidth;
-		} else {
-			DiskFont_FontCharInfo fci;			
-			if (getCharInfo((int)*p_text, &blockToCheckFirst, &fci)) {
-				refcolumn += fci.widthbits + 1;
-			}
-			else {
-				refcolumn += 0;
-			}
-		}
-
-        p_text++;
-        counter++;
-    }
-	return refcolumn;
-*/
 }
+
 
 double DiskFont::GetTextWidthA(const char* text) {
 	return GetTextWidth(String(text));
 }
+
 
 double DiskFont::GetTextWidthA(String text) {
 	int width = 0;
@@ -922,68 +872,54 @@ double DiskFont::GetTextWidthA(String text) {
 	return advwidth;	
 }
 
+
 int DiskFont::GetTextWidth(String text) {
 	int width = 0;
 	double advwidth = 0.0;
 	
 	GetTextWidth(text, width, advwidth);
 	return width;
-/*	
-	
-	//I2CSerial.printf("len:");
-
-	int charIndex = 0;
-	int i = 0;
-	int len = text.length();
-    int refcolumn = 0;
-	String ch;
-
-	uint16_t blockToCheckFirst = 0;
-
-	bool bresult = false;
-	DiskFont_FontCharInfo fci;
-	
-	while (i < len) {
-		ch = utf8CharAt(text, i);
-		if (ch == " ") {
-			refcolumn += _FontHeader.spacecharwidth;
-		} 
-		else {
-			//charIndex = (int)(codepointUtf8(ch) - font->startChar);
-			//refcolumn += (int)(pgm_read_byte(&(font->charInfo[charIndex].widthBits))) + 1;
-			
-			//I2CSerial.printf(">cp=%x, len(ch)=%d\n", codepointUtf8(ch), ch.length());
-			bresult = getCharInfo(codepointUtf8(ch), &blockToCheckFirst, &fci);
-			
-			//I2CSerial.printf(bresult ? "getCharInfo returned true\n" : "getCharInfo returned false\n");
-			
-			if (bresult) {
-				refcolumn += fci.widthbits + 1;
-			}
-			else {
-				refcolumn += 0;
-			}
-		}
-
-		i += ch.length();
-	}
-	
-	//I2CSerial.printf("refcolumn=%d\n", refcolumn);
-	return refcolumn;		
-*/
 }
 
+
 bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* fci) {
-	Serial.printf("@");
-	
 	uint16_t blockToCheckFirst = 0;
 	
 	return getCharInfo(codepointUtf8(ch), &blockToCheckFirst, fci);
 }
 
+
 bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci) {
 	if (!available) {
-		Serial.printf("getCharInfo() diskfont _file is not available\n");
+		// will use rom font if diskfont is not available
+		//Serial.printf("getCharInfo() diskfont _file is not available\n");
+		const FONT_CHAR_INFO* f = getCharInfo(codepoint, blockToCheckFirst, romfont);
+
+		if (f != NULL) {	
+			fci->widthbits = (uint16_t)pgm_read_byte(&(f->widthBits));
+			fci->heightbits = (uint16_t)pgm_read_byte(&(f->heightBits));
+			fci->bitmapfileoffset = pgm_read_dword(&(f->offset));
+
+
+			uint32_t* ptr = (uint32_t*)&(f->advanceWidth); // need to get a double out of flash, but there is no 'pgm_read_double'
+
+			uint32_t double_h = pgm_read_dword(ptr);
+			ptr+=1;
+			uint32_t double_l = pgm_read_dword(ptr);
+		  
+			uint32_t p[2] = {double_h, double_l};
+			  
+			double d = *(double*)p;
+	  
+			fci->advanceWidth = d;
+
+			fci->advanceHeight = 0; // not used in rom font
+
+			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			
+			return true;
+		}
+		
 		return false;
 	}
 		
@@ -1001,6 +937,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	
 			bresult = readFontCharInfoEntry(fci);
 			//I2CSerial.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
+			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			return bresult;
 		}
 		else {
@@ -1030,6 +967,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			//I2CSerial.printf("@ foffset=%x\n", foffset);			
 
 			bresult = readFontCharInfoEntry(fci);
+			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			//I2CSerial.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
 			return bresult;
 		}
@@ -1056,4 +994,42 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
 	//I2CSerial.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	
 	return bresult;
+}
+
+const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font) {
+	if (font->charInfo != NULL) {
+		return &font->charInfo[codepoint - font->startChar];
+	} 
+	else {
+		if (font->blockCount > 0 && font->fontcharinfoBlockLookup != NULL) {
+			if (*blockToCheckFirst < font->blockCount) {
+				if ((font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar <= codepoint) && (font->fontcharinfoBlockLookup[*blockToCheckFirst].endChar >= codepoint)) {
+					//Serial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
+					return &font->fontcharinfoBlockLookup[*blockToCheckFirst].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar];
+				}
+				else {
+					uint16_t blockIndex = 0;
+					bool bFound = false;
+					
+					while (!bFound && blockIndex < font->blockCount) {
+						if ((font->fontcharinfoBlockLookup[blockIndex].startChar <= codepoint) && (font->fontcharinfoBlockLookup[blockIndex].endChar >= codepoint)) {
+							bFound = true;
+						} else {
+							blockIndex++;
+						}
+					}
+					
+					if (!bFound) return NULL;
+					
+					*blockToCheckFirst = blockIndex;
+					
+					//Serial.printf("BlockIndex = %d\n", blockIndex);
+					
+					return &font->fontcharinfoBlockLookup[blockIndex].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[blockIndex].startChar];
+				}
+			}
+		}
+	}
+	
+	return NULL;
 }

@@ -11,8 +11,8 @@ extern const int PANEL_SIZE_Y = 176;
 
 //ESP8266---
 #include "ESP8266WiFi.h"
-#define FS_NO_GLOBALS
-#include "FS.h"
+//#define FS_NO_GLOBALS
+//#include "FS.h"
 
 //----------
 #include <pins_arduino.h>
@@ -29,7 +29,7 @@ extern const int PANEL_SIZE_Y = 176;
 #include <SPI.h>
 #include <epd2in7b.h>
 #include <epdpaint.h>
-#include <calibri10pt.h>
+//#include <calibri10pt.h>
 #include <edb.h>
 #include <pgmspace.h>
 #include <Network.h>
@@ -645,7 +645,7 @@ bool display_calendar(String date, Calendar* c, String refs) {
     I2CSerial.printf("Using internal font\n");    
   }
   
-  FONT_INFO* font = &calibri_10pt;
+  //FONT_INFO* font = &calibri_10pt;
   
   //FONT_INFO* font_bold = &calibri_8ptBold;
   Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
@@ -664,21 +664,21 @@ bool display_calendar(String date, Calendar* c, String refs) {
 //  //refs="1 Chr 29:9-10bc";              //debugging
 //  refs="John 3:16"; // debugging
 //  refs="2 John 1:1"; // debugging
-  if (!display_verses(c, refs, &paint, &paint_red, font, &diskfont)) {
+  if (!display_verses(c, refs, &paint, &paint_red, &diskfont)) {
     I2CSerial.printf("display_verses returned false\n");
     return false;
   }
 
   if (c->day.is_sanctorale) {
-    display_day(c->day.sanctorale, &paint, &paint_red, font, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
+    display_day(c->day.sanctorale, &paint, &paint_red, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
     if (c->day.sanctorale == c->day.day) {                                     // otherwise the liturgical day is shown at the top of the screen.
       //display_date(date, "", &paint, font, &diskfont);                       // If it is a feast day, the liturgical day is displayed at the bottom left. Otherwise the bottom left
     } else {                                                                   // is left blank.
-      display_date(date, c->day.day, &paint, font, &diskfont); // "day" in struct day is the liturgical day
+      display_date(date, c->day.day, &paint, &diskfont); // "day" in struct day is the liturgical day
     }
   } else {
-    display_day(c->day.day, &paint, &paint_red, font, &diskfont, bRed);    
-    display_date(date, "", &paint, font, &diskfont);
+    display_day(c->day.day, &paint, &paint_red, &diskfont, bRed);    
+    display_date(date, "", &paint, &diskfont);
   }
 
 //  I2CSerial.println("Displaying verses");
@@ -703,11 +703,11 @@ bool display_calendar(String date, Calendar* c, String refs) {
   return true;
 }
 
-void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont, bool bRed) {
+void display_day(String d, Paint* paint, Paint* paint_red, DiskFont* diskfont, bool bRed) {
   I2CSerial.println("display_day() d=" + d);
   
-  if (diskfont->available) {
-    int text_xpos = (paint->GetHeight() / 2) - ((diskfont->GetTextWidth(d))/2);
+//  if (diskfont->available) {
+    int text_xpos = (paint->GetHeight() / 2) - (int)((diskfont->GetTextWidthA(d))/2);
   
     if (bRed) {
       diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED, false);
@@ -718,45 +718,45 @@ void display_day(String d, Paint* paint, Paint* paint_red, FONT_INFO* font, Disk
     int charheight = diskfont->_FontHeader.charheight;
     
     paint->DrawLine(0, charheight, 264, charheight, COLORED);
-  }
-  else {
-    //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-    //paint.SetRotate(ROTATE_90);
-  
-    int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
-  
-    if (bRed) {
-      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
-    } else {
-      paint->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
-    }
-    paint->DrawLine(0, 15, 264, 15, COLORED);
-    //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
-  }
+//  }
+//  else {
+//    //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+//    //paint.SetRotate(ROTATE_90);
+//  
+//    int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
+//  
+//    if (bRed) {
+//      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
+//    } else {
+//      paint->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
+//    }
+//    paint->DrawLine(0, 15, 264, 15, COLORED);
+//    //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
+//  }
 }
 
-void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFont* diskfont) {
+void display_date(String date, String day, Paint* paint, DiskFont* diskfont) {
   I2CSerial.println("\ndisplay_date: s=" + date);
 
-  if (diskfont->available) {
-    int text_xpos = PANEL_SIZE_X - (diskfont->GetTextWidth(date)); // right justified
+//  if (diskfont->available) {
+    int text_xpos = PANEL_SIZE_X - (int)(diskfont->GetTextWidthA(date)); // right justified
    
     diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED, false);
     diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED, false);
-  }
-  else {
-    //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-    //paint.SetRotate(ROTATE_90);
-  
-    int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
-   
-    //paint.Clear(UNCOLORED);
-    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED, false);
-    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED, false);
-    
-    //paint.DrawLine(0, 15, 264, 15, COLORED);
-    //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
-  }
+//  }
+//  else {
+//    //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
+//    //paint.SetRotate(ROTATE_90);
+//  
+//    int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
+//   
+//    //paint.Clear(UNCOLORED);
+//    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED, false);
+//    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED, false);
+//    
+//    //paint.DrawLine(0, 15, 264, 15, COLORED);
+//    //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+//  }
 }
 
 #define FORMAT_EMPHASIS_ON String("on")
@@ -764,14 +764,14 @@ void display_date(String date, String day, Paint* paint, FONT_INFO* font, DiskFo
 #define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
 #define FORMAT_LINEBREAK String("br")
 
-bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, FONT_INFO* font, DiskFont* diskfont) {
+bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, DiskFont* diskfont) {
   bool right_to_left = c->_I18n->configparams.right_to_left;
 
   I2CSerial.printf("refs from lectionary: [%s]\n", refs.c_str());
   
   Bible b(c->_I18n);
   if (!b.get(refs)) {
-    I2CSerial.printf("Couldn't get refs (Apocrypha?)\n");
+    I2CSerial.printf("Couldn't get refs (no Apocrypha?)\n");
     return false;
   }
     
@@ -785,11 +785,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   bool bEndOfScreen = false;
 
   int xpos = 0;
-  int ypos = font->heightPages;
-
-  if (diskfont->available) {
-    ypos = diskfont->_FontHeader.charheight;
-  }
+  int ypos = diskfont->_FontHeader.charheight;
 
   String line_above = "";
   bool bDisplayRefs = true;
@@ -860,7 +856,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
           //bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &bEmphasis_On, right_to_left); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, diskfont, &bEmphasis_On, right_to_left); // returns false if at end of screen
           I2CSerial.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           I2CSerial.printf("\n");
           v++;
@@ -880,7 +876,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   return true;
 }
 
-bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, bool* bEmphasis_On, bool right_to_left) {
+bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, DiskFont* diskfont, bool* bEmphasis_On, bool right_to_left) {
   I2CSerial.println("epd_verse() verse=" + verse);
 
   int fbwidth = PANEL_SIZE_X;
@@ -888,319 +884,18 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   
   Bidi bidi;
 
-  if (diskfont->available) {
+//  if (diskfont->available) {
     fbheight = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
     return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left);    
-  }
-  else {
-    fbheight = PANEL_SIZE_Y - font->heightPages;
-    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, font,     bEmphasis_On, fbwidth, fbheight, right_to_left);
-  }
+//  }
+//  else {
+//    fbheight = PANEL_SIZE_Y - font->heightPages;
+//    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, font,     bEmphasis_On, fbwidth, fbheight, right_to_left);
+//  }
 
   return true;
 }
 
-/*
-bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, FONT_INFO* font, DiskFont* diskfont, String* format_state, bool right_to_left) {
-  I2CSerial.println("epd_verse() verse=" + verse);
-
-//  right_to_left = false;
-
-  String word_part = "";
-  String strOverflow = " . . .";
-  bool bEOL = false;
-  int width = 0;
-
-  String ch = "";
-  
-  int ellipsiswidth = 0;
-  int line_height = font->heightPages;
-
-  if (diskfont->available) {
-    line_height = diskfont->_FontHeader.charheight;
-    ellipsiswidth = diskfont->GetTextWidth(strOverflow);
-  }
-  else {
-    ellipsiswidth = paint_black->GetTextWidth(strOverflow, font);    
-  }
-  
-  if (*ypos >= (PANEL_SIZE_Y - line_height)) return true;
-
-  // Defaults to FORMAT_DEFAULT
-  bool b_emphasis_on = false; // <i> or <b> italic/bold enclosing tags in the text will cause text to be output in red
-  bool b_linebreak = false; // will be set by hyphenate_word if it encounters a <br> tag
-
-  if (*format_state == FORMAT_EMPHASIS_ON) {
-    b_emphasis_on = true;
-  }
-  else if (*format_state == FORMAT_EMPHASIS_OFF) {
-    b_emphasis_on = false;
-  }
-  else if (*format_state == FORMAT_LINEBREAK) {
-    b_linebreak = true;
-  }
-
-  int i = 0;
-  bool bRtl = false;
-  bool bEndOfRtlPart = false;
-  bool bReversed_bidi = false;
-  
-  DiskFont_FontCharInfo fci;
-  String rtlreversedpart = "";
-  bool found_word = false;
-  String rtlword = "";
-  int rtlwordwidthpx = 0;
-  int rtlstringwidthpx = 0;
-  int lastrtlstringwidthpx = 0;
-  int rtlreversedwidthpx = 0;
-  int rtlreversedpospx = 0;
-  int rtlxposoffsetpx = 0;
-  bool bBeginRtlBlock = false;
-  
-  while(verse.length() > 0) {    
-    I2CSerial.printf(".");
-    if (rtlreversedpart.length() == 0) {
-      I2CSerial.printf("+");
-            
-      int charwidthpx = 0;
-      
-      ch = utf8CharAt(verse, 0);      
-      if (diskfont->available) {
-        if (ch != " ") {
-          diskfont->getCharInfo(ch, &fci);
-          bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
-          //charwidthpx = fci.widthbits + 1;
-        } // otherwise, leave bRtl as it was (from last iteration). Space char inherits rtl/ltr property from characters around it.
-        else {
-          //charwidthpx = diskfont->_FontHeader.spacecharwidth;
-        }
-      }
-      else {
-        bRtl = false; //placeholder - will use method from epdpaint Paint object.
-      }
-      
-      if (bRtl)
-      {
-        if (!bBeginRtlBlock) {
-          rtlxposoffsetpx = *xpos;
-          bBeginRtlBlock = true;
-        } else {
-          bBeginRtlBlock = false;
-        }
-        
-        I2CSerial.printf("verse=[%s]\n", verse.c_str());
-        int stringpos = 0;
-        //int last_stringpos = 0;
-        String rtlpart = "";
-        String lastrtlpart = "";
-                
-        do {
-          // scan whole rtlword
-          //if (found_word) {
-          //  I2CSerial.printf("overflow word = [%s]\n", rtlword.c_str());
-          //  rtlstringwidthpx = 0;
-          //  lastrtlstringwidthpx = 0;
-          //  rtlpart = "";
-          //  lastrtlpart = "";
-          //}
-          
-          rtlword = "";
-          rtlwordwidthpx = 0;
-          
-          while (bRtl && !found_word && stringpos < verse.length() && ch.length() != 0) {   // scan rtl word into variable rtlword. On entry, ch and fci have already been set to the first rtl character data
-            I2CSerial.printf("%d %s", stringpos, ch.c_str());
-
-            ch = utf8CharAt(verse, stringpos);
-            
-            //rtlword = rtlword + ch;
-            //rtlwordwidthpx += charwidthpx;
-            //stringpos += ch.length();            
-         
-            //I2CSerial.printf("verse = [%s]\n", verse.c_str());
-  
-            //ch = utf8CharAt(verse, stringpos);
-
-            if (diskfont->available) { //
-              I2CSerial.printf("<"); 
-              diskfont->getCharInfo(ch, &fci);
-
-              if (ch != " ") {
-                charwidthpx = fci.widthbits + 1;
-                bRtl = (((!right_to_left) && (fci.rtlflag > 0)) || ((right_to_left) && (fci.rtlflag == 0)));
-              } // otherwise, inherit the rtl state of the space from the last character
-              else {
-                //rtlwordwidthpx += charwidthpx; // add trailing character (should be a space), since the last character read is appended at the beginning of the while loop above
-                //rtlword = ch + rtlword;        // so it won't get done on the last character, when it drops out.
-                ////stringpos+= ch.length();
-                charwidthpx = diskfont->_FontHeader.spacecharwidth;
-                //rtlwordwidthpx += charwidthpx;
-                //rtlword = rtlword + ch;
-                found_word = true;
-              }
-
-              if (bRtl) {
-                rtlword = rtlword + ch;
-                rtlwordwidthpx += charwidthpx;
-                stringpos += ch.length();
-              }
-              
-              //if (!bRtl) bBeginRtlBlock = false;
-              
-              I2CSerial.printf(">"); 
-            }
-            else {
-              //if using internal font
-            }
-          }
-
-          I2CSerial.printf("verselen=%d, stringpos=%d\n", verse.length(), stringpos);
-                    
-          I2CSerial.printf("rtlword=[%s]\n", rtlword.c_str());
-
-          lastrtlpart = rtlpart;
-          lastrtlstringwidthpx = rtlstringwidthpx;
-          
-          rtlpart = rtlpart + rtlword;
-          rtlstringwidthpx += rtlwordwidthpx;
-
-          //if ((rtlstringwidthpx + *xpos) <= PANEL_SIZE_X) {
-          //  rtlword = ""; // if the word hasn't overflowed the line, then clear it. If it has (will drop out of while loop), save the word found for the next iteration
-          //  rtlwordwidthpx = 0;
-            found_word = false;              // reset found word flag
-          //}
-
- 
-          I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
-          I2CSerial.printf("rtlpart=[%s]\n", rtlpart.c_str());
-          I2CSerial.printf("bRtl=[%s], rtlwordwidthpx=[%d], rtlstringwidthpx=[%d], lastrtlstringwidthpx=[%d], stringpos=[%d], verse.length=[%d], *xpos=[%d]\n,", bRtl ? "true":"false", rtlwordwidthpx, rtlstringwidthpx, lastrtlstringwidthpx, stringpos, verse.length(), *xpos);
- 
-          I2CSerial.printf("%"); 
-
-        } while ((bRtl) && ((lastrtlstringwidthpx + rtlwordwidthpx + *xpos) <= PANEL_SIZE_X) && (stringpos < verse.length()));
-
-        if (*xpos + rtlstringwidthpx > PANEL_SIZE_X) {
-          lastrtlpart = rtlpart; // occurs at start of newline when embedded reversed reading text overflows a line
-          lastrtlstringwidthpx = rtlstringwidthpx;
-          rtlxposoffsetpx = 0;
-        }
-
-        rtlreversedpart = lastrtlpart;
-        rtlreversedwidthpx = lastrtlstringwidthpx;
-        rtlreversedpospx = rtlreversedwidthpx;
-        
-        verse = verse.substring(rtlreversedpart.length());
-
-        I2CSerial.printf("lastrtlpart.length()=%d\n", lastrtlpart.length());
-        I2CSerial.printf("lastrtlpart=[%s]\n", lastrtlpart.c_str());
-
-        I2CSerial.printf("rtlreversedpart.length()=%d\n", rtlreversedpart.length());
-        I2CSerial.printf("rtlreversedpart=[%s]\n", rtlreversedpart.c_str());
-
-        rtlstringwidthpx = 0;
-        lastrtlstringwidthpx = 0;
-        rtlpart = "";
-        lastrtlpart = "";
-      }
-    }
-    
-    if (rtlreversedpart.length() > 0) {
-      bReversed_bidi = true;
-      
-      I2CSerial.printf("(");
-      bEndOfRtlPart = hyphenate_word(&rtlreversedpart, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
-                                                                                         // "off" when a closing </i> or </b> tag is found, or "" otherwise.
-                                                                                         // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
-                                                                                         // paint_black or paint_red could be used for this, since it is a nonprinting call.    
-      
-      I2CSerial.printf(")");
-    } 
-    else {
-      bReversed_bidi = false;
-      bBeginRtlBlock = false;
-      
-      I2CSerial.printf("[");
-      bEOL = hyphenate_word(&verse, &word_part, &width, font, diskfont, paint_black, format_state); // emphasis_state will be set to "on" by hyphenate_word when an opening <i> or <b> tag is found, and 
-                                                                                         // "off" when a closing </i> or </b> tag is found, or "" otherwise.
-                                                                                         // paint_black is used by hyphenate_word for getting the width of the text to be printed, so either
-                                                                                         // paint_black or paint_red could be used for this, since it is a nonprinting call.    
-      I2CSerial.printf("]");
-    }
-    
-    if (*format_state == FORMAT_EMPHASIS_ON) {
-      b_emphasis_on = true;
-    }
-    else if (*format_state == FORMAT_EMPHASIS_OFF) {
-      b_emphasis_on = false;
-    }
-    else if (*format_state == FORMAT_LINEBREAK) {
-      b_linebreak = true;
-    }
-
-    // if display_verses() called this function with format_state set to something other than FORMAT_DEFAULT (e.g. for printing the Bible reference at the top of the reading), then this 
-    // selection will be left unchanged and will be acted upon, unless it is cancelled by tags in the verse text parsed by the call to hyphenate_word() (mostly it will not be). This should 
-    // allow emphasised text to continue over more than one call to this function from display_verses().
-
-    if (((*ypos + (line_height * 2)) >= (PANEL_SIZE_Y - line_height)) && (*xpos + width >= PANEL_SIZE_X - ellipsiswidth) && (verse.length() > 0)) {
-      //if true, the present line of text is the last to be displayed on the screen (at the bottom right), and there is more text to display
-      //some text left that won't fit on the screen - display ellipsis
-      //line_height * 2 because want to consider if the *bottom* of the *next* line will overflow into the calendar area (the bottom line)
-
-      word_part = strOverflow;
-    }
-    else {
-      if (*xpos + width > PANEL_SIZE_X || b_linebreak == true) {            
-        *xpos = 0;      
-        (*ypos)+= line_height;      
-        
-        if (*ypos + line_height >= (PANEL_SIZE_Y - line_height)) return true; // + line_height because want to know if the *bottom* of the character overflows the calendar line (bottom line)
-        
-        b_linebreak = false; // reset linebreak flag
-      }
-    }
-        
-    wdt_reset();
-
-    I2CSerial.printf("rtlxposoffsetpx = [%d], rtlreversedwidthpx = [%d], rtlreversedpospx = [%d], width = [%d], *xpos = [%d]\n", rtlxposoffsetpx, rtlreversedwidthpx, rtlreversedpospx, width, *xpos);
-
-    //if (!bReversed_bidi) rtlxposoffsetpx = *xpos + width;
-*/    
-//    bool bDrawingDirection = false; //right_to_left ? !bReversed_bidi : bReversed_bidi; // true->drawing direction is rtl (embedded rtl text in ltr document), and vice versa
-//    int xpos_bidi = bReversed_bidi ? /* *xpos*/ rtlxposoffsetpx + rtlreversedpospx - width/*rtlxposoffsetpx + rtlreversedwidthpx - width*/: *xpos;
-/*    if (width != 0) { // width will be 0 when a tag <i>, </i>, <b>, </b> or <br> has been encountered (which are non-printing) so no need to call paint in these cases          
-      if (diskfont->available) {
-        if (!b_emphasis_on) {
-          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_black, COLORED, right_to_left, bReversed_bidi);
-        }
-        else {
-          diskfont->DrawStringAt(xpos_bidi, *ypos, word_part, paint_red, COLORED, right_to_left, bReversed_bidi);          
-        }
-      }
-      else {
-        if (!b_emphasis_on) {
-          paint_black->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, right_to_left);
-        }
-        else {
-          paint_red->DrawStringAt(xpos_bidi, *ypos, word_part, font, COLORED, right_to_left);
-        }
-      }
-      
-      if (bReversed_bidi) {
-        rtlreversedpospx -= width;
-      }
-      else {
-        (*xpos) += width;
-      }
-
-      if (rtlreversedpospx == 0) {
-        //(*xpos) += rtlreversedwidthpx;
-      }
-      wdt_reset();
-    }
-  }
-  
-  return false;
-}
-*/
 
 String utf8CharAt(String s, int pos) { 
   //I2CSerial.println("String=" + s);
@@ -1223,32 +918,6 @@ String utf8CharAt(String s, int pos) {
   }
 }
 
-/*
-int charLenBytesUTF8(char s) {
-  byte ch = (byte) s;
-  //I2CSerial.println(String(ch)+ ";");
-
-  byte b;
- 
-  b = (ch & 0xE0);  // 2-byte utf-8 characters start with 110xxxxx
-  if (b == 0xC0) return 2;
-
-  b = (ch & 0xF0);  // 3-byte utf-8 characters start with 1110xxxx
-  if (b == 0xE0) return 3;
-
-  b = (ch & 0xF8);  // 4-byte utf-8 characters start with 11110xxx
-  if (b == 0xF0) return 4;
-
-  b = (ch & 0xC0);  // bytes within multibyte utf-8 characters are 10xxxxxx
-  if (b == 0x80) return 0; //somewhere in a multi-byte utf-8 character, so don't know the length. Return 0 so the scanner can keep looking
-
-  return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
-}
-
-int lines(String s) {
-  
-}
-*/
 
 String get_verse(String verse_record, String* book_name, String sentence_range, int numRecords) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
   I2CSerial.printf("get_verse() %s", verse_record.c_str());
@@ -1372,12 +1041,12 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   String w_str_last;
   int hyphen_width;
   
-  if (diskfont->available) {
-    hyphen_width = diskfont->GetTextWidth("-");
-  }
-  else {
-    hyphen_width = paint->GetTextWidth("-", font);
-  }
+//  if (diskfont->available) {
+    hyphen_width = (int)diskfont->GetTextWidthA("-");
+//  }
+//  else {
+//    hyphen_width = paint->GetTextWidth("-", font);
+//  }
   
   int len = w->length();
   String hyphen = "-";
@@ -1425,12 +1094,12 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
     }
 
     bool bTextWidthGtThanPanelWidth = false;
-    if (diskfont->available) {
-      bTextWidthGtThanPanelWidth = (diskfont->GetTextWidth(w_str) > (PANEL_SIZE_X - hyphen_width));
-    }
-    else {
-      bTextWidthGtThanPanelWidth = (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width));
-    }
+//    if (diskfont->available) {
+      bTextWidthGtThanPanelWidth = (int)((diskfont->GetTextWidthA(w_str)) > (PANEL_SIZE_X - hyphen_width));
+//    }
+//    else {
+//     bTextWidthGtThanPanelWidth = (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width));
+//    }
         
     if (bTextWidthGtThanPanelWidth) {
       bEOL = true;
@@ -1454,13 +1123,13 @@ bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font,
   *w = w->substring(w_str_last.length());
   *word_part = (w_str_last + hyphen);
   
-  if (diskfont->available) {
-    *x_width = diskfont->GetTextWidth(*word_part);
+//  if (diskfont->available) {
+    *x_width = (int)(diskfont->GetTextWidthA(*word_part));
     I2CSerial.printf("*x_width: %d\n", *x_width);
-  }
-  else {
-    *x_width = paint->GetTextWidth(*word_part, font);  
-  }
+//  }
+//  else {
+//    *x_width = paint->GetTextWidth(*word_part, font);  
+//  }
   
   return bEOL;
 }
