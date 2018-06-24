@@ -84,6 +84,7 @@ void SetUtf8CharByIndex(String& s, int index, String ch);
 String GetUtf8CharByIndex(String s, unsigned int index);
 int Utf8CharCount(String s);
 String Utf8substring(String s, unsigned int startutf8charindex, unsigned int endutf8charindex);
+String DeleteUtf8CharByIndex(String s, unsigned int i);
 String Utf8ReverseString(String instr);
 bool IsRightToLeftChar(uint32_t c);
 bool IsRightToLeftChar(String ch);

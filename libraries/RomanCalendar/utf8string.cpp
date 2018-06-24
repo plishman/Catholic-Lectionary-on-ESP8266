@@ -201,6 +201,26 @@ String Utf8substring(String s, unsigned int startutf8charindex, unsigned int end
 	return s.substring(startstrpos, endstrpos + charLenBytesUTF8(s.charAt(endstrpos)));
 }
 
+String DeleteUtf8CharByIndex(String s, unsigned int i) {
+	String res = "";
+	unsigned int pos = 0;
+	String ch = "";
+	unsigned int charIndex = 0;
+	
+	while (pos < s.length()) {
+		ch = utf8CharAt(pos);
+		if (charIndex != i) {
+			res += ch;
+		}
+		
+		pos += ch.length();
+		charIndex++;
+	}
+	
+	return res;
+}
+
+
 String Utf8ReverseString(String instr) {
 	String outstr = "";
 	String ch = "";
