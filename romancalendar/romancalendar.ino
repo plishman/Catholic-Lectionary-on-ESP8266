@@ -1,3 +1,5 @@
+#define DISPLAY_SPI_3WIRE
+
 //#include <LiquidCrystal.h>
 
 // Catholic Lectionary on ESP
@@ -52,8 +54,13 @@ extern "C" {
 #define SLEEP_HOUR 60*60e6
 
 I2CSerialPort I2CSerial;
+ 
+#ifdef DISPLAY_SPI_3WIRE
+Epd epd(SPI_3WIRE);
+#else
+Epd epd();
+#endif
 
-Epd epd;
 //DiskFont diskfont;
 
 unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];

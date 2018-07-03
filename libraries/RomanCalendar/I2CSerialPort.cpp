@@ -19,6 +19,8 @@ I2CSerialPort::~I2CSerialPort() {
 }
 
 void I2CSerialPort::begin(uint8_t sda, uint8_t scl, uint8_t address) {
+//	if (!_b_enable) return;
+	
 	_sda = sda;
 	_scl = scl;
 	_sp_address = address;
@@ -41,7 +43,10 @@ void I2CSerialPort::begin(uint8_t sda, uint8_t scl, uint8_t address) {
 }
 
 size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your class*/
-	if (!_b_enable) return 0;
+	if (!_b_enable) {
+		//return Serial.write(character);
+		return 0;
+	}
 	
 	uint8_t	bcode = 0;
 	uint8_t buffer[1];
@@ -64,7 +69,10 @@ size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your 
 }
 
 size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
-	if (!_b_enable) return 0;
+	if (!_b_enable) {
+		//return Serial.write(str);
+		return 0;
+	}
 
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;
@@ -86,7 +94,10 @@ size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
 }
 
 size_t I2CSerialPort::write(uint8_t *buffer, size_t size) { /*blahblah is the name of your class*/
-	if (!_b_enable) return 0;
+	if (!_b_enable) {
+		//return Serial.write(buffer, size);
+		return 0;
+	}
 
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;

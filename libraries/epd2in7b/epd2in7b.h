@@ -72,6 +72,11 @@
 #define ACTIVE_PROGRAM                              0xA1
 #define READ_OTP_DATA                               0xA2
 
+enum BUS_SELECT {
+	SPI_4WIRE = 0,
+	SPI_3WIRE = 1,
+};
+
 extern const unsigned char lut_vcom_dc[];
 extern const unsigned char lut_ww[];
 extern const unsigned char lut_bw[];
@@ -82,8 +87,11 @@ class Epd : EpdIf {
 public:
     unsigned int width;
     unsigned int height;
+	
+	BUS_SELECT bs = SPI_4WIRE;
 
     Epd();
+    Epd(BUS_SELECT bs);
     ~Epd();
     int  Init(void);
     void SendCommand(unsigned char command);

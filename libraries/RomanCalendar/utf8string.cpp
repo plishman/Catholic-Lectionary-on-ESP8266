@@ -208,7 +208,7 @@ String DeleteUtf8CharByIndex(String s, unsigned int i) {
 	unsigned int charIndex = 0;
 	
 	while (pos < s.length()) {
-		ch = utf8CharAt(pos);
+		ch = utf8CharAt(s, pos);
 		if (charIndex != i) {
 			res += ch;
 		}

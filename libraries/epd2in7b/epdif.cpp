@@ -60,10 +60,16 @@ void EpdIf::SpiTransfer(unsigned char data) {
     digitalWrite(CS_PIN, HIGH);
 }
 
-int EpdIf::IfInit(void) {
+void EpdIf::SpiTransfer(unsigned char data, bool isCommand) {
+    digitalWrite(CS_PIN, LOW);
+	SPI.transfer_9bit(data, isCommand ? 0 : 1);
+    digitalWrite(CS_PIN, HIGH);
+}
+
+int EpdIf::IfInit(bool b3Wire) {
     pinMode(CS_PIN, OUTPUT);
     pinMode(RST_PIN, OUTPUT);
-    pinMode(DC_PIN, OUTPUT);
+	if (!b3Wire) pinMode(DC_PIN, OUTPUT);
     pinMode(BUSY_PIN, INPUT); 
     SPI.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE0));
     SPI.begin();

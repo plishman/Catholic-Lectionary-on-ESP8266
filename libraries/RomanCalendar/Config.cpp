@@ -382,10 +382,15 @@ bool Config::getDS3231DateTime(time64_t* t) {
   
   I2CSerial.printf("DS3231 Datetime = %d/%d/%d %d:%d:%d\n", date, month, year, hour, minute, second);
 
-  //I2CSerial.printf("-1-");
+  I2CSerial.printf("-1-");
+  
+  int century = 0;
+  
   config_t c;
-  GetConfig(&c);
-  //I2CSerial.printf("-2-");
+  if (GetConfig(&c)) {
+	century = c.century;  
+  }
+  I2CSerial.printf("-2-");
   
   tmElements_t tm;
   
@@ -394,7 +399,7 @@ bool Config::getDS3231DateTime(time64_t* t) {
   tm.Hour = hour;
   tm.Day = date;
   tm.Month = month;
-  tm.Year = y2kYearToTm(year + (c.century * 100));
+  tm.Year = y2kYearToTm(year + (century * 100));
 
   //I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
   
@@ -406,7 +411,10 @@ bool Config::getDS3231DateTime(time64_t* t) {
 	b_incorrectleapyear = true;	 												   // So it will incorrectly treat 2100 as a leap year, when it is not (2400 will be)
  }
   
+  I2CSerial.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
+  I2CSerial.printf("-3-");
   *t = makeTime(tm);
+  I2CSerial.printf("-4-");
   
   if (b_incorrectleapyear) {
 	  I2CSerial.printf("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March %d\n", tm.Year);
@@ -463,14 +471,14 @@ bool Config::setDS3231DateTime(time64_t t) {
 
   config_t c;
   
-  GetConfig(&c);
-  c.century = (tmYearToY2k(tm.Year)/100);
-  I2CSerial.printf("setDS3231DateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.century);
+  if (GetConfig(&c)) {
+	c.century = (tmYearToY2k(tm.Year)/100);
+	I2CSerial.printf("setDS3231DateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.century);
   
-  SaveConfig(&c);
-  GetConfig(&c);
-  I2CSerial.printf("setDS3231DateTime() c.century=%d\n", c.century);
-  
+	SaveConfig(&c);
+	GetConfig(&c);
+	I2CSerial.printf("setDS3231DateTime() c.century=%d\n", c.century);
+  }
   return true;
 }
 

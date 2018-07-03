@@ -30,7 +30,18 @@
 Epd::~Epd() {
 };
 
+Epd::Epd(BUS_SELECT bus_select) {
+	bs = bus_select;
+    reset_pin = RST_PIN;
+    dc_pin = DC_PIN;
+    cs_pin = CS_PIN;
+    busy_pin = BUSY_PIN;
+    width = EPD_WIDTH;
+    height = EPD_HEIGHT;
+}
+
 Epd::Epd() {
+	bs = SPI_4WIRE;
     reset_pin = RST_PIN;
     dc_pin = DC_PIN;
     cs_pin = CS_PIN;
@@ -41,7 +52,7 @@ Epd::Epd() {
 
 int Epd::Init(void) {
     /* this calls the peripheral hardware interface, see epdif */
-    if (IfInit() != 0) {
+    if (IfInit(bs == SPI_3WIRE ? true : false) != 0) {
         return -1;
     }
     /* EPD hardware init start */
@@ -70,7 +81,7 @@ int Epd::Init(void) {
     
     // Power optimization
     SendCommand(0xF8);
-    SendData(0x60);
+	SendData(0x60);
     SendData(0xA5);
     
     // Power optimization
@@ -112,16 +123,29 @@ int Epd::Init(void) {
  *  @brief: basic function for sending commands
  */
 void Epd::SendCommand(unsigned char command) {
-    DigitalWrite(dc_pin, LOW);
-    SpiTransfer(command);
+    
+	if (bs == SPI_4WIRE) {
+		DigitalWrite(dc_pin, LOW);
+		SpiTransfer(command);
+	} 
+	else {
+		//DigitalWrite(dc_pin, LOW);
+		SpiTransfer(command, true);		
+	}
 }
 
 /**
  *  @brief: basic function for sending data
  */
 void Epd::SendData(unsigned char data) {
-    DigitalWrite(dc_pin, HIGH);
-    SpiTransfer(data);
+	if (bs == SPI_4WIRE) {
+		DigitalWrite(dc_pin, HIGH);
+		SpiTransfer(data);
+	}
+	else {
+		//DigitalWrite(dc_pin, LOW);
+		SpiTransfer(data, false);
+	}
 }
 
 /**

@@ -48,11 +48,16 @@ const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 Calendar::Calendar(int CS_PIN) {
 	_config = new Config();	
 	config_t c;
-	_config->GetConfig(&c);
+	if (!_config->GetConfig(&c)) {
+		I2CSerial.printf("GetConfig returned false\n");
+		_lectionary_config_number = 0;
+		_timezone_offset = 0;
+	}
+	else {
+		_timezone_offset = c.timezone_offset;
+		_lectionary_config_number = c.lectionary_config_number; // is the line number of the entry in config.csv, specifies the Bible, language and sanctorale files to use
+	}
 	
-	_timezone_offset = c.timezone_offset;
-	_lectionary_config_number = c.lectionary_config_number; // is the line number of the entry in config.csv, specifies the Bible, language and sanctorale files to use
-
 	_CS_PIN = CS_PIN;
 	_I18n = new I18n(_CS_PIN, _lectionary_config_number);
 	
