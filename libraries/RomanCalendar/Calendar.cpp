@@ -86,20 +86,20 @@ Calendar::~Calendar() {
 	if (sanctorale != NULL) delete sanctorale;
 }
 
-bool Calendar::get(time64_t date) {
+bool Calendar::get(time64_t date) { // date passed in will now be local time, so do not need to add/subtract the timezone offset, it is already done (03-07-2018)
 	if (date < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											  // which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
 	
-	int tz_offset = (int) (_timezone_offset * 3600);
+//	int tz_offset = (int) (_timezone_offset * 3600);
 	I2CSerial.println("Timezone offset is " + String(_timezone_offset));
 
-	I2CSerial.print("The UTC datetime is ");
-	temporale->print_date(date);
-	I2CSerial.print(" ");
-	temporale->print_time(date);
-	I2CSerial.println();
+//	I2CSerial.print("The UTC datetime is ");
+//	temporale->print_date(date);
+//	I2CSerial.print(" ");
+//	temporale->print_time(date);
+//	I2CSerial.println();
 	
-	date += tz_offset; // quick and dirty - if bug occurs, need to split the time64_t value into a TMelements_t struct, and perform the arithmetic.
+//	date += tz_offset; // quick and dirty - if bug occurs, need to split the time64_t value into a TMelements_t struct, and perform the arithmetic.
 	
 	I2CSerial.print("The local time is ");
 	temporale->print_date(date);

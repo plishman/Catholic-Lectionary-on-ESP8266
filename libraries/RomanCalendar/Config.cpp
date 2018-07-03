@@ -430,14 +430,17 @@ bool Config::getDS3231DateTime(time64_t* t) {
   return true;
 }
 
-bool Config::getLocalDS3231DateTime(time64_t* t) {
+bool Config::getLocalDS3231DateTime(time64_t* t) { 
   config_t c;
-  GetConfig(&c);
+  if (!GetConfig(&c)) {
+	*t = 0;
+	return false;
+  }
   
   bool bResult = getDS3231DateTime(t);
   
   if (bResult) {
-	  *t = *t + (time64_t)(c.timezone_offset * 3600);
+	  *t += (int)(c.timezone_offset * 3600);
   }
   
   return bResult;

@@ -225,7 +225,7 @@ void loop(void) {
     I2CSerial.println("Getting datetime...");
     //time64_t date = timeserver.local_datetime();
     time64_t date;
-    c._config->getDS3231DateTime(&date);
+    c._config->getLocalDS3231DateTime(&date);
     tmElements_t ts;
     breakTime(date, ts);
   
