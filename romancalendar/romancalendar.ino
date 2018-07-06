@@ -103,9 +103,10 @@ void setup() {
 //    Serial.print(".");
 //  }
 
+  rtcData_t rtcData = {0};
+
   if (battery.power_connected()) {
     if (!network.connect()){
-      //I2CSerial.println("Need to configure Wifi with WPS for time service");
       I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
       I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
       if (!connect_wps()) {
@@ -119,13 +120,27 @@ void setup() {
     }
   }
   else {
-    I2CSerial.println("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/).");
-    //I2CSerial.println("On battery power and no network configured: Sleeping until USB power is attached and network is configured");
-    //display_image(connect_power_image);
-    //while(1) {
-    //  delay(5000);
-    //}
-    //ESP.deepSleep(SLEEP_HOUR); // sleep for an hour, or until power is connected
+    I2CSerial.println("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/).");  
+
+    rst_info *rinfo;
+    rinfo = ESP.getResetInfoPtr();
+    I2CSerial.println(String("ResetInfo.reason = ") + (*rinfo).reason);
+
+    if ((*rinfo).reason == REASON_DEEP_SLEEP_AWAKE) { // only check the hour count to the next reading if we awoke because of the deepsleep timer
+      if (Config::readRtcMemoryData(rtcData)) { // if CRC fails for values, this is probably a cold boot (power up), so will always update the reading in this case
+        if (rtcData.data.wake_hour_counter > 8) { // sanity check - should never be more than 8 hours between readings.
+          rtcData.data.wake_hour_counter = 1; // this will mean that, after being decremented to 0, a reading should be displayed immediately
+        }
+        
+        rtcData.data.wake_hour_counter--;
+        Config::writeRtcMemoryData(rtcData);
+  
+        if (rtcData.data.wake_hour_counter > 0) {
+          I2CSerial.printf("No reading this hour, and on battery, so going back to sleep immediately.\nNumber of hours to next reading is %d\n", rtcData.data.wake_hour_counter);
+          SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
+        }
+      }
+    }
   }
 
   // Check if EEPROM checksum is good
@@ -226,6 +241,10 @@ void loop(void) {
     //time64_t date = timeserver.local_datetime();
     time64_t date;
     c._config->getLocalDS3231DateTime(&date);
+
+    roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
+                     // will round to the hour.
+    
     tmElements_t ts;
     breakTime(date, ts);
   
@@ -277,7 +296,7 @@ void loop(void) {
     
     Lectionary::ReadingsFromEnum r;
     
-    if (getLectionaryReading(date, &r, battery.power_connected(), b_OT, b_NT, b_PS, b_G)) {      
+    if (getLectionaryReading(date, &r, true/*battery.power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
   
       if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
@@ -300,6 +319,28 @@ void loop(void) {
     else {
       I2CSerial.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
     }
+
+    I2CSerial.printf("Calculating next wake time:\n");
+
+    rtcData_t rtcData = {0};
+    //rtcData.data.dcs = dc_normal;        
+    rtcData.data.wake_hour_counter = 1;
+
+    uint8_t Hour = ts.Hour;
+    int i = 1;
+    
+    if (Hour != 23) { // if crossing a day boundary, the season and/or number of readings may change, so will always wake on a day boundary, so make the next wake time default to 1 hour
+      while (!getLectionaryReading(date + (SECS_PER_HOUR * i), &r, false, b_OT, b_NT, b_PS, b_G)) { // check if there will be a reading next hour
+        rtcData.data.wake_hour_counter++;
+        i++;
+        Hour = (Hour + 1 > 23) ? 0 : Hour + 1;
+        if (Hour == 0) break;
+      }
+    }
+
+    I2CSerial.printf("Next reading is in %d hour(s)\n", rtcData.data.wake_hour_counter); 
+
+    Config::writeRtcMemoryData(rtcData);        
   
     I2CSerial.println("*6*\n");
   } // if(bEEPROM_checksum_good)
@@ -383,26 +424,49 @@ void loop(void) {
   }
 }
 
+void roundupdatetohour(time64_t& date) {
+  tmElements_t ts;
+  breakTime(date, ts);
+  I2CSerial.printf("Input date = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+
+  if (ts.Minute >= 53) {
+    date += ((59 - ts.Minute) * 60) + (60 - ts.Second);
+  }
+
+  tmElements_t tso;
+  breakTime(date, tso);
+  I2CSerial.printf("Rounded date = %02d/%02d/%04d %02d:%02d:%02d\n", tso.Day, tso.Month, tmYearToCalendar(tso.Year), tso.Hour, tso.Minute, tso.Second);
+}
+
 void SleepUntilStartOfHour() {
     Config conf;
     time64_t date;
     conf.getDS3231DateTime(&date);
+    
     tmElements_t ts;
     breakTime(date, ts);
 
-    uint32_t sleepduration_minutes = (60 - ts.Minute + 10); // should wake up at around 10 minutes past the hour (the sleep timer is not terribly accurate!)
+    int hourskip = 0;
+
+    uint32_t sleepduration_minutes = (60 - ts.Minute); // should wake up at around 10 minutes past the hour (the sleep timer is not terribly accurate!)
+    if (sleepduration_minutes <= 7) { // if only a few minutes before the top of the hour, round it up to the next hour and skip the hour plus the difference
+      sleepduration_minutes += 60;  // this can occur because the wake timer is inaccurate (+- about 3 minutes per hour). 
+      hourskip = 1; // for the debug output, so that the correct hour is output if the current hour is rounded up
+    }
     
-    I2CSerial.printf("Sleeping %d minutes: Will wake at around 10 minutes past the hour\n", sleepduration_minutes);
+    I2CSerial.printf("Sleeping %d minutes: Will wake at around %02d:00\n", sleepduration_minutes, (ts.Hour + 1 + hourskip > 23) ? 0 : ts.Hour + 1 + hourskip);
     ESP.deepSleep(sleepduration_minutes * 60e6);
     return; // should never return because ESP should be asleep!
 }
 
 
 bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, bool b_OT, bool b_NT, bool b_PS, bool b_G) {
-  I2CSerial.printf("getLectionaryReading() bReturnReadingFromAllHours=%s\n", bReturnReadingForAllHours?"true":"false");
+  I2CSerial.printf("getLectionaryReading() bReturnReadingFromAllHours=%s ", bReturnReadingForAllHours?"true":"false");
   //Lectionary::ReadingsFromEnum r;
   tmElements_t tm;
   breakTime(date, tm);
+
+  I2CSerial.printf("hour=%02d\n", tm.Hour);
 
   bool bHaveLectionaryValue = false;
 

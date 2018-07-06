@@ -137,7 +137,7 @@ bool Config::ServeClient(bool* bSettingsUpdated)
     String tz = getQueryStringParam("timezone", querystring, "0");
     String lect = getQueryStringParam("lectionary", querystring, "0");	
 
-	String debug_mode = getQueryStringParam("debug", querystring, "0");
+	String debug_mode = getQueryStringParam("debug", querystring, "");
 	
     I2CSerial.println("timezone = " + tz);
     I2CSerial.println("lectionary = " + lect);
@@ -509,4 +509,74 @@ bool Config::testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 	}
 	
 	return false;
+}
+
+bool Config::readRtcMemoryData(rtcData_t& rtcData) {
+	  // Read struct from RTC memory
+  if (ESP.rtcUserMemoryRead(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
+    I2CSerial.println("Read: ");
+    //printMemory();
+    //I2CSerial.println("number of hours to next reading: " + String(rtcData.data.wake_hour_counter)); // set to true if the reading should be made this hour (read on waking)
+    //I2CSerial.println("card displayed: " + String(rtcData.data.dcs)); // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
+    
+    I2CSerial.println();
+    uint32_t crcOfData = calculateCRC32((uint8_t*) (uint8_t*)&rtcData.data, sizeof(rtcData.data));
+    I2CSerial.print("CRC32 of data: ");
+    I2CSerial.println(crcOfData, HEX);
+    I2CSerial.print("CRC32 read from RTC: ");
+    I2CSerial.println(rtcData.crc32, HEX);
+    
+	if (crcOfData != rtcData.crc32) {
+      I2CSerial.println("CRC32 in RTC memory doesn't match CRC32 of data. Data is probably invalid!");
+	  return false;
+    } 
+    
+	I2CSerial.println("CRC32 check ok, data is probably valid.");
+	return true;
+  }
+}
+
+void Config::writeRtcMemoryData(rtcData_t& rtcData) {
+	  // Update CRC32 of data
+  rtcData.crc32 = calculateCRC32((uint8_t*) &rtcData.data, sizeof(rtcData.data));
+  // Write struct to RTC memory
+  if (ESP.rtcUserMemoryWrite(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
+    I2CSerial.println("Write: ");
+    printMemory(rtcData);
+	I2CSerial.println();
+  }
+}
+
+uint32_t Config::calculateCRC32(const uint8_t *data, size_t length) {
+  uint32_t crc = 0xffffffff;
+  while (length--) {
+    uint8_t c = *data++;
+    for (uint32_t i = 0x80; i > 0; i >>= 1) {
+      bool bit = crc & 0x80000000;
+      if (c & i) {
+        bit = !bit;
+      }
+      crc <<= 1;
+      if (bit) {
+        crc ^= 0x04c11db7;
+      }
+    }
+  }
+  return crc;
+}
+
+//prints all rtcData, including the leading crc32
+void Config::printMemory(rtcData_t& rtcData) {
+  char buf[3];
+  uint8_t *ptr = (uint8_t *)&rtcData;
+  for (size_t i = 0; i < sizeof(rtcData); i++) {
+    sprintf(buf, "%02X", ptr[i]);
+    I2CSerial.print(buf);
+    if ((i + 1) % 32 == 0) {
+      I2CSerial.println();
+    } else {
+      I2CSerial.print(" ");
+    }
+  }
+  Serial.println();
 }
