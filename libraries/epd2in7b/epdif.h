@@ -46,7 +46,7 @@ public:
     static int  DigitalRead(int pin);
     static void DelayMs(unsigned int delaytime);
     static void SpiTransfer(unsigned char data); // 4 wire SPI
-	static void SpiTransfer(unsigned char data, bool isCommand); // 3 wire SPI 02-July-2018
+	static void SpiTransfer(unsigned char data, bool isCommand); // 3 wire 9-bit SPI 02-July-2018
 };
 
 #endif

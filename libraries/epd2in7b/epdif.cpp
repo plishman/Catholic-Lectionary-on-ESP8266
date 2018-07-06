@@ -33,10 +33,10 @@ EpdIf::EpdIf() {
 	int dc_pin = DC_PIN;
 	int cs_pin = CS_PIN;
 	int busy_pin = BUSY_PIN;
-	Serial.println("RST_PIN=" + String(rst_pin));
-	Serial.println("DC_PIN=" + String(dc_pin));
-	Serial.println("CS_PIN=" + String(cs_pin));
-	Serial.println("BUSY_PIN=" + String(busy_pin));
+	//Serial.println("RST_PIN=" + String(rst_pin));
+	//Serial.println("DC_PIN=" + String(dc_pin));
+	//Serial.println("CS_PIN=" + String(cs_pin));
+	//Serial.println("BUSY_PIN=" + String(busy_pin));
 };
 
 EpdIf::~EpdIf() {

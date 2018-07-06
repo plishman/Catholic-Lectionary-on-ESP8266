@@ -9,15 +9,14 @@ bool Battery::power_connected( void ) {
 }
 
 float Battery::battery_voltage( void ) {
-	int sensorValue = analogRead(A0);
-	float v = ((float)sensorValue * (3.3 / 1024.00) * 2) + DIODE_DROP;
-	I2CSerial.println("battery_voltage = " + String(v));
-	I2CSerial.println("A0 sensor value = " + String(sensorValue));
+	float sensorValue = (float)analogRead(A0) / 1023.0;
+
+	float adc_maxvoltage = (ADC_RESISTOR + 100.0) / 100.0; //max voltage (adc value 1023, which will be scaled by potential divider to 1 volt) = 4.89V for 169.0k adc resistor, 5.4V for 220k adc resistor
+	float v = (adc_maxvoltage * sensorValue) + DIODE_DROP;
+
+	//I2CSerial.println("battery_voltage = " + String(v));
+	//I2CSerial.println("A0 sensor value = " + String(sensorValue));
 	return v;
-	//return ((((float)sensorValue/1023.0)*3.3) * 2.0);
-	//return (((float)sensorValue / 1024.0) * 7.8) + DIODE_DROP;
-	//return ((float)sensorValue / 130);
-	//return DIODE_DROP + BATT_MARGIN + (((float)sensorValue/1024.0) * 3.3 * 2.0);	
 }
 
 bool Battery::recharge_level_reached( void ) {

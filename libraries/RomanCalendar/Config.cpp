@@ -380,9 +380,9 @@ bool Config::getDS3231DateTime(time64_t* t) {
   month  = bcd2dec(buf[5] & 0x1f); 	//(((buf[5] & B00010000)>>4)*10 + (buf[5] & B00001111)); //msb7 is century overflow
   year   = bcd2dec(buf[6]); 		//(((buf[6] & B11110000)>>4)*10 + (buf[6] & B00001111));
   
-  I2CSerial.printf("DS3231 Datetime = %d/%d/%d %d:%d:%d\n", date, month, year, hour, minute, second);
+  //I2CSerial.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
 
-  I2CSerial.printf("-1-");
+  //I2CSerial.printf("-1-");
   
   int century = 0;
   
@@ -390,7 +390,7 @@ bool Config::getDS3231DateTime(time64_t* t) {
   if (GetConfig(&c)) {
 	century = c.century;  
   }
-  I2CSerial.printf("-2-");
+  //I2CSerial.printf("-2-");
   
   tmElements_t tm;
   
@@ -411,15 +411,17 @@ bool Config::getDS3231DateTime(time64_t* t) {
 	b_incorrectleapyear = true;	 												   // So it will incorrectly treat 2100 as a leap year, when it is not (2400 will be)
  }
   
-  I2CSerial.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
-  I2CSerial.printf("-3-");
+  //I2CSerial.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
+  //I2CSerial.printf("-3-");
   *t = makeTime(tm);
-  I2CSerial.printf("-4-");
+  //I2CSerial.printf("-4-");
   
   if (b_incorrectleapyear) {
 	  I2CSerial.printf("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March %d\n", tm.Year);
 	  setDS3231DateTime(*t);
   }
+ 
+  I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
   
   if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
