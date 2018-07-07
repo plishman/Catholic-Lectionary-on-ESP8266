@@ -57,13 +57,17 @@ bool Lectionary::test(int number, String liturgical_year, String liturgical_cycl
 }
 
 bool Lectionary::testFile(String filename) {
-	File file = _I18n->openFile(filename, FILE_READ);
+	I2CSerial.printf("testing file %s : ", filename.c_str());
 	
-	if (file.available()) {		
-		_I18n->closeFile(file);
+	char filenamestr[80];
+	filename.toCharArray(filenamestr, 80);
+	
+	if (SD.exists(filenamestr)) {		
+		I2CSerial.printf("present\n");
 		return true;
 	}
-	
+
+	I2CSerial.printf("not found\n");	
 	return false;
 }
 
@@ -104,11 +108,11 @@ bool Lectionary::get(String liturgical_year, String liturgical_cycle, Lectionary
 	File file;
 	
 	I2CSerial.print("Looking for entry for liturgical year...");
-	file = _I18n->openFile(filename + "/" + liturgical_year, FILE_READ);
+	file = /*_I18n->openFile*/SD.open(filename + "/" + liturgical_year, FILE_READ);
 
 	if (!file.available()) {
 		I2CSerial.print("not found. Looking for entry for liturgical cycle...");
-		file = _I18n->openFile(filename + "/" + liturgical_cycle, FILE_READ);
+		file = /*_I18n->openFile*/SD.open(filename + "/" + liturgical_cycle, FILE_READ);
 	}
 
 	if (!file.available()) {

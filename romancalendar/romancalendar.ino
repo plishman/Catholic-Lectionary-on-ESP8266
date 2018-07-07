@@ -861,6 +861,9 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   String line_above = "";
   bool bDisplayRefs = true;
 
+  bool bGotVerses = false; // I found that Psalm 85:14 is missing from the NJB, but not the French version, because in the English version verse 14 is included in verse 13.
+                           // If something was found, this flag will be set, so only if nothing was found will the function return false.
+
   while (r != NULL && !bEndOfScreen) {     
     int start_chapter = r->start_chapter;
     int end_chapter = r->end_chapter;
@@ -871,7 +874,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
     String verse_record;
     String verse_text;
     String output;
-
+                             
     for (int c = start_chapter; c <= end_chapter; c++) {
       I2CSerial.printf("\n%d:", c);
       if (c < end_chapter) {
@@ -907,6 +910,8 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
         }
             
         if (b._bibleverse->get(r->book_index, c, v, &verse_record, &numRecords)) {
+          bGotVerses = true;
+          
           I2CSerial.printf(" %d ", v);
           I2CSerial.printf("sentence_range=%s, numRecords=%d\n", sentence_range == "" ? "[All]" : sentence_range.c_str(), numRecords);
           verse_text = get_verse(verse_record, &book_name, sentence_range, numRecords);
@@ -934,9 +939,11 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
           if (v > end_verse) bDone = true; // end_verse will be set to -1 if all verses up to the end of the chapter are to be returned.
         }
         else {
-          I2CSerial.printf("Error\n");
-          return false;
+          I2CSerial.printf("Verse is missing from this Bible (variation in Psalms?)\n");
+          //return false;
           //bDone = true;
+          v++;
+          if (v > end_verse) bDone = true;
         }
       }
       if (bEndOfScreen) break; // out of chapter for loop
@@ -944,7 +951,7 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
     r = b.refsList.get(i++);
   }
 
-  return true;
+  return bGotVerses;
 }
 
 bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, int* ypos, DiskFont* diskfont, bool* bEmphasis_On, bool right_to_left) {
