@@ -2,13 +2,13 @@
 #include "Config.h"
 
 I2CSerialPort::I2CSerialPort() {
-	config_t c;
+	config_t c = {0};
 	
 	Config conf;
 	
 	
-	if (conf.GetConfig(&c)) {
-		_b_enable = c.debug_on;
+	if (conf.GetConfig(c)) {
+		_b_enable = c.data.debug_on;
 	} 
 	else {
 		_b_enable = true; // turn on debug output if the EEPROM settings are corrupt or invalid.

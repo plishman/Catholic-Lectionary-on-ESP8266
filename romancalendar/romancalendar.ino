@@ -96,12 +96,17 @@ void setup() {
   //WiFi.disconnect(); // testing - so have to connect to a network each reboot
 
   battery_test();
-//  display_image(battery_recharge_image); // testing
 
-//  while(1){
-//    delay(5000);
-//    Serial.print(".");
-//  }
+  // Check if EEPROM checksum is good
+
+  Config c;
+  bEEPROM_checksum_good = c.EEPROMChecksumValid();
+
+  if (!bEEPROM_checksum_good && !battery.power_connected()) {
+    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
+    display_image(connect_power_image);
+    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
+  }
 
   rtcData_t rtcData = {0};
 
@@ -143,16 +148,16 @@ void setup() {
     }
   }
 
-  // Check if EEPROM checksum is good
-
-  Config c;
-  bEEPROM_checksum_good = c.EEPROMChecksumValid();
-
-  if (!bEEPROM_checksum_good && !battery.power_connected()) {
-    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
-    display_image(connect_power_image);
-    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
-  }
+//  // Check if EEPROM checksum is good
+//
+//  Config c;
+//  bEEPROM_checksum_good = c.EEPROMChecksumValid();
+//
+//  if (!bEEPROM_checksum_good && !battery.power_connected()) {
+//    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
+//    display_image(connect_power_image);
+//    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
+//  }
 }
 
 void battery_test() {
@@ -441,7 +446,7 @@ void roundupdatetohour(time64_t& date) {
 void SleepUntilStartOfHour() {
     Config conf;
     time64_t date;
-    conf.getDS3231DateTime(&date);
+    conf.getLocalDS3231DateTime(&date);
     
     tmElements_t ts;
     breakTime(date, ts);

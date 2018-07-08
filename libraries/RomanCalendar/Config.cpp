@@ -123,11 +123,11 @@ bool Config::ServeClient(bool* bSettingsUpdated)
     b404 = !sendHttpFile(&client, "/config.csv");
   }
   else if (filename == "/settings.json") {
-    config_t c;
-    GetConfig(&c);
-    I2CSerial.println("timezone = " + String(c.timezone_offset));
-    I2CSerial.println("lectionary = " + String(c.lectionary_config_number));
-    String line = "{\"tz_offset\":\"" + String(c.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.lectionary_config_number) + "\"}"; // output in JSON format
+    config_t c = {0};
+    GetConfig(c);
+    I2CSerial.println("timezone = " + String(c.data.timezone_offset));
+    I2CSerial.println("lectionary = " + String(c.data.lectionary_config_number));
+    String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + "\"}"; // output in JSON format
     String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + String(line.length()) + "\r\nConnection: close\r\n\r\n";
     client.print(header);
     I2CSerial.println(line);
@@ -146,9 +146,9 @@ bool Config::ServeClient(bool* bSettingsUpdated)
 		I2CSerial.println("debug = " + debug_mode);
 	}
 	
-    bool bresult = SaveConfig(tz, lect, debug_mode);
-
-    I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
+//    bool bresult = SaveConfig(tz, lect, debug_mode);
+//
+//    I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
 		
 	uint32_t hh, mm, ss, day, mon, year;
 
@@ -171,11 +171,40 @@ bool Config::ServeClient(bool* bSettingsUpdated)
 		time64_t t = makeTime(tm);
 		setDS3231DateTime(t);
 	}
+	
+	uint32_t dststarthour = 0;
+	uint32_t dststartday = 0;
+	uint32_t dststartmonth = 0;
+	
+	uint32_t dstendhour = 0; 
+	uint32_t dstendday = 0; 
+	uint32_t dstendmonth = 0;
 
-    config_t c;
-    GetConfig(&c);
-    I2CSerial.println("timezone = " + String(c.timezone_offset));
-    I2CSerial.println("lectionary = " + String(c.lectionary_config_number));
+    String dstoffset = getQueryStringParam("dstoffset", querystring, "0");
+
+	bool bresult = false;
+	
+	if (testArg(getQueryStringParam("dststarthour", querystring, ""), 0, 23, &dststarthour) &&
+		testArg(getQueryStringParam("dststartday", querystring, ""), 1, 31, &dststartday) &&
+		testArg(getQueryStringParam("dststartmonth", querystring, ""), 1, 12, &dststartmonth) &&
+		testArg(getQueryStringParam("dstendhour", querystring, ""), 0, 23, &dstendhour) &&
+		testArg(getQueryStringParam("dstendday", querystring, ""), 1, 31, &dstendday) &&
+		testArg(getQueryStringParam("dstendmonth", querystring, ""), 1, 12, &dstendmonth)) {
+
+		bresult = SaveConfig(tz, lect, debug_mode, dststartmonth, dststartday, dststarthour, dstendmonth, dstendday, dstendhour, dstoffset);
+	}
+	else {
+		bresult = SaveConfig(tz, lect, debug_mode);
+	}
+	
+    I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
+
+	
+	
+    config_t c = {0};
+    GetConfig(c);
+    I2CSerial.println("timezone = " + String(c.data.timezone_offset));
+    I2CSerial.println("lectionary = " + String(c.data.lectionary_config_number));
 	*bSettingsUpdated = true;
 
     b404 = !sendHttpFile(&client, "/html/setconf.htm");
@@ -229,9 +258,21 @@ bool Config::sendHttpFile(WiFiClient* client, String filename) {
 }
 
 bool Config::SaveConfig(String tz, String lect_num, String debug_mode) {
-  float timezone_offset;
-  int lectionary_config_number;
+	return SaveConfig(tz, lect_num, debug_mode, 0,0,0,0,0,0,"0.0");
+}
+
+
+bool Config::SaveConfig(String tz, String lect_num, String debug_mode, 
+						uint32_t dstStartMonth, uint32_t dstStartDay, uint32_t dstStartHour,
+						uint32_t dstEndMonth,   uint32_t dstEndDay,   uint32_t dstEndHour,
+						String dstoffset) 
+{
+  float timezone_offset = 0.0;
+  int lectionary_config_number = 0;
   bool debug_on = false;
+  bool debug_not_set = true;
+  
+  float dst_offset = 0.0;
   
   if (IsNumeric(tz)) {
     timezone_offset = atof(tz.c_str());
@@ -251,39 +292,92 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode) {
     return false;
   }
 
-  if (!(timezone_offset >= -12 && timezone_offset <= 12)) {
+  if (!(timezone_offset >= -12.0 && timezone_offset <= 12.0)) {
     I2CSerial.println("timezone_offset is out of range: " + String(timezone_offset));
     return false;
   }
 
   if (debug_mode == "1" || debug_mode == "true") {
 	  debug_on = true;
-  } else {
+	  debug_not_set = false;
+  } 
+  else if (debug_mode == "0" || debug_mode == "false") {
 	  debug_on = false;
+	  debug_not_set = false;
+  }
+
+  if (IsNumeric(dstoffset)) {
+    dst_offset = atof(dstoffset.c_str());
+    I2CSerial.println("dst_offset=" + String(dst_offset));
+  } 
+  else {
+    I2CSerial.println("dst_offset is not a number");
+    return false;
+  }
+
+  if (!(dst_offset >= 0.0 && dst_offset <= 3.0)) {
+    I2CSerial.println("dst_offset is out of range: " + String(dst_offset));
+    return false;
+  }
+
+  
+  config_t c = {0};
+  GetConfig(c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
+  
+  c.data.timezone_offset = timezone_offset;
+  c.data.lectionary_config_number = lectionary_config_number;
+  
+  if (!debug_not_set) {
+	c.data.debug_on = debug_on;
   }
   
-  config_t c;
-  GetConfig(&c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
+  c.data.dst_offset = dst_offset;
+  c.data.dst_start_month = dstStartMonth;
+  c.data.dst_start_day = dstStartDay;
+  c.data.dst_start_hour = dstStartHour;
+  c.data.dst_end_month = dstEndMonth;
+  c.data.dst_end_day = dstEndDay;
+  c.data.dst_end_hour = dstEndHour;
   
-  c.timezone_offset = timezone_offset;
-  c.lectionary_config_number = lectionary_config_number;
-  c.debug_on = debug_on;
+  SaveConfig(c);
   
-  SaveConfig(&c);
+  dump_config(c);
+  
   return true;
 }
 
-void Config::SaveConfig(config_t* c) {
-  c->checksum = CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on);
-  storeStruct(c, sizeof(config_t));
+void Config::dump_config(config_t& c) {
+	I2CSerial.println("c.data.timezone_offset:\t" + String(c.data.timezone_offset));
+	I2CSerial.println("c.data.lectionary_config_number:\t" + String(c.data.lectionary_config_number));
+	I2CSerial.println("c.data.debug_on:\t"        + String(c.data.debug_on));
+	I2CSerial.println("c.data.dst_offset:\t"      + String(c.data.dst_offset));
+	I2CSerial.println("c.data.dst_start_month:\t" + String(c.data.dst_start_month));
+	I2CSerial.println("c.data.dst_start_day:\t"   + String(c.data.dst_start_day));
+	I2CSerial.println("c.data.dst_start_hour:\t"  + String(c.data.dst_start_hour));
+	I2CSerial.println("c.data.dst_end_month:\t"   + String(c.data.dst_end_month));
+	I2CSerial.println("c.data.dst_end_day:\t"     + String(c.data.dst_end_day));
+	I2CSerial.println("c.data.dst_end_hour:\t"    + String(c.data.dst_end_hour));
+	I2CSerial.println("\nc.crc32:\t" + String(c.crc32));
 }
 
-bool Config::GetConfig(config_t* c) {
-  loadStruct(c, sizeof(config_t));
+void Config::SaveConfig(config_t& c) {
+  //c->checksum = CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on);
+  uint32_t crcOfData = calculateCRC32((uint8_t*) (uint8_t*)&c.data, sizeof(c.data));
+  c.crc32 = crcOfData;
+  storeStruct(&c, sizeof(config_t));
+}
 
-  if (c->checksum == (CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on))) {
+bool Config::GetConfig(config_t& c) {
+  loadStruct(&c, sizeof(config_t));
+
+  uint32_t crcOfData = calculateCRC32((uint8_t*) (uint8_t*)&c.data, sizeof(c.data));
+  if (crcOfData == c.crc32) {
 	  return true;
   }
+  
+//  if (c->checksum == (CountBytes(c->timezone_offset) + CountBytes(c->lectionary_config_number) + CountBytes(c->century) + CountBytes(c->debug_on))) {
+//	  return true;
+//  }
   
   I2CSerial.printf("Config: EEPROM checksum wrong or uninitialized\n");
   return false;
@@ -295,8 +389,8 @@ bool Config::EEPROMChecksumValid() {
 		return false;
 	}
 	
-	config_t c;
-	return GetConfig(&c);
+	config_t c = {0};
+	return GetConfig(c);
 }
 
 bool Config::IsNumeric(String str) {
@@ -386,9 +480,9 @@ bool Config::getDS3231DateTime(time64_t* t) {
   
   int century = 0;
   
-  config_t c;
-  if (GetConfig(&c)) {
-	century = c.century;  
+  config_t c = {0};
+  if (GetConfig(c)) {
+	century = c.data.century;  
   }
   //I2CSerial.printf("-2-");
   
@@ -421,7 +515,7 @@ bool Config::getDS3231DateTime(time64_t* t) {
 	  setDS3231DateTime(*t);
   }
  
-  I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
+//  I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
   
   if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
@@ -433,20 +527,79 @@ bool Config::getDS3231DateTime(time64_t* t) {
 }
 
 bool Config::getLocalDS3231DateTime(time64_t* t) { 
-  config_t c;
-  if (!GetConfig(&c)) {
-	*t = 0;
-	return false;
-  }
+	tmElements_t ts = {0};
+
+	config_t c = {0};
+	if (!GetConfig(c)) {
+		*t = 0;
+		return false;
+	}
   
-  bool bResult = getDS3231DateTime(t);
+	bool bResult = getDS3231DateTime(t);
   
-  if (bResult) {
-	  *t += (int)(c.timezone_offset * 3600);
-  }
+	if (bResult) {
+		*t += (int)(c.data.timezone_offset * 3600.0);	  	
   
-  return bResult;
+		breakTime(*t, ts);
+		// very basic DST support. DST start and end dates are provided by Javascript calculations in the config.htm web page, but in some jurisdictions these dates change from year to 
+		// year, for example the change is made on the last Sunday of a month rather than the same date each year. In these jurisdictions, the DST compensation will likely be wrong in the 
+		// years after the year in which the config.htm page was last used to set the time. This is easily corrected though by using the configuration interface again - this will need to
+		// done at least once per year in order to keep the DST start and end dates current. (No user input is required in the configuration page, just click on the form submit button and 
+		// the new start and end dates for DST will automatically be recorded.)
+		//
+		dump_config(c);
+		
+		tmElements_t dst_start = {0};
+		tmElements_t dst_end = {0};
+
+		dst_start.Second = 0;
+		dst_start.Minute = 0;
+		dst_start.Hour   = c.data.dst_start_hour;
+		dst_start.Day    = c.data.dst_start_day;
+		dst_start.Month  = c.data.dst_start_month;
+		dst_start.Year   = ts.Year;
+
+		dst_end.Second   = 0;
+		dst_end.Minute   = 0;
+		dst_end.Hour     = c.data.dst_end_hour;
+		dst_end.Day      = c.data.dst_end_day;
+		dst_end.Month    = c.data.dst_end_month;
+		dst_end.Year     = ts.Year;
+
+		
+		if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+			if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+				dst_end.Year++; // end dst month is in next year						 //	next year
+				I2CSerial.printf("dst_end is in next year (southern hemisphere)\n");
+			}
+		}
+		else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+			if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month) {
+				dst_start.Year++; // start dst month is in next year
+				I2CSerial.printf("dst_start is in next year (northern hemisphere)\n");
+			}			
+		}
+		
+		time64_t t_dst_start = makeTime(dst_start);
+		time64_t t_dst_end = makeTime(dst_end);
+		
+		if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
+			
+			*t += (int)(c.data.dst_offset * 3600.0);	  
+			
+			I2CSerial.printf("DST in effect\n");
+		}
+		else {
+			I2CSerial.printf("Standard Time in effect\n");
+		}
+	}
+	
+	breakTime(*t, ts);
+	I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+
+	return bResult;
 }
+
 
 bool Config::setDS3231DateTime(time64_t t) {
   tmElements_t tm;
@@ -474,15 +627,15 @@ bool Config::setDS3231DateTime(time64_t t) {
     return false;
   }
 
-  config_t c;
+  config_t c = {0};
   
-  if (GetConfig(&c)) {
-	c.century = (tmYearToY2k(tm.Year)/100);
-	I2CSerial.printf("setDS3231DateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.century);
+  if (GetConfig(c)) {
+	c.data.century = (tmYearToY2k(tm.Year)/100);
+	I2CSerial.printf("setDS3231DateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.data.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.data.century);
   
-	SaveConfig(&c);
-	GetConfig(&c);
-	I2CSerial.printf("setDS3231DateTime() c.century=%d\n", c.century);
+	SaveConfig(c);
+	GetConfig(c);
+	I2CSerial.printf("setDS3231DateTime() c.data.century=%d\n", c.data.century);
   }
   return true;
 }

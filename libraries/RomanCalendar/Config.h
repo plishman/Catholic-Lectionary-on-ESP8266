@@ -27,10 +27,21 @@ template<typename T> int CountBytes(const T & t)
 // non-volatile (eeprom) configuration parameters
 typedef struct {
   float timezone_offset;
-  int lectionary_config_number;
-  int century;
+  uint32_t lectionary_config_number;
+  uint32_t century;
   bool debug_on;
-  int checksum;
+  float dst_offset;
+  uint32_t dst_start_month;
+  uint32_t dst_start_day;
+  uint32_t dst_start_hour;
+  uint32_t dst_end_month;
+  uint32_t dst_end_day;
+  uint32_t dst_end_hour;	
+} config_data_t;
+
+typedef struct {
+  config_data_t data;
+  uint32_t crc32;
 } config_t __attribute__ ((packed));
 //
 
@@ -60,9 +71,17 @@ public:
 	bool ServeClient( bool* bSettingsUpdated );
 	String getQueryStringParam(String param, String querystring, String default_value);
 	bool sendHttpFile(WiFiClient* client, String filename);
-	bool SaveConfig(String tz, String lect_num, String debug_mode);
-	void SaveConfig(config_t* c);
-	bool GetConfig(config_t* c);
+	
+	bool SaveConfig(String tz, String lect_num, String debug_mode);	
+	bool SaveConfig(String tz, String lect_num, String debug_mode, 
+					uint32_t dstStartMon, uint32_t dstStartDay, uint32_t dstStartHour, 
+					uint32_t dstEndMon, uint32_t dstEndDay, uint32_t dstEndHour, 
+					String dstoffset);
+	
+	void dump_config(config_t& c);
+	
+	void SaveConfig(config_t& c);
+	bool GetConfig(config_t& c);
 	bool EEPROMChecksumValid();
 	bool IsNumeric(String str);
 	void storeStruct(void *data_source, size_t size);

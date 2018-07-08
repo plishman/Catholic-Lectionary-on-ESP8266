@@ -47,15 +47,15 @@ const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 #ifndef _WIN32
 Calendar::Calendar(int CS_PIN) {
 	_config = new Config();	
-	config_t c;
-	if (!_config->GetConfig(&c)) {
+	config_t c = {0};
+	if (!_config->GetConfig(c)) {
 		I2CSerial.printf("GetConfig returned false\n");
 		_lectionary_config_number = 0;
 		_timezone_offset = 0;
 	}
 	else {
-		_timezone_offset = c.timezone_offset;
-		_lectionary_config_number = c.lectionary_config_number; // is the line number of the entry in config.csv, specifies the Bible, language and sanctorale files to use
+		_timezone_offset = c.data.timezone_offset;
+		_lectionary_config_number = c.data.lectionary_config_number; // is the line number of the entry in config.csv, specifies the Bible, language and sanctorale files to use
 	}
 	
 	_CS_PIN = CS_PIN;
