@@ -46,9 +46,9 @@ const char* const Calendar::LITURGICAL_CYCLES[2] = { "I", "II" };
 
 #ifndef _WIN32
 Calendar::Calendar(int CS_PIN) {
-	_config = new Config();	
+	//_config = new Config();	
 	config_t c = {0};
-	if (!_config->GetConfig(c)) {
+	if (!Config::GetConfig(c)) {
 		I2CSerial.println(F("GetConfig returned false"));
 		_lectionary_config_number = 0;
 		_timezone_offset = 0;
@@ -61,7 +61,7 @@ Calendar::Calendar(int CS_PIN) {
 	_CS_PIN = CS_PIN;
 	_I18n = new I18n(_CS_PIN, _lectionary_config_number);
 	
-	_config->_I18n = _I18n;
+	//_config->_I18n = _I18n;
 #else
 Calendar::Calendar() {	
 	_I18n = new I18n();
@@ -78,9 +78,9 @@ Calendar::Calendar() {
 
 Calendar::~Calendar() {
 	if (_I18n != NULL) delete _I18n;
-#ifndef _WIN32
-	if (_config != NULL) delete _config;
-#endif
+//#ifndef _WIN32
+//	if (_config != NULL) delete _config;
+//#endif
 	if (transfers != NULL) delete transfers;
 	if (temporale != NULL) delete temporale;
 	if (sanctorale != NULL) delete sanctorale;

@@ -4,11 +4,12 @@
 #include <Arduino.h>
 #include <TimeLib.h>
 #include "I2CSerialPort.h"
+
 #include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>
-//#include <ESP8266WebServer.h>
-//#include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+
 #include <EEPROM.h>
 #include <pins_arduino.h>
 #include <I18n.h>
@@ -59,40 +60,54 @@ typedef struct {
 } rtcData_t;
 //
 
+extern ESP8266WebServer server;
+	
+bool loadFromSdCard(String path);
+void handleNotFound();
+void handleSettingsJson();
+void handleSetConf();
+String getQueryStringParam(String param_name, String default_value);
+bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
+
 class Config {
 public:
-	I18n* _I18n;
-	WiFiServer server;
+//	I18n* _I18n;
+//	ESP8266WebServer server;
+	static bool bSettingsUpdated;	
+	//Config();
+	//~Config();
+//	bool loadFromSdCard(String path);
+//	void handleNotFound();
+//	void handleSettingsJson();
+//	void handleSetConf();
+//	String getQueryStringParam(String param_name, String default_value);
+	static bool StartServer( /* I18n* i */ );
+	static void StopServer( void );
+	//bool ServeClient( bool* bSettingsUpdated );
+	//String getQueryStringParam(String param, String querystring, String default_value);
+	//bool sendHttpFile(WiFiClient* client, String filename);
 	
-	Config();
-	~Config();
-	bool StartServer( I18n* i );
-	void StopServer( void );
-	bool ServeClient( bool* bSettingsUpdated );
-	String getQueryStringParam(String param, String querystring, String default_value);
-	bool sendHttpFile(WiFiClient* client, String filename);
-	
-	bool SaveConfig(String tz, String lect_num, String debug_mode);	
-	bool SaveConfig(String tz, String lect_num, String debug_mode, 
+	static bool SaveConfig(String tz, String lect_num, String debug_mode);	
+	static bool SaveConfig(String tz, String lect_num, String debug_mode, 
 					uint32_t dstStartMon, uint32_t dstStartDay, uint32_t dstStartHour, 
 					uint32_t dstEndMon, uint32_t dstEndDay, uint32_t dstEndHour, 
 					String dstoffset);
 	
-	void dump_config(config_t& c);
+	static void dump_config(config_t& c);
 	
-	void SaveConfig(config_t& c);
-	bool GetConfig(config_t& c);
-	bool EEPROMChecksumValid();
-	bool IsNumeric(String str);
-	void storeStruct(void *data_source, size_t size);
-	void loadStruct(void *data_dest, size_t size);
+	static void SaveConfig(config_t& c);
+	static bool GetConfig(config_t& c);
+	static bool EEPROMChecksumValid();
+	static bool IsNumeric(String str);
+	static void storeStruct(void *data_source, size_t size);
+	static void loadStruct(void *data_dest, size_t size);
 		
-	bool getDS3231DateTime(time64_t* t);
-	bool setDS3231DateTime(time64_t t);
-	bool getLocalDS3231DateTime(time64_t* t);
-	uint8_t dec2bcd(uint8_t num);
-	uint8_t bcd2dec(uint8_t num);
-	bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
+	static bool getDS3231DateTime(time64_t* t);
+	static bool setDS3231DateTime(time64_t t);
+	static bool getLocalDS3231DateTime(time64_t* t);
+	static uint8_t dec2bcd(uint8_t num);
+	static uint8_t bcd2dec(uint8_t num);
+//	bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
 	
 	//based on Arduino example code at https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino
 	static bool readRtcMemoryData(rtcData_t& rtcData);

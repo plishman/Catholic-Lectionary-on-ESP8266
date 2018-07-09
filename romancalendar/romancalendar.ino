@@ -13,6 +13,7 @@ extern const int PANEL_SIZE_Y = 176;
 
 //ESP8266---
 #include "ESP8266WiFi.h"
+#include <ESP8266WebServer.h>
 //#define FS_NO_GLOBALS
 //#include "FS.h"
 
@@ -75,6 +76,8 @@ EDB db(&writer, &reader);
 Battery battery;
 Network network;
 
+ESP8266WebServer server(80);
+
 bool bEEPROM_checksum_good = false;
 
 void setup() { 
@@ -103,8 +106,8 @@ void setup() {
 
   // Check if EEPROM checksum is good
 
-  Config c;
-  bEEPROM_checksum_good = c.EEPROMChecksumValid();
+  //Config c;
+  bEEPROM_checksum_good = Config::EEPROMChecksumValid();
 
   if (!bEEPROM_checksum_good && !battery.power_connected()) {
     I2CSerial.println("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
@@ -271,7 +274,7 @@ void loop(void) {
     I2CSerial.println("Getting datetime...");
     //time64_t date = timeserver.local_datetime();
     time64_t date;
-    c._config->getLocalDS3231DateTime(&date);
+    Config::getLocalDS3231DateTime(&date);
 
     roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
                      // will round to the hour.
@@ -409,19 +412,19 @@ void loop(void) {
     unsigned long server_start_time = millis();
     bool bTimeUp = false;
    
-    if (c._config->StartServer(c._I18n)) {
+    if (Config::StartServer()) {
       I2CSerial.println("Config web server started, listening for requests...");
-      while(battery.power_connected() && !bSettingsUpdated && !bTimeUp) {
+      while(battery.power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
+        server.handleClient();
         wdt_reset();
-        c._config->ServeClient(&bSettingsUpdated);
         delay(1000);
         //I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
         if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
       }
 
-      c._config->StopServer();
+      Config::StopServer();
 
-      if (bSettingsUpdated) {
+      if (Config::bSettingsUpdated) {
         I2CSerial.println("Settings updated, resetting lectionary...");
         ESP.deepSleep(1e6); //reboot after 1 second
         //ESP.reset();

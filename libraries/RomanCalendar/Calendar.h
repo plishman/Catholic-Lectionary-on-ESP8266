@@ -62,7 +62,7 @@ public:
 #ifndef _WIN32
 	int _CS_PIN = 10;
 	Calendar(int CS_PIN);
-	Config* _config;
+	//Config* _config;
 #else
 	Calendar();
 #endif

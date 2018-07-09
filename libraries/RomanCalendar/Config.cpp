@@ -1,11 +1,198 @@
 #include "config.h"
 
-Config::Config() : server(80) {}
+//Config::Config() {}
+bool Config::bSettingsUpdated;
 
-bool Config::StartServer( I18n* i ) {
-	if (i == NULL) return false;
+bool loadFromSdCard(String path) {
+  String dataType = "text/plain";
+  if(path.endsWith("/")) path += "index.htm";
+
+  if (!(path == "/config.csv" || path == "config.csv")) {  
+	  if (path.startsWith("/")) {
+		path = "/html" + path;  
+	  }
+	  else {
+		path = "/html/" + path;	  
+	  }
+  }
+  
+  I2CSerial.print(F("path="));
+  I2CSerial.println(path);
+  
+  if(path.endsWith(".src")) path = path.substring(0, path.lastIndexOf("."));
+  else if(path.endsWith(".htm")) dataType = "text/html";
+  else if(path.endsWith(".css")) dataType = "text/css";
+  else if(path.endsWith(".js")) dataType = "application/javascript";
+  else if(path.endsWith(".png")) dataType = "image/png";
+  else if(path.endsWith(".gif")) dataType = "image/gif";
+  else if(path.endsWith(".jpg")) dataType = "image/jpeg";
+  else if(path.endsWith(".ico")) dataType = "image/x-icon";
+  else if(path.endsWith(".xml")) dataType = "text/xml";
+  else if(path.endsWith(".pdf")) dataType = "application/pdf";
+  else if(path.endsWith(".zip")) dataType = "application/zip";
+
+  File dataFile = SD.open(path.c_str());
+  if(dataFile.isDirectory()){
+    path += "/index.htm";
+    dataType = "text/html";
+    dataFile = SD.open(path.c_str());
+  }
+
+  if (!dataFile)
+    return false;
+
+  if (server.hasArg("download")) dataType = "application/octet-stream";
+
+  if (server.streamFile(dataFile, dataType) != dataFile.size()) {
+    I2CSerial.println("Sent less data than expected!");
+  }
+
+  dataFile.close();
+  return true;
+}
+
+void handleNotFound() {
+	if(loadFromSdCard(server.uri())) return;
+	String message = "SDCARD Not Detected or File Not Found\n\n";
+	message += "URI: ";
+	message += server.uri();
+	message += "\nMethod: ";
+	message += (server.method() == HTTP_GET)?"GET":"POST";
+	message += "\nArguments: ";
+	message += server.args();
+	message += "\n";
+	for (uint8_t i=0; i<server.args(); i++){
+		message += " NAME:"+server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
+	}
+	server.send(404, "text/plain", message);
+	I2CSerial.print(message);
+}
+
+
+void handleSettingsJson() {
+    config_t c = {0};
+    Config::GetConfig(c);
 	
-	_I18n = i;
+    I2CSerial.print(F("timezone = "));
+	I2CSerial.println(String(c.data.timezone_offset));
+    I2CSerial.print(F("lectionary = "));
+	I2CSerial.println(String(c.data.lectionary_config_number));
+	
+    String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + "\"}"; // output in JSON format
+    server.send(200, "application/json", line);
+    I2CSerial.println(line);
+}
+
+
+void handleSetConf() {
+    String tz = getQueryStringParam("timezone", "0");
+    String lect = getQueryStringParam("lectionary", "0");	
+
+	String debug_mode = getQueryStringParam("debug", "");
+	
+    I2CSerial.print(F("timezone = "));
+	I2CSerial.println(String(tz));
+    I2CSerial.print(F("lectionary = "));
+	I2CSerial.println(String(lect));
+    
+	if (debug_mode != "") {
+		I2CSerial.print(F("debug = "));
+		I2CSerial.println(String(debug_mode));
+	}
+	
+//    bool bresult = SaveConfig(tz, lect, debug_mode);
+//
+//    I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
+		
+	uint32_t hh, mm, ss, day, mon, year;
+
+	if (testArg(getQueryStringParam("hh",   ""), 0, 23, &hh) &&
+		testArg(getQueryStringParam("mm",   ""), 0, 59, &mm) &&
+		testArg(getQueryStringParam("ss",   ""), 0, 59, &ss) &&
+		testArg(getQueryStringParam("day",  ""), 1, 31, &day) &&
+		testArg(getQueryStringParam("mon",  ""), 1, 12, &mon) &&
+		testArg(getQueryStringParam("year", ""), 1970, 0xFFFFFFFF, &year)) { // was max range was 65535
+			
+		tmElements_t tm;
+		
+		tm.Hour = (uint8_t)hh;
+		tm.Minute = (uint8_t)mm;
+		tm.Second = (uint8_t)ss;
+		tm.Day = (uint8_t)day;
+		tm.Month = (uint8_t)mon;
+		tm.Year = year - 1970;
+		
+		time64_t t = makeTime(tm);
+		Config::setDS3231DateTime(t);
+	}
+	
+	uint32_t dststarthour = 0;
+	uint32_t dststartday = 0;
+	uint32_t dststartmonth = 0;
+	
+	uint32_t dstendhour = 0; 
+	uint32_t dstendday = 0; 
+	uint32_t dstendmonth = 0;
+
+    String dstoffset = getQueryStringParam("dstoffset", "0");
+
+	bool bresult = false;
+	
+	if (testArg(getQueryStringParam("dststarthour",  ""), 0, 23, &dststarthour) &&
+		testArg(getQueryStringParam("dststartday",   ""), 1, 31, &dststartday) &&
+		testArg(getQueryStringParam("dststartmonth", ""), 1, 12, &dststartmonth) &&
+		testArg(getQueryStringParam("dstendhour",    ""), 0, 23, &dstendhour) &&
+		testArg(getQueryStringParam("dstendday",     ""), 1, 31, &dstendday) &&
+		testArg(getQueryStringParam("dstendmonth",   ""), 1, 12, &dstendmonth)) {
+
+		bresult = Config::SaveConfig(tz, lect, debug_mode, dststartmonth, dststartday, dststarthour, dstendmonth, dstendday, dstendhour, dstoffset);
+	}
+	else {
+		bresult = Config::SaveConfig(tz, lect, debug_mode);
+	}
+	
+    I2CSerial.print(F("SaveConfig returned "));
+	I2CSerial.println( bresult ? F("true") : F("false") );
+	
+    config_t c = {0};
+    Config::GetConfig(c);
+    I2CSerial.print(F("timezone = "));
+	I2CSerial.println(String(c.data.timezone_offset));
+    I2CSerial.print(F("lectionary = "));
+	I2CSerial.println(String(c.data.lectionary_config_number));
+	
+	Config::bSettingsUpdated = true;
+
+	bool b404 = !loadFromSdCard("setconf.htm");
+	
+	if (b404) {
+		server.send(404, "text/plain", "Settings updated (setconf.htm not found)");
+		I2CSerial.println(F("Sending 404"));
+	}
+}
+
+
+String getQueryStringParam(String param_name, String default_value) {
+  uint8_t i = 0;
+  bool bFound = false;
+  String res = default_value;
+  
+  while (i<server.args() && !bFound) {
+    if (server.argName(i) == param_name) {
+		res = server.arg(i);
+		bFound = true;
+	}
+	else {
+		i++;
+	}
+  }
+  return res;
+}
+
+
+
+bool Config::StartServer() {
+	bSettingsUpdated = false;
 	
 	wl_status_t status = WiFi.status();
 	if(status == WL_CONNECTED) {
@@ -19,58 +206,40 @@ bool Config::StartServer( I18n* i ) {
 		WiFi.printDiag(I2CSerial);
 		return false;
 	}
+  
+	// Set up mDNS responder:
+	// - first argument is the domain name, in this example
+	//   the fully-qualified domain name is "esp8266.local"
+	// - second argument is the IP address to advertise
+	//   we send our IP address on the WiFi network
+	if (!MDNS.begin("lectionary")) {
+		I2CSerial.println(F("Error setting up MDNS responder!"));
+		return false;
+	}
 
-  // TCP server at port 80 will respond to HTTP requests
-//  if (p_server == NULL) {
-//	  p_server = new WiFiServer(80);
-//  }
+	// Add service to MDNS-SD
+	MDNS.addService("http", "tcp", 80);
+	
+	I2CSerial.println(F("mDNS responder started"));
   
-  // Set up mDNS responder:
-  // - first argument is the domain name, in this example
-  //   the fully-qualified domain name is "esp8266.local"
-  // - second argument is the IP address to advertise
-  //   we send our IP address on the WiFi network
-  if (!MDNS.begin("lectionary")) {
-    I2CSerial.println(F("Error setting up MDNS responder!"));
-	return false;
-  }
-  I2CSerial.println(F("mDNS responder started"));
-  
-//  if (p_server == NULL) {
-//	  I2CSerial.println("p_server is null!");
-//  }
-  
-  // Start TCP (HTTP) server
-//  p_server->begin();
-/*
-	server.on ( "/", handleRoot );
-	server.on ( "/test.svg", drawGraph );
-	server.on ( "/inline", []() {
-		server.send ( 200, "text/plain", "this works as well" );
-	} );
+	server.on ( "/settings.json", handleSettingsJson );
+	server.on ( "/setconf.htm", handleSetConf );
 	server.onNotFound ( handleNotFound );
+
 	server.begin();
-	Serial.println ( "HTTP server started" );
-*/
-  server.begin();
-  I2CSerial.println(F("TCP server started"));
+	I2CSerial.println ( "HTTP server started" );
   
-  // Add service to MDNS-SD
-  MDNS.addService("http", "tcp", 80);
-  return true;	
+	return true;	
 }
 
 void Config::StopServer( void ) {
 	server.close();
-//  if (p_server != NULL) {
-//	  p_server->close();
-//  }	
 }
 
-Config::~Config() {
-  //delete p_server;
-}
+//Config::~Config() {
+//}
 
+/*
 bool Config::ServeClient(bool* bSettingsUpdated)
 {
 	*bSettingsUpdated = false;
@@ -292,6 +461,7 @@ bool Config::sendHttpFile(WiFiClient* client, String filename) {
   }
   return true;
 }
+*/
 
 bool Config::SaveConfig(String tz, String lect_num, String debug_mode) {
 	return SaveConfig(tz, lect_num, debug_mode, 0,0,0,0,0,0,"0.0");
@@ -572,12 +742,12 @@ bool Config::getLocalDS3231DateTime(time64_t* t) {
 	tmElements_t ts = {0};
 
 	config_t c = {0};
-	if (!GetConfig(c)) {
+	if (!Config::GetConfig(c)) {
 		*t = 0;
 		return false;
 	}
   
-	bool bResult = getDS3231DateTime(t);
+	bool bResult = Config::getDS3231DateTime(t);
   
 	if (bResult) {
 		*t += (int)(c.data.timezone_offset * 3600.0);	  	
@@ -694,9 +864,9 @@ uint8_t Config::bcd2dec(uint8_t num)
   return ((num/16 * 10) + (num % 16));
 }
 
-bool Config::testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
+bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 	*outval = 0;
-	if (IsNumeric(arg)) {
+	if (Config::IsNumeric(arg)) {
 		*outval = arg.toInt();
 		return ((*outval >= min) && (*outval <= max));
 	}

@@ -36,8 +36,9 @@ bool Network::connect() {
 	WiFi.mode(WIFI_STA);
 	delay(1000);
 	
+	//WiFi.setOutputPower(0);
 	WiFi.begin(storedSSID.c_str(), storedPSK.c_str()); // reading data from EEPROM, last saved credentials
-	int timeout = 60;
+	int timeout = 120;
 	while (WiFi.status() != WL_CONNECTED && timeout != 0) {
 		delay(500);
 		I2CSerial.print(".");
@@ -72,7 +73,7 @@ bool Network::connect() {
 }
 
 bool Network::startWPSPBC() {
-  //WiFi.persistent(true);
+  //WiFi.setOutputPower(0);
   I2CSerial.println(F("WPS config start"));
   bool wpsSuccess = WiFi.beginWPSConfig();
   WiFi.mode(WIFI_STA);

@@ -4,10 +4,10 @@
 I2CSerialPort::I2CSerialPort() {
 	config_t c = {0};
 	
-	Config conf;
+//	Config conf;
 	
 	
-	if (conf.GetConfig(c)) {
+	if (Config::GetConfig(c)) {
 		_b_enable = c.data.debug_on;
 	} 
 	else {
