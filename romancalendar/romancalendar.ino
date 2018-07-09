@@ -397,7 +397,7 @@ void loop(void) {
 
   if (battery.power_connected()) {
     I2CSerial.println("Power is connected, starting config web server");
-    I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+    I2CSerial.println("USB voltage is " + String(battery.battery_voltage()));
 
     // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
     //if (!network.connect()) {
@@ -443,6 +443,9 @@ void loop(void) {
       free = system_get_free_heap_size();
       I2CSerial.println("free memory = " + String(free));
     }
+  }
+  else {
+    I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
   }
 
   /************************************************/ 
