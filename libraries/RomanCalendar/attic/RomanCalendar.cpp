@@ -987,9 +987,9 @@ void RomanCalendar::print_date(time64_t t) {
 	::breakTime(t, ts);
 
 	I2CSerial.print(ts.Day);
-	I2CSerial.print("-");
+	I2CSerial.print(F("-"));
 	I2CSerial.print(ts.Month);
-	I2CSerial.print("-");
+	I2CSerial.print(F("-"));
 	I2CSerial.print(ts.Year);
 #endif
 }

@@ -10,8 +10,8 @@ Transfers::Transfers(bool transfer_to_sunday, I18n* i) {
 
 Transfers::~Transfers() {
 	transfersList.clear();
-	if (_tc != NULL ) { delete _tc; I2CSerial.println("Transfers:~Transfers: deleted _tc"); }
-	if (_sc != NULL ) { delete _sc; I2CSerial.println("Transfers:~Transfers: deleted _sc"); }
+	if (_tc != NULL ) { delete _tc; I2CSerial.println(F("Transfers:~Transfers: deleted _tc")); }
+	if (_sc != NULL ) { delete _sc; I2CSerial.println(F("Transfers:~Transfers: deleted _sc")); }
 	_year = 0;
 }
 
@@ -72,9 +72,9 @@ bool Transfers::do_transfers(time64_t date) {
 					transfersList.add(t);
 
 					Temporale::print_date(currDate);
-					I2CSerial.printf(" has been transferred to ");
+					I2CSerial.print(F(" has been transferred to "));
 					Temporale::print_date(transfer_to);
-					I2CSerial.printf("\n");
+					I2CSerial.println();
 				}
 			}
 		}
@@ -85,7 +85,7 @@ bool Transfers::do_transfers(time64_t date) {
 #endif
 	} while (currDate <= endDate);
 
-	I2CSerial.println("do_transfers() complete");
+	I2CSerial.println(F("do_transfers() complete"));
 	
 	return true;
 }
@@ -104,14 +104,14 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 	time64_t start_holy_week = next_day(palm_sunday);
 	time64_t end_easter_octave = tc->sunday_after(tc->easter_sunday(year));
 
-	I2CSerial.printf("year = %d", year);
-	I2CSerial.printf("\tPalm Sunday:");
+	I2CSerial.print(F("year = ")); I2CSerial.print(String(year));
+	I2CSerial.print(F("\tPalm Sunday:"));
 	tc->print_date(palm_sunday);
-	I2CSerial.printf("\tAnnunciation: ");
+	I2CSerial.print(F("\tAnnunciation: "));
 	tc->print_date(annunciation);
-	I2CSerial.printf("\tStart of Holy Week: ");
+	I2CSerial.print(F("\tStart of Holy Week: "));
 	tc->print_date(start_holy_week);
-	I2CSerial.printf("\tEnd of Easter Octave: ");
+	I2CSerial.print(F("\tEnd of Easter Octave: "));
 	tc->print_date(end_easter_octave);
 	
 	Transfer* t;
@@ -122,11 +122,11 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 		t->to = tc->saturday_before(palm_sunday); // transfer to saturday before palm sunday (Romcal states this, some others state it should be
 		transfersList.add(t);					  // handled as though it fell at any other time in Holy Week or Easter Octave).
 
-		I2CSerial.printf("\nAnnunciation on Palm Sunday: Annunciation transferred from ");
+		I2CSerial.print(F("\nAnnunciation on Palm Sunday: Annunciation transferred from "));
 		tc->print_date(annunciation);
-		I2CSerial.printf(" to ");
+		I2CSerial.print(F(" to "));
 		tc->print_date(t->to);
-		I2CSerial.printf("\n");
+		I2CSerial.println();
 	}
 	else if (annunciation >= start_holy_week && annunciation <= end_easter_octave) {
 		t = new Transfer();
@@ -134,18 +134,18 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 		t->to = tc->monday_after(end_easter_octave); // transfer to second monday of easter
 		transfersList.add(t);
 
-		I2CSerial.printf("\nAnnunciation in Holy Week or Easter Octave: Annunciation transferred from ");
+		I2CSerial.print(F("\nAnnunciation in Holy Week or Easter Octave: Annunciation transferred from "));
 		tc->print_date(annunciation);
-		I2CSerial.printf(" to ");
+		I2CSerial.print(F(" to "));
 		tc->print_date(t->to);
-		I2CSerial.printf("\n");
+		I2CSerial.println();
 	}
 
 	time64_t joseph_hom = tc->date(19, 3, year + 1);
 
-	I2CSerial.printf("Joseph Husband of Mary: ");
+	I2CSerial.print(F("Joseph Husband of Mary: "));
 	tc->print_date(joseph_hom);
-	I2CSerial.printf("\n");
+	I2CSerial.println();
 
 	if (tc->issameday(joseph_hom, palm_sunday) || (joseph_hom >= start_holy_week && joseph_hom <= tc->easter_sunday(year))) {
 		t = new Transfer();
@@ -153,11 +153,11 @@ void Transfers::transfers_lent(int year, Temporale* tc) {
 		t->to = tc->saturday_before(palm_sunday); // transfer to saturday before palm sunday. Since joseph_hom and annunciation cannot both be
 		transfersList.add(t);					  // on palm sunday in the same year, annunciation and joseph_hom should never conflict, 
 												  // even if they are both moved
-		I2CSerial.printf("Joseph Husband of Mary transferred from ");
+		I2CSerial.print(F("Joseph Husband of Mary transferred from "));
 		tc->print_date(joseph_hom);
-		I2CSerial.printf(" to ");
+		I2CSerial.print(F(" to "));
 		tc->print_date(t->to);
-		I2CSerial.printf("\n");
+		I2CSerial.println();
 	}											  
 }
 

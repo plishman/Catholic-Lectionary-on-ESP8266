@@ -36,7 +36,7 @@ typedef struct {
   uint32_t dst_start_hour;
   uint32_t dst_end_month;
   uint32_t dst_end_day;
-  uint32_t dst_end_hour;	
+  uint32_t dst_end_hour;
 } config_data_t;
 
 typedef struct {

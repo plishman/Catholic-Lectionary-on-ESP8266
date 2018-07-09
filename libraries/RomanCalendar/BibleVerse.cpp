@@ -6,7 +6,7 @@ extern "C" {
 
 BibleVerse::BibleVerse(I18n* i)
 {
-	I2CSerial.println("BibleVerse::BibleVerse()");
+	I2CSerial.println(F("BibleVerse::BibleVerse()"));
 	_I18n = i;
 	//String filename;
 	//get_bible_filename(&filename); // populates the _book_count variable when the bible filename has been determined from the locale
@@ -67,12 +67,12 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	book++;
 
 	if (_I18n == NULL) {
-		I2CSerial.println("BibleVerse::get(): _I18n is null");
+		I2CSerial.println(F("BibleVerse::get(): _I18n is null"));
 		return false;
 	} 
 
 	if (!(_I18n->configparams.have_config)) {
-		I2CSerial.println("BibleVerse::get(): No config");
+		I2CSerial.println(F("BibleVerse::get(): No config"));
 		return false;
 	}
 
@@ -107,8 +107,9 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	
 	result = ::db.open(0);
 	if (result != EDB_OK) {
-		I2CSerial.println("ERROR");
-		I2CSerial.println("Did not find database in the file " + edb_filename);
+		I2CSerial.println(F("ERROR"));
+		I2CSerial.print(F("Did not find database in the file "));
+		I2CSerial.println(edb_filename);
 		_I18n->closeFile(::dbFile);		
 		return false;
 	}
@@ -126,7 +127,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 
 	if (verseentry.fragment_count > 31) {
 		_I18n->closeFile(::dbFile);
-		I2CSerial.println("Malformed database record: fragment_count for verse > 31");
+		I2CSerial.println(F("Malformed database record: fragment_count for verse > 31"));
 		return false;
 	}	
 	
@@ -151,7 +152,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	_I18n->closeFile(::dbFile);
 
 	if (fileOffsetStr.length() == 0) {
-		I2CSerial.println("fileOffset not found");
+		I2CSerial.println(F("fileOffset not found"));
 		return false;
 	}
 	
@@ -166,7 +167,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	file = _I18n->openFile(bible_filename, FILE_READ);
 
 	if (!file){
-		I2CSerial.println("BibleVerse::get() can't open bible");
+		I2CSerial.println(F("BibleVerse::get() can't open bible"));
 		return false;
 	} 
 	wdt_reset();
@@ -175,15 +176,19 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	int pos = 0;
 	int len = fileOffsetStr.length();
 	String fragment = "";
-	I2CSerial.println("fileOffsetStr.length() = " + String(len));
-	I2CSerial.println("fileOffsetStr = " + fileOffsetStr);
+	I2CSerial.print(F("fileOffsetStr.length() = "));
+	I2CSerial.println(String(len));
+	I2CSerial.print(F("fileOffsetStr = "));
+	I2CSerial.println(fileOffsetStr);
 	long fileOffset;
 	
 	while(pos < len) {
 		fileOffset = atol(csv.getCsvField(fileOffsetStr, &pos).c_str());
 		
-		I2CSerial.print("file offset string is " + fileOffsetStr);
-		I2CSerial.println("\t file offset = " + String(fileOffset));
+		I2CSerial.print(F("file offset string is "));
+		I2CSerial.print(fileOffsetStr);
+		I2CSerial.print(F("\t file offset = "));
+		I2CSerial.println(String(fileOffset));
 
 		file.seek(fileOffset);
 		
@@ -193,12 +198,16 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 			
 		} else {
 			_I18n->closeFile(file);
-			I2CSerial.println("BibleVerse::get() verse text not found at file offset " + String(fileOffset) + " for Bible filename " + bible_filename);
+			I2CSerial.print(F("BibleVerse::get() verse text not found at file offset "));
+			I2CSerial.print(String(fileOffset));
+			I2CSerial.print(F(" for Bible filename "));
+			I2CSerial.println(bible_filename);
 			return false;
 		}
 		
 	}
-	I2CSerial.println("verse_text=" + *verse_text);
+	I2CSerial.print(F("verse_text="));
+	I2CSerial.println(*verse_text);
 	_I18n->closeFile(file);	
 	return true;
 }

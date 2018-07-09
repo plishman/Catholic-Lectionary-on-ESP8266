@@ -1,6 +1,7 @@
 #ifndef _NETWORK_H
 #define _NETWORK_H
 
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <TimeLib.h>
@@ -21,6 +22,7 @@ public:
 	// A UDP instance to let us send and receive packets over UDP
 	WiFiUDP udp;
 
+	static String getDHCPAddressAsString();
 	bool connect();
 	bool startWPSPBC();
 	bool get_ntp_time(time64_t* t);

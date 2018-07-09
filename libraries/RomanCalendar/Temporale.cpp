@@ -1180,9 +1180,9 @@ void Temporale::print_date(time64_t t) {
 	::breakTime(t, ts);
 
 	I2CSerial.print(ts.Day);
-	I2CSerial.print("-");
+	I2CSerial.print(F("-"));
 	I2CSerial.print(ts.Month);
-	I2CSerial.print("-");
+	I2CSerial.print(F("-"));
 	I2CSerial.print(ts.Year + BEGIN_EPOCH);
 #endif
 }
@@ -1201,9 +1201,9 @@ void Temporale::print_time(time64_t t) {
 	::breakTime(t, ts);
 
 	I2CSerial.print(ts.Hour);
-	I2CSerial.print(":");
+	I2CSerial.print(F(":"));
 	I2CSerial.print(ts.Minute);
-	I2CSerial.print(":");
+	I2CSerial.print(F(":"));
 	I2CSerial.print(ts.Second);
 #endif
 }

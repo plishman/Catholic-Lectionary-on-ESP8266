@@ -78,6 +78,10 @@ Network network;
 bool bEEPROM_checksum_good = false;
 
 void setup() { 
+  pinMode(D1, OUTPUT);
+  digitalWrite(D1, HIGH);
+  SD.begin(D1, SPI_HALF_SPEED);
+  
   SPIFFS.begin();
   //Serial.begin(9600);
   I2CSerial.begin(1,3,8);
@@ -103,7 +107,7 @@ void setup() {
   bEEPROM_checksum_good = c.EEPROMChecksumValid();
 
   if (!bEEPROM_checksum_good && !battery.power_connected()) {
-    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
+    I2CSerial.println("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
     display_image(connect_power_image);
     ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
   }
@@ -119,8 +123,9 @@ void setup() {
         display_image(connect_power_image);
         ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
       } else {
-        ESP.deepSleep(1e6); // reset esp, network is configured
+        //ESP.deepSleep(1e6); // reset esp, network is configured
         //ESP.reset();
+        ESP.restart();
       }
     }
   }
@@ -195,6 +200,10 @@ bool connect_wps(){
 }
 
 void display_image(EPD_DISPLAY_IMAGE i) {
+  display_image(i, "", false);
+}
+
+void display_image(EPD_DISPLAY_IMAGE i, String messagetext, bool bMessageRed) {
   if (i.bitmap_black != NULL) {
     memcpy(image, i.bitmap_black, i.bitmap_bytecount);
   }
@@ -212,6 +221,23 @@ void display_image(EPD_DISPLAY_IMAGE i) {
   Paint paint_red(image_red, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
   if (i.bitmap_red == NULL) {
     paint_red.Clear(UNCOLORED);    
+  }
+
+  if (messagetext != "") {
+    //I2CSerial.println("Message text is: " + messagetext);
+    DiskFont diskfont;
+    diskfont.begin();
+    
+    int strwidth = diskfont.GetTextWidth(messagetext);
+    //I2CSerial.println("strwidth is " + String(strwidth) + "\n paint.GetHeight - strwidth = " + String(paint.GetHeight() - strwidth));
+  
+    if (bMessageRed) {
+      paint_red.SetRotate(ROTATE_90);
+      diskfont.DrawStringAt(paint.GetHeight() - strwidth, 0, messagetext, &paint_red, COLORED, false);
+    } else {
+      paint.SetRotate(ROTATE_90);
+      diskfont.DrawStringAt(paint.GetHeight() - strwidth, 0, messagetext, &paint, COLORED, false);
+    }
   }
 
   epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
@@ -358,7 +384,7 @@ void loop(void) {
 
   if (!bEEPROM_checksum_good) {
     if (battery.power_connected()) {
-      display_image(clock_not_set_image);
+      display_image(clock_not_set_image, Network::getDHCPAddressAsString(), true);
     } else {
       display_image(connect_power_image);
     }
@@ -416,8 +442,6 @@ void loop(void) {
     }
   }
 
-
-  
   /************************************************/ 
   // *8* completed all tasks, go to sleep
   I2CSerial.println("*8*\n");
@@ -459,7 +483,7 @@ void SleepUntilStartOfHour() {
       hourskip = 1; // for the debug output, so that the correct hour is output if the current hour is rounded up
     }
     
-    I2CSerial.printf("Sleeping %d minutes: Will wake at around %02d:00\n", sleepduration_minutes, (ts.Hour + 1 + hourskip > 23) ? 0 : ts.Hour + 1 + hourskip);
+    I2CSerial.printf("Sleeping %d minutes: Will wake at around %02d:00\n", sleepduration_minutes, (ts.Hour + 1 + hourskip)%24);
     ESP.deepSleep(sleepduration_minutes * 60e6);
     return; // should never return because ESP should be asleep!
 }
@@ -784,7 +808,7 @@ void display_day(String d, Paint* paint, Paint* paint_red, DiskFont* diskfont, b
   
 //  if (diskfont->available) {
     int text_xpos = (paint->GetHeight() / 2) - (int)((diskfont->GetTextWidthA(d))/2);
-  
+
     if (bRed) {
       diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED, false);
     } else {

@@ -88,7 +88,7 @@ public:
 	
 	DiskFont();
 	~DiskFont();
-	
+	bool begin();
 	bool begin(String fontfilename);
 	bool begin(String fontfilename, double font_tuning_percent);
 	bool begin(ConfigParams c);

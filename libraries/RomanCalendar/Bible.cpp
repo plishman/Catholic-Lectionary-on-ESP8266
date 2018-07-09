@@ -68,7 +68,7 @@ const int Bible::books_chaptercounts_with_apocrypha[73] = {
 
 Bible::Bible(I18n* i)
 {
-	I2CSerial.println("Bible::Bible()");
+	I2CSerial.println(F("Bible::Bible()"));
 	
 	_I18n = i;
 	_bibleverse = new BibleVerse(_I18n);
@@ -96,7 +96,7 @@ Bible::~Bible(void)
 
 bool Bible::get(String refs) {
 	if (refs == NULL) {
-		I2CSerial.println("Bible::get() refs is null");
+		I2CSerial.println(F("Bible::get() refs is null"));
 		return false;
 	}
 	

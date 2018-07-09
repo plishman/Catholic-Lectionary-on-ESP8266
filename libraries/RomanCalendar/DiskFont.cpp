@@ -158,6 +158,15 @@ DiskFont::~DiskFont() {
 	end();
 }
 
+bool DiskFont::begin() {
+	_font_use_fixed_spacing		 	= true;
+	_font_use_fixed_spacecharwidth  = true;
+	_font_fixed_spacing			 	= 1;
+	_font_fixed_spacecharwidth		= 2;
+
+	begin("builtin");
+}
+
 bool DiskFont::begin(ConfigParams c) {
 /*
 		desc = "";
@@ -201,7 +210,7 @@ bool DiskFont::begin(String fontfilename) {
 	_fontfilename = fontfilename;
 
 	if (_fontfilename == "builtin" || !OpenFontFile()) {
-		I2CSerial.printf("Diskfont is not selected (fontfilename is 'builtin' or font file not found\n");
+		I2CSerial.println(F("Diskfont is not selected (fontfilename is 'builtin' or font file not found"));
 
 		_FontHeader.charheight = romfont->heightPages;
 		_FontHeader.startchar = romfont->startChar;
@@ -332,7 +341,7 @@ int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth,
 int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst) {	
 	DiskFont_FontCharInfo fci;
 	if (!getCharInfo(codepoint, blockToCheckFirst, &fci)) {
-		I2CSerial.printf("DrawCharAt() getCharInfo returned false\n");
+		I2CSerial.println(F("DrawCharAt() getCharInfo returned false"));
 		return 0;
 	}
 	
@@ -451,7 +460,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 				}
 				else {
 					// error - found unexpected end of file
-					I2CSerial.printf("Diskfont Error (unexpected EOF)\n");
+					I2CSerial.println(F("Diskfont Error (unexpected EOF)"));
 					return char_width + 1;
 				}
 			}

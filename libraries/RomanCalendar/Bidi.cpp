@@ -192,7 +192,7 @@ void Bidi::GetString(String s,
 	
 	// check if an emphasis tag is present in the string starting at pos 
 	if (ExpectEmphasisTag(s, startstrpos, bEmphasis_On, bLineBreak)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
-		I2CSerial.printf("found tag\n");
+		I2CSerial.println(F("found tag"));
 
 		*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
 		*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
@@ -223,7 +223,7 @@ void Bidi::GetString(String s,
 	while (pos < s.length() && dcurrwidth < dmaxwidth && !bEmphasisTagFound && bCurrCharRightToLeft == bLookingForRightToLeft) {				
 		bEmphasisTagFound = ExpectEmphasisTag(s, pos); // stop when an emphasis or line break tag is found, and break out of the while loop without changing pos
 		if (bEmphasisTagFound) {
-			I2CSerial.printf("found tag-\n");
+			I2CSerial.println(F("found tag-"));
 			lastwordendstrpos = pos; // save this position as if it is a word boundary
 			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 			continue; // The tag will be dealt with on the next call to this function.
@@ -241,7 +241,7 @@ void Bidi::GetString(String s,
 			//I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
 		}		
 
-		I2CSerial.printf("%s", bCurrCharRightToLeft ? "<" : ">");
+		I2CSerial.print(bCurrCharRightToLeft ? F("<") : F(">"));
 		if (bCurrCharRightToLeft != bLookingForRightToLeft) {
 			*bDirectionChanged = true; //report that the direction of the next block to be scanned (on the next call) will be reversed
 			continue; // don't bump string index pos if the reading direction of the text has just changed, so that the first character of the reversed text is not skipped
@@ -272,7 +272,7 @@ void Bidi::GetString(String s,
 		*bNewLine = true;		 // *startstrpos and *endstrpos).
 	}
 
-	I2CSerial.printf("\n");
+	I2CSerial.println();
 }
 
 /*
