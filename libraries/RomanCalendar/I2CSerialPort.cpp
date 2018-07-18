@@ -1,5 +1,5 @@
 #include "I2CSerialPort.h"
-#include "Config.h"
+#include "RCConfig.h"
 
 I2CSerialPort::I2CSerialPort() {
 	config_t c = {0};
@@ -48,19 +48,25 @@ size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your 
 		return 0;
 	}
 	
+	int retry = 3;
+
 	uint8_t	bcode = 0;
 	uint8_t buffer[1];
 	
 	buffer[0] = character;
 	
-	brzo_i2c_start_transaction(_sp_address, SCL_speed);
-		brzo_i2c_write(buffer, 1, false);
-		delay(1);
-	bcode = brzo_i2c_end_transaction();
+	do {
+		brzo_i2c_start_transaction(_sp_address, SCL_speed);
+			brzo_i2c_write(buffer, 1, false);
+			delay(1);
+		bcode = brzo_i2c_end_transaction();
+	} while (--retry > 0 && bcode != 0);
 
-	if (bcode != 0) {
-		soft_reset();
-	}
+	
+//	if (bcode != 0) {
+//		soft_reset();
+//		printf("\nI2CSerial: bcode=%d\n", bcode);
+//	}
 
 //  Wire.beginTransmission(_sp_address); // transmit to device #8
 //  Wire.write(character);     // sends string
@@ -74,15 +80,21 @@ size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
 		return 0;
 	}
 
+	int retry = 3;
+	
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;
-	brzo_i2c_start_transaction(_sp_address, SCL_speed);
-		brzo_i2c_write(buffer, strlen(str), true);
-	bcode = brzo_i2c_end_transaction();
+	do {
+		brzo_i2c_start_transaction(_sp_address, SCL_speed);
+			brzo_i2c_write((uint8_t*)str, strlen(str), false);
+		bcode = brzo_i2c_end_transaction();
+	} while (--retry > 0 && bcode != 0);
 
-	if (bcode != 0) {
-		soft_reset();
-	}
+	
+//	if (bcode != 0) {
+//		soft_reset();
+//		printf("\nI2CSerial: bcode=%d\n", bcode);
+//	}
 
 //  Wire.beginTransmission(_sp_address); // transmit to device #8
 //  while(*str) {
@@ -99,15 +111,20 @@ size_t I2CSerialPort::write(uint8_t *buffer, size_t size) { /*blahblah is the na
 		return 0;
 	}
 
+	int retry = 3;
+	
 	uint8_t	bcode = 0;
 	//buffer[0] = 0xE3;
-	brzo_i2c_start_transaction(_sp_address, SCL_speed);
-		brzo_i2c_write(buffer, size, true);
-	bcode = brzo_i2c_end_transaction();
-
-	if (bcode != 0) {
-		soft_reset();
-	}
+	do {
+		brzo_i2c_start_transaction(_sp_address, SCL_speed);
+			brzo_i2c_write(buffer, size, false);
+		bcode = brzo_i2c_end_transaction();
+	} while (--retry > 0 && bcode != 0);
+		
+//	if (bcode != 0) {
+//		soft_reset();
+//		printf("\nI2CSerial: bcode=%d\n", bcode);
+//	}
 
 //  Wire.beginTransmission(_sp_address); // transmit to device #8
 //  for(int i=0; i<size; i++) {

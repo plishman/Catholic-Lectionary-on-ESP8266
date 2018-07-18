@@ -6,7 +6,7 @@
 #ifndef _WIN32
 	#include "Arduino.h"
 	#include "../Time/TimeLib.h"
-	#include "Config.h"
+	#include "RCConfig.h"
 	#include "I2CSerialPort.h"
 #else
 	#include <time.h>

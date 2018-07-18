@@ -70,7 +70,7 @@ String Csv::getCsvField(String csvLine, int* ppos) {
 	//int pos = 0;
 	String field = "";
 	String currChar = "";
-	bool bDone = false;
+	//bool bDone = false;
 
 	currChar = utf8CharAt(csvLine, *ppos);
 

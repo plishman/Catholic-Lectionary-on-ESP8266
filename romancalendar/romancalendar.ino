@@ -37,7 +37,7 @@ extern const int PANEL_SIZE_Y = 176;
 #include <pgmspace.h>
 #include <Network.h>
 #include <Battery.h>
-#include <Config.h>
+#include <RCConfig.h>
 #include <images.h>
 #include <DiskFont.h>
 #include <Bidi.h>
@@ -267,14 +267,14 @@ void loop(void) {
     }
 
     /************************************************/ 
-    // *2* Get date and time from DS3231 
+    // *2* Get date and time from DS3231 clock chip
     wdt_reset();
     I2CSerial.println("*2*\n");
     //time64_t date = c.temporale->date(12,11,2017);
     I2CSerial.println("Getting datetime...");
     //time64_t date = timeserver.local_datetime();
     time64_t date;
-    Config::getLocalDS3231DateTime(&date);
+    Config::getLocalDateTime(&date);
 
     roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
                      // will round to the hour.
@@ -474,10 +474,8 @@ void roundupdatetohour(time64_t& date) {
 }
 
 void SleepUntilStartOfHour() {
-    Config conf;
     time64_t date;
-    conf.getLocalDS3231DateTime(&date);
-    
+    Config::getLocalDateTime(&date);
     tmElements_t ts;
     breakTime(date, ts);
 
@@ -902,7 +900,6 @@ bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_r
   while (r != NULL && !bEndOfScreen) {     
     int start_chapter = r->start_chapter;
     int end_chapter = r->end_chapter;
-    int verse = r->start_verse;
     int start_verse;
     int end_verse;
     String sentence_range;
@@ -1009,29 +1006,6 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   return true;
 }
 
-
-String utf8CharAt(String s, int pos) { 
-  //I2CSerial.println("String=" + s);
-  
-  if (pos >= s.length()) {
-    //I2CSerial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
-    return String("");
-  }
-  
-  int charLen = charLenBytesUTF8(s.charAt(pos));
-
-  //I2CSerial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
-
-  if (charLen == 0) {
-    return String("");
-  } 
-  else {
-    //Serial.print("substring is" + s.substring(pos, pos+charLen));
-    return s.substring(pos, pos + charLen);
-  }
-}
-
-
 String get_verse(String verse_record, String* book_name, String sentence_range, int numRecords) { // a bit naughty, verse_record strings can contain multiple lines of csv records for verses that span more than one line.
   I2CSerial.printf("get_verse() %s", verse_record.c_str());
   I2CSerial.printf("get_verse() sentence_range=%s, numRecords=%d\n", sentence_range == "" ? "[All]" : sentence_range.c_str(), numRecords);
@@ -1040,7 +1014,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   int pos = 0;
 
   String fragment = "";
-  int sentence_number = 1;
+  //int sentence_number = 1;
   int sentence_count = 0;
   String verse = "";
   bool more_than_one = false;
@@ -1144,107 +1118,6 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   I2CSerial.printf("get_verse() *7*");      
 
   return verse;
-}
-
-bool hyphenate_word(String *w, String* word_part, int* x_width, FONT_INFO* font, DiskFont* diskfont, Paint* paint, String* format_state) {
-  int j = 0;
-  bool bHyphenDone = false;
-  String w_ch;
-  String w_str;
-  String w_str_last;
-  int hyphen_width;
-  
-//  if (diskfont->available) {
-    hyphen_width = (int)diskfont->GetTextWidthA("-");
-//  }
-//  else {
-//    hyphen_width = paint->GetTextWidth("-", font);
-//  }
-  
-  int len = w->length();
-  String hyphen = "-";
-  bool bEOL = false;
-  bool bExpectingTag = false;
-  bool bIsWordNotTag = false;
-
-  *format_state = FORMAT_DEFAULT;
-  
-  while(!bHyphenDone) {
-    w_str_last = w_str;
-    w_ch = utf8CharAt(*w, j);
-    w_str += w_ch;
-
-    if ((j==0) && (w_ch != "<")) {
-      bIsWordNotTag = true; //some tags may be added after a word, but with no space inbetween. Must return a word to print when either a space, an eol or a start tag "<" is found.
-    }                       //then the tag will be processed on the next call to the function.
-
-    if (!bIsWordNotTag) {
-      if (w_ch == "<" && bExpectingTag == false) {
-        bExpectingTag = true;
-      }
-  
-      if (w_ch == ">") {         
-        if (w_str == "<br>") {
-          *format_state = FORMAT_LINEBREAK;
-          *x_width = 0;
-        }
-    
-        if (w_str == "<i>" || w_str == "<b>") {
-          *format_state = FORMAT_EMPHASIS_ON;
-          *x_width = 0;
-        }
-    
-        if (w_str == "</i>" || w_str == "</b>") {
-          *format_state = FORMAT_EMPHASIS_OFF;
-        }
-      }
-  
-      if (bExpectingTag && w_ch == ">") {
-        *w = w->substring(w_str.length());
-        *x_width = 0;
-        return false;
-      }
-    }
-
-    bool bTextWidthGtThanPanelWidth = false;
-//    if (diskfont->available) {
-      bTextWidthGtThanPanelWidth = (int)((diskfont->GetTextWidthA(w_str)) > (PANEL_SIZE_X - hyphen_width));
-//    }
-//    else {
-//     bTextWidthGtThanPanelWidth = (paint->GetTextWidth(w_str, font) > (PANEL_SIZE_X - hyphen_width));
-//    }
-        
-    if (bTextWidthGtThanPanelWidth) {
-      bEOL = true;
-      bHyphenDone = true;
-    } else {
-      bEOL = false;
-      
-      if (w_ch != "<" && bIsWordNotTag) {
-        w_str_last = w_str;
-      }
-      
-      j += w_ch.length();
-
-      if (w_ch == " " || (w_ch == "<" && bIsWordNotTag) || j >= len) {
-        hyphen = "";
-        bHyphenDone = true;
-      }
-    }
-  }
-  //Serial.print("[" + String(w->length()) + " " + String(w_str_last.length()) + "]");
-  *w = w->substring(w_str_last.length());
-  *word_part = (w_str_last + hyphen);
-  
-//  if (diskfont->available) {
-    *x_width = (int)(diskfont->GetTextWidthA(*word_part));
-    I2CSerial.printf("*x_width: %d\n", *x_width);
-//  }
-//  else {
-//    *x_width = paint->GetTextWidth(*word_part, font);  
-//  }
-  
-  return bEOL;
 }
 
 // EDB SD card reader/writer functions

@@ -848,7 +848,7 @@ void Temporale::christmas_vigil(time64_t date) {
 
 void Temporale::christmas_lectionary(time64_t date) {
 	Enums::Season seas = season(date);
-	int week = season_week(seas, date);
+	//int week = season_week(seas, date);
 
 	if (seas != Enums::SEASON_CHRISTMAS) return;
 
@@ -933,7 +933,7 @@ void Temporale::christmas_lectionary(time64_t date) {
 
 bool Temporale::do_solemnities(time64_t date) {
 	int lit_year = liturgical_year(date);
-	int cal_year = Temporale::year(date);
+	//int cal_year = Temporale::year(date);
 	bool bIsSolemnity = false;
 	Enums::Solemnities s;
 

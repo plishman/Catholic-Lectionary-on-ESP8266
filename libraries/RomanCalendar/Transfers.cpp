@@ -53,7 +53,7 @@ bool Transfers::do_transfers(time64_t date) {
 			if (bIsSanctorale && _sc->_rank_e == Enums::RANKS_SOLEMNITY_GENERAL) {
 				if (_tc->_rank_e >= _sc->_rank_e) {
 					time64_t transfer_to = currDate;
-					bool bFound = false;
+					//bool bFound = false;
 					int i = 365;
 					do {
 						wdt_reset();
