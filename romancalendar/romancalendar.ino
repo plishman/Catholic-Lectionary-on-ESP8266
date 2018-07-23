@@ -80,6 +80,8 @@ ESP8266WebServer server(80);
 
 bool bEEPROM_checksum_good = false;
 
+wake_reasons wake_reason = WAKE_UNKNOWN;
+
 void setup() { 
   pinMode(D1, OUTPUT);
   digitalWrite(D1, HIGH);
@@ -88,6 +90,10 @@ void setup() {
   SPIFFS.begin();
   //Serial.begin(9600);
   I2CSerial.begin(1,3,8);
+
+  wake_reason = Config::Wake_Reason();
+
+  if (wake_reason != WAKE_ALARM_1) Config::SetPowerOn(); //attempt to hold up alarm 1 flag A1F - not writable in the DS3231 spec, but useful to keep the power on if the wake reason was not an alarm
 
   I2CSerial.println("--------------------------");
   I2CSerial.println("abcdefghijklmnopqrstuvwxyz");
@@ -112,7 +118,10 @@ void setup() {
   if (!bEEPROM_checksum_good && !battery.power_connected()) {
     I2CSerial.println("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
     display_image(connect_power_image);
-    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
+    if (!Config::PowerOff(0)) {
+      I2CSerial.println("Attempt to power off via DS3231 failed, using deepsleep mode");
+      ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
+    }
   }
 
   rtcData_t rtcData = {0};
@@ -124,7 +133,10 @@ void setup() {
       if (!connect_wps()) {
         I2CSerial.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
         display_image(connect_power_image);
-        ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+        if (!Config::PowerOff(0)) {
+          I2CSerial.println("Attempt to power off via DS3231 failed, using deepsleep mode");
+          ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+        }
       } else {
         //ESP.deepSleep(1e6); // reset esp, network is configured
         //ESP.reset();
@@ -135,11 +147,13 @@ void setup() {
   else {
     I2CSerial.println("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/).");  
 
-    rst_info *rinfo;
-    rinfo = ESP.getResetInfoPtr();
-    I2CSerial.println(String("ResetInfo.reason = ") + (*rinfo).reason);
+//    rst_info *rinfo;
+//    rinfo = ESP.getResetInfoPtr();
+//    I2CSerial.println(String("ResetInfo.reason = ") + (*rinfo).reason);
 
-    if ((*rinfo).reason == REASON_DEEP_SLEEP_AWAKE) { // only check the hour count to the next reading if we awoke because of the deepsleep timer
+//    if ((*rinfo).reason == REASON_DEEP_SLEEP_AWAKE) { // only check the hour count to the next reading if we awoke because of the deepsleep timer
+
+    if (wake_reason == WAKE_DEEPSLEEP) { // ESP woke from deep sleep - so was still powered, hence RTC memory (in the ESP8266) may be set. This is a backup/legacy code, the DS3231 clock chip will apply power when its alarm asserts
       if (Config::readRtcMemoryData(rtcData)) { // if CRC fails for values, this is probably a cold boot (power up), so will always update the reading in this case
         if (rtcData.data.wake_hour_counter > 8) { // sanity check - should never be more than 8 hours between readings.
           rtcData.data.wake_hour_counter = 1; // this will mean that, after being decremented to 0, a reading should be displayed immediately
@@ -150,7 +164,8 @@ void setup() {
   
         if (rtcData.data.wake_hour_counter > 0) {
           I2CSerial.printf("No reading this hour, and on battery, so going back to sleep immediately.\nNumber of hours to next reading is %d\n", rtcData.data.wake_hour_counter);
-          SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
+          //SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
+          SleepForHours(rtcData.data.wake_hour_counter);
         }
       }
     }
@@ -255,6 +270,8 @@ void loop(void) {
   // *1* Create calendar object and load config.csv
   wdt_reset();
 
+  int next_wake_hours_count = 1; // will store the number of hours until the next wake up
+
   I2CSerial.println("*1*\n");
   //timeserver.gps_wake();
   Calendar c(D1);
@@ -329,8 +346,11 @@ void loop(void) {
     I2CSerial.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
     
     Lectionary::ReadingsFromEnum r;
-    
-    if (getLectionaryReading(date, &r, true/*battery.power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
+
+    bool getLectionaryReadingEveryHour = false;
+    if (wake_reason != WAKE_ALARM_1) getLectionaryReadingEveryHour = true;
+        
+    if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true battery.power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
   
       if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
@@ -375,6 +395,8 @@ void loop(void) {
     I2CSerial.printf("Next reading is in %d hour(s)\n", rtcData.data.wake_hour_counter); 
 
     Config::writeRtcMemoryData(rtcData);        
+
+    next_wake_hours_count = rtcData.data.wake_hour_counter;
   
     I2CSerial.println("*6*\n");
   } // if(bEEPROM_checksum_good)
@@ -432,7 +454,8 @@ void loop(void) {
       else if (bTimeUp) {
         I2CSerial.println("Server timed out, stopping web server and going to sleep");
         //ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
-        SleepUntilStartOfHour();
+        SleepForHours(next_wake_hours_count);
+        //SleepUntilStartOfHour();
       }
       else {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
@@ -452,11 +475,10 @@ void loop(void) {
   // *8* completed all tasks, go to sleep
   I2CSerial.println("*8*\n");
   
-  while(1) {
-    I2CSerial.println("Going to sleep");
-    //ESP.deepSleep(SLEEP_HOUR); //1 hour
-    SleepUntilStartOfHour();
-  }
+  I2CSerial.println("Going to sleep");
+  //ESP.deepSleep(SLEEP_HOUR); //1 hour
+  SleepForHours(next_wake_hours_count);
+  //SleepUntilStartOfHour();
 }
 
 void roundupdatetohour(time64_t& date) {
@@ -473,9 +495,30 @@ void roundupdatetohour(time64_t& date) {
   I2CSerial.printf("Rounded date = %02d/%02d/%04d %02d:%02d:%02d\n", tso.Day, tso.Month, tmYearToCalendar(tso.Year), tso.Hour, tso.Minute, tso.Second);
 }
 
+void SleepForHours(int num_hours) {
+    time64_t date;
+    Config::getLocalDateTime(&date);
+    
+    tmElements_t ts;
+    breakTime(date, ts);
+
+    ts.Minute = 0;
+    ts.Second = 0; // reset ts to top of current hour
+
+    time64_t waketime = makeTime(ts);
+
+    waketime += (num_hours * 3600);
+
+    Config::PowerOff(waketime);
+    
+    delay(250);
+    SleepUntilStartOfHour(); // shouldn't happen - should be powered off by this point (use the deepsleep timer as a backup for the DS3231 alarm)
+}
+
 void SleepUntilStartOfHour() {
     time64_t date;
     Config::getLocalDateTime(&date);
+    
     tmElements_t ts;
     breakTime(date, ts);
 
@@ -1055,7 +1098,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   String letters = "abcdefghijklmnopqrstuvwxyz";
 
   int max_fragment_number = 0;
-  for (int i = 0; i < sentence_range.length(); i++) {
+  for (unsigned int i = 0; i < sentence_range.length(); i++) {
     int fragment_number = letters.indexOf(sentence_range.charAt(i));
 
     if (fragment_number > max_fragment_number) max_fragment_number = fragment_number;
@@ -1068,7 +1111,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
   }
   else {
     I2CSerial.println("parsing subrange reference");
-    int charpos = 0;
+    unsigned int charpos = 0;
     int fragment_number = 0;
     String output = "";
     

@@ -74,34 +74,34 @@ public:
 
 	void datestests();
 	bool getTm(int day, int month, int year, int hours, int minutes, int seconds, struct tm* ts);
-	time64_t date(int day, int month, int year);
+	static time64_t date(int day, int month, int year);
+    
+	static time64_t weekday_before(int weekdayBefore, time64_t date);
+	static time64_t sunday_before(time64_t date);
+	static time64_t monday_before(time64_t date);
+	static time64_t tuesday_before(time64_t date);
+	static time64_t wednesday_before(time64_t date);
+	static time64_t thursday_before(time64_t date);
+	static time64_t friday_before(time64_t date);
+	static time64_t saturday_before(time64_t date);
+     
+	static time64_t weekday_after(int weekdayAfter, time64_t date);
+	static time64_t sunday_after(time64_t date);
+	static time64_t monday_after(time64_t date);
+	static time64_t tuesday_after(time64_t date);
+	static time64_t wednesday_after(time64_t date);
+	static time64_t thursday_after(time64_t date);
+	static time64_t friday_after(time64_t date);
+	static time64_t saturday_after(time64_t date);
 
-	time64_t weekday_before(int weekdayBefore, time64_t date);
-	time64_t sunday_before(time64_t date);
-	time64_t monday_before(time64_t date);
-	time64_t tuesday_before(time64_t date);
-	time64_t wednesday_before(time64_t date);
-	time64_t thursday_before(time64_t date);
-	time64_t friday_before(time64_t date);
-	time64_t saturday_before(time64_t date);
-
-	time64_t weekday_after(int weekdayAfter, time64_t date);
-	time64_t sunday_after(time64_t date);
-	time64_t monday_after(time64_t date);
-	time64_t tuesday_after(time64_t date);
-	time64_t wednesday_after(time64_t date);
-	time64_t thursday_after(time64_t date);
-	time64_t friday_after(time64_t date);
-	time64_t saturday_after(time64_t date);
-
-	int dayofweek(time64_t date);
-	bool sunday(time64_t date);
-	bool monday(time64_t date);
-	bool tuesday(time64_t date);
-	bool wednesday(time64_t date);
-	bool thursday(time64_t date);
-	bool friday(time64_t date);
-	bool saturday(time64_t date);
+	static int dayofweek(time64_t date);
+	static bool sunday(time64_t date);
+	static bool monday(time64_t date);
+	static bool tuesday(time64_t date);
+	static bool wednesday(time64_t date);
+	static bool thursday(time64_t date);
+	static bool friday(time64_t date);
+	static bool saturday(time64_t date);
 
 	int date_difference(time64_t date1, time64_t date2);
 	int hour_of_day(time64_t time);

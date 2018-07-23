@@ -116,19 +116,28 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 	
 	String monthdayandflags = readLine.substring(0, readLine.indexOf(":"));
 	
-	setLectionaryNumber(monthdayandflags);
+	//setLectionaryNumber(monthdayandflags);
 	//Enums::Season seas = _temporale->season(date);
 	//Enums::Ranks rank; //= _temporale->_rank_e;
 	//Enums::Colours colour; //= _temporale->_colour_e;
 
+	bool bIsSanctorale = false;
+	
 	if (monthdayandflags.indexOf("s") != -1) {	// solemnity
 		//if (move_to_monday) {
 		//	if ((seas == SEASON_ADVENT || seas == SEASON_LENT) && sunday(date)) return false; // if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after
 		//}
 		setRank(Enums::RANKS_SOLEMNITY_GENERAL);
 		setColour(Enums::COLOURS_WHITE);
+
+		if (monthdayandflags.indexOf("R") != -1) {
+			//if (!(((seas == Enums::SEASON_LENT) && (rank == Enums::RANKS_MEMORIAL_GENERAL)) || (rank == Enums::RANKS_MEMORIAL_OPTIONAL))) {
+				setColour(Enums::COLOURS_RED);
+			//}
+		}
+		bIsSanctorale = true;
 	}
-	else if (monthdayandflags.indexOf("m") != -1) {	//memorial
+	if (monthdayandflags.indexOf("m") != -1 && !Temporale::sunday(date)) {	//memorial
 		//if (monthdayandflags.indexOf("m2.5") != -1) {
 		//	setColour(Enums::COLOURS_WHITE);
 		//	setRank(Enums::RANKS_FEAST_LORD_GENERAL); // rank is 2.5
@@ -137,6 +146,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 			//if (seas != Enums::SEASON_LENT) {
 				setColour(Enums::COLOURS_WHITE);
 				setRank(Enums::RANKS_MEMORIAL_GENERAL);
+				bIsSanctorale = true;
 				//printf("**Memorial general\n");
 			//}
 			//else {
@@ -148,15 +158,18 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 		if (monthdayandflags.indexOf("f2.5") != -1) {
 			setColour(Enums::COLOURS_WHITE);
 			setRank(Enums::RANKS_FEAST_LORD_GENERAL); // rank is 2.5
+			bIsSanctorale = true;
 		}
-		else {
+		else if (!Temporale::sunday(date)) {
 			setColour(Enums::COLOURS_WHITE);
 			setRank(Enums::RANKS_FEAST_GENERAL);
+			bIsSanctorale = true;
 		}
 	}
-	else {
+	else if (!Temporale::sunday(date)){
 		//if (seas != Enums::SEASON_LENT) {
 			setRank(Enums::RANKS_MEMORIAL_OPTIONAL);	// colour is the colour of the season
+			bIsSanctorale = true;
 		//}
 		//else {
 		//	rank = Enums::RANKS_COMMEMORATION; // commemorations fall in lent
@@ -168,7 +181,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 	//		rank = RANKS_COMMEMORATION;	// colour is the colour of the season
 	//	}
 
-	if (monthdayandflags.indexOf("R") != -1) {
+	if (monthdayandflags.indexOf("R") != -1 && bIsSanctorale) {
 		//if (!(((seas == Enums::SEASON_LENT) && (rank == Enums::RANKS_MEMORIAL_GENERAL)) || (rank == Enums::RANKS_MEMORIAL_OPTIONAL))) {
 			setColour(Enums::COLOURS_RED);
 		//}
@@ -181,11 +194,17 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 //	_rank_e = rank;
 //	_colour = _I18n->get(_I18n->I18n_COLOURS[_colour_e]);
 //	_rank = _I18n->get(_I18n->I18n_RANK_NAMES[_rank_e]);
-	return true;
+//	return true;
+	
+	if (bIsSanctorale) setLectionaryNumber(monthdayandflags);
+	
+	return bIsSanctorale;
+
+
 	//}
 
-	//_sanctorale = "";
-	//return false;
+//	_sanctorale = "";
+//	return false;
 }
 
 void Sanctorale::setLectionaryNumber(String s) {
