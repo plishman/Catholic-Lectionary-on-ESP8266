@@ -31,6 +31,8 @@ public:
 		String day;
 		int lectionary;				 
 		bool is_sanctorale;
+		bool is_holy_day_of_obligation;
+		String holy_day_of_obligation;
 		String sanctorale;
 		String sanctorale_colour;
 		String sanctorale_rank;

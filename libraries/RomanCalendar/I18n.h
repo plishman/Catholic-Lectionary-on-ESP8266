@@ -15,6 +15,9 @@
 
 
 #include "Enums.h"
+
+#define I18n_HOLY_DAY_OF_OBLIGATION "holy_day_of_obligation"
+
 class ConfigParams
 {
 public:
@@ -58,7 +61,7 @@ public:
 	static const char* const I18n_COLOURS[4];
 	static const char* const I18n_RANK_NAMES[14];
 	static const char* const I18n_SOLEMNITIES[18];
-
+	
 	int _callcount = 0;
 	int _lectionary_config_number = 1;
 #ifndef _WIN32

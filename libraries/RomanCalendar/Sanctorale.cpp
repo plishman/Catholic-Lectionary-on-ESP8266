@@ -123,6 +123,15 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 
 	bool bIsSanctorale = false;
 	
+	if (monthdayandflags.indexOf("o") != -1) {	// solemnity
+		_hdo = true;
+		_holy_day_of_obligation = _I18n->get(I18n_HOLY_DAY_OF_OBLIGATION);
+	}
+	else {
+		_hdo = false;
+		_holy_day_of_obligation = "";
+	}
+	
 	if (monthdayandflags.indexOf("s") != -1) {	// solemnity
 		//if (move_to_monday) {
 		//	if ((seas == SEASON_ADVENT || seas == SEASON_LENT) && sunday(date)) return false; // if a solemnity falls on a sunday in Lent or Advent, it is moved to the Monday after

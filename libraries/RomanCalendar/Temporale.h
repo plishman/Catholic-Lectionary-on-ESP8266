@@ -32,10 +32,12 @@ public:
 	I18n* _I18n;
 	Ordinalizer* _ordinalizer;
 	
-	String _day;
-	String _rank;
-	String _season;
-	String _colour;
+	String _day = "";
+	String _rank = "";
+	String _season = "";
+	String _colour = "";
+	
+	String _holy_day_of_obligation = "";
 
 	Enums::Ranks _rank_e;
 	Enums::Colours _colour_e;
@@ -44,6 +46,8 @@ public:
 
 	bool _bIsSolemnity = false;
 
+	bool _hdo = false;
+	
 	typedef struct {
 		Enums::Solemnities s;
 		Enums::Colours c;

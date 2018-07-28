@@ -124,11 +124,11 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 
 	if (!bWasTransferred) {
 		bIsSanctorale = sanctorale->get(date);
-		I2CSerial.println(F("got sanctorale(1)"));
+		I2CSerial.println(F("got sanctorale"));
 	}
 	else {
 		bIsSanctorale = sanctorale->get(transferred_from);
-		I2CSerial.println(F("got sanctorale(2)"));
+		I2CSerial.println(F("got sanctorale (transferred)"));
 	}
 
 	int lit_year = temporale->liturgical_year(date);
@@ -189,6 +189,19 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	day.day = temporale->_day;
 	day.rank = temporale->_rank;
 	day.season = temporale->_season;
+	
+	if (day.is_sanctorale) {
+		day.is_holy_day_of_obligation = sanctorale->_hdo;
+		day.holy_day_of_obligation = sanctorale->_holy_day_of_obligation;
+	}
+	else {
+		day.is_holy_day_of_obligation = temporale->_hdo;
+		day.holy_day_of_obligation = temporale->_holy_day_of_obligation;
+	}
+	
+	if (day.is_holy_day_of_obligation) {
+		I2CSerial.println("Holy day of obligation");
+	}
 	
 	if (sanctorale->_Lectionary == 0) {
 		day.lectionary = temporale->_Lectionary;

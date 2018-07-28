@@ -385,7 +385,7 @@ void loop(void) {
     Lectionary::ReadingsFromEnum r;
 
     bool getLectionaryReadingEveryHour = false;
-    if (wake_reason != WAKE_ALARM_1) getLectionaryReadingEveryHour = true;
+    if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V) getLectionaryReadingEveryHour = true;
         
     if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true battery.power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
@@ -854,14 +854,23 @@ bool display_calendar(String date, Calendar* c, String refs) {
   }
 
   if (c->day.is_sanctorale) {
-    display_day(c->day.sanctorale, &paint, &paint_red, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
+    String sanctorale_day = c->day.sanctorale;
+    if (c->day.is_holy_day_of_obligation) {
+      sanctorale_day = sanctorale_day + " " + c->day.holy_day_of_obligation;
+    }
+    
+    display_day(sanctorale_day, &paint, &paint_red, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
     if (c->day.sanctorale == c->day.day) {                                     // otherwise the liturgical day is shown at the top of the screen.
       //display_date(date, "", &paint, font, &diskfont);                       // If it is a feast day, the liturgical day is displayed at the bottom left. Otherwise the bottom left
     } else {                                                                   // is left blank.
       display_date(date, c->day.day, &paint, &diskfont); // "day" in struct day is the liturgical day
     }
   } else {
-    display_day(c->day.day, &paint, &paint_red, &diskfont, bRed);    
+    String liturgical_day = c->day.day;
+    if (c->day.is_holy_day_of_obligation) {
+      liturgical_day = liturgical_day + " " + c->day.holy_day_of_obligation;
+    }
+    display_day(liturgical_day, &paint, &paint_red, &diskfont, bRed);    
     display_date(date, "", &paint, &diskfont);
   }
 

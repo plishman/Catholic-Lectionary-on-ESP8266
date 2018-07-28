@@ -937,28 +937,30 @@ bool Temporale::do_solemnities(time64_t date) {
 	bool bIsSolemnity = false;
 	Enums::Solemnities s;
 
+	bool bIsHDO = false; // is holy day of obligation
+	
 	//printf("lit_year=%d\t", lit_year);
 
-	if (issameday(date, nativity(lit_year))) { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; christmas_lectionary(date);}
-	if (issameday(date, holy_family(lit_year))) { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; _Lectionary = 17; }
-	if (issameday(date, mother_of_god(lit_year))) { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true;  _Lectionary = 18; }
-	if (issameday(date, epiphany(lit_year))) { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true;  _Lectionary = 20; }
+	if (issameday(date, nativity(lit_year)))        { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; bIsHDO = true; christmas_lectionary(date);}
+	if (issameday(date, holy_family(lit_year)))     { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; _Lectionary = 17; }
+	if (issameday(date, mother_of_god(lit_year)))   { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true; bIsHDO = true; _Lectionary = 18; }
+	if (issameday(date, epiphany(lit_year)))        { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true; bIsHDO = true; _Lectionary = 20; }
 	if (issameday(date, baptism_of_lord(lit_year))) { s = Enums::SOLEMNITIES_BAPTISM_OF_LORD;  bIsSolemnity = true; _Lectionary = 21; }
-	if (issameday(date, ash_wednesday(lit_year))) { s = Enums::SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; _Lectionary = 219; }
-	if (issameday(date, palm_sunday(lit_year))) { s = Enums::SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; _Lectionary = 38; }
-	if (issameday(date, good_friday(lit_year))) { s = Enums::SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; _Lectionary = 40; }
-	if (issameday(date, holy_saturday(lit_year))) { s = Enums::SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; _Lectionary = 41; }
-	if (issameday(date, easter_sunday(lit_year))) { s = Enums::SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; _Lectionary = 42; }
-	if (issameday(date, ascension(lit_year))) { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; _Lectionary = 58; }
-	if (issameday(date, pentecost(lit_year))) { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; _Lectionary = 62; }
+	if (issameday(date, ash_wednesday(lit_year)))   { s = Enums::SOLEMNITIES_ASH_WEDNESDAY;  bIsSolemnity = true; _Lectionary = 219; }
+	if (issameday(date, palm_sunday(lit_year)))     { s = Enums::SOLEMNITIES_PALM_SUNDAY;  bIsSolemnity = true; _Lectionary = 38; }
+	if (issameday(date, good_friday(lit_year)))     { s = Enums::SOLEMNITIES_GOOD_FRIDAY;  bIsSolemnity = true; _Lectionary = 40; }
+	if (issameday(date, holy_saturday(lit_year)))   { s = Enums::SOLEMNITIES_HOLY_SATURDAY;  bIsSolemnity = true; _Lectionary = 41; }
+	if (issameday(date, easter_sunday(lit_year)))   { s = Enums::SOLEMNITIES_EASTER_SUNDAY;  bIsSolemnity = true; _Lectionary = 42; }
+	if (issameday(date, ascension(lit_year)))       { s = Enums::SOLEMNITIES_ASCENSION;  bIsSolemnity = true; bIsHDO = true; _Lectionary = 58; }
+	if (issameday(date, pentecost(lit_year)))       { s = Enums::SOLEMNITIES_PENTECOST;  bIsSolemnity = true; _Lectionary = 62; }
 
 	if (_I18n->configparams.celebrate_feast_of_christ_priest) {
 		if (issameday(date, christ_eternal_priest(lit_year))) { s = Enums::SOLEMNITIES_CHRIST_PRIEST;  bIsSolemnity = true; _Lectionary = 982; }		
 	}
 
-	if (issameday(date, holy_trinity(lit_year))) { s = Enums::SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 164; } //check lectionary
-	if (issameday(date, corpus_christi(lit_year))) { s = Enums::SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 167; }
-	if (issameday(date, sacred_heart(lit_year))) { s = Enums::SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 170; }
+	if (issameday(date, holy_trinity(lit_year)))     { s = Enums::SOLEMNITIES_HOLY_TRINITY;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 164; } //check lectionary
+	if (issameday(date, corpus_christi(lit_year)))   { s = Enums::SOLEMNITIES_CORPUS_CHRISTI;  bIsSolemnity = true; bIsHDO = true; _Lectionary = (lit_year % 3) + 167; }
+	if (issameday(date, sacred_heart(lit_year)))     { s = Enums::SOLEMNITIES_SACRED_HEART;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 170; }
 	if (issameday(date, immaculate_heart(lit_year))) { s = Enums::SOLEMNITIES_IMMACULATE_HEART;  bIsSolemnity = true; _Lectionary = 622; }
 	if (issameday(date, christ_king(lit_year + 1/*is relative to next liturgical year's first advent sunday*/))) { s = Enums::SOLEMNITIES_CHRIST_KING;  bIsSolemnity = true; _Lectionary = (lit_year % 3) + 160; }
 
@@ -969,11 +971,14 @@ bool Temporale::do_solemnities(time64_t date) {
 		//printf("*********************\n");
 	}
 
+	if (bIsHDO) _hdo = true;
+	
 	return bIsSolemnity;
 }
 
 bool Temporale::do_sundays(time64_t date) {
 	if (sunday(date)) {
+		_hdo = true;
 		sunday_temporale(date);
 		return true;
 	}
@@ -999,6 +1004,8 @@ bool Temporale::get(time64_t date) {
 	_colour = "";
 	//_liturgical_year = "";
 	//_liturgical_cycle = "";
+	_hdo = false;
+	_holy_day_of_obligation = "";
 
 	Enums::Season seas = season(date);
 	_season = _I18n->get("temporale.season." + String(_I18n->I18n_SEASONS[seas]));
@@ -1043,7 +1050,11 @@ bool Temporale::get(time64_t date) {
 	_colour = _I18n->get(_I18n->I18n_COLOURS[_colour_e]);
 	_rank = _I18n->get(_I18n->I18n_RANK_NAMES[_rank_e]);
 
-	return _day;
+	if (_hdo) {
+		_holy_day_of_obligation = _I18n->get(I18n_HOLY_DAY_OF_OBLIGATION);
+	}
+	
+	return (_day != "");
 }
 
 bool Temporale::includes(const char* s, const char* const strarray[]) {

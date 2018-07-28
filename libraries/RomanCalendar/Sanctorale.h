@@ -24,6 +24,8 @@ public:
 	String _sanctorale;
 	String _rank;
 	String _colour;
+
+	String _holy_day_of_obligation = "";
 	
 	int _Lectionary = 0;
 
@@ -31,6 +33,8 @@ public:
 	Enums::Ranks _rank_e;
 
 	bool _bIsSolemnity = false;
+	
+	bool _hdo = false;
 
 	Enums::I18nLanguages _locale;
 	bool _transfer_to_sunday;

@@ -1,0 +1,105 @@
+en:
+  temporale:
+    season:
+      advent: Advent
+      christmas: Christmas Season
+      lent: Lent
+      easter: Easter Season
+      ordinary: Ordinary Time
+    solemnity:
+      nativity: The Nativity of the Lord
+      holy_family: The Holy Family of Jesus, Mary and Joseph
+      mother_of_god: Octave Day of Christmas, of Mary, Mother of God
+      epiphany: The Epiphany of the Lord
+      baptism_of_lord: The Baptism of the Lord
+      ash_wednesday: Ash Wednesday
+      palm_sunday: Palm Sunday of the Passion of the Lord
+      good_friday: Friday of the Passion of the Lord
+      holy_saturday: Easter Vigil
+      easter_sunday: Easter Sunday of the Resurrection of the Lord
+      ascension: Ascension of the Lord
+      pentecost: Pentecost Sunday
+      holy_trinity: The Most Holy Trinity
+      corpus_christi: The Most Holy Body and Blood of Christ
+      sacred_heart: The Most Sacred Heart of Jesus
+      immaculate_heart: Immaculate Heart of Mary
+      christ_king: Our Lord Jesus Christ, King of the Universe
+    ordinary:
+      sunday: '%{week} Sunday in Ordinary Time'
+      ferial: '%{weekday}, %{week} week in Ordinary Time'
+    advent:
+      sunday: '%{week} Sunday of Advent'
+      ferial: '%{weekday}, %{week} week of Advent'
+      before_christmas: '%{day} December'
+      vigil: Christmas Eve
+    christmas:
+      nativity_octave:
+        ferial: '%{day} day of Christmas Octave'
+      sunday: '%{week} Sunday after the Nativity of the Lord'
+      ferial: '%{weekday} after Christmas Octave'
+      after_epiphany:
+        ferial: '%{weekday} after Epiphany'
+    lent:
+      after_ashes:
+        ferial: '%{weekday} after Ash Wednesday'
+      sunday: '%{week} Sunday of Lent'
+      ferial: '%{weekday}, %{week} week of Lent'
+      holy_week:
+        ferial: '%{weekday} of Holy Week'
+        thursday: 'Holy Thursday'
+    easter:
+      octave:
+        ferial: 'Easter %{weekday}'
+      sunday: '%{week} Sunday of Easter'
+      ferial: '%{weekday}, %{week} week of Easter'
+  rank:
+    '1_1': Easter triduum
+    '1_2': Primary liturgical days
+    '1_3': Solemnities in the General Calendar
+    '1_4': Proper solemnities
+    '2_5': Feasts of the Lord in the General Calendar
+    '2_6': Unprivileged Sundays
+    '2_7': Feasts of saints in the General Calendar
+    '2_8': Proper feasts
+    '2_9': Privileged ferials
+    '3_10': Obligatory memorials in the General Calendar
+    '3_11': Proper obligatory memorials
+    '3_12': Optional memorials
+    '3_13': Ferials
+    '4_0': Commemorations
+    short:
+      solemnity: solemnity
+      feast: feast
+      sunday: Sunday
+      memorial: memorial
+      memorial_opt: optional memorial
+      ferial: ferial
+      commemoration: commemoration
+  weekday:
+    '0': Sunday
+    '1': Monday
+    '2': Tuesday
+    '3': Wednesday
+    '4': Thursday
+    '5': Friday
+    '6': Saturday
+  month:
+    '1': Jan
+    '2': Feb
+    '3': Mar
+    '4': Apr
+    '5': May
+    '6': Jun
+    '7': Jul
+    '8': Aug
+    '9': Sep
+    '10': Oct
+    '11': Nov
+    '12': Dec
+  ordinals: english
+  colour:
+    violet: violet
+    white: white
+    green: green
+    red: red
+  holy_day_of_obligation: (+)
