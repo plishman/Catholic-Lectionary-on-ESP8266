@@ -14,3 +14,5 @@ extern EPD_DISPLAY_IMAGE wps_connect_image;
 extern EPD_DISPLAY_IMAGE clock_not_set_image;
 
 extern EPD_DISPLAY_IMAGE sd_card_not_inserted_image;
+
+extern EPD_DISPLAY_IMAGE replace_cr2032_image;

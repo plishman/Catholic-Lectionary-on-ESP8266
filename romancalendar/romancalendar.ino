@@ -110,6 +110,8 @@ void setup() {
 
   battery_test();
 
+  clock_battery_test();
+
   // Check if EEPROM checksum is good
 
   //Config c;
@@ -188,7 +190,7 @@ void battery_test() {
   if (!battery.power_connected()) {
     if (battery.recharge_level_reached()) {
       I2CSerial.println("Battery recharge level is " + String(MIN_BATT_VOLTAGE));
-      I2CSerial.println("Battery recharge level reached - sleeping until power is connected");
+      I2CSerial.println(F("Battery recharge level reached - sleeping until power is connected"));
       display_image(battery_recharge_image);
       //while(!battery.power_connected()) {
       //  wdt_reset();
@@ -198,7 +200,42 @@ void battery_test() {
     }
   }
   else {
-    I2CSerial.println("Battery is charging");
+    I2CSerial.println(F("Battery is charging"));
+  }
+}
+
+void clock_battery_test() {
+  int retries = 10;
+  bool ok = false;
+  bool clockstopped = false;
+  while (!ok && --retries != 0) {
+    clockstopped = Config::ClockStopped(ok);
+    delay(50);
+  }
+
+  if (clockstopped) {
+    I2CSerial.println(F("Clock stopped"));
+
+    bool ok2 = false;
+    while (!ok2 && --retries != 0) {
+      ok2 = Config::ClearClockStoppedFlag();
+      delay(50);
+    }
+
+    I2CSerial.println(F("Cleared OSF status bit (clock stopped flag)"));
+
+    if (!Config::ClockWasReset()) { // clock should reset when the battery is actually removed and replaced, if so, we will assume the battery has already been replaced.
+                                    // since even a dead battery should have enough energy to maintain the last time setting, but with the oscillator stopped.
+      I2CSerial.println(F("Clock was not reset, assuming battery has not yet been changed, so displaying replace_cr2032_image"));
+      display_image(replace_cr2032_image);
+
+      if (!Config::PowerOff(0)) {
+        I2CSerial.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+        ESP.deepSleep(0); //sleep until USB power is reconnected
+      }
+    }
+
+    Config::InvalidateEEPROM(); // if the clock stopped, invalidate the eeprom contents, to force the user to reset them on next boot (connect usb 5v).
   }
 }
 
