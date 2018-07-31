@@ -1,7 +1,7 @@
 #include "Battery.h"
 
-Battery::Battery() {
-}
+//Battery::Battery() {
+//}
 
 bool Battery::power_connected( void ) {
 	//return true; 														// debugging

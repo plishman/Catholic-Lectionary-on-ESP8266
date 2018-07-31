@@ -136,6 +136,7 @@ public:
 	
 	static void dump_config(config_t& c);
 	
+	static bool DstIsValid(config_t& c);
 	static void InvalidateEEPROM();
 	static void SaveConfig(config_t& c);
 	static bool GetConfig(config_t& c);

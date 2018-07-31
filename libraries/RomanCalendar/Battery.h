@@ -14,10 +14,10 @@
 
 class Battery {
 public:
-	Battery();
-	bool power_connected( void );
-	float battery_voltage( void );
-	bool recharge_level_reached( void );
+	//Battery();
+	static bool power_connected( void );
+	static float battery_voltage( void );
+	static bool recharge_level_reached( void );
 };
 
 

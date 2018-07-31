@@ -91,8 +91,8 @@ void handleSettingsJson() {
 
 
 void handleSetConf() {
-    String tz = getQueryStringParam("timezone", "0");
-    String lect = getQueryStringParam("lectionary", "0");	
+    String tz = getQueryStringParam("timezone", ""); // "timezone", "0"
+    String lect = getQueryStringParam("lectionary", ""); // "lectionary", "0"	
 
 	String debug_mode = getQueryStringParam("debug", "");
 	
@@ -263,30 +263,33 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
   
   float dst_offset = 0.0;
   
-  if (IsNumeric(tz)) {
-    timezone_offset = atof(tz.c_str());
-    I2CSerial.print(F("timezone_offset="));
-	I2CSerial.println(String(timezone_offset));
-  } 
-  else {
-    I2CSerial.println(F("tz is not a number"));
-    return false;
+  bool bGotTz = false;
+  bool bGotLectNum = false;
+  
+  if (tz != "") {
+	  if (IsNumeric(tz)) {
+		timezone_offset = atof(tz.c_str());
+		bGotTz = true;
+		I2CSerial.print(F("timezone_offset="));
+		I2CSerial.println(String(timezone_offset));
+	  } 
+	  else {
+		I2CSerial.println(F("tz is not a number"));
+		return false;
+	  }
   }
-
-  if (IsNumeric(lect_num)) {
-    lectionary_config_number = atoi(lect_num.c_str());  
-    I2CSerial.print(F("lectionary_config_number="));
-	I2CSerial.println(String(lectionary_config_number));
-  }
-  else {
-    I2CSerial.println(F("lectionary config is not a number"));
-    return false;
-  }
-
-  if (!(timezone_offset >= -12.0 && timezone_offset <= 12.0)) {
-    I2CSerial.print(F("timezone_offset is out of range: "));
-	I2CSerial.println(String(timezone_offset));
-    return false;
+  
+  if (lect_num != "") {
+	  if (IsNumeric(lect_num)) {
+		lectionary_config_number = atoi(lect_num.c_str());  
+		bGotLectNum = true;
+		I2CSerial.print(F("lectionary_config_number="));
+		I2CSerial.println(String(lectionary_config_number));
+	  }
+	  else {
+		I2CSerial.println(F("lectionary config is not a number"));
+		return false;
+	  }
   }
 
   if (debug_mode == "1" || debug_mode == "true") {
@@ -297,42 +300,50 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 	  debug_on = false;
 	  debug_not_set = false;
   }
+  
+  if (bGotTz && bGotLectNum) {
+	  if (!(timezone_offset >= -12.0 && timezone_offset <= 12.0)) {
+		I2CSerial.print(F("timezone_offset is out of range: "));
+		I2CSerial.println(String(timezone_offset));
+		return false;
+	  }
 
-  if (IsNumeric(dstoffset)) {
-    dst_offset = atof(dstoffset.c_str());
-    I2CSerial.print(F("dst_offset="));
-	I2CSerial.println(String(dst_offset));
-  } 
-  else {
-    I2CSerial.println(F("dst_offset is not a number"));
-    return false;
+	  if (IsNumeric(dstoffset)) {
+		dst_offset = atof(dstoffset.c_str());
+		I2CSerial.print(F("dst_offset="));
+		I2CSerial.println(String(dst_offset));
+	  } 
+	  else {
+		I2CSerial.println(F("dst_offset is not a number"));
+		return false;
+	  }
+
+	  if (!(dst_offset >= 0.0 && dst_offset <= 3.0)) {
+		I2CSerial.print(F("dst_offset is out of range: "));
+		I2CSerial.println(String(dst_offset));
+		return false;
+	  }
   }
-
-  if (!(dst_offset >= 0.0 && dst_offset <= 3.0)) {
-    I2CSerial.print(F("dst_offset is out of range: "));
-	I2CSerial.println(String(dst_offset));
-    return false;
-  }
-
   
   config_t c = {0};
   GetConfig(c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
-  
-  c.data.timezone_offset = timezone_offset;
-  c.data.lectionary_config_number = lectionary_config_number;
-  
+
   if (!debug_not_set) {
 	c.data.debug_on = debug_on;
   }
   
-  c.data.dst_offset = dst_offset;
-  c.data.dst_start_month = dstStartMonth;
-  c.data.dst_start_day = dstStartDay;
-  c.data.dst_start_hour = dstStartHour;
-  c.data.dst_end_month = dstEndMonth;
-  c.data.dst_end_day = dstEndDay;
-  c.data.dst_end_hour = dstEndHour;
-  
+  if (bGotTz && bGotLectNum) {
+	c.data.timezone_offset = timezone_offset;
+	c.data.lectionary_config_number = lectionary_config_number;
+ 
+	c.data.dst_offset = dst_offset;
+	c.data.dst_start_month = dstStartMonth;
+	c.data.dst_start_day = dstStartDay;
+	c.data.dst_start_hour = dstStartHour;
+	c.data.dst_end_month = dstEndMonth;
+	c.data.dst_end_day = dstEndDay;
+	c.data.dst_end_hour = dstEndHour;
+  }  
   SaveConfig(c);
   
   dump_config(c);
@@ -351,7 +362,23 @@ void Config::dump_config(config_t& c) {
 	I2CSerial.print(F("c.data.dst_end_month:\t")); 				I2CSerial.println(String(c.data.dst_end_month));
 	I2CSerial.print(F("c.data.dst_end_day:\t")); 				I2CSerial.println(String(c.data.dst_end_day));
 	I2CSerial.print(F("c.data.dst_end_hour:\t")); 				I2CSerial.println(String(c.data.dst_end_hour));
+	if (!DstIsValid(c)) {
+		I2CSerial.print(F("DST settings invalid"));
+	}
+	
 	I2CSerial.print(F("\nc.crc32:\t")); 						I2CSerial.println(String(c.crc32, HEX));
+}
+
+bool Config::DstIsValid(config_t& c) {
+	uint8_t m[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	
+	return ((c.data.dst_start_month >= 1)   && (c.data.dst_start_month <= 12) &&
+	        (c.data.dst_end_month   >= 1)   && (c.data.dst_end_month   <= 12) &&
+	        (c.data.dst_start_day   >= 1)   && (c.data.dst_start_day   <= m[c.data.dst_start_month]) && // dst beginning or ending on Feb 29 (leap year) is not supported
+	        (c.data.dst_end_day     >= 1)   && (c.data.dst_end_day     <= m[c.data.dst_end_month]) &&
+	        (c.data.dst_start_hour  >= 0)   && (c.data.dst_start_hour  <= 23) &&
+	        (c.data.dst_end_hour    >= 0)   && (c.data.dst_end_hour    <= 23) &&
+			(c.data.dst_offset      >= 0.0) && (c.data.dst_offset      <= 3.0));
 }
 
 void Config::InvalidateEEPROM() {
@@ -599,64 +626,69 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
   
 	bool bResult = Config::getDateTime(t);
   
-	if (bResult) {
-		*t += (int)(c.data.timezone_offset * 3600.0);	  	
-  
-		breakTime(*t, ts);
-		// very basic DST support. DST start and end dates are provided by Javascript calculations in the config.htm web page, but in some jurisdictions these dates change from year to 
-		// year, for example the change is made on the last Sunday of a month rather than the same date each year. In these jurisdictions, the DST compensation will likely be wrong in the 
-		// years after the year in which the config.htm page was last used to set the time. This is easily corrected though by using the configuration interface again - this will need to
-		// done at least once per year in order to keep the DST start and end dates current. (No user input is required in the configuration page, just click on the form submit button and 
-		// the new start and end dates for DST will automatically be recorded.)
-		//
-		//dump_config(c);
-		
-		tmElements_t dst_start = {0};
-		tmElements_t dst_end = {0};
+	if (DstIsValid(c)) {
+		if (bResult) {
+			*t += (int)(c.data.timezone_offset * 3600.0);	  	
+	  
+			breakTime(*t, ts);
+			// very basic DST support. DST start and end dates are provided by Javascript calculations in the config.htm web page, but in some jurisdictions these dates change from year to 
+			// year, for example the change is made on the last Sunday of a month rather than the same date each year. In these jurisdictions, the DST compensation will likely be wrong in the 
+			// years after the year in which the config.htm page was last used to set the time. This is easily corrected though by using the configuration interface again - this will need to
+			// done at least once per year in order to keep the DST start and end dates current. (No user input is required in the configuration page, just click on the form submit button and 
+			// the new start and end dates for DST will automatically be recorded.)
+			//
+			//dump_config(c);
+			
+			tmElements_t dst_start = {0};
+			tmElements_t dst_end = {0};
 
-		dst_start.Second = 0;
-		dst_start.Minute = 0;
-		dst_start.Hour   = c.data.dst_start_hour;
-		dst_start.Day    = c.data.dst_start_day;
-		dst_start.Month  = c.data.dst_start_month;
-		dst_start.Year   = ts.Year;	
+			dst_start.Second = 0;
+			dst_start.Minute = 0;
+			dst_start.Hour   = c.data.dst_start_hour;
+			dst_start.Day    = c.data.dst_start_day;
+			dst_start.Month  = c.data.dst_start_month;
+			dst_start.Year   = ts.Year;	
 
-		dst_end.Second   = 0;
-		dst_end.Minute   = 0;
-		dst_end.Hour     = c.data.dst_end_hour;
-		dst_end.Day      = c.data.dst_end_day;
-		dst_end.Month    = c.data.dst_end_month;
-		dst_end.Year     = ts.Year; 
+			dst_end.Second   = 0;
+			dst_end.Minute   = 0;
+			dst_end.Hour     = c.data.dst_end_hour;
+			dst_end.Day      = c.data.dst_end_day;
+			dst_end.Month    = c.data.dst_end_month;
+			dst_end.Year     = ts.Year; 
 
-		
-		if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
-			if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
-				dst_end.Year++; // end dst month is in next year						 //	next year
-				I2CSerial.printf("dst_end is in next year (southern hemisphere)\n");
+			
+			if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+				if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+					dst_end.Year++; // end dst month is in next year						 //	next year
+					I2CSerial.printf("dst_end is in next year (southern hemisphere)\n");
+				}
+			}
+			else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+				if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month) {
+					dst_start.Year++; // start dst month is in next year
+					I2CSerial.printf("dst_start is in next year (northern hemisphere)\n");
+				}			
+			}
+			
+			time64_t t_dst_start = makeTime(dst_start);
+			time64_t t_dst_end = makeTime(dst_end);
+			
+			if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
+				
+				*t += (int)(c.data.dst_offset * 3600.0);	  
+				*isdst = true;
+				
+				I2CSerial.println(F("DST in effect"));
+			}
+			else {
+				*isdst = false;
+
+				I2CSerial.println(F("Standard Time in effect"));
 			}
 		}
-		else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
-			if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month) {
-				dst_start.Year++; // start dst month is in next year
-				I2CSerial.printf("dst_start is in next year (northern hemisphere)\n");
-			}			
-		}
-		
-		time64_t t_dst_start = makeTime(dst_start);
-		time64_t t_dst_end = makeTime(dst_end);
-		
-		if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
-			
-			*t += (int)(c.data.dst_offset * 3600.0);	  
-			*isdst = true;
-			
-			I2CSerial.println(F("DST in effect"));
-		}
-		else {
-			*isdst = false;
-
-			I2CSerial.println(F("Standard Time in effect"));
-		}
+	}
+	else {
+		*isdst = false; // dst settings invalid
 	}
 	
 	breakTime(*t, ts);

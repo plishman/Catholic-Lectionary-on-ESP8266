@@ -117,7 +117,7 @@ void setup() {
   //Config c;
   bEEPROM_checksum_good = Config::EEPROMChecksumValid();
 
-  if (!bEEPROM_checksum_good && !battery.power_connected()) {
+  if (!bEEPROM_checksum_good && !Battery::power_connected()) {
     I2CSerial.println("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
     display_image(connect_power_image);
     if (!Config::PowerOff(0)) {
@@ -128,7 +128,7 @@ void setup() {
 
   rtcData_t rtcData = {0};
 
-  if (battery.power_connected()) {
+  if (Battery::power_connected()) {
     if (!network.connect()){
       I2CSerial.println("Need to configure Wifi with WPS to enable web configuration");
       I2CSerial.println("On USB power and no network configured: Prompting user to connect using WPS button");
@@ -178,7 +178,7 @@ void setup() {
 //  Config c;
 //  bEEPROM_checksum_good = c.EEPROMChecksumValid();
 //
-//  if (!bEEPROM_checksum_good && !battery.power_connected()) {
+//  if (!bEEPROM_checksum_good && !Battery::power_connected()) {
 //    I2CSerial.printf("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
 //    display_image(connect_power_image);
 //    ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
@@ -186,13 +186,13 @@ void setup() {
 }
 
 void battery_test() {
-  I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
-  if (!battery.power_connected()) {
-    if (battery.recharge_level_reached()) {
+  I2CSerial.println("Battery voltage is " + String(Battery::battery_voltage()));
+  if (!Battery::power_connected()) {
+    if (Battery::recharge_level_reached()) {
       I2CSerial.println("Battery recharge level is " + String(MIN_BATT_VOLTAGE));
       I2CSerial.println(F("Battery recharge level reached - sleeping until power is connected"));
       display_image(battery_recharge_image);
-      //while(!battery.power_connected()) {
+      //while(!Battery::power_connected()) {
       //  wdt_reset();
       //  delay(2000); // testing - when finished, will be sleep (indefinite, wakes when charger is connected through reset pulse)
       //}
@@ -221,9 +221,21 @@ void clock_battery_test() {
       ok2 = Config::ClearClockStoppedFlag();
       delay(50);
     }
-
+    // the clock now runs on the main battery, which will output between about 2.7v (empty) and 4.2v (full). The clock will run on the full range of these voltages,
+    // but the ESP8266 and peripherals will only run until the battery gets down to about 3.4 volts, when the 5v boost circuit will stop producing power for the 3.3v
+    // LDO regulator. So the clock should always run, even when the "charge battery" screen is displayed, and for quite some time after that.
+    // Running the clock chip directly on the battery should not affect charging, since when 5v power is applied via usb, which is when the battery charges, the clock
+    // chip will switch over to the 3.3v LDO output supply automatically, even though it has a lower voltage than the battery (typically). See table 1, "power 
+    // management" on page 10 of  the DS3231 data sheet for details of power management:.
+    //
+    // SUPPLY CONDITION ACTIVE SUPPLY
+    // VCC < VPF, VCC < VBAT VBAT <- (VCC is less than power fail voltage (off), and VCC is less than vbat. This is the case when the 3.3V LDO output is off).
+    // VCC < VPF, VCC > VBAT VCC
+    // VCC > VPF, VCC < VBAT VCC  <- (VCC is on (3.3v), but VCC is less than VBAT - VCC will be 3.3v, vbat will be about 3.7v nominal, but the chip will still use VCC for power).
+    // VCC > VPF, VCC > VBAT VCC
+    
     I2CSerial.println(F("Cleared OSF status bit (clock stopped flag)"));
-
+/*
     if (!Config::ClockWasReset()) { // clock should reset when the battery is actually removed and replaced, if so, we will assume the battery has already been replaced.
                                     // since even a dead battery should have enough energy to maintain the last time setting, but with the oscillator stopped.
       I2CSerial.println(F("Clock was not reset, assuming battery has not yet been changed, so displaying replace_cr2032_image"));
@@ -234,7 +246,7 @@ void clock_battery_test() {
         ESP.deepSleep(0); //sleep until USB power is reconnected
       }
     }
-
+*/
     Config::InvalidateEEPROM(); // if the clock stopped, invalidate the eeprom contents, to force the user to reset them on next boot (connect usb 5v).
   }
 }
@@ -385,9 +397,9 @@ void loop(void) {
     Lectionary::ReadingsFromEnum r;
 
     bool getLectionaryReadingEveryHour = false;
-    if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V) getLectionaryReadingEveryHour = true;
+    if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V || Battery::power_connected()) getLectionaryReadingEveryHour = true;
         
-    if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true battery.power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
+    if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true Battery::power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
   
       if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
@@ -445,7 +457,7 @@ void loop(void) {
   //timeserver.gps_sleep();
 
   if (!bEEPROM_checksum_good) {
-    if (battery.power_connected()) {
+    if (Battery::power_connected()) {
       display_image(clock_not_set_image, Network::getDHCPAddressAsString(), true);
     } else {
       display_image(connect_power_image);
@@ -454,9 +466,9 @@ void loop(void) {
 
   bool bSettingsUpdated = false;
 
-  if (battery.power_connected()) {
+  if (Battery::power_connected()) {
     I2CSerial.println("Power is connected, starting config web server");
-    I2CSerial.println("USB voltage is " + String(battery.battery_voltage()));
+    I2CSerial.println("USB voltage is " + String(Battery::battery_voltage()));
 
     // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
     //if (!network.connect()) {
@@ -473,11 +485,11 @@ void loop(void) {
    
     if (Config::StartServer()) {
       I2CSerial.println("Config web server started, listening for requests...");
-      while(battery.power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
+      while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
         server.handleClient();
         wdt_reset();
         delay(1000);
-        //I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+        //I2CSerial.println("Battery voltage is " + String(Battery::battery_voltage()));
         if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
       }
 
@@ -498,14 +510,14 @@ void loop(void) {
         I2CSerial.println("Power disconnected, stopping web server and going to sleep");
       }
   
-      //I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+      //I2CSerial.println("Battery voltage is " + String(Battery::battery_voltage()));
       
       free = system_get_free_heap_size();
       I2CSerial.println("free memory = " + String(free));
     }
   }
   else {
-    I2CSerial.println("Battery voltage is " + String(battery.battery_voltage()));
+    I2CSerial.println("Battery voltage is " + String(Battery::battery_voltage()));
   }
 
   /************************************************/ 
