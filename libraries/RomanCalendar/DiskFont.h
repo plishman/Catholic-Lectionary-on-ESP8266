@@ -11,6 +11,7 @@
 #include <epd2in7b.h>
 #include <epdpaint.h>
 #include <utf8string.h>
+#include <ArabicLigaturizer.h>
 #include "I2CSerialPort.h"
 #include "I18n.h"
 
@@ -153,6 +154,7 @@ public:
 	double GetCharWidth(String ch, 			DiskFont_FontCharInfo& fci);
 	
 	double GetTextWidthA(String text);
+	double GetTextWidthA(String text, bool shape_text);
 	double GetTextWidthA(const char* text);
 		
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);

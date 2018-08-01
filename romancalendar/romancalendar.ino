@@ -320,7 +320,7 @@ void loop(void) {
   wdt_reset();
 
   int next_wake_hours_count = 1; // will store the number of hours until the next wake up
-
+  
   I2CSerial.println("*1*\n");
   //timeserver.gps_wake();
   Calendar c(D1);
@@ -331,6 +331,8 @@ void loop(void) {
       display_image(sd_card_not_inserted_image);
       ESP.deepSleep(SLEEP_HOUR);    
     }
+  
+    bool right_to_left = c._I18n->configparams.right_to_left;
 
     /************************************************/ 
     // *2* Get date and time from DS3231 clock chip
@@ -413,11 +415,11 @@ void loop(void) {
             
       /************************************************/ 
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
-      if (!display_calendar(datetime, &c, refs)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
+      if (!display_calendar(datetime, &c, refs, right_to_left)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
         I2CSerial.printf("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n");
         r=Lectionary::READINGS_G;
         l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
-        display_calendar(datetime, &c, refs);
+        display_calendar(datetime, &c, refs, right_to_left);
       }
     }
     else {
@@ -832,7 +834,7 @@ void init_panel() {
   }
 }
 
-bool display_calendar(String date, Calendar* c, String refs) {  
+bool display_calendar(String date, Calendar* c, String refs, bool right_to_left) {  
   DiskFont diskfont;
   
   if (diskfont.begin(c->_I18n->configparams)) {
@@ -861,10 +863,12 @@ bool display_calendar(String date, Calendar* c, String refs) {
 //  //refs="1 Chr 29:9-10bc";              //debugging
 //  refs="John 3:16"; // debugging
 //  refs="2 John 1:1"; // debugging
-  if (!display_verses(c, refs, &paint, &paint_red, &diskfont)) {
+
+  if (!display_verses(c, refs, &paint, &paint_red, &diskfont, right_to_left)) {
     I2CSerial.printf("display_verses returned false\n");
     return false;
   }
+
 
   if (c->day.is_sanctorale) {
     String sanctorale_day = c->day.sanctorale;
@@ -872,19 +876,19 @@ bool display_calendar(String date, Calendar* c, String refs) {
       sanctorale_day = sanctorale_day + " " + c->day.holy_day_of_obligation;
     }
     
-    display_day(sanctorale_day, &paint, &paint_red, &diskfont, bRed); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
+    display_day(sanctorale_day, &paint, &paint_red, &diskfont, bRed, right_to_left); // sanctorale in struct day is the feast day, displayed at the top of the screen on feast days
     if (c->day.sanctorale == c->day.day) {                                     // otherwise the liturgical day is shown at the top of the screen.
       //display_date(date, "", &paint, font, &diskfont);                       // If it is a feast day, the liturgical day is displayed at the bottom left. Otherwise the bottom left
     } else {                                                                   // is left blank.
-      display_date(date, c->day.day, &paint, &diskfont); // "day" in struct day is the liturgical day
+      display_date(date, c->day.day, &paint, &paint_red, &diskfont, right_to_left); // "day" in struct day is the liturgical day
     }
   } else {
     String liturgical_day = c->day.day;
     if (c->day.is_holy_day_of_obligation) {
       liturgical_day = liturgical_day + " " + c->day.holy_day_of_obligation;
     }
-    display_day(liturgical_day, &paint, &paint_red, &diskfont, bRed);    
-    display_date(date, "", &paint, &diskfont);
+    display_day(liturgical_day, &paint, &paint_red, &diskfont, bRed, right_to_left);    
+    display_date(date, "", &paint, &paint_red, &diskfont, right_to_left);
   }
 
 //  I2CSerial.println("Displaying verses");
@@ -909,69 +913,55 @@ bool display_calendar(String date, Calendar* c, String refs) {
   return true;
 }
 
-void display_day(String d, Paint* paint, Paint* paint_red, DiskFont* diskfont, bool bRed) {
+void display_day(String d, Paint* paint, Paint* paint_red, DiskFont* diskfont, bool bRed, bool right_to_left) {
   I2CSerial.println("display_day() d=" + d);
   
-//  if (diskfont->available) {
-    int text_xpos = (paint->GetHeight() / 2) - (int)((diskfont->GetTextWidthA(d))/2);
+  int text_xpos = (paint->GetHeight() / 2) - (int)((diskfont->GetTextWidthA(d, true))/2); // true => shape text before calculating width
+  //I2CSerial.println("display_day() text_xpos = " + String(text_xpos));
+  
+  int text_ypos = 0;
+  
+  int fbwidth = PANEL_SIZE_X;
+  int fbheight = PANEL_SIZE_Y;
 
-    if (bRed) {
-      diskfont->DrawStringAt(text_xpos, 0, d, paint_red, COLORED, false);
-    } else {
-      diskfont->DrawStringAt(text_xpos, 0, d, paint, COLORED, false);
-    }
+  Bidi::RenderText(d, &text_xpos, &text_ypos, paint, paint_red, diskfont, &bRed, fbwidth, fbheight, right_to_left, false);
 
-    int charheight = diskfont->_FontHeader.charheight;
+  int charheight = diskfont->_FontHeader.charheight;
     
-    paint->DrawLine(0, charheight, 264, charheight, COLORED);
-//  }
-//  else {
-//    //Paint paint(image, title_bar_y_height, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-//    //paint.SetRotate(ROTATE_90);
-//  
-//    int text_xpos = (paint->GetHeight() / 2) - ((paint->GetTextWidth(d, font))/2);
-//  
-//    if (bRed) {
-//      paint_red->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
-//    } else {
-//      paint->DrawStringAt(text_xpos, 0, d, font, COLORED, false);
-//    }
-//    paint->DrawLine(0, 15, 264, 15, COLORED);
-//    //epd.TransmitPartialBlack(paint.GetImage(), PANEL_SIZE_Y - title_bar_y_height, 0, paint.GetWidth(), paint.GetHeight());
-//  }
+  paint->DrawLine(0, charheight, 264, charheight, COLORED);
 }
 
-void display_date(String date, String day, Paint* paint, DiskFont* diskfont) {
+void display_date(String date, String day, Paint* paint, Paint* paint_red, DiskFont* diskfont, bool right_to_left) {
   I2CSerial.println("\ndisplay_date: s=" + date);
 
-//  if (diskfont->available) {
-    int text_xpos = PANEL_SIZE_X - (int)(diskfont->GetTextWidthA(date)); // right justified
+  bool bEmphasisOn = false;
+
+  int fbwidth = PANEL_SIZE_X;
+  int fbheight = PANEL_SIZE_Y;
+
+  int text_xpos = 0;
+  int text_ypos = 0;
+
+  text_xpos = PANEL_SIZE_X - (int)(diskfont->GetTextWidthA(date, true)); // right justified, shape text before calculating width
+  text_ypos = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
+  Bidi::RenderText(date, &text_xpos, &text_ypos, paint, paint_red, diskfont, &bEmphasisOn, fbwidth, fbheight, right_to_left, false);
+
+  text_xpos = 0;
+  text_ypos = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
+  Bidi::RenderText(day, &text_xpos, &text_ypos, paint, paint_red, diskfont, &bEmphasisOn, fbwidth, fbheight, right_to_left, false);
    
-    diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED, false);
-    diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED, false);
-//  }
-//  else {
-//    //Paint paint(image, font->heightPages, PANEL_SIZE_X); //792bytes used    //width should be the multiple of 8 
-//    //paint.SetRotate(ROTATE_90);
-//  
-//    int text_xpos = PANEL_SIZE_X - (paint->GetTextWidth(date, font)); // right justified
-//   
-//    //paint.Clear(UNCOLORED);
-//    paint->DrawStringAt(text_xpos, PANEL_SIZE_Y - font->heightPages, date, font, COLORED, false);
-//    paint->DrawStringAt(0, PANEL_SIZE_Y - font->heightPages, day, font, COLORED, false);
-//    
-//    //paint.DrawLine(0, 15, 264, 15, COLORED);
-//    //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
-//  }
+  //diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED, false);
+  //diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED, false);
 }
 
-#define FORMAT_EMPHASIS_ON String("on")
-#define FORMAT_EMPHASIS_OFF String("off")
-#define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
-#define FORMAT_LINEBREAK String("br")
 
-bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, DiskFont* diskfont) {
-  bool right_to_left = c->_I18n->configparams.right_to_left;
+//#define FORMAT_EMPHASIS_ON String("on")
+//#define FORMAT_EMPHASIS_OFF String("off")
+//#define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
+//#define FORMAT_LINEBREAK String("br")
+
+bool display_verses(Calendar* c, String refs, Paint* paint_black, Paint* paint_red, DiskFont* diskfont, bool right_to_left) {
+//  bool right_to_left = c->_I18n->configparams.right_to_left;
 
   I2CSerial.printf("refs from lectionary: [%s]\n", refs.c_str());
   
@@ -1094,16 +1084,10 @@ bool epd_verse(String verse, Paint* paint_black, Paint* paint_red, int* xpos, in
   int fbwidth = PANEL_SIZE_X;
   int fbheight = PANEL_SIZE_Y;
   
-  Bidi bidi;
+//  Bidi bidi;
 
-//  if (diskfont->available) {
-    fbheight = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
-    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left);    
-//  }
-//  else {
-//    fbheight = PANEL_SIZE_Y - font->heightPages;
-//    return bidi.RenderText(verse, xpos, ypos, paint_black, paint_red, font,     bEmphasis_On, fbwidth, fbheight, right_to_left);
-//  }
+  fbheight = PANEL_SIZE_Y - diskfont->_FontHeader.charheight;
+  return Bidi::RenderText(verse, xpos, ypos, paint_black, paint_red, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left, true);    
 
   return true;
 }

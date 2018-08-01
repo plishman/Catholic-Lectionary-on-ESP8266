@@ -639,6 +639,8 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				charoffset = (dcharwidth - (double)char_bmwidth) / 2.0; //add, to center the character horizontally in its box
 				finalcharx = drefcolumn + charoffset;
 
+				//I2CSerial.printf("ch=%s, drc=%d, fcx=%d, co=%d\n", ch.c_str(), (int)drefcolumn, (int)finalcharx, (int)charoffset);
+				
 				DrawCharAt((int)finalcharx, y, ch, dcharwidth, fci, paint, colored);
 				//refcolumn += charwidth;
 				drefcolumn += dcharwidth;
@@ -692,7 +694,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				GetCharWidth(ch, char_bmwidth, dcharwidth, fci, blockToCheckFirst);//GetTextWidth(ch, char_bmwidth, dcharwidth); // populates fci structure with details of the character read from disk
 				charoffset = (dcharwidth - (double)char_bmwidth) / 2.0; //add, to center the character horizontally in its box
 
-				Serial.printf("ch=%s\tchar_bmwidth=%d\tdcharwidth=%s\tcharoffset=%s\n", ch.c_str(), char_bmwidth, String(dcharwidth).c_str(), String(charoffset,3).c_str());
+				//Serial.printf("ch=%s\tchar_bmwidth=%d\tdcharwidth=%s\tcharoffset=%s\n", ch.c_str(), char_bmwidth, String(dcharwidth).c_str(), String(charoffset,3).c_str());
 
 				finalcharx = drefcolumn + (dcharwidth - charoffset);
 				
@@ -881,6 +883,17 @@ double DiskFont::GetTextWidthA(String text) {
 	return advwidth;	
 }
 
+double DiskFont::GetTextWidthA(String text, bool shape_text) {
+	if (shape_text) {
+		String alshapedtext = "";
+		int level = ArabicLigaturizer::ar_nothing; //ArabicLigaturizer::ar_composedtashkeel | ArabicLigaturizer::ar_lig | ArabicLigaturizer::DIGITS_EN2AN;
+		ArabicLigaturizer::Shape(text, alshapedtext, level);
+		return GetTextWidthA(alshapedtext);
+	}
+	else {
+		return GetTextWidthA(text);
+	}
+}
 
 int DiskFont::GetTextWidth(String text) {
 	int width = 0;
