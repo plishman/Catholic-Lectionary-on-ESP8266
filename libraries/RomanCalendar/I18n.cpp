@@ -331,6 +331,29 @@ bool I18n::get_config( void ) {
 	return true;
 }
 
+String I18n::getdate(time64_t t) {
+	tmElements_t ts;
+	breakTime(t, ts);
+	
+	String date_format = get("date");
+	
+	date_format.replace("%{d}", String(ts.Day));
+	date_format.replace("%{dd}", ts.Day > 9 ? String(ts.Day) : "0" + String(ts.Day));
+	
+	date_format.replace("%{m}", String(ts.Month));
+	date_format.replace("%{mm}", ts.Month > 9 ? String(ts.Month) : "0" + String(ts.Month));
+	date_format.replace("%{mmm}", get("month." + String(ts.Month)));
+	
+	String yy = tmYearToCalendar(ts.Year) % 100 < 10 ? "0" + String(tmYearToCalendar(ts.Year) % 100) : String(tmYearToCalendar(ts.Year) % 100);
+	
+	date_format.replace("%{yy}", yy);
+	date_format.replace("%{yyyy}", String(tmYearToCalendar(ts.Year)));	
+
+	date_format.replace("%{day}", get("weekday." + String(ts.Wday - 1)));
+	
+	return date_format;
+}
+
 String I18n::get(String I18nPath) {
 	//I2CSerial.println("I18n::get()");
 	

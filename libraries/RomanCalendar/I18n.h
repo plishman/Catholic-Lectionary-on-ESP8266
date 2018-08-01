@@ -8,6 +8,7 @@
 	#include <SPI.h>
 	#include <SD.h>
 	#include <pins_arduino.h>
+	#include <TimeLib.h>
 	#include "I2CSerialPort.h"
 #else
 	#include "WString.h"
@@ -78,6 +79,7 @@ public:
 	I18n( void );
 #endif
 	bool get_config( void );
+	String getdate(time64_t t);
 	String get(String I18nPath);
 	~I18n();
 };

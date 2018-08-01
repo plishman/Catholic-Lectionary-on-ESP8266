@@ -368,9 +368,10 @@ void loop(void) {
     /************************************************/ 
     // *4* Make calendar entry text string for day
     I2CSerial.println("*4*\n");
-    String mth = c._I18n->get("month." + String(ts.Month));
-    //String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
-    String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
+    //String mth = c._I18n->get("month." + String(ts.Month));
+    ////String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
+    //String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
+    String datetime = c._I18n->getdate(date);
     I2CSerial.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
     if (c.day.is_sanctorale) {
       I2CSerial.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);

@@ -96,6 +96,7 @@ la:
     '10': Oct.
     '11': Nov.
     '12': Dec.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: latin
   colour:
     violet: violaceus # sc. color

@@ -96,6 +96,7 @@ it:
     '10': ott.
     '11': nov.
     '12': dic.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: latin
   colour:
     violet: viola

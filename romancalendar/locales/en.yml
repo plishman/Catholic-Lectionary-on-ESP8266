@@ -96,6 +96,7 @@ en:
     '10': Oct
     '11': Nov
     '12': Dec
+  date: %{d} %{mmm} %{yyyy}
   ordinals: english
   colour:
     violet: violet

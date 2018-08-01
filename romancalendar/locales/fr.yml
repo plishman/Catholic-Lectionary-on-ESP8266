@@ -96,6 +96,7 @@ fr:
     '10': oct.
     '11': nov.
     '12': déc.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: french
   colour:
     violet: violet
