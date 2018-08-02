@@ -827,6 +827,22 @@ double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo& fci) {										
 void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	//I2CSerial.printf("len:");
 
+	// remove supported tags before calculating text width
+	text.replace("<b>", "");
+	text.replace("</b>", "");
+	text.replace("<i>", "");
+	text.replace("</i>", "");
+	text.replace("<br>", "");
+	text.replace("<br/>", "");
+
+	text.replace("<B>", "");
+	text.replace("</B>", "");
+	text.replace("<I>", "");
+	text.replace("</I>", "");
+	text.replace("<BR>", "");
+	text.replace("<BR/>", "");
+	//
+	
 	int charIndex = 0;
 	int i = 0;
 	int len = text.length();
