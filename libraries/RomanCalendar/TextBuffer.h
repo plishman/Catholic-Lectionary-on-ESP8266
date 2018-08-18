@@ -27,11 +27,14 @@ class DisplayString
 	int height = 0;
 	String text = "";
 
+	bool right_to_left = false;
+	bool reverse_string = false;
+	
 	bool bRed = false;
 	int colored = UNCOLORED;
 	
 	bool IsEmpty() {
-		return text == "" && x == 0 && y == 0 && width == 0 && height == 0 && bRed == false && colored == UNCOLORED;
+		return text == "" && x == 0 && y == 0 && width == 0 && height == 0 && bRed == false && colored == UNCOLORED &&  right_to_left == false && reverse_string == false;
 	}
 	
 	DisplayString(const DisplayString& d2) { // copy constructor
@@ -83,9 +86,11 @@ class TextBuffer
 	}
 
 	bool get(int& displayListEntryNumber, DisplayString& displayString, int& offset_x, int& offset_y, int x0, int y0, int x1, int y1) {
+		if (displayListEntryNumber >= displayStringsList.size()) return false;
+		
 		displayString = displayStringsList.get(displayListEntryNumber);
 		
-		if (displayString.IsEmpty()) return false;
+		//if (displayString.IsEmpty()) return false;
 		
 		int dx0 = displayString.x;
 		int dy0 = displayString.y;
@@ -99,10 +104,10 @@ class TextBuffer
 		    (dx0 >= x0 && dy0 >= y0 &&  x1 <= dx1 &&  y1 <= dy1) ||
 		    (dx0 >= x0 && dy0 >= y0 && dx1 <= x1  && dy1 <= y1)) {
 				
-				offset_x = dx0 - x0;
-				offset_y = dy0 - y0;
-				return true;
-			}
+			offset_x = dx0 - x0;
+			offset_y = dy0 - y0;
+			return true;
+		}
 	}
 
 	bool render(Epd& epd, diskfont& DiskFont, int bufsize, int bufwidthpx, int bufheightpx) {
@@ -115,7 +120,10 @@ class TextBuffer
 		int w = bufwidthpx;
 		int h = bufheightpx;
 
-		Paint paint(image, h, w); //Y, X: 5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 // image is extern
+		Paint paint_black(image, h, w); //Y, X: 5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 // image is extern
+		paint.SetRotate(ROTATE_90);
+
+		Paint paint_red(image_red, h, w); //Y, X: 5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 // image_red is extern
 		paint.SetRotate(ROTATE_90);
 		
 		for (int x = 0; x <= PANEL_SIZE_X; x+=w) {
@@ -126,16 +134,33 @@ class TextBuffer
 				int displayListEntryNumber = 0;
 				DisplayString ds;
 				
+				bool started = false;
 				bool finished = false;
 
-				paint.Clear(UNCOLORED);
+				paint_black.Clear(UNCOLORED);
+				paint_red.Clear(UNCOLORED);
 
 				while (!finished) {
 					if (get(displayListEntryNumber, ds, offset_x, offset_y, x, x+w, y, y+w)) {
-						diskfont.DrawStringAt(0, 0, ds.text, &paint, COLORED, false, false);
+						if (!ds.bRed) {
+							diskfont.DrawStringAt(offset_x, offset_y, ds.text, &paint_black, ds.colored, ds.right_to_left, ds.reverse_string);
+						}
+						else {
+							diskfont.DrawStringAt(offset_x, offset_y, ds.text, &paint_red, ds.colored, ds.right_to_left, ds.reverse_string);							
+						}
+						started = true;
+					} else {
+						if (started) {
+							finished = true;
+						}
 					}
 					displayListEntryNumber++;
-				}			
+				}
+				
+				if (started) {
+					epd.TransmitPartialBlack(paint_black.GetImage(), x, y, paint_black.GetWidth(), paint_black.GetHeight());    
+					epd.TransmitPartialRed(paint_red.GetImage(), x, y, paint_red.GetWidth(), paint_red.GetHeight());    
+				}
 			}
 		}
 	}	
