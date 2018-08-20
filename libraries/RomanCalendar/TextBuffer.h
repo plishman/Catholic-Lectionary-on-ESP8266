@@ -68,7 +68,7 @@ public:
 	void sort_on_y();
 */
 
-	bool render(GxEPD_Class& ePaper, DiskFont& diskfont);
+	bool render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage);
 
 	void dump();
 };

@@ -1,12 +1,15 @@
 EPD_DISPLAY_IMAGE* epd_image = NULL;
 String epaper_messagetext = "";
 uint16_t epaper_messagetext_color = GxEPD_BLACK;
+int displayPage = 0;
 
 void updateDisplay(DISPLAY_UPDATE_TYPE d) {
   updateDisplay(d, "", GxEPD_BLACK);
 }
 
 void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor) {
+  displayPage = 0;
+  
   DEBUG_PRT.println("Updating Display");
   ePaper.init(); // disable diagnostic output on Serial (use 115200 as parameter to enable diagnostic output on Serial)
   DEBUG_PRT.println("Init Display");
@@ -55,10 +58,13 @@ void epaperUpdate() {
   ePaper.eraseDisplay();
   ePaper.setRotation(1); //90 degrees 
   
-  tb.render(ePaper, diskfont);
+  tb.render(ePaper, diskfont, displayPage);
   
   int charheight = diskfont._FontHeader.charheight;
   ePaper.drawFastHLine(0, charheight, PANEL_SIZE_X, GxEPD_BLACK);
+
+  displayPage++;
+  if (displayPage >= PAGE_COUNT) displayPage = 0;
   
   DEBUG_PRT.print(".");
 }

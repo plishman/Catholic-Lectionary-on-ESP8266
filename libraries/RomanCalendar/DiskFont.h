@@ -168,6 +168,11 @@ public:
 	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
 	
 	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
+
+	int _displayPage = 0;
+	void setDisplayPage(int displayPageNumber);
+	bool IsInPage(int displayPageNumber, DiskFont_FontCharInfo& fci, int codepoint, int x0, int y0, int x1, int y1);
+	void swap(int& a, int& b);
 };
 
 class FontBlockTable {

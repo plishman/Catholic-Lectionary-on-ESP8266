@@ -112,7 +112,9 @@ void sort_on_y() {
 }
 */
 
-bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont) {	
+bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage) {	
+	diskfont.setDisplayPage(displayPage);
+	
 	Serial.println("render():--------------------------");
 	int numListEntries = displayStringsList.size();
 
