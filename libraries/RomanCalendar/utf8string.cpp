@@ -258,7 +258,7 @@ String Utf8ReverseString(String instr) {
 // https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
 bool IsRightToLeftChar(uint32_t c)
 {
-	//I2CSerial.printf("{%x}", c);
+	//DEBUG_PRT.printf("{%x}", c);
 
 	uint8_t hasRandALCat = 0;
 	if (c >= 0x5BE && c <= 0x10B7F)

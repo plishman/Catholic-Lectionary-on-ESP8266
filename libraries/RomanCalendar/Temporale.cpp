@@ -1039,7 +1039,7 @@ bool Temporale::get(time64_t date) {
 		break;
 
 	default:
-		I2CSerial.printf("Colours:Season not set!\n");
+		DEBUG_PRT.printf("Colours:Season not set!\n");
 		_colour_e = Enums::COLOURS_GREEN;
 	}
 
@@ -1190,11 +1190,11 @@ void Temporale::print_date(time64_t t) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(t, ts);
 
-	I2CSerial.print(ts.Day);
-	I2CSerial.print(F("-"));
-	I2CSerial.print(ts.Month);
-	I2CSerial.print(F("-"));
-	I2CSerial.print(ts.Year + BEGIN_EPOCH);
+	DEBUG_PRT.print(ts.Day);
+	DEBUG_PRT.print(F("-"));
+	DEBUG_PRT.print(ts.Month);
+	DEBUG_PRT.print(F("-"));
+	DEBUG_PRT.print(ts.Year + BEGIN_EPOCH);
 #endif
 }
 
@@ -1211,10 +1211,10 @@ void Temporale::print_time(time64_t t) {
 	::tmElements_t ts;						// for arduino
 	::breakTime(t, ts);
 
-	I2CSerial.print(ts.Hour);
-	I2CSerial.print(F(":"));
-	I2CSerial.print(ts.Minute);
-	I2CSerial.print(F(":"));
-	I2CSerial.print(ts.Second);
+	DEBUG_PRT.print(ts.Hour);
+	DEBUG_PRT.print(F(":"));
+	DEBUG_PRT.print(ts.Minute);
+	DEBUG_PRT.print(F(":"));
+	DEBUG_PRT.print(ts.Second);
 #endif
 }

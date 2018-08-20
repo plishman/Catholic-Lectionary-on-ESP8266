@@ -3,6 +3,8 @@
 #ifndef _CSV_H
 #define _CSV_H
 
+#include "RCGlobals.h"
+
 #ifdef _WIN32
 	#include "WString.h"
 #else

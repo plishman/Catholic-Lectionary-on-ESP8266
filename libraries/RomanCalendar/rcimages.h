@@ -1,7 +1,9 @@
+#include "RCGlobals.h"
+
 typedef struct
 {
-	unsigned char* bitmap_black;
-	unsigned char* bitmap_red;
+	const unsigned char* bitmap_black;
+	const unsigned char* bitmap_red;
 	int bitmap_bytecount;
 } EPD_DISPLAY_IMAGE;	
 

@@ -3,6 +3,8 @@
 #ifndef _I18n_H
 #define _I18n_H
 
+#include "RCGlobals.h"
+
 #ifndef _WIN32
 	#include "Arduino.h"
 	#include <SPI.h>

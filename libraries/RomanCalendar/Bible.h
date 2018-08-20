@@ -3,6 +3,8 @@
 #ifndef _BIBLE_H
 #define _BIBLE_H
 
+#include "RCGlobals.h"
+
 #ifdef _WIN32
 	#include "LinkedList/LinkedList.h"
 	#include "WString.h"

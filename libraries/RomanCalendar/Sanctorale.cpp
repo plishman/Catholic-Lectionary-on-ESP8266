@@ -16,18 +16,18 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 									// On mondays in lent and advent, need to look back and check if there was a
 									// solemnity the previous sunday.
 	if (_I18n == NULL) {
-		I2CSerial.println(F("Sanctorale::get(): _I18n is null"));
+		DEBUG_PRT.println(F("Sanctorale::get(): _I18n is null"));
 		return false;
 	} 
 
 	if (!(_I18n->configparams.have_config)) {
-		I2CSerial.println(F("Sanctorale::get(): No config"));
+		DEBUG_PRT.println(F("Sanctorale::get(): No config"));
 		return false;
 	}
 
 	_Lectionary = 0;
 	
-	//I2CSerial.println("Sanctorale::get()");
+	//DEBUG_PRT.println("Sanctorale::get()");
 #ifndef _WIN32
 	//if (!_I18n->initializeSD()) return String("");
 #else
@@ -49,7 +49,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 #ifndef _WIN32
 	File file = _I18n->openFile(I18nFilename, FILE_READ);
 	if (!file) {
-		I2CSerial.print(F("Sanctorale::get() couldn't open file ")); I2CSerial.println(I18nFilename);
+		DEBUG_PRT.print(F("Sanctorale::get() couldn't open file ")); DEBUG_PRT.println(I18nFilename);
 		return false;
 	} 
 #else

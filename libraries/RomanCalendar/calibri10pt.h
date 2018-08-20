@@ -1,6 +1,8 @@
 #ifndef _CALIBRI10PT_H
 #define _CALIBRI10PT_H
 
+#include "RCGlobals.h"
+
 #include <RomFont.h>
 #include <pgmspace.h>
 

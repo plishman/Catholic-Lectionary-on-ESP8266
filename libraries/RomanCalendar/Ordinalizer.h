@@ -1,5 +1,8 @@
 #ifndef _ORDINALIZER_H
 #define _ORDINALIZER_H
+
+#include "RCGlobals.h"
+
 #include "Arduino.h"
 #include "I2CSerialPort.h"
 

@@ -14,7 +14,7 @@ Ordinalizer::Ordinalizer(String type) {
 		_ordinal_type = i;
 	}
 	
-	I2CSerial.printf("\nOrdinal type is %d, %s\n", _ordinal_type, type.c_str());
+	DEBUG_PRT.printf("\nOrdinal type is %d, %s\n", _ordinal_type, type.c_str());
 		
 }
 

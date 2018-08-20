@@ -1,6 +1,8 @@
 #ifndef _ARABICLIGATURIZER_H
 #define _ARABICLIGATURIZER_H
 
+#include "RCGlobals.h"
+
 #ifndef _WIN32
 #include <Arduino.h>
 #include <I2CSerialPort.h>

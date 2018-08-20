@@ -22,8 +22,8 @@ bool loadFromSdCard(String path) {
 	  }
   }
   
-  I2CSerial.print(F("path="));
-  I2CSerial.println(path);
+  DEBUG_PRT.print(F("path="));
+  DEBUG_PRT.println(path);
   
   if(path.endsWith(".src")) path = path.substring(0, path.lastIndexOf("."));
   else if(path.endsWith(".htm")) dataType = "text/html";
@@ -50,7 +50,7 @@ bool loadFromSdCard(String path) {
   if (server.hasArg("download")) dataType = "application/octet-stream";
 
   if (server.streamFile(dataFile, dataType) != dataFile.size()) {
-    I2CSerial.println("Sent less data than expected!");
+    DEBUG_PRT.println("Sent less data than expected!");
   }
 
   dataFile.close();
@@ -71,7 +71,7 @@ void handleNotFound() {
 		message += " NAME:"+server.argName(i) + "\n VALUE:" + server.arg(i) + "\n";
 	}
 	server.send(404, "text/plain", message);
-	I2CSerial.print(message);
+	DEBUG_PRT.print(message);
 }
 
 
@@ -79,14 +79,14 @@ void handleSettingsJson() {
     config_t c = {0};
     Config::GetConfig(c);
 	
-    I2CSerial.print(F("timezone = "));
-	I2CSerial.println(String(c.data.timezone_offset));
-    I2CSerial.print(F("lectionary = "));
-	I2CSerial.println(String(c.data.lectionary_config_number));
+    DEBUG_PRT.print(F("timezone = "));
+	DEBUG_PRT.println(String(c.data.timezone_offset));
+    DEBUG_PRT.print(F("lectionary = "));
+	DEBUG_PRT.println(String(c.data.lectionary_config_number));
 	
     String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + "\"}"; // output in JSON format
     server.send(200, "application/json", line);
-    I2CSerial.println(line);
+    DEBUG_PRT.println(line);
 }
 
 
@@ -96,19 +96,19 @@ void handleSetConf() {
 
 	String debug_mode = getQueryStringParam("debug", "");
 	
-    I2CSerial.print(F("timezone = "));
-	I2CSerial.println(String(tz));
-    I2CSerial.print(F("lectionary = "));
-	I2CSerial.println(String(lect));
+    DEBUG_PRT.print(F("timezone = "));
+	DEBUG_PRT.println(String(tz));
+    DEBUG_PRT.print(F("lectionary = "));
+	DEBUG_PRT.println(String(lect));
     
 	if (debug_mode != "") {
-		I2CSerial.print(F("debug = "));
-		I2CSerial.println(String(debug_mode));
+		DEBUG_PRT.print(F("debug = "));
+		DEBUG_PRT.println(String(debug_mode));
 	}
 	
 //    bool bresult = SaveConfig(tz, lect, debug_mode);
 //
-//    I2CSerial.println("SaveConfig returned " + String(bresult?"true":"false"));
+//    DEBUG_PRT.println("SaveConfig returned " + String(bresult?"true":"false"));
 		
 	uint32_t hh, mm, ss, day, mon, year;
 
@@ -157,15 +157,15 @@ void handleSetConf() {
 		bresult = Config::SaveConfig(tz, lect, debug_mode);
 	}
 	
-    I2CSerial.print(F("SaveConfig returned "));
-	I2CSerial.println( bresult ? F("true") : F("false") );
+    DEBUG_PRT.print(F("SaveConfig returned "));
+	DEBUG_PRT.println( bresult ? F("true") : F("false") );
 	
     config_t c = {0};
     Config::GetConfig(c);
-    I2CSerial.print(F("timezone = "));
-	I2CSerial.println(String(c.data.timezone_offset));
-    I2CSerial.print(F("lectionary = "));
-	I2CSerial.println(String(c.data.lectionary_config_number));
+    DEBUG_PRT.print(F("timezone = "));
+	DEBUG_PRT.println(String(c.data.timezone_offset));
+    DEBUG_PRT.print(F("lectionary = "));
+	DEBUG_PRT.println(String(c.data.lectionary_config_number));
 	
 	Config::bSettingsUpdated = true;
 
@@ -173,7 +173,7 @@ void handleSetConf() {
 	
 	if (b404) {
 		server.send(404, "text/plain", "Settings updated (setconf.htm not found)");
-		I2CSerial.println(F("Sending 404"));
+		DEBUG_PRT.println(F("Sending 404"));
 	}
 }
 
@@ -202,13 +202,13 @@ bool Config::StartServer() {
 	
 	wl_status_t status = WiFi.status();
 	if(status == WL_CONNECTED) {
-		I2CSerial.print(F("Config: Network '"));
-		I2CSerial.print(WiFi.SSID());
-		I2CSerial.println(F("' is connected, starting mDNS responder"));
+		DEBUG_PRT.print(F("Config: Network '"));
+		DEBUG_PRT.print(WiFi.SSID());
+		DEBUG_PRT.println(F("' is connected, starting mDNS responder"));
 	} 
 	else {
-		I2CSerial.print(F("\nCould not connect to WiFi. state="));
-		I2CSerial.println(String(status)); 
+		DEBUG_PRT.print(F("\nCould not connect to WiFi. state="));
+		DEBUG_PRT.println(String(status)); 
 		WiFi.printDiag(I2CSerial);
 		return false;
 	}
@@ -219,21 +219,21 @@ bool Config::StartServer() {
 	// - second argument is the IP address to advertise
 	//   we send our IP address on the WiFi network
 	if (!MDNS.begin("lectionary")) {
-		I2CSerial.println(F("Error setting up MDNS responder!"));
+		DEBUG_PRT.println(F("Error setting up MDNS responder!"));
 		return false;
 	}
 
 	// Add service to MDNS-SD
 	MDNS.addService("http", "tcp", 80);
 	
-	I2CSerial.println(F("mDNS responder started"));
+	DEBUG_PRT.println(F("mDNS responder started"));
   
 	server.on ( "/settings.json", handleSettingsJson );
 	server.on ( "/setconf.htm", handleSetConf );
 	server.onNotFound ( handleNotFound );
 
 	server.begin();
-	I2CSerial.println ( "HTTP server started" );
+	DEBUG_PRT.println ( "HTTP server started" );
   
 	return true;	
 }
@@ -270,11 +270,11 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 	  if (IsNumeric(tz)) {
 		timezone_offset = atof(tz.c_str());
 		bGotTz = true;
-		I2CSerial.print(F("timezone_offset="));
-		I2CSerial.println(String(timezone_offset));
+		DEBUG_PRT.print(F("timezone_offset="));
+		DEBUG_PRT.println(String(timezone_offset));
 	  } 
 	  else {
-		I2CSerial.println(F("tz is not a number"));
+		DEBUG_PRT.println(F("tz is not a number"));
 		return false;
 	  }
   }
@@ -283,11 +283,11 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 	  if (IsNumeric(lect_num)) {
 		lectionary_config_number = atoi(lect_num.c_str());  
 		bGotLectNum = true;
-		I2CSerial.print(F("lectionary_config_number="));
-		I2CSerial.println(String(lectionary_config_number));
+		DEBUG_PRT.print(F("lectionary_config_number="));
+		DEBUG_PRT.println(String(lectionary_config_number));
 	  }
 	  else {
-		I2CSerial.println(F("lectionary config is not a number"));
+		DEBUG_PRT.println(F("lectionary config is not a number"));
 		return false;
 	  }
   }
@@ -303,24 +303,24 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
   
   if (bGotTz && bGotLectNum) {
 	  if (!(timezone_offset >= -12.0 && timezone_offset <= 12.0)) {
-		I2CSerial.print(F("timezone_offset is out of range: "));
-		I2CSerial.println(String(timezone_offset));
+		DEBUG_PRT.print(F("timezone_offset is out of range: "));
+		DEBUG_PRT.println(String(timezone_offset));
 		return false;
 	  }
 
 	  if (IsNumeric(dstoffset)) {
 		dst_offset = atof(dstoffset.c_str());
-		I2CSerial.print(F("dst_offset="));
-		I2CSerial.println(String(dst_offset));
+		DEBUG_PRT.print(F("dst_offset="));
+		DEBUG_PRT.println(String(dst_offset));
 	  } 
 	  else {
-		I2CSerial.println(F("dst_offset is not a number"));
+		DEBUG_PRT.println(F("dst_offset is not a number"));
 		return false;
 	  }
 
 	  if (!(dst_offset >= 0.0 && dst_offset <= 3.0)) {
-		I2CSerial.print(F("dst_offset is out of range: "));
-		I2CSerial.println(String(dst_offset));
+		DEBUG_PRT.print(F("dst_offset is out of range: "));
+		DEBUG_PRT.println(String(dst_offset));
 		return false;
 	  }
   }
@@ -352,21 +352,21 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 }
 
 void Config::dump_config(config_t& c) {
-	I2CSerial.print(F("c.data.timezone_offset:\t")); 			I2CSerial.println(String(c.data.timezone_offset));
-	I2CSerial.print(F("c.data.lectionary_config_number:\t")); 	I2CSerial.println(String(c.data.lectionary_config_number));
-	I2CSerial.print(F("c.data.debug_on:\t")); 					I2CSerial.println(String(c.data.debug_on));
-	I2CSerial.print(F("c.data.dst_offset:\t")); 				I2CSerial.println(String(c.data.dst_offset));
-	I2CSerial.print(F("c.data.dst_start_month:\t")); 			I2CSerial.println(String(c.data.dst_start_month));
-	I2CSerial.print(F("c.data.dst_start_day:\t")); 				I2CSerial.println(String(c.data.dst_start_day));
-	I2CSerial.print(F("c.data.dst_start_hour:\t")); 			I2CSerial.println(String(c.data.dst_start_hour));
-	I2CSerial.print(F("c.data.dst_end_month:\t")); 				I2CSerial.println(String(c.data.dst_end_month));
-	I2CSerial.print(F("c.data.dst_end_day:\t")); 				I2CSerial.println(String(c.data.dst_end_day));
-	I2CSerial.print(F("c.data.dst_end_hour:\t")); 				I2CSerial.println(String(c.data.dst_end_hour));
+	DEBUG_PRT.print(F("c.data.timezone_offset:\t")); 			DEBUG_PRT.println(String(c.data.timezone_offset));
+	DEBUG_PRT.print(F("c.data.lectionary_config_number:\t")); 	DEBUG_PRT.println(String(c.data.lectionary_config_number));
+	DEBUG_PRT.print(F("c.data.debug_on:\t")); 					DEBUG_PRT.println(String(c.data.debug_on));
+	DEBUG_PRT.print(F("c.data.dst_offset:\t")); 				DEBUG_PRT.println(String(c.data.dst_offset));
+	DEBUG_PRT.print(F("c.data.dst_start_month:\t")); 			DEBUG_PRT.println(String(c.data.dst_start_month));
+	DEBUG_PRT.print(F("c.data.dst_start_day:\t")); 				DEBUG_PRT.println(String(c.data.dst_start_day));
+	DEBUG_PRT.print(F("c.data.dst_start_hour:\t")); 			DEBUG_PRT.println(String(c.data.dst_start_hour));
+	DEBUG_PRT.print(F("c.data.dst_end_month:\t")); 				DEBUG_PRT.println(String(c.data.dst_end_month));
+	DEBUG_PRT.print(F("c.data.dst_end_day:\t")); 				DEBUG_PRT.println(String(c.data.dst_end_day));
+	DEBUG_PRT.print(F("c.data.dst_end_hour:\t")); 				DEBUG_PRT.println(String(c.data.dst_end_hour));
 	if (!DstIsValid(c)) {
-		I2CSerial.print(F("DST settings invalid"));
+		DEBUG_PRT.print(F("DST settings invalid"));
 	}
 	
-	I2CSerial.print(F("\nc.crc32:\t")); 						I2CSerial.println(String(c.crc32, HEX));
+	DEBUG_PRT.print(F("\nc.crc32:\t")); 						DEBUG_PRT.println(String(c.crc32, HEX));
 }
 
 bool Config::DstIsValid(config_t& c) {
@@ -382,7 +382,7 @@ bool Config::DstIsValid(config_t& c) {
 }
 
 void Config::InvalidateEEPROM() {
-	I2CSerial.println(F("Invalidating EEPROM to oblige user to reconfigure time/dst settings etc"));
+	DEBUG_PRT.println(F("Invalidating EEPROM to oblige user to reconfigure time/dst settings etc"));
 	config_t c = {0};
 	storeStruct(&c, sizeof(config_t));
 }
@@ -406,7 +406,7 @@ bool Config::GetConfig(config_t& c) {
 //	  return true;
 //  }
   
-  I2CSerial.println(F("Config: EEPROM checksum wrong or uninitialized"));
+  DEBUG_PRT.println(F("Config: EEPROM checksum wrong or uninitialized"));
   return false;
 }
 
@@ -494,14 +494,14 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   
   buf[0] = 0; // start at register 0 in the ds3231
   
-  brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+  brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
     brzo_i2c_write(buf, 1, true);
     brzo_i2c_read(buf, 7, true);
     //delay(1);
   bcode = brzo_i2c_end_transaction();
 
   if (bcode != 0) {
-    I2CSerial.soft_reset();
+    DEBUG_PRT.soft_reset();
     return false;
   }
 
@@ -519,9 +519,9 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   
   if (day == 1 && date == 1 && month == 1 && year == 0 && hour == 0 && minute == 0 && second < 10) clockwasreset = true; // assume clock was reset (by power failure etc) if the values read are the same as the reset values (from DS3231 datasheet)
   
-  //I2CSerial.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
+  //DEBUG_PRT.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
 
-  //I2CSerial.printf("-1-");
+  //DEBUG_PRT.printf("-1-");
   
   int century = 0;
   
@@ -538,17 +538,17 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 	  }
 	  
 	  if (!ok) {
-		  I2CSerial.println(F("Century overflowed and was unable to reset the flag: century setting may be wrong on next call - connect power and use Lectionary config website to reset it"));
+		  DEBUG_PRT.println(F("Century overflowed and was unable to reset the flag: century setting may be wrong on next call - connect power and use Lectionary config website to reset it"));
 	  }
 	  else {
-		  I2CSerial.println(F("Century overflowed, flag in clock chip has been reset and century value incremented in EEPROM"));		  
+		  DEBUG_PRT.println(F("Century overflowed, flag in clock chip has been reset and century value incremented in EEPROM"));		  
 	  }
 	}
 
 	century = c.data.century;  
   }
   
-  //I2CSerial.printf("-2-");
+  //DEBUG_PRT.printf("-2-");
   
   tmElements_t tm;
   
@@ -559,7 +559,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   tm.Month = month;
   tm.Year = y2kYearToTm(year + (century * 100));
 
-  //I2CSerial.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
+  //DEBUG_PRT.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
   
   bool b_incorrectleapyear = false;
   
@@ -569,24 +569,24 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 	b_incorrectleapyear = true;	 												   // So it will incorrectly treat 2100 as a leap year, when it is not (2400 will be)
  }
   
-  //I2CSerial.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
-  //I2CSerial.printf("-3-");
+  //DEBUG_PRT.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
+  //DEBUG_PRT.printf("-3-");
   *t = makeTime(tm);
-  //I2CSerial.printf("-4-");
+  //DEBUG_PRT.printf("-4-");
   
   if (b_incorrectleapyear) {
-	  I2CSerial.print(F("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March "));
-	  I2CSerial.println(String(tm.Year));
+	  DEBUG_PRT.print(F("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March "));
+	  DEBUG_PRT.println(String(tm.Year));
 	  setDateTime(*t);
   }
  
-//  I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
+//  DEBUG_PRT.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
   
   if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
 
   
-  //I2CSerial.printf("-4-");
+  //DEBUG_PRT.printf("-4-");
 
   return true;
 }
@@ -660,13 +660,13 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 			if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
 				if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
 					dst_end.Year++; // end dst month is in next year						 //	next year
-					I2CSerial.printf("dst_end is in next year (southern hemisphere)\n");
+					DEBUG_PRT.printf("dst_end is in next year (southern hemisphere)\n");
 				}
 			}
 			else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
 				if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month) {
 					dst_start.Year++; // start dst month is in next year
-					I2CSerial.printf("dst_start is in next year (northern hemisphere)\n");
+					DEBUG_PRT.printf("dst_start is in next year (northern hemisphere)\n");
 				}			
 			}
 			
@@ -678,12 +678,12 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 				*t += (int)(c.data.dst_offset * 3600.0);	  
 				*isdst = true;
 				
-				I2CSerial.println(F("DST in effect"));
+				DEBUG_PRT.println(F("DST in effect"));
 			}
 			else {
 				*isdst = false;
 
-				I2CSerial.println(F("Standard Time in effect"));
+				DEBUG_PRT.println(F("Standard Time in effect"));
 			}
 		}
 	}
@@ -692,7 +692,7 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 	}
 	
 	breakTime(*t, ts);
-	I2CSerial.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+	DEBUG_PRT.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 
 	return bResult;
 }
@@ -715,13 +715,13 @@ bool Config::setDateTime(time64_t t) {
   buf[6] = (dec2bcd(tm.Month));
   buf[7] = (dec2bcd(tmYearToY2k(tm.Year % 100))); 
   
-  brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+  brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
     brzo_i2c_write(buf, 8, true);
   bcode = brzo_i2c_end_transaction();
 
   if (bcode != 0) {
-    I2CSerial.soft_reset();
-	I2CSerial.printf("\nsetDateTime(): bcode=%d\n", bcode);
+    DEBUG_PRT.soft_reset();
+	DEBUG_PRT.printf("\nsetDateTime(): bcode=%d\n", bcode);
     return false;
   }
 
@@ -729,12 +729,12 @@ bool Config::setDateTime(time64_t t) {
   
   if (GetConfig(c)) {
 	c.data.century = (tmYearToY2k(tm.Year)/100);
-	I2CSerial.printf("setDateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.data.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.data.century);
+	DEBUG_PRT.printf("setDateTime() tmYearToY2k(tm.Year)=%d, tm.Year=%d, c.data.century=%d\n", tmYearToY2k(tm.Year), tm.Year, c.data.century);
   
 	SaveConfig(c);
 	GetConfig(c);
-	I2CSerial.print(F("setDateTime() c.data.century="));
-	I2CSerial.println(String(c.data.century));
+	DEBUG_PRT.print(F("setDateTime() c.data.century="));
+	DEBUG_PRT.println(String(c.data.century));
   }
   return true;
 }
@@ -785,13 +785,13 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 			
 		}
 	  
-		brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+		brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
 			brzo_i2c_write(buf, 5, false);
 		bcode = brzo_i2c_end_transaction();
 
 		if (bcode != 0) {
-			I2CSerial.soft_reset();
-			I2CSerial.printf("\nsetAlarm(1): bcode=%d\n", bcode);
+			DEBUG_PRT.soft_reset();
+			DEBUG_PRT.printf("\nsetAlarm(1): bcode=%d\n", bcode);
 			return false;
 		}
 		
@@ -827,13 +827,13 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 			break;			
 		}
 	  
-		brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+		brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
 			brzo_i2c_write(buf, 4, false);
 		bcode = brzo_i2c_end_transaction();
 
 		if (bcode != 0) {
-			I2CSerial.soft_reset();
-			I2CSerial.printf("\nsetAlarm(2): bcode=%d\n", bcode);
+			DEBUG_PRT.soft_reset();
+			DEBUG_PRT.printf("\nsetAlarm(2): bcode=%d\n", bcode);
 			return false;
 		}
 		
@@ -854,13 +854,13 @@ bool Config::DS3231_set_addr(const uint8_t addr, const uint8_t val)
 	buf[0] = addr;
 	buf[1] = val;
 	
-	brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+	brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
 		brzo_i2c_write(buf, 2, false);
 	bcode = brzo_i2c_end_transaction();
 
 	if (bcode != 0) {
-		I2CSerial.soft_reset();
-		I2CSerial.printf("\nDS3231_set_addr: bcode=%d\n", bcode);
+		DEBUG_PRT.soft_reset();
+		DEBUG_PRT.printf("\nDS3231_set_addr: bcode=%d\n", bcode);
 		return false;
 	}
 	
@@ -877,14 +877,14 @@ uint8_t Config::DS3231_get_addr(const uint8_t addr, bool& ok)
 
 	buf[0] = addr;
 	
-	brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
+	brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
 		brzo_i2c_write(buf, 1, false);
 		brzo_i2c_read(buf, 1, false);
 	bcode = brzo_i2c_end_transaction();
 
 	if (bcode != 0) {
-		I2CSerial.soft_reset();
-		I2CSerial.printf("\nDS3231_get_addr: bcode=%d\n", bcode);
+		DEBUG_PRT.soft_reset();
+		DEBUG_PRT.printf("\nDS3231_get_addr: bcode=%d\n", bcode);
 		ok = false;
 	}	  
 
@@ -1073,24 +1073,24 @@ bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 bool Config::readRtcMemoryData(rtcData_t& rtcData) {
 	  // Read struct from RTC memory
   if (ESP.rtcUserMemoryRead(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
-    I2CSerial.println("Read: ");
+    DEBUG_PRT.println("Read: ");
     //printMemory();
-    //I2CSerial.println("number of hours to next reading: " + String(rtcData.data.wake_hour_counter)); // set to true if the reading should be made this hour (read on waking)
-    //I2CSerial.println("card displayed: " + String(rtcData.data.dcs)); // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
+    //DEBUG_PRT.println("number of hours to next reading: " + String(rtcData.data.wake_hour_counter)); // set to true if the reading should be made this hour (read on waking)
+    //DEBUG_PRT.println("card displayed: " + String(rtcData.data.dcs)); // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
     
-    I2CSerial.println();
+    DEBUG_PRT.println();
     uint32_t crcOfData = calculateCRC32((uint8_t*) (uint8_t*)&rtcData.data, sizeof(rtcData.data));
-    I2CSerial.print(F("CRC32 of data: "));
-    I2CSerial.println(crcOfData, HEX);
-    I2CSerial.print(F("CRC32 read from RTC: "));
-    I2CSerial.println(rtcData.crc32, HEX);
+    DEBUG_PRT.print(F("CRC32 of data: "));
+    DEBUG_PRT.println(crcOfData, HEX);
+    DEBUG_PRT.print(F("CRC32 read from RTC: "));
+    DEBUG_PRT.println(rtcData.crc32, HEX);
     
 	if (crcOfData != rtcData.crc32) {
-      I2CSerial.println(F("CRC32 in RTC memory doesn't match CRC32 of data. Data is probably invalid!"));
+      DEBUG_PRT.println(F("CRC32 in RTC memory doesn't match CRC32 of data. Data is probably invalid!"));
 	  return false;
     } 
     
-	I2CSerial.println(F("CRC32 check ok, data is probably valid."));
+	DEBUG_PRT.println(F("CRC32 check ok, data is probably valid."));
 	return true;
   }
   
@@ -1102,9 +1102,9 @@ void Config::writeRtcMemoryData(rtcData_t& rtcData) {
   rtcData.crc32 = calculateCRC32((uint8_t*) &rtcData.data, sizeof(rtcData.data));
   // Write struct to RTC memory
   if (ESP.rtcUserMemoryWrite(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
-    I2CSerial.println(F("Write: "));
+    DEBUG_PRT.println(F("Write: "));
     printMemory(rtcData);
-	I2CSerial.println();
+	DEBUG_PRT.println();
   }
 }
 
@@ -1132,11 +1132,11 @@ void Config::printMemory(rtcData_t& rtcData) {
   uint8_t *ptr = (uint8_t *)&rtcData;
   for (size_t i = 0; i < sizeof(rtcData); i++) {
     sprintf(buf, "%02X", ptr[i]);
-    I2CSerial.print(buf);
+    DEBUG_PRT.print(buf);
     if ((i + 1) % 32 == 0) {
-      I2CSerial.println();
+      DEBUG_PRT.println();
     } else {
-      I2CSerial.print(" ");
+      DEBUG_PRT.print(" ");
     }
   }
   Serial.println();
@@ -1162,12 +1162,12 @@ wake_reasons Config::Wake_Reason() {
 	}
 
 	if (triggered_a1) {
-		I2CSerial.println("Woken by Alarm 1");
+		DEBUG_PRT.println("Woken by Alarm 1");
 		return WAKE_ALARM_1;
 	}
   
 	if (triggered_a2) {
-		I2CSerial.println("Woken by Alarm 2");
+		DEBUG_PRT.println("Woken by Alarm 2");
 		return WAKE_ALARM_2;
 	}
 
@@ -1175,12 +1175,12 @@ wake_reasons Config::Wake_Reason() {
     rinfo = ESP.getResetInfoPtr();
 
     if ((*rinfo).reason == REASON_DEEP_SLEEP_AWAKE) { // only check the hour count to the next reading if we awoke because of the deepsleep timer
-		I2CSerial.println(String("ResetInfo.reason = ") + (*rinfo).reason);		
+		DEBUG_PRT.println(String("ResetInfo.reason = ") + (*rinfo).reason);		
 		return WAKE_DEEPSLEEP;
 	}
    
 	if (!(triggered_a1 || triggered_a2)) {
-		I2CSerial.println("Woken by USB 5volts");
+		DEBUG_PRT.println("Woken by USB 5volts");
 		return WAKE_USB_5V;
 	}
 	
@@ -1191,19 +1191,19 @@ wake_reasons Config::Wake_Reason() {
 bool Config::PowerOff(time64_t wake_datetime) {
 	if (wake_datetime != 0) {
 		if (Config::setAlarm(wake_datetime, 1, A1_MATCH_DAY_AND_TIME, true)) {
-			I2CSerial.print("Alarm 1 set");
+			DEBUG_PRT.print("Alarm 1 set");
 			tmElements_t ts;
 			breakTime(wake_datetime, ts);
-			I2CSerial.printf(" for %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+			DEBUG_PRT.printf(" for %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 			delay(200);
 		}
 		else {
-			I2CSerial.print("Problem setting Alarm 1");
+			DEBUG_PRT.print("Problem setting Alarm 1");
 			return false;
 		}
 	}
 	else {
-		I2CSerial.print("Not setting alarm, power off until USB5V connected");    		
+		DEBUG_PRT.print("Not setting alarm, power off until USB5V connected");    		
 	}
     
 	bool okCleared_a1 = false;
@@ -1211,7 +1211,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
 
 	int retries = 50;
   
-	I2CSerial.println("Clearing A1F");
+	DEBUG_PRT.println("Clearing A1F");
 	while(!okCleared_a1 && --retries != 0) {
 		okCleared_a1 = Config::DS3231_clear_a1f();
 		delay(50);
@@ -1219,7 +1219,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
   
 	//might not get here if A1F was just cleared, since clearing it removes power from ESP8266
   
-	I2CSerial.println("Clearing A2F");
+	DEBUG_PRT.println("Clearing A2F");
 	while(!okCleared_a2 && --retries != 0) {
 		okCleared_a2 = Config::DS3231_clear_a2f();
 		delay(50);

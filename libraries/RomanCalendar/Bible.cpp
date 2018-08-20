@@ -68,14 +68,14 @@ const int Bible::books_chaptercounts_with_apocrypha[73] = {
 
 Bible::Bible(I18n* i)
 {
-	I2CSerial.println(F("Bible::Bible()"));
+	DEBUG_PRT.println(F("Bible::Bible()"));
 	
 	_I18n = i;
 	_bibleverse = new BibleVerse(_I18n);
 	
 	_book_count = 73; //_bibleverse->_book_count;
 	
-	//I2CSerial.println("book count is " + String(_book_count));
+	//DEBUG_PRT.println("book count is " + String(_book_count));
 	
 	//if (_book_count == 66) {
 	//	books = books_no_apocrypha;
@@ -96,7 +96,7 @@ Bible::~Bible(void)
 
 bool Bible::get(String refs) {
 	if (refs == NULL) {
-		I2CSerial.println(F("Bible::get() refs is null"));
+		DEBUG_PRT.println(F("Bible::get() refs is null"));
 		return false;
 	}
 	
@@ -168,13 +168,13 @@ void Bible::dump_refs() {
 
 	while (r != NULL) {
 
-		I2CSerial.printf("%s", r->refs.c_str());
+		DEBUG_PRT.printf("%s", r->refs.c_str());
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
-			I2CSerial.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
+			DEBUG_PRT.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
 		}
 		else {
 			if (r->start_chapter == r->end_chapter) {
-				I2CSerial.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
+				DEBUG_PRT.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					r->start_verse_sentence_range.c_str(),
@@ -182,7 +182,7 @@ void Bible::dump_refs() {
 					r->end_verse_sentence_range.c_str());
 			}
 			else {
-				I2CSerial.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
+				DEBUG_PRT.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					r->start_verse_sentence_range.c_str(),
@@ -194,9 +194,9 @@ void Bible::dump_refs() {
 
 		i++;
 		r = refsList.get(i);
-		//I2CSerial.println(".");
+		//DEBUG_PRT.println(".");
 	} 
-	//I2CSerial.println("finished");
+	//DEBUG_PRT.println("finished");
 }
 
 /*
@@ -208,13 +208,13 @@ void Bible::dump_refs() {
 
 	while (r != NULL) {
 
-		I2CSerial.printf("%s", r->refs.c_str());
+		DEBUG_PRT.printf("%s", r->refs.c_str());
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
-			I2CSerial.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str());
+			DEBUG_PRT.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str());
 		}
 		else {
 			if (r->start_chapter == r->end_chapter) {
-				I2CSerial.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
+				DEBUG_PRT.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str(),
@@ -222,7 +222,7 @@ void Bible::dump_refs() {
 					sentence_ref(r->end_first_sentence, r->end_last_sentence).c_str());
 			}
 			else {
-				I2CSerial.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
+				DEBUG_PRT.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
 					r->start_chapter,
 					r->start_verse,
 					sentence_ref(r->start_first_sentence, r->start_last_sentence).c_str(),
@@ -234,9 +234,9 @@ void Bible::dump_refs() {
 
 		i++;
 		r = refsList.get(i);
-		//I2CSerial.println(".");
+		//DEBUG_PRT.println(".");
 	} 
-	//I2CSerial.println("finished");
+	//DEBUG_PRT.println("finished");
 }
 */
 
@@ -484,7 +484,7 @@ bool Bible::get_sentences(String s, int* startpos, int* start_sentence, int* end
 
 	*startpos = pos;
 
-	//I2CSerial.printf("Bible::get_sentences() start_sentence=%d, end_sentence=%d\n", *start_sentence, *end_sentence);
+	//DEBUG_PRT.printf("Bible::get_sentences() start_sentence=%d, end_sentence=%d\n", *start_sentence, *end_sentence);
 	
 	return true;
 }

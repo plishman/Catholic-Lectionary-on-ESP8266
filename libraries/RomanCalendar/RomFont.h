@@ -1,6 +1,8 @@
 #ifndef _ROMFONT_H
 #define _ROMFONT_H
 
+#include "RCGlobals.h"
+
 #include <stdint.h>
 //vv the dot factory font structs - Internal font
 // This structure describes a single character's display information

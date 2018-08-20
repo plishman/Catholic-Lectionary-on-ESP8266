@@ -14,8 +14,8 @@ float Battery::battery_voltage( void ) {
 	float adc_maxvoltage = (ADC_RESISTOR + 100.0) / 100.0; //max voltage (adc value 1023, which will be scaled by potential divider to 1 volt) = 4.89V for 169.0k adc resistor, 5.4V for 220k adc resistor
 	float v = (adc_maxvoltage * sensorValue) + DIODE_DROP;
 
-	//I2CSerial.println("battery_voltage = " + String(v));
-	//I2CSerial.println("A0 sensor value = " + String(sensorValue));
+	//DEBUG_PRT.println("battery_voltage = " + String(v));
+	//DEBUG_PRT.println("A0 sensor value = " + String(sensorValue));
 	return v;
 }
 

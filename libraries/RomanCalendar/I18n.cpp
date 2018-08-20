@@ -23,34 +23,34 @@ void ConfigParams::Clear() {
 }
 
 void ConfigParams::Dump() {
-	I2CSerial.print(F("\tdesc=")); 										I2CSerial.println(desc);
-	I2CSerial.print(F("\tlang=")); 										I2CSerial.println(lang);
-	I2CSerial.print(F("\tyml_filename=")); 								I2CSerial.println(yml_filename);
-	I2CSerial.print(F("\tsanctorale_filename=")); 						I2CSerial.println(sanctorale_filename);
-	I2CSerial.print(F("\tbible_filename=")); 							I2CSerial.println(bible_filename);
-	I2CSerial.print(F("\tlectionary path=")); 							I2CSerial.println(lectionary_path);
-	I2CSerial.print(F("\ttransfer_to_sunday=")); 						I2CSerial.println(String(transfer_to_sunday));
-	I2CSerial.print(F("\tcelebrate_feast_of_christ_eternal_priest=")); 	I2CSerial.println(String(celebrate_feast_of_christ_priest));
-	I2CSerial.print(F("\tfont filename=")); 							I2CSerial.println(font_filename);
-	I2CSerial.print(F("\tright_to_left=")); 							I2CSerial.println(String(right_to_left));			
-	I2CSerial.print(F("\tfont fixed spacing=")); 						I2CSerial.println(font_fixed_spacing);
-	I2CSerial.print(F("\tfont fixed spacecharwidth=")); 				I2CSerial.println(font_fixed_spacecharwidth);
-	I2CSerial.print(F("\tfont tuning=")); 								I2CSerial.print(String(font_tuning_percent)); I2CSerial.println(F(" percent"));	
+	DEBUG_PRT.print(F("\tdesc=")); 										DEBUG_PRT.println(desc);
+	DEBUG_PRT.print(F("\tlang=")); 										DEBUG_PRT.println(lang);
+	DEBUG_PRT.print(F("\tyml_filename=")); 								DEBUG_PRT.println(yml_filename);
+	DEBUG_PRT.print(F("\tsanctorale_filename=")); 						DEBUG_PRT.println(sanctorale_filename);
+	DEBUG_PRT.print(F("\tbible_filename=")); 							DEBUG_PRT.println(bible_filename);
+	DEBUG_PRT.print(F("\tlectionary path=")); 							DEBUG_PRT.println(lectionary_path);
+	DEBUG_PRT.print(F("\ttransfer_to_sunday=")); 						DEBUG_PRT.println(String(transfer_to_sunday));
+	DEBUG_PRT.print(F("\tcelebrate_feast_of_christ_eternal_priest=")); 	DEBUG_PRT.println(String(celebrate_feast_of_christ_priest));
+	DEBUG_PRT.print(F("\tfont filename=")); 							DEBUG_PRT.println(font_filename);
+	DEBUG_PRT.print(F("\tright_to_left=")); 							DEBUG_PRT.println(String(right_to_left));			
+	DEBUG_PRT.print(F("\tfont fixed spacing=")); 						DEBUG_PRT.println(font_fixed_spacing);
+	DEBUG_PRT.print(F("\tfont fixed spacecharwidth=")); 				DEBUG_PRT.println(font_fixed_spacecharwidth);
+	DEBUG_PRT.print(F("\tfont tuning=")); 								DEBUG_PRT.print(String(font_tuning_percent)); DEBUG_PRT.println(F(" percent"));	
 	
-	I2CSerial.print(F("\tfont use fixed spacing: ")); 					
+	DEBUG_PRT.print(F("\tfont use fixed spacing: ")); 					
 	if(font_use_fixed_spacing) {
-		I2CSerial.println(F("Yes"));
+		DEBUG_PRT.println(F("Yes"));
 	}
 	else {
-		I2CSerial.println(F("No (If not using builtin font, will use character advanceWidths and percent tuning value instead)"));	
+		DEBUG_PRT.println(F("No (If not using builtin font, will use character advanceWidths and percent tuning value instead)"));	
 	}
 	
-	I2CSerial.print(F("\tfont use fixed spacecharwidth: "));
+	DEBUG_PRT.print(F("\tfont use fixed spacecharwidth: "));
 	if (font_use_fixed_spacecharwidth) {
-		I2CSerial.println(F("Yes"));
+		DEBUG_PRT.println(F("Yes"));
 	}
 	else {
-		I2CSerial.println(F("No (If not using builtin font, will use space character advanceWidth and percent tuning value instead)"));				
+		DEBUG_PRT.println(F("No (If not using builtin font, will use space character advanceWidth and percent tuning value instead)"));				
 	}
 }
 
@@ -155,7 +155,7 @@ I18n::I18n(int CS_PIN, int lectionary_config_number) {
 	_lectionary_config_number = lectionary_config_number;
 	
 	if (!initializeSD()) {
-		I2CSerial.println(F("Failed to initialize SD card"));
+		DEBUG_PRT.println(F("Failed to initialize SD card"));
 	}
 	
 	get_config();	
@@ -164,7 +164,7 @@ I18n::I18n(int CS_PIN, int lectionary_config_number) {
 I18n::I18n( void ) {
 //	I18n(_CS_PIN);
 	if (!initializeSD()) {
-		I2CSerial.println(F("Failed to initialize SD card"));
+		DEBUG_PRT.println(F("Failed to initialize SD card"));
 	}
 	
 	get_config();
@@ -185,8 +185,8 @@ void I18n::suppress_output(bool s) {
 }
 
 bool I18n::get_config( void ) {
-	I2CSerial.print(F("I18n::get_config() lectionary_config_number = "));
-	I2CSerial.println(String(_lectionary_config_number));
+	DEBUG_PRT.print(F("I18n::get_config() lectionary_config_number = "));
+	DEBUG_PRT.println(String(_lectionary_config_number));
 
 	Csv csv;
 
@@ -194,7 +194,7 @@ bool I18n::get_config( void ) {
 #ifndef _WIN32	
 	File file = openFile(config_filename, FILE_READ);
 	if (!file.available()) {
-		I2CSerial.println(F("Couldn't open config file"));
+		DEBUG_PRT.println(F("Couldn't open config file"));
 		return false;
 	}
 #else
@@ -244,8 +244,8 @@ bool I18n::get_config( void ) {
 		readLine = String(buf);
 	#endif		
 		pos = 0;
-		I2CSerial.print(F("csv_record: "));
-		I2CSerial.println(csv_record);
+		DEBUG_PRT.print(F("csv_record: "));
+		DEBUG_PRT.println(csv_record);
 		
 		c.desc = csv.getCsvField(csv_record, &pos);
 		c.lang = csv.getCsvField(csv_record, &pos);
@@ -287,7 +287,7 @@ bool I18n::get_config( void ) {
 		if (_lectionary_config_number == i) {
 			c.Dump();
 			bFoundSelection = true;
-			I2CSerial.println(F("* selected"));
+			DEBUG_PRT.println(F("* selected"));
 			break;
 		} 
 		else {
@@ -323,8 +323,8 @@ bool I18n::get_config( void ) {
 	configparams.have_config = true;
 	
 	if (!bFoundSelection) {
-		I2CSerial.print(F("Can't find lectionary config entry number "));
-		I2CSerial.println(String(_lectionary_config_number));
+		DEBUG_PRT.print(F("Can't find lectionary config entry number "));
+		DEBUG_PRT.println(String(_lectionary_config_number));
 		return false; // will simply use the last entry in the file if not found
 	}
 	
@@ -355,10 +355,10 @@ String I18n::getdate(time64_t t) {
 }
 
 String I18n::get(String I18nPath) {
-	//I2CSerial.println("I18n::get()");
+	//DEBUG_PRT.println("I18n::get()");
 	
 	if (!configparams.have_config) {
-		I2CSerial.println(F("I18n::get(): No config"));
+		DEBUG_PRT.println(F("I18n::get(): No config"));
 		return "";
 	}
 	
@@ -475,10 +475,10 @@ String I18n::get(String I18nPath) {
 	
 	if (!bTokenMatched) { // reached end of file without finding the token
 		#ifndef _WIN32
-			I2CSerial.print(F("token ")); I2CSerial.print(lookingforToken); I2CSerial.println(F(" not found (EOF)"));
+			DEBUG_PRT.print(F("token ")); DEBUG_PRT.print(lookingforToken); DEBUG_PRT.println(F(" not found (EOF)"));
 			closeFile(file);
 		#else
-			print(F("token ")); I2CSerial.print(lookingforToken); I2CSerial.println(F("not found (EOF)"));
+			print(F("token ")); DEBUG_PRT.print(lookingforToken); DEBUG_PRT.println(F("not found (EOF)"));
 			fclose(fpi);
 		#endif
 		return String("");
@@ -504,8 +504,8 @@ String I18n::get(String I18nPath) {
 
 #ifndef _WIN32
 bool I18n::initializeSD() {
- //I2CSerial.println("Initializing SD card...");
- //I2CSerial.println("_CS_PIN is " + String(_CS_PIN));
+ //DEBUG_PRT.println("Initializing SD card...");
+ //DEBUG_PRT.println("_CS_PIN is " + String(_CS_PIN));
 	return true;
  
   //pinMode(_CS_PIN, OUTPUT);
@@ -515,12 +515,12 @@ bool I18n::initializeSD() {
 }
 
 String I18n::readLine(File file) { 
-  //I2CSerial.println("readLine(): position=" + String(file.position()));
+  //DEBUG_PRT.println("readLine(): position=" + String(file.position()));
   String received = "";
   char ch;
   
   if (!file) {
-    I2CSerial.println(F("file is not available"));
+    DEBUG_PRT.println(F("file is not available"));
 	return "";
   }
   
@@ -532,18 +532,18 @@ String I18n::readLine(File file) {
 	}
 	
 	if (ch == '\n') {
-	  //I2CSerial.println("received lf len=" + String(received.length()));
+	  //DEBUG_PRT.println("received lf len=" + String(received.length()));
 	  return received;
     } else {
       received += ch;
     }
 	
 	if (file.position() == file.size()) {
-		//I2CSerial.println("EOF");
+		//DEBUG_PRT.println("EOF");
 		return received;
 	} 
   }
-  //I2CSerial.println("dropped through");
+  //DEBUG_PRT.println("dropped through");
   return "";
 }
 
@@ -552,11 +552,11 @@ File I18n::openFile(String filename, uint8_t mode) {
   
   File file = SD.open(filename.c_str(), mode);
   if (file) {
-    //I2CSerial.println("File opened with success!");
+    //DEBUG_PRT.println("File opened with success!");
     return file;
   } else {
-    I2CSerial.print(F("Error opening file ")); 
-	I2CSerial.println(filename);
+    DEBUG_PRT.print(F("Error opening file ")); 
+	DEBUG_PRT.println(filename);
 	
     return file;
   }
@@ -565,7 +565,7 @@ File I18n::openFile(String filename, uint8_t mode) {
 void I18n::closeFile(File file) {
   if (file) {
     file.close();
-    //I2CSerial.println("File closed");
+    //DEBUG_PRT.println("File closed");
   }
 }
 #endif

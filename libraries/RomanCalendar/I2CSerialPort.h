@@ -1,5 +1,8 @@
 #ifndef _I2C_SERIAL_H
 #define _I2C_SERIAL_H
+
+#include "RCGlobals.h"
+
 #include "Arduino.h"
 //#include <Wire.h>
 #include <brzo_i2c.h>

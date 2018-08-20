@@ -3,6 +3,8 @@
 #ifndef _RCCONFIG_H
 #define _RCCONFIG_H
 
+#include "RCGlobals.h"
+
 #include <Arduino.h>
 #include <TimeLib.h>
 

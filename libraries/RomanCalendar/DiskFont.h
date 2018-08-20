@@ -3,13 +3,19 @@
 #ifndef _FONT_H
 #define _FONT_H
 
+#include "RCGlobals.h"
+
 #include <Arduino.h>
 #include <SD.h>
 #define FS_NO_GLOBALS
 #include <FS.h>
 #include <math.h>
-#include <epd2in7b.h>
-#include <epdpaint.h>
+//#include <epd2in7b.h>
+//#include <epdpaint.h>
+
+#include <GxEPD.h>
+#include <GxGDEW027C44/GxGDEW027C44.h>      // 7.5" b/w  640x384 GxGDEW075T8/GxGDEW075T8.cpp  // 2.7" color 176x264 GxGDEW027C44/GxGDEW027C44.cpp
+
 #include <utf8string.h>
 #include <ArabicLigaturizer.h>
 #include "I2CSerialPort.h"
@@ -18,7 +24,7 @@
 extern "C" {
 #include "user_interface.h"
 }
-extern const int COLORED;
+extern const uint16_t colored;
 extern const int UNCOLORED;
 
 extern const int PANEL_SIZE_X;
@@ -108,30 +114,30 @@ public:
 	
 	
 	// for diskfont characters (will fail over to romfont rendering if diskfont is not available)
-	int DrawCharAt(int x, int y, char ascii_char,    Paint* paint, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, String ch,          Paint* paint, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, char ascii_char,    GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, String ch,          GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
 	
-	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);	
-	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);	
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
 
-	int DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, Paint* paint, int colored);
-	int DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, Paint* paint, int colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
 
-	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
-	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
 
 	// for romfont characters
-	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored);
+	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
 
 	
 	
-	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string);
-	void DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left);
+	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t colored, bool right_to_left, bool reverse_string);
+	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t colored, bool right_to_left);
 	
 	
 	void GetTextWidth(String text, int& width, double& advanceWidth);

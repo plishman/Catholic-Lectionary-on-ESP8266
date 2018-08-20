@@ -2,6 +2,8 @@
 #ifndef _SANCTORALE_H
 #define _SANCTORALE_H
 
+#include "RCGlobals.h"
+
 #ifndef _WIN32
 	#include "Arduino.h"
 	#include "../Time/TimeLib.h"

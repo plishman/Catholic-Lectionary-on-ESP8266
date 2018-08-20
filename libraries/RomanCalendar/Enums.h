@@ -2,6 +2,9 @@
 
 #ifndef _ENUMS_H
 #define _ENUMS_H
+
+#include "RCGlobals.h"
+
 class Enums {
 public:
 	enum I18nLanguages {

@@ -1,6 +1,8 @@
 #ifndef _LECTIONARY_H
 #define _LECTIONARY_H
 
+#include "RCGlobals.h"
+
 #define REF_MAX_SIZE 1500
 
 #ifdef _WIN32

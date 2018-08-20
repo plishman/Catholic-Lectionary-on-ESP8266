@@ -3,6 +3,8 @@
 #ifndef _CALENDAR_H
 #define _CALENDAR_H
 
+#include "RCGlobals.h"
+
 #ifndef _WIN32
 	#include "Arduino.h"
 	#include "../Time/TimeLib.h"

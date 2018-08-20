@@ -3,6 +3,8 @@
 #ifndef _BIBLEVERSE_H
 #define _BIBLEVERSE_H
 
+#include "RCGlobals.h"
+
 #define VERSE_MAX_SIZE 3072
 
 #ifdef _WIN32

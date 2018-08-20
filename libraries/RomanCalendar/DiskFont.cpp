@@ -210,7 +210,7 @@ bool DiskFont::begin(String fontfilename) {
 	_fontfilename = fontfilename;
 
 	if (_fontfilename == "builtin" || !OpenFontFile()) {
-		I2CSerial.println(F("Diskfont is not selected (fontfilename is 'builtin' or font file not found"));
+		DEBUG_PRT.println(F("Diskfont is not selected (fontfilename is 'builtin' or font file not found"));
 
 		_FontHeader.charheight = romfont->heightPages;
 		_FontHeader.startchar = romfont->startChar;
@@ -228,7 +228,7 @@ bool DiskFont::begin(String fontfilename) {
 	_file = SD.open(_fontfilename.c_str(), FILE_READ);
 
 	if (!_file.available()) {
-		I2CSerial.printf("unable to open diskfont %s\n", _fontfilename.c_str());
+		DEBUG_PRT.printf("unable to open diskfont %s\n", _fontfilename.c_str());
 		return false;
 	}
 */
@@ -314,85 +314,85 @@ void DiskFont::end() {
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
 // No Pre-populated FontCharInfo structure (in), and no advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    Paint* paint, int colored, uint16_t* blockToCheckFirst) {	
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), paint, colored, blockToCheckFirst);
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          Paint* paint, int colored, uint16_t* blockToCheckFirst) {
-	return DrawCharAt(x, y, codepointUtf8(ch),                 paint, colored, blockToCheckFirst);
+int DiskFont::DrawCharAt(int x, int y, String ch,          GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
+	return DrawCharAt(x, y, codepointUtf8(ch), ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, Paint* paint, int colored, uint16_t* blockToCheckFirst) {
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
 	double advwidth = 0.0;
-	return DrawCharAt(x, y, codepoint, advwidth, paint, colored, blockToCheckFirst);
+	return DrawCharAt(x, y, codepoint, advwidth, ePaper, color, blockToCheckFirst);
 }
 
 
 
 // No Pre-populated FontCharInfo structure (in), but advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst) {
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, paint, colored, blockToCheckFirst);
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst) {	
-	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, paint, colored, blockToCheckFirst);
+int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
+	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, Paint* paint, int colored, uint16_t* blockToCheckFirst) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
 	DiskFont_FontCharInfo fci;
 	if (!getCharInfo(codepoint, blockToCheckFirst, &fci)) {
-		I2CSerial.println(F("DrawCharAt() getCharInfo returned false"));
+		DEBUG_PRT.println(F("DrawCharAt() getCharInfo returned false"));
 		return 0;
 	}
 	
-	return DrawCharAt(x, y, codepoint, advanceWidth, fci, paint, colored);
+	return DrawCharAt(x, y, codepoint, advanceWidth, fci, ePaper, color);
 }
 
 
 
 // Pre-populated FontCharInfo structure (in), no advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), fci, paint, colored);
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
-	return DrawCharAt(x, y, codepointUtf8(ch),                 fci, paint, colored);
+int DiskFont::DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+	return DrawCharAt(x, y, codepointUtf8(ch),                 fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {
 	double advanceWidth = 0.0;
-	return DrawCharAt(x, y, codepoint, advanceWidth, fci, paint, colored);
+	return DrawCharAt(x, y, codepoint, advanceWidth, fci, ePaper, color);
 }
 
 
  
 // Pre-populated FontCharInfo structure (in), and advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
-	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, fci, paint, colored);
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
-	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, fci, paint, colored);
+int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, fci, ePaper, color);
 } 
  
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
 	// allows pre-populated FontCharInfo structure to be passed in, for use where it would otherwise have to read from the disk more than once for each character
 
 	//if (codepoint == 32) return _FontHeader.spacecharwidth; // space character
 
 	if(!available) {
 		//Serial.printf("DrawCharAt() Diskfont is not available.\n");
-		return DrawCharAt(x, y, codepoint, advanceWidth, romfont, fci, paint, colored);
+		return DrawCharAt(x, y, codepoint, advanceWidth, romfont, fci, ePaper, color);
 	}
 	
 //	DiskFont_FontCharInfo fci;
 //	if (!getCharInfo(codepoint, blockToCheckFirst, &fci)) {
-//		I2CSerial.printf("DrawCharAt() getCharInfo returned false\n");
+//		DEBUG_PRT.printf("DrawCharAt() getCharInfo returned false\n");
 //		return 0;
 //	}
 
 	uint16_t char_width = fci.widthbits;
-	//I2CSerial.printf("char_width=%d\n", char_width);
+	//DEBUG_PRT.printf("char_width=%d\n", char_width);
 
 	if (codepoint == 32) {
 		//Serial.printf("DrawCharAt: space char width = %d\n", (int)fci.advanceWidth);
@@ -404,10 +404,10 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	}
 	
 	//int charIndex = codepoint - font->startChar;
-	//I2CSerial.printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
+	//DEBUG_PRT.printf("char codepoint=%s, font->startChar = %d, char_index=%d\n", utf8fromCodepoint(codepoint).c_str(), font->startChar, charIndex);
 
 	uint16_t char_height = _FontHeader.charheight;
-	//I2CSerial.printf("char_height=%d\n", char_height);
+	//DEBUG_PRT.printf("char_height=%d\n", char_height);
 
 	////uint32_t char_offset = pgm_read_dword(&(font->charInfo[charIndex].offset));
 	uint32_t char_offset = fci.bitmapfileoffset;
@@ -421,7 +421,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	int buf_offset = 0;	
 	int bytesremaining = 0;
 	
-	//I2CSerial.printf("-%x\t", fci.bitmapfileoffset);
+	//DEBUG_PRT.printf("-%x\t", fci.bitmapfileoffset);
 	
 	Seek(fci.bitmapfileoffset);
 	
@@ -438,7 +438,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	
 	bytesremaining = numbytes * fci.heightbits;
 	
-	//I2CSerial.printf("bytesremaining = %d\n", bytesremaining);
+	//DEBUG_PRT.printf("bytesremaining = %d\n", bytesremaining);
 	
 	for (j = 0; j < char_height; j++) {
 		//printf("\n%d:\t|", j);
@@ -453,20 +453,20 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 					/* 
 					//debugging
 					for (int o=0;o<CHARBUFF_SIZE;o++) {
-						I2CSerial.printf("%x ", _char_buffer[o]);
+						DEBUG_PRT.printf("%x ", _char_buffer[o]);
 					}
-					I2CSerial.printf("\n");
+					DEBUG_PRT.printf("\n");
 					*/
 				}
 				else {
 					// error - found unexpected end of file
-					I2CSerial.println(F("Diskfont Error (unexpected EOF)"));
+					DEBUG_PRT.println(F("Diskfont Error (unexpected EOF)"));
 					return char_width + 1;
 				}
 			}
 
 			if (_char_buffer[buf_offset] & (0x80 >> (i % 8))) {
-				paint->DrawPixel(x + i, y + j, colored);
+				ePaper.drawPixel(x + i, y + j, color);
 				//Serial.printf("#");
 			} else {
 				//Serial.printf(" ");
@@ -513,11 +513,11 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 /**
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
-int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
-	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), advanceWidth, font, fci, paint, colored);
+int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), advanceWidth, font, fci, ePaper, color);
 }
  
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, Paint* paint, int colored) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
 	uint16_t char_width = fci.widthbits;
 
 	if (codepoint == 32) {
@@ -543,7 +543,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 		//printf("\n%d:\t|", j);
         for (i = 0; i < char_width; i++) {
             if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
-                paint->DrawPixel(x + i, y + j, colored);
+                ePaper.drawPixel(x + i, y + j, color);
 				//Serial.printf("#");
             } else {
 				//Serial.printf(" ");
@@ -574,11 +574,11 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left) {
-	DrawStringAt(x, y, text, paint, colored, right_to_left, false);
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left) {
+	DrawStringAt(x, y, text, ePaper, color, right_to_left, false);
 }
 
-void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored, bool right_to_left, bool reverse_string) {
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left, bool reverse_string) {
 	Serial.printf("DrawStringAt: String is %s\n", text.c_str());
 
 	//if (!available) {
@@ -629,7 +629,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				//Serial.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
 				dnsmcolumn = dnsmcolumn + ((dcharwidth - doverlaycharwidth) / 2.0);
 
-				DrawCharAt((int)dnsmcolumn, y, ch, fci, paint, colored); // first, so they will apply to the next non-nsm character to print, not the previous
+				DrawCharAt((int)dnsmcolumn, y, ch, fci, ePaper, color); // first, so they will apply to the next non-nsm character to print, not the previous
 				
 				//drefcolumn += dcharwidth;
 				//refcolumn += charwidth;									// one. In that case, do not need to subtract the last printed char width (ie do 
@@ -639,9 +639,9 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				charoffset = (dcharwidth - (double)char_bmwidth) / 2.0; //add, to center the character horizontally in its box
 				finalcharx = drefcolumn + charoffset;
 
-				//I2CSerial.printf("ch=%s, drc=%d, fcx=%d, co=%d\n", ch.c_str(), (int)drefcolumn, (int)finalcharx, (int)charoffset);
+				//DEBUG_PRT.printf("ch=%s, drc=%d, fcx=%d, co=%d\n", ch.c_str(), (int)drefcolumn, (int)finalcharx, (int)charoffset);
 				
-				DrawCharAt((int)finalcharx, y, ch, dcharwidth, fci, paint, colored);
+				DrawCharAt((int)finalcharx, y, ch, dcharwidth, fci, ePaper, color);
 				//refcolumn += charwidth;
 				drefcolumn += dcharwidth;
 				
@@ -655,7 +655,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				*/
 			}
 						
-			//refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
+			//refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 			/* Point on the next character */
 			 charIndex += ch.length(); //charIndex++; // += ch.length();
 		}
@@ -681,10 +681,10 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				//int refcolumnoverlaychar =(int)(float)(refcolumn + ((charwidth - overlaycharwidth) / 2));
 
 				dnsmcolumn = (dcharwidth - doverlaycharwidth) / 2.0;
-				DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, fci, paint, colored);
+				DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, fci, ePaper, color);
 
 //				dnsmcolumn = dnsmcolumn + (dcharwidth - doverlaycharwidth) / 2.0;
-//				DrawCharAt(PANEL_SIZE_X - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
+//				DrawCharAt(PANEL_SIZE_X - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 
 
 				
@@ -698,7 +698,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 
 				finalcharx = drefcolumn + (dcharwidth - charoffset);
 				
-				char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, fci, paint, colored);
+				char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, fci, ePaper, color);
 				//refcolumn += charwidth;
 				drefcolumn += dcharwidth;
 
@@ -712,7 +712,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, Paint* paint, int colored
 				*/
 			}
 			
-			//refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), paint, colored, &blockToCheckFirst);
+			//refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 			/* Point on the next character */
 			charIndex += ch.length(); //charIndex++; //+= ch.length();
 		}		
@@ -761,12 +761,12 @@ double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint
 	char_width = bitmapwidth;
 	
 	if (scalefactor < _font_tuning_percent) {
-		Serial.printf("dbitmapwidth < %spc of advanceWidth: returning advanceWidth\n\n", String(_font_tuning_percent).c_str());
+		//Serial.printf("dbitmapwidth < %spc of advanceWidth: returning advanceWidth\n\n", String(_font_tuning_percent).c_str());
 		//char_width = (uint16_t)advanceWidth;
 		return advanceWidth; // + 1.0; // if bitmap width is less than 80% of advanceWidth (which comes from the font metrics), then return advancewidth, since it is likely a small character with a large footprint
 	}
 	
-	Serial.printf("returning dbitmapwidth\n\n");
+	//Serial.printf("returning dbitmapwidth\n\n");
 	//char_width = (uint16_t)dbitmapwidth;
 	return dbitmapwidth; // otherwise, if the values are close, prefer the bitmap width (helps with Arabic ligaturization etc.)
 }
@@ -825,7 +825,7 @@ double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo& fci) {										
 
 
 void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
-	//I2CSerial.printf("len:");
+	//DEBUG_PRT.printf("len:");
 
 	// remove supported tags before calculating text width
 	text.replace("<b>", "");
@@ -874,7 +874,7 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 		i += ch.length();
 	}
 	
-	//I2CSerial.printf("refcolumn=%d\n", refcolumn);
+	//DEBUG_PRT.printf("refcolumn=%d\n", refcolumn);
 	//return refcolumn;			
 	width = refcolumn;
 	advanceWidth = advwidth;
@@ -953,7 +953,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 
 			fci->advanceHeight = 0; // not used in rom font
 
-			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			
 			return true;
 		}
@@ -966,16 +966,16 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	
 	if (*blockToCheckFirst < _FontHeader.numlookupblocks) {
 		if ((_Font_BlocktablePtr[*blockToCheckFirst].startchar <= codepoint) && (_Font_BlocktablePtr[*blockToCheckFirst].endchar >= codepoint)) {
-			//I2CSerial.printf("default BlockIndex = %d\n", *blockToCheckFirst);
-			//I2CSerial.printf("sc=%x, ec=%x, cp=%x\n", _Font_BlocktablePtr[*blockToCheckFirst].startchar, _Font_BlocktablePtr[*blockToCheckFirst].endchar, codepoint);
+			//DEBUG_PRT.printf("default BlockIndex = %d\n", *blockToCheckFirst);
+			//DEBUG_PRT.printf("sc=%x, ec=%x, cp=%x\n", _Font_BlocktablePtr[*blockToCheckFirst].startchar, _Font_BlocktablePtr[*blockToCheckFirst].endchar, codepoint);
 			foffset = _Font_BlocktablePtr[*blockToCheckFirst].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
 			Seek(foffset);			
 						
-			//I2CSerial.printf("# foffset=%x\n", foffset);			
+			//DEBUG_PRT.printf("# foffset=%x\n", foffset);			
 	
 			bresult = readFontCharInfoEntry(fci);
-			//I2CSerial.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
-			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
+			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			return bresult;
 		}
 		else {
@@ -991,22 +991,22 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			}
 			
 			if (!bFound) {
-				//I2CSerial.printf("block not found, _FontHeader.numlookupblocks = %d, codepoint=%x\n", _FontHeader.numlookupblocks, codepoint);
+				//DEBUG_PRT.printf("block not found, _FontHeader.numlookupblocks = %d, codepoint=%x\n", _FontHeader.numlookupblocks, codepoint);
 				return false;
 			}
 			
 			*blockToCheckFirst = blockIndex;
 			
-			//I2CSerial.printf("BlockIndex = %d\n", blockIndex);
+			//DEBUG_PRT.printf("BlockIndex = %d\n", blockIndex);
 			
 			foffset = _Font_BlocktablePtr[blockIndex].fileoffset_startchar + ((codepoint - _Font_BlocktablePtr[*blockToCheckFirst].startchar) * DiskFont_FontCharInfo_RecSize); //sizeof(DiskFont_FontCharInfo));
 			Seek(foffset);
 			
-			//I2CSerial.printf("@ foffset=%x\n", foffset);			
+			//DEBUG_PRT.printf("@ foffset=%x\n", foffset);			
 
 			bresult = readFontCharInfoEntry(fci);
-			//I2CSerial.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
-			//I2CSerial.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
+			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
 			return bresult;
 		}
 	}
@@ -1019,7 +1019,7 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
 	
 	bool bresult = false;
 
-	//I2CSerial.printf("pos:%x", _file.position());
+	//DEBUG_PRT.printf("pos:%x", _file.position());
 	
 	bresult = /*ReadUInt8(&(fci->rtlflag)) && */
 			   Read(&(fci->widthbits))
@@ -1028,8 +1028,8 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
 			&& Read(&(fci->advanceWidth))
 			&& Read(&(fci->advanceHeight));
 
-	//I2CSerial.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
-	//I2CSerial.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
+	//DEBUG_PRT.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
+	//DEBUG_PRT.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	
 	return bresult;
 }

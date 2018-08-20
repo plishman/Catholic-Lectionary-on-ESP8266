@@ -1,7 +1,7 @@
 #include "TimeServerGPS.h"
 
 time64_t TimeServerGPS::local_datetime( void ) {
-  I2CSerial.println("local_datetime()");
+  DEBUG_PRT.println("local_datetime()");
   
   // need to add a timeout
   String colon = ":";
@@ -16,13 +16,13 @@ time64_t TimeServerGPS::local_datetime( void ) {
   
   do {
     wdt_reset();
-    if (I2CSerial.available() > 0) {
-		byte b = I2CSerial.read();
+    if (DEBUG_PRT.available() > 0) {
+		byte b = DEBUG_PRT.read();
 		b_nmea_message_received = gps.encode(b);
 			
 		if (b_nmea_message_received) {
 			if (nmea_sentence.indexOf("NMEA unknown msg") == -1) { // we're using the TX and RX pins used for debug output, so this output will be sent also to the GPS, which uses a checksum to validate messages, which debug messages will not have, so the GPS will produce an error when it sees them, which we don't print
-				//I2CSerial.println(nmea_sentence);
+				//DEBUG_PRT.println(nmea_sentence);
 			}
 			nmea_sentence = "";
 		}
@@ -38,11 +38,11 @@ time64_t TimeServerGPS::local_datetime( void ) {
     //}
   } while (!(gps.date.isValid() && gps.time.isValid() && gps.location.isValid())); //fix_age == TinyGPS::GPS_INVALID_AGE || fix_age > 5000
 
-  I2CSerial.println(nmea_sentence);
+  DEBUG_PRT.println(nmea_sentence);
   
-  I2CSerial.println();
-  I2CSerial.print("LAT="); I2CSerial.print(gps.location.lat(), 6);
-  I2CSerial.print("LNG="); I2CSerial.println(gps.location.lng(), 6);
+  DEBUG_PRT.println();
+  DEBUG_PRT.print("LAT="); DEBUG_PRT.print(gps.location.lat(), 6);
+  DEBUG_PRT.print("LNG="); DEBUG_PRT.println(gps.location.lng(), 6);
 
   String d = String(gps.date.day());
   String m = String(gps.date.month());
@@ -51,8 +51,8 @@ time64_t TimeServerGPS::local_datetime( void ) {
   String mm = String(gps.time.minute());
   String ss = String(gps.time.second());
 
-  I2CSerial.print("Datetime=" + d + slash + m + slash + y + " "); // Year (2000+) (u16)     
-  I2CSerial.println(hh + colon + mm + colon + ss);
+  DEBUG_PRT.print("Datetime=" + d + slash + m + slash + y + " "); // Year (2000+) (u16)     
+  DEBUG_PRT.println(hh + colon + mm + colon + ss);
 /*
   if (lng < -180.0) {
     while (lng < -180.0) lng += 360.0;
@@ -64,7 +64,7 @@ time64_t TimeServerGPS::local_datetime( void ) {
   setTime(gps.time.hour(), gps.time.minute(), gps.time.second(), gps.date.day(), gps.date.month(), gps.date.year());
   float a = gps.location.lng() * (12/180);
   long adjustment = (long)round(a); // round is a macro in arduino, which returns a long, hence the intermediate processing with the float a
-  I2CSerial.println("set_local_datetime(): adjustment = " + String(adjustment));
+  DEBUG_PRT.println("set_local_datetime(): adjustment = " + String(adjustment));
   adjustTime(adjustment);
   return now();
 }
@@ -74,7 +74,7 @@ void TimeServerGPS::gps_sleep( void ) {
 	const byte ublox_sleep_packet_bytes = 16;
 	
 	for (byte i = 0; i < ublox_sleep_packet_bytes; i++) {
-		I2CSerial.write(ublox_sleep_packet[i]);
+		DEBUG_PRT.write(ublox_sleep_packet[i]);
 	}
 	delay(1000);
 }
@@ -84,7 +84,7 @@ void TimeServerGPS::gps_wake( void ) {
 	const byte ublox_wake_packet_bytes = 16;
 	
 	for (byte i = 0; i < ublox_wake_packet_bytes; i++) {
-		I2CSerial.write(ublox_wake_packet[i]);
+		DEBUG_PRT.write(ublox_wake_packet[i]);
 	}
 	delay(1000);
 }

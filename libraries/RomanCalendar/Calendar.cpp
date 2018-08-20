@@ -49,7 +49,7 @@ Calendar::Calendar(int CS_PIN) {
 	//_config = new Config();	
 	config_t c = {0};
 	if (!Config::GetConfig(c)) {
-		I2CSerial.println(F("GetConfig returned false"));
+		DEBUG_PRT.println(F("GetConfig returned false"));
 		_lectionary_config_number = 0;
 		_timezone_offset = 0;
 	}
@@ -73,7 +73,7 @@ Calendar::Calendar() {
 	temporale = new Temporale(_transfer_to_sunday, _I18n);
 	sanctorale = new Sanctorale(_transfer_to_sunday, _I18n);
 	
-	I2CSerial.println(F("Created new calendar object"));
+	DEBUG_PRT.println(F("Created new calendar object"));
 }
 
 Calendar::~Calendar() {
@@ -91,31 +91,31 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 											  // which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
 	
 //	int tz_offset = (int) (_timezone_offset * 3600);
-	I2CSerial.print(F("Timezone offset is "));
-	I2CSerial.println(String(_timezone_offset));
+	DEBUG_PRT.print(F("Timezone offset is "));
+	DEBUG_PRT.println(String(_timezone_offset));
 
-//	I2CSerial.print("The UTC datetime is ");
+//	DEBUG_PRT.print("The UTC datetime is ");
 //	temporale->print_date(date);
-//	I2CSerial.print(" ");
+//	DEBUG_PRT.print(" ");
 //	temporale->print_time(date);
-//	I2CSerial.println();
+//	DEBUG_PRT.println();
 	
 //	date += tz_offset; // quick and dirty - if bug occurs, need to split the time64_t value into a TMelements_t struct, and perform the arithmetic.
 	
-	I2CSerial.print(F("The local time is "));
+	DEBUG_PRT.print(F("The local time is "));
 	temporale->print_date(date);
-	I2CSerial.print(" ");
+	DEBUG_PRT.print(" ");
 	temporale->print_time(date);
-	I2CSerial.println();
+	DEBUG_PRT.println();
 
 	//bool bTransfersSuccess = transfers->get(date);
 	
-	//I2CSerial.println("Calendar::get()");
+	//DEBUG_PRT.println("Calendar::get()");
 	
 	//bool bTransfersSuccess = transfers->get(date);
 	bool bTemporaleSuccess = temporale->get(date);
 	if (!bTemporaleSuccess) return false;
-	I2CSerial.println(F("got temporale"));
+	DEBUG_PRT.println(F("got temporale"));
 
 	time64_t transferred_from;
 	bool bWasTransferred = transfers->transferred_to(date, &transferred_from);
@@ -124,11 +124,11 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 
 	if (!bWasTransferred) {
 		bIsSanctorale = sanctorale->get(date);
-		I2CSerial.println(F("got sanctorale"));
+		DEBUG_PRT.println(F("got sanctorale"));
 	}
 	else {
 		bIsSanctorale = sanctorale->get(transferred_from);
-		I2CSerial.println(F("got sanctorale (transferred)"));
+		DEBUG_PRT.println(F("got sanctorale (transferred)"));
 	}
 
 	int lit_year = temporale->liturgical_year(date);
@@ -142,7 +142,7 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	Enums::Ranks rank_s = sanctorale->getRank();
 	Enums::Season seas = temporale->season(date);
 
-	//I2CSerial.println("Checking day");
+	//DEBUG_PRT.println("Checking day");
 	
 	if (bIsSanctorale) { // there is a sanctorale for this day. All conflicting Solemnities will already have been moved
 		if (rank_s > rank_t) { // sanctorale's rank is above temporale's rank
@@ -200,17 +200,17 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	}
 	
 	if (day.is_holy_day_of_obligation) {
-		I2CSerial.println("Holy day of obligation");
+		DEBUG_PRT.println("Holy day of obligation");
 	}
 	
 	if (sanctorale->_Lectionary == 0) {
 		day.lectionary = temporale->_Lectionary;
-		I2CSerial.print(F("Lectionary number is from temporale, L"));
+		DEBUG_PRT.print(F("Lectionary number is from temporale, L"));
 	} else {
 		day.lectionary = sanctorale->_Lectionary;
-		I2CSerial.print(F("Lectionary number is from sanctorale, L"));
+		DEBUG_PRT.print(F("Lectionary number is from sanctorale, L"));
 	}
-	I2CSerial.println(String(day.lectionary));
+	DEBUG_PRT.println(String(day.lectionary));
 	
 	return true;
 }
