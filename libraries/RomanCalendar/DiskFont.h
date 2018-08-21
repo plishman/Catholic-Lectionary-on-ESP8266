@@ -20,6 +20,7 @@
 #include <ArabicLigaturizer.h>
 #include "I2CSerialPort.h"
 #include "I18n.h"
+#include "FCIHashTable.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -45,16 +46,20 @@ typedef struct {
 	uint32_t fileoffset_startchar;
 } DiskFont_BlocktableEntry;
 
-typedef struct {
+/*
+typedef struct {	// 32 bytes
 	//uint8_t rtlflag;
 	uint16_t widthbits;
 	uint16_t heightbits;
 	uint32_t bitmapfileoffset;
 	double advanceWidth;
 	double advanceHeight;
+	uint32_t useCount;
+	uint32_t codepoint;
 } DiskFont_FontCharInfo;
 
 const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
+*/
 
 //#include "romfont.h"
 #include "calibri10pt.h"
@@ -62,6 +67,8 @@ const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 
 class DiskFont {
 public:
+	FCIHashTable fcihashtable;
+	
 	FONT_INFO* romfont = &calibri_10pt;
 
 	String _fontfilename;
@@ -147,25 +154,25 @@ public:
 	double GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width);
 //	double GetAdvanceWidth(int bitmapwidth, double advanceWidth);
 	
-	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
-	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci);
+	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst);
+	void GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci);
                                           
-	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
-	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci);
+	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst);
+	void GetCharWidth(String ch, 		  uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci);
 
-	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
-	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci);
+	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo* &fci, uint16_t& blockToCheckFirst);
+	double GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo* &fci);
 
-	double GetCharWidth(String ch, 			DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst);
-	double GetCharWidth(String ch, 			DiskFont_FontCharInfo& fci);
+	double GetCharWidth(String ch, 			DiskFont_FontCharInfo* &fci, uint16_t& blockToCheckFirst);
+	double GetCharWidth(String ch, 			DiskFont_FontCharInfo* &fci);
 	
 	double GetTextWidthA(String text);
 	double GetTextWidthA(String text, bool shape_text);
 	double GetTextWidthA(const char* text);
 		
-	bool getCharInfo(String ch, DiskFont_FontCharInfo* fci);
-	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci);
-	bool readFontCharInfoEntry(DiskFont_FontCharInfo* fci);
+	bool getCharInfo(String ch, DiskFont_FontCharInfo* &pfci);
+	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* &pfci);
+	bool readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t codepoint);
 	
 	const FONT_CHAR_INFO* getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font);
 

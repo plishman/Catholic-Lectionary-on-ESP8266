@@ -345,13 +345,13 @@ int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth,
 }
 
 int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
-	DiskFont_FontCharInfo fci;
-	if (!getCharInfo(codepoint, blockToCheckFirst, &fci)) {
+	DiskFont_FontCharInfo* pfci;
+	if (!getCharInfo(codepoint, blockToCheckFirst, pfci)) {
 		DEBUG_PRT.println(F("DrawCharAt() getCharInfo returned false"));
 		return 0;
 	}
 	
-	return DrawCharAt(x, y, codepoint, advanceWidth, fci, ePaper, color);
+	return DrawCharAt(x, y, codepoint, advanceWidth, *pfci, ePaper, color);
 }
 
 
@@ -607,7 +607,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 	
 	uint16_t blockToCheckFirst = 0;
 
-	DiskFont_FontCharInfo fci;
+	DiskFont_FontCharInfo* pfci;
 	
 	if (reverse_string) {
 		text = Utf8ReverseString(text); // BUG: this is going to cause a bug when composing characters. The diacritic will appear left justified over the character to which it 
@@ -631,26 +631,26 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			
 			if (bidi_info == BIDI_NSM) { // position at refcolumn + (charwidth / 2) to get the composited diacritic centred over the character to which it applies
 				//int overlaycharwidth = GetTextWidth(ch);
-				double doverlaycharwidth = GetCharWidth(ch, fci, blockToCheckFirst); //GetTextWidthA(ch);
+				double doverlaycharwidth = GetCharWidth(ch, pfci, blockToCheckFirst); //GetTextWidthA(ch);
 				double dnsmcolumn = drefcolumn - dcharwidth; //skip back over last char printed (dcharwidth comes from the previous iteration of the while loop, from the else part of the if statement, that is, after a non-NSM character has been printed, if the NSM character is not the first character printed)
 				//refcolumn -= charwidth; // if string has been reversed in memory (eg. for ltr substrings in rtl text and vv), the composing diacritics will be
 				//int refcolumnoverlaychar = (int)(drefcolumn - dcharwidth);
 				//DEBUG_PRT.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
 				dnsmcolumn = dnsmcolumn + ((dcharwidth - doverlaycharwidth) / 2.0);
 
-				DrawCharAt((int)dnsmcolumn, y, ch, fci, ePaper, color); // first, so they will apply to the next non-nsm character to print, not the previous
+				DrawCharAt((int)dnsmcolumn, y, ch, *pfci, ePaper, color); // first, so they will apply to the next non-nsm character to print, not the previous
 				
 				//drefcolumn += dcharwidth;
 				//refcolumn += charwidth;									// one. In that case, do not need to subtract the last printed char width (ie do 
 			}																					// backspace over it before overprinting the diacritic).
 			else { 
-				GetCharWidth(ch, char_bmwidth, dcharwidth, fci, blockToCheckFirst); //GetTextWidth(ch, char_bmwidth, dcharwidth);				
+				GetCharWidth(ch, char_bmwidth, dcharwidth, pfci, blockToCheckFirst); //GetTextWidth(ch, char_bmwidth, dcharwidth);				
 				charoffset = (dcharwidth - (double)char_bmwidth) / 2.0; //add, to center the character horizontally in its box
 				finalcharx = drefcolumn + charoffset;
 
 				//DEBUG_PRT.printf("ch=%s, drc=%d, fcx=%d, co=%d\n", ch.c_str(), (int)drefcolumn, (int)finalcharx, (int)charoffset);
 				
-				DrawCharAt((int)finalcharx, y, ch, dcharwidth, fci, ePaper, color);
+				DrawCharAt((int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
 				//refcolumn += charwidth;
 				drefcolumn += dcharwidth;
 				
@@ -683,14 +683,14 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			
 			if (bidi_info == BIDI_NSM) {
 				//int overlaycharwidth = GetTextWidth(ch);
-				double doverlaycharwidth = GetCharWidth(ch, fci, blockToCheckFirst); //GetTextWidthA(ch);
+				double doverlaycharwidth = GetCharWidth(ch, pfci, blockToCheckFirst); //GetTextWidthA(ch);
 				double dnsmcolumn = drefcolumn - dcharwidth; //+ charoffset; //skip back over last char printed
 				//refcolumn -= charwidth; // position at refcolumn + (charwidth / 2) to get the diacritic centred over the character to which it applies
 				//DEBUG_PRT.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
 				//int refcolumnoverlaychar =(int)(float)(refcolumn + ((charwidth - overlaycharwidth) / 2));
 
 				dnsmcolumn = (dcharwidth - doverlaycharwidth) / 2.0;
-				DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, fci, ePaper, color);
+				DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, *pfci, ePaper, color);
 
 //				dnsmcolumn = dnsmcolumn + (dcharwidth - doverlaycharwidth) / 2.0;
 //				DrawCharAt(PANEL_SIZE_X - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
@@ -700,14 +700,14 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				//refcolumn += charwidth;
 			}
 			else {
-				GetCharWidth(ch, char_bmwidth, dcharwidth, fci, blockToCheckFirst);//GetTextWidth(ch, char_bmwidth, dcharwidth); // populates fci structure with details of the character read from disk
+				GetCharWidth(ch, char_bmwidth, dcharwidth, pfci, blockToCheckFirst);//GetTextWidth(ch, char_bmwidth, dcharwidth); // populates fci structure with details of the character read from disk
 				charoffset = (dcharwidth - (double)char_bmwidth) / 2.0; //add, to center the character horizontally in its box
 
 				//DEBUG_PRT.printf("ch=%s\tchar_bmwidth=%d\tdcharwidth=%s\tcharoffset=%s\n", ch.c_str(), char_bmwidth, String(dcharwidth).c_str(), String(charoffset,3).c_str());
 
 				finalcharx = drefcolumn + (dcharwidth - charoffset);
 				
-				char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, fci, ePaper, color);
+				char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
 				//refcolumn += charwidth;
 				drefcolumn += dcharwidth;
 
@@ -782,53 +782,53 @@ double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint
 
 
 // Get char width and advance width (codepoint)
-void DiskFont::GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst) { 	//with blocktocheckfirst optimization
-	if (getCharInfo(codepoint, &blockToCheckFirst, &fci)) {
-		advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, width); 	// width is modified by GetAdvanceWidth()		
+void DiskFont::GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst) { 	//with blocktocheckfirst optimization
+	if (getCharInfo(codepoint, &blockToCheckFirst, pfci)) {
+		advanceWidth = GetAdvanceWidth(pfci->widthbits, pfci->advanceWidth, codepoint, width); 	// width is modified by GetAdvanceWidth()		
 	}
 }
 
-void DiskFont::GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci) { 								// without blocktocheckfirst optimization
+void DiskFont::GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci) { 								// without blocktocheckfirst optimization
 	uint16_t blockToCheckFirst = 0;
-	GetCharWidth(codepoint, width, advanceWidth, fci, blockToCheckFirst);
+	GetCharWidth(codepoint, width, advanceWidth, pfci, blockToCheckFirst);
 }
 
 
 // Get char width and advance width (String)
-void DiskFont::GetCharWidth(String ch, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst) { 			//with blocktocheckfirst optimization
-	GetCharWidth(codepointUtf8(ch), width, advanceWidth, fci, blockToCheckFirst);
+void DiskFont::GetCharWidth(String ch, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst) { 			//with blocktocheckfirst optimization
+	GetCharWidth(codepointUtf8(ch), width, advanceWidth, pfci, blockToCheckFirst);
 }
 
-void DiskFont::GetCharWidth(String ch, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo& fci) {										 	// without blocktocheckfirst optimization
+void DiskFont::GetCharWidth(String ch, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci) {										 	// without blocktocheckfirst optimization
 	uint16_t blockToCheckFirst = 0;
-	GetCharWidth(codepointUtf8(ch), width, advanceWidth, fci, blockToCheckFirst);
+	GetCharWidth(codepointUtf8(ch), width, advanceWidth, pfci, blockToCheckFirst);
 }
 
 
 // Get char advance width only (codepoint)
-double DiskFont::GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst) { 									//with blocktocheckfirst optimization
+double DiskFont::GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst) { 									//with blocktocheckfirst optimization
 	double advanceWidth = 0.0;
 	uint16_t width = 0;
 	
-	GetCharWidth(codepoint, width, advanceWidth, fci, blockToCheckFirst);
+	GetCharWidth(codepoint, width, advanceWidth, pfci, blockToCheckFirst);
 	
 	return advanceWidth;
 }
 
-double DiskFont::GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo& fci) { 																// without blocktocheckfirst optimization
+double DiskFont::GetCharWidth(uint32_t codepoint, DiskFont_FontCharInfo* &pfci) { 																// without blocktocheckfirst optimization
 	uint16_t blockToCheckFirst = 0;
-	return GetCharWidth(codepoint, fci, blockToCheckFirst);
+	return GetCharWidth(codepoint, pfci, blockToCheckFirst);
 }
 
 
 // Get char advance width only (String)
-double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo& fci, uint16_t& blockToCheckFirst) { 											//with blocktocheckfirst optimization
-	return GetCharWidth(codepointUtf8(ch), fci, blockToCheckFirst);
+double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst) { 											//with blocktocheckfirst optimization
+	return GetCharWidth(codepointUtf8(ch), pfci, blockToCheckFirst);
 }
 
-double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo& fci) {																			// without blocktocheckfirst optimization
+double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo* &pfci) {																			// without blocktocheckfirst optimization
 	uint16_t blockToCheckFirst = 0;
-	return GetCharWidth(codepointUtf8(ch), fci, blockToCheckFirst);
+	return GetCharWidth(codepointUtf8(ch), pfci, blockToCheckFirst);
 }
 
 
@@ -863,18 +863,18 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	uint16_t blockToCheckFirst = 0;
 	
 	bool bresult = false;
-	DiskFont_FontCharInfo fci;
+	DiskFont_FontCharInfo* pfci;
 	
 	while (i < len) {
 		ch = utf8CharAt(text, i);
 		int codepoint = codepointUtf8(ch);
-		bresult = getCharInfo(codepoint, &blockToCheckFirst, &fci);
+		bresult = getCharInfo(codepoint, &blockToCheckFirst, pfci);
 
 		if (!bresult) DEBUG_PRT.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());
 		
 		if (bresult){
 			uint16_t char_width = 0;
-			advwidth += GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); // char width is modified by GetAdvanceWidth()
+			advwidth += GetAdvanceWidth(pfci->widthbits, pfci->advanceWidth, codepoint, char_width); // char width is modified by GetAdvanceWidth()
 			refcolumn += char_width;
 		}
 		else {
@@ -929,23 +929,28 @@ int DiskFont::GetTextWidth(String text) {
 }
 
 
-bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* fci) {
+bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* &pfci) {
 	uint16_t blockToCheckFirst = 0;
 	
-	return getCharInfo(codepointUtf8(ch), &blockToCheckFirst, fci);
+	return getCharInfo(codepointUtf8(ch), &blockToCheckFirst, pfci);
 }
 
 
-bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* fci) {
+bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* &pfci) {
 	if (!available) {
 		// will use rom font if diskfont is not available
 		//DEBUG_PRT.printf("getCharInfo() diskfont _file is not available\n");
 		const FONT_CHAR_INFO* f = getCharInfo(codepoint, blockToCheckFirst, romfont);
 
 		if (f != NULL) {	
-			fci->widthbits = (uint16_t)pgm_read_byte(&(f->widthBits));
-			fci->heightbits = (uint16_t)pgm_read_byte(&(f->heightBits));
-			fci->bitmapfileoffset = pgm_read_dword(&(f->offset));
+			pfci = fcihashtable.get(codepoint);
+			if (pfci != NULL) return true;
+			
+			pfci = new DiskFont_FontCharInfo;
+
+			pfci->widthbits = (uint16_t)pgm_read_byte(&(f->widthBits));
+			pfci->heightbits = (uint16_t)pgm_read_byte(&(f->heightBits));
+			pfci->bitmapfileoffset = pgm_read_dword(&(f->offset));
 
 
 			uint32_t* ptr = (uint32_t*)&(f->advanceWidth); // need to get a double out of flash, but there is no 'pgm_read_double'
@@ -958,11 +963,13 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			  
 			double d = *(double*)p;
 	  
-			fci->advanceWidth = d;
+			pfci->advanceWidth = d;
 
-			fci->advanceHeight = 0; // not used in rom font
+			pfci->advanceHeight = 0; // not used in rom font
 
 			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			
+			fcihashtable.add(codepoint, pfci);
 			
 			return true;
 		}
@@ -982,7 +989,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 						
 			//DEBUG_PRT.printf("# foffset=%x\n", foffset);			
 	
-			bresult = readFontCharInfoEntry(fci);
+			bresult = readFontCharInfoEntry(pfci, codepoint);
 			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
 			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			return bresult;
@@ -1013,7 +1020,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			
 			//DEBUG_PRT.printf("@ foffset=%x\n", foffset);			
 
-			bresult = readFontCharInfoEntry(fci);
+			bresult = readFontCharInfoEntry(pfci, codepoint);
 			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
 			return bresult;
@@ -1023,22 +1030,31 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	return false;
 }
 
-bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* fci) {
+bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t codepoint) {
 	if (!available) return false;
 	
 	bool bresult = false;
 
+	pfci = fcihashtable.get(codepoint);
+	if (pfci != NULL) return true;
+	
+	pfci = new DiskFont_FontCharInfo;
+	
 	//DEBUG_PRT.printf("pos:%x", _file.position());
 	
 	bresult = /*ReadUInt8(&(fci->rtlflag)) && */
-			   Read(&(fci->widthbits))
-			&& Read(&(fci->heightbits))
-			&& Read(&(fci->bitmapfileoffset))
-			&& Read(&(fci->advanceWidth))
-			&& Read(&(fci->advanceHeight));
+			   Read(&(pfci->widthbits))
+			&& Read(&(pfci->heightbits))
+			&& Read(&(pfci->bitmapfileoffset))
+			&& Read(&(pfci->advanceWidth))
+			&& Read(&(pfci->advanceHeight));
 
 	//DEBUG_PRT.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	//DEBUG_PRT.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
+	
+	if (bresult) {
+		fcihashtable.add(codepoint, pfci);
+	}
 	
 	return bresult;
 }
