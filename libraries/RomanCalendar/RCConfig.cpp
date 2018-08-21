@@ -209,7 +209,7 @@ bool Config::StartServer() {
 	else {
 		DEBUG_PRT.print(F("\nCould not connect to WiFi. state="));
 		DEBUG_PRT.println(String(status)); 
-		WiFi.printDiag(I2CSerial);
+		WiFi.printDiag(DEBUG_PRT);
 		return false;
 	}
   
@@ -494,14 +494,14 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   
   buf[0] = 0; // start at register 0 in the ds3231
   
-  brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+  brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
     brzo_i2c_write(buf, 1, true);
     brzo_i2c_read(buf, 7, true);
     //delay(1);
   bcode = brzo_i2c_end_transaction();
 
   if (bcode != 0) {
-    DEBUG_PRT.soft_reset();
+    I2CSerial.soft_reset();
     return false;
   }
 
@@ -715,12 +715,12 @@ bool Config::setDateTime(time64_t t) {
   buf[6] = (dec2bcd(tm.Month));
   buf[7] = (dec2bcd(tmYearToY2k(tm.Year % 100))); 
   
-  brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+  brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
     brzo_i2c_write(buf, 8, true);
   bcode = brzo_i2c_end_transaction();
 
   if (bcode != 0) {
-    DEBUG_PRT.soft_reset();
+    I2CSerial.soft_reset();
 	DEBUG_PRT.printf("\nsetDateTime(): bcode=%d\n", bcode);
     return false;
   }
@@ -785,13 +785,13 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 			
 		}
 	  
-		brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+		brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
 			brzo_i2c_write(buf, 5, false);
 		bcode = brzo_i2c_end_transaction();
 
 		if (bcode != 0) {
-			DEBUG_PRT.soft_reset();
-			DEBUG_PRT.printf("\nsetAlarm(1): bcode=%d\n", bcode);
+			I2CSerial.soft_reset();
+			I2CSerial.printf("\nsetAlarm(1): bcode=%d\n", bcode);
 			return false;
 		}
 		
@@ -827,13 +827,13 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 			break;			
 		}
 	  
-		brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+		brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
 			brzo_i2c_write(buf, 4, false);
 		bcode = brzo_i2c_end_transaction();
 
 		if (bcode != 0) {
-			DEBUG_PRT.soft_reset();
-			DEBUG_PRT.printf("\nsetAlarm(2): bcode=%d\n", bcode);
+			I2CSerial.soft_reset();
+			I2CSerial.printf("\nsetAlarm(2): bcode=%d\n", bcode);
 			return false;
 		}
 		
@@ -854,13 +854,13 @@ bool Config::DS3231_set_addr(const uint8_t addr, const uint8_t val)
 	buf[0] = addr;
 	buf[1] = val;
 	
-	brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+	brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
 		brzo_i2c_write(buf, 2, false);
 	bcode = brzo_i2c_end_transaction();
 
 	if (bcode != 0) {
-		DEBUG_PRT.soft_reset();
-		DEBUG_PRT.printf("\nDS3231_set_addr: bcode=%d\n", bcode);
+		I2CSerial.soft_reset();
+		I2CSerial.printf("\nDS3231_set_addr: bcode=%d\n", bcode);
 		return false;
 	}
 	
@@ -877,14 +877,14 @@ uint8_t Config::DS3231_get_addr(const uint8_t addr, bool& ok)
 
 	buf[0] = addr;
 	
-	brzo_i2c_start_transaction(DS3231_I2C_ADDR, DEBUG_PRT.SCL_speed); // 104 is DS3231 device address
+	brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
 		brzo_i2c_write(buf, 1, false);
 		brzo_i2c_read(buf, 1, false);
 	bcode = brzo_i2c_end_transaction();
 
 	if (bcode != 0) {
-		DEBUG_PRT.soft_reset();
-		DEBUG_PRT.printf("\nDS3231_get_addr: bcode=%d\n", bcode);
+		I2CSerial.soft_reset();
+		I2CSerial.printf("\nDS3231_get_addr: bcode=%d\n", bcode);
 		ok = false;
 	}	  
 

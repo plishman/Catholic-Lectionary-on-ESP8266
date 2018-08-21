@@ -943,7 +943,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 		const FONT_CHAR_INFO* f = getCharInfo(codepoint, blockToCheckFirst, romfont);
 
 		if (f != NULL) {	
-			pfci = fcihashtable.get(codepoint);
+			pfci = fciCache.get(codepoint);
 			if (pfci != NULL) return true;
 			
 			pfci = new DiskFont_FontCharInfo;
@@ -969,7 +969,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 
 			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			
-			fcihashtable.add(codepoint, pfci);
+			fciCache.add(codepoint, pfci);
 			
 			return true;
 		}
@@ -1035,7 +1035,7 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t code
 	
 	bool bresult = false;
 
-	pfci = fcihashtable.get(codepoint);
+	pfci = fciCache.get(codepoint);
 	if (pfci != NULL) return true;
 	
 	pfci = new DiskFont_FontCharInfo;
@@ -1053,7 +1053,7 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t code
 	//DEBUG_PRT.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
 	
 	if (bresult) {
-		fcihashtable.add(codepoint, pfci);
+		fciCache.add(codepoint, pfci);
 	}
 	
 	return bresult;

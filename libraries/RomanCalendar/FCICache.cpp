@@ -1,16 +1,17 @@
-#include "FCIHashTable.h"
+#include "FCICache.h"
+#include "utf8String.h"
 
 //LinkedList<DiskFont_FontCharInfo*>* _fciTable[FCI_NUMENTRIES];
 	
-FCIHashTable::FCIHashTable(){
+FCICache::FCICache(){
 	clear();
 }
 
-FCIHashTable::~FCIHashTable(){
+FCICache::~FCICache(){
 	clear();
 }
 
-int FCIHashTable::Prune(int highestUseCountToPrune){
+int FCICache::Prune(int highestUseCountToPrune){
 	int numPruned = 0;
 	
 	for (int i = 0; i < FCI_NUMENTRIES; i++) {
@@ -33,16 +34,21 @@ int FCIHashTable::Prune(int highestUseCountToPrune){
 			}
 		}
 	}
+
+	DEBUG_PRT.printf("FCICache prune: pruned %d entries\n", numPruned);
 	
 	return numPruned;
 }
 
-DiskFont_FontCharInfo* FCIHashTable::get(uint32_t codepoint){
+DiskFont_FontCharInfo* FCICache::get(uint32_t codepoint){
 	uint16_t fcitable_index = hash(codepoint); // will return a number between 0 and FCI_NUMENTRIES - 1, should be evenly distributed
 
 	FCILinkedList* fci_ll = _fciTable[fcitable_index];
 
-	if (fci_ll == NULL) return NULL;
+	if (fci_ll == NULL) {
+		//DEBUG_PRT.println("FCICache miss");
+		return NULL;
+	}
 	
 	int n = fci_ll->size();
 	DiskFont_FontCharInfo* pfci = NULL;
@@ -64,13 +70,14 @@ DiskFont_FontCharInfo* FCIHashTable::get(uint32_t codepoint){
 		}
         else {
 			pfci->useCount++;
+			//DEBUG_PRT.println("FCICache hit");
 			return pfci;
 		}
 	}	
     return NULL;
 }
 
-void FCIHashTable::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
+void FCICache::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
 	DiskFont_FontCharInfo* existing_item = get(codepoint);
 	if (existing_item == NULL) {
 		int pruneMaxUseCount = 1;
@@ -93,14 +100,16 @@ void FCIHashTable::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
 		fci_ll->sort(fci_compare);
 		
 		_fci_count++;
+		//DEBUG_PRT.printf("FCICache add %s\n", utf8fromCodepoint(codepoint).c_str());
 	}
 	else {
 		delete fci;
 		fci = existing_item;
+		//DEBUG_PRT.printf("FCICache add %s (already present)\n", utf8fromCodepoint(codepoint).c_str());
 	}
 }
 
-void FCIHashTable::clear(){
+void FCICache::clear(){
 	for (int i = 0 ; i < FCI_NUMENTRIES; i++) {
 		FCILinkedList* fci_ll = _fciTable[i];
 		
@@ -112,7 +121,7 @@ void FCIHashTable::clear(){
 	_fci_count = 0;
 }
 
-uint16_t FCIHashTable::hash(uint32_t codepoint){
+uint16_t FCICache::hash(uint32_t codepoint){
 	return codepoint % FCI_NUMENTRIES;
 }
 

@@ -20,13 +20,13 @@
 #include <ArabicLigaturizer.h>
 #include "I2CSerialPort.h"
 #include "I18n.h"
-#include "FCIHashTable.h"
+#include "FCICache.h"
 
 extern "C" {
 #include "user_interface.h"
 }
-extern const uint16_t colored;
-extern const int UNCOLORED;
+//extern const uint16_t colored;
+//extern const int UNCOLORED;
 
 extern const int PANEL_SIZE_X;
 extern const int PANEL_SIZE_Y;
@@ -67,7 +67,7 @@ const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 
 class DiskFont {
 public:
-	FCIHashTable fcihashtable;
+	FCICache fciCache;
 	
 	FONT_INFO* romfont = &calibri_10pt;
 

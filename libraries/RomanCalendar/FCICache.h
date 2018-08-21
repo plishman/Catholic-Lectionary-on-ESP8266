@@ -1,6 +1,8 @@
 #ifndef _FCICHAINEDHASHTABLE
 #define _FCICHAINEDHASHTABLE
 
+#include "RCGlobals.h"
+
 #include "Arduino.h"
 #include "I2CSerialPort.h"
 
@@ -23,7 +25,7 @@ typedef struct {	// 32 bytes
 
 const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 
-class FCIHashTable
+class FCICache
 {
 public:
 	//LinkedList<DiskFont_FontCharInfo*> FCILinkedList = LinkedList<DiskFont_FontCharInfo*>();
@@ -32,8 +34,8 @@ public:
 	
 	int _fci_count = 0;
 	
-	FCIHashTable();
-	~FCIHashTable();
+	FCICache();
+	~FCICache();
 	int Prune(int highestUseCountToPrune);
 	DiskFont_FontCharInfo* get(uint32_t codepoint);
 	void add(uint32_t codepoint, DiskFont_FontCharInfo* &fci);

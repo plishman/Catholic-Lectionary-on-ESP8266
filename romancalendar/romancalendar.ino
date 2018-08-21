@@ -304,7 +304,12 @@ void loop(void) {
     if (!c._I18n->configparams.have_config) {
       DEBUG_PRT.println("Error: Failed to get config: config.csv is missing or bad or no SD card inserted");
       display_image(sd_card_not_inserted);
-      ESP.deepSleep(SLEEP_HOUR);    
+      //ESP.deepSleep(SLEEP_HOUR);    
+      if (!Config::PowerOff(0)) {
+        DEBUG_PRT.println("Attempt to power off via DS3231 failed, using deepsleep mode");
+        ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+      }
+
     }
   
     bool right_to_left = c._I18n->configparams.right_to_left;
