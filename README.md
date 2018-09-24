@@ -4,7 +4,7 @@ The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 wit
 <h2>Catholic Lectionary</h2>
 <p>
 This project implements a Calendar, Liturgical calendar, Lectionary and Feast Day (Sanctorale) calendar on the ESP8266. It also shows an indicator for Holy Days of Obligation.
-It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the same configuration files and file formats as this program, with some modifications to support month names etc.
+It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the some of the same configuration files and file formats as this program, with some modifications to support month names etc.
 </p>
 
 ![Preview1](./lectionary.jpg)
