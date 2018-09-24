@@ -15,5 +15,17 @@ Arabic ligaturization is supported, and in the SD card archive an Arabic Bible i
 
 <h3>ToolChain</h3>
 <p>
-Several Toolchain projects are provided, written in C# and C++, one of which - TheDotFactory - is not mine, but I have modified it to output "disk fonts", which are bitmap fonts which can be used as an alternative to the built-in rom font used by default. (They may be useful for other character sets needing more detail and larger characters, such as Chinese or Arabic).
+Several Toolchain projects are provided, written in C# and C++, one of which - TheDotFactory (https://github.com/pavius/the-dot-factory/tree/master/TheDotFactory) - is not mine, but I have modified it to output "disk fonts", which are bitmap fonts which can be used as an alternative to the built-in rom font used by default. (They may be useful for other character sets needing more detail and larger characters, such as Chinese or Arabic).
 <p>
+
+<h3>Debug Output</h3>
+<p>
+In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX to SDA and RX to SCL, and enabling debug output through the web page served from the ESP8266 to configure the Lectionary and Bible translation to be used. (Provide the argument "?debug=1" to the url to which the initial config page is submitted).
+</p>
+
+<p>
+There is a lot to this project, and it has taken me over a year to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
+</p>
+[This readme is still in the process of being updated]
+
+Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the Arduino libraries on which this project depends.
