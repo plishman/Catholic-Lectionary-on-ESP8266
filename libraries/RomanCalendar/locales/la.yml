@@ -19,7 +19,6 @@ la:
       easter_sunday: Dominica Paschae in Resurrectione Domini
       ascension: In Ascensione Domini
       pentecost: Dominica Pentecostes
-      christ_eternal_priest: Iesu Christi, Summi et Aeterni Sacerdotis
       holy_trinity: Sanctissimae Trinitatis
       corpus_christi: Sanctissimi Corporis et Sanguinis Christi
       sacred_heart: Sacratissimi Cordis Iesu
@@ -97,9 +96,12 @@ la:
     '10': Oct.
     '11': Nov.
     '12': Dec.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: latin
   colour:
     violet: violaceus # sc. color
     white: albus
     green: viridis
     red: rubeus
+  holy_day_of_obligation: <b>+</b>
+  or: aut

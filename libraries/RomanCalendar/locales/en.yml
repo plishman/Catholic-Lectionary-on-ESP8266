@@ -19,7 +19,6 @@ en:
       easter_sunday: Easter Sunday of the Resurrection of the Lord
       ascension: Ascension of the Lord
       pentecost: Pentecost Sunday
-      christ_eternal_priest: Christ the Eternal Priest
       holy_trinity: The Most Holy Trinity
       corpus_christi: The Most Holy Body and Blood of Christ
       sacred_heart: The Most Sacred Heart of Jesus
@@ -97,9 +96,12 @@ en:
     '10': Oct
     '11': Nov
     '12': Dec
+  date: %{d} %{mmm} %{yyyy}
   ordinals: english
   colour:
     violet: violet
     white: white
     green: green
     red: red
+  holy_day_of_obligation: <b>+</b>
+  or: or

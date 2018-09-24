@@ -4,7 +4,11 @@
 //LinkedList<DiskFont_FontCharInfo*>* _fciTable[FCI_NUMENTRIES];
 	
 FCICache::FCICache(){
-	clear();
+	for (int i = 0 ; i < FCI_NUMENTRIES; i++) {
+		_fciTable[i] = NULL;
+	}
+	
+	_fci_count = 0;
 }
 
 FCICache::~FCICache(){
@@ -74,6 +78,7 @@ DiskFont_FontCharInfo* FCICache::get(uint32_t codepoint){
 			return pfci;
 		}
 	}	
+	//DEBUG_PRT.println("FCICache miss");
     return NULL;
 }
 
@@ -112,9 +117,9 @@ void FCICache::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
 void FCICache::clear(){
 	for (int i = 0 ; i < FCI_NUMENTRIES; i++) {
 		FCILinkedList* fci_ll = _fciTable[i];
-		
 		if (fci_ll != NULL) {
 			fci_ll->clear();
+			delete fci_ll;
 			_fciTable[i] = NULL;
 		}
 	}

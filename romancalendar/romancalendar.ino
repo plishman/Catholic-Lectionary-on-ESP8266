@@ -5,11 +5,11 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017 Philip Lishman, All rights reserved.
 
-extern const int COLORED    = 1;
-extern const int UNCOLORED  = 0;
+//extern const int COLORED    = 1;
+//extern const int UNCOLORED  = 0;
 
-extern const int PANEL_SIZE_X = 264;
-extern const int PANEL_SIZE_Y = 176;
+//extern const int PANEL_SIZE_X = 264;
+//extern const int PANEL_SIZE_Y = 176;
 
 //ESP8266---
 #include "ESP8266WiFi.h"
@@ -181,6 +181,9 @@ void setup() {
           //SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
           SleepForHours(rtcData.data.wake_hour_counter);
         }
+      }
+      else {
+        DEBUG_PRT.println("Updating now - Woken from deepsleep but RTC memory (which should contain time of next reading update) contains no valid data");
       }
     }
   }
@@ -943,12 +946,12 @@ void display_date(String date, String day, bool right_to_left) {
 //#define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
 //#define FORMAT_LINEBREAK String("br")
 
-bool display_verses(Calendar* c, String refs, bool right_to_left) {
+bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
 //  bool right_to_left = c->_I18n->configparams.right_to_left;
 
   DEBUG_PRT.printf("refs from lectionary: [%s]\n", refs.c_str());
   
-  Bible b(c->_I18n);
+  Bible b(calendar->_I18n);
   if (!b.get(refs)) {
     DEBUG_PRT.printf("Couldn't get refs (no Apocrypha?)\n");
     return false;
@@ -1025,7 +1028,20 @@ bool display_verses(Calendar* c, String refs, bool right_to_left) {
 
           if (bDisplayRefs) {
             String refs_i18n = refs;
-            if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
+            int booknum = -1;
+            int refsindex = 0;
+            while(b.getUniqueBookInRefs(booknum, refsindex)){
+              String bookname_I18n = b._bibleverse->getBookNameFromBible(booknum);
+              if (bookname_I18n != "") refs_i18n.replace(b.getBookShortName(booknum), bookname_I18n);
+            }
+
+            String ortext = calendar->_I18n->get("or");
+            if(ortext != "or" && ortext != "") {
+              ortext = " " + ortext + " ";
+              refs_i18n.replace(" or ", ortext);
+            }
+            
+            //if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
             verse_text = "<i>" + refs_i18n + "</i> " + verse_text;
             
             //verse_text = "The quick brown fox لنور و jumps over the";// lazy dog. Now is the time for all good men to come to the aid of the party. ";

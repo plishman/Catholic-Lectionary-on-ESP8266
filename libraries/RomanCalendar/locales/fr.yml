@@ -19,7 +19,6 @@ fr:
       easter_sunday: Dimanche de Pâques de la Résurrection du Seigneur
       ascension: Ascension du Seigneur
       pentecost: Dimanche de Pentecôte
-      christ_eternal_priest: Jésus-Christ, le Prêtre éternel
       holy_trinity: La Très Sainte Trinité
       corpus_christi: Le Très Saint Corps et Sang du Christ
       sacred_heart: Le Sacré-Coeur de Jésus
@@ -97,9 +96,12 @@ fr:
     '10': oct.
     '11': nov.
     '12': déc.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: french
   colour:
     violet: violet
     white: blanc
     green: vert
     red: rouge
+  holy_day_of_obligation: <b>+</b>
+  or: ou

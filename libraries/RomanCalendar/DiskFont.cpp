@@ -311,8 +311,13 @@ bool DiskFont::begin(String fontfilename) {
 void DiskFont::end() {
 	//_I18n.closeFile(_file);
 	available = false;
-	if (_Font_BlocktablePtr != NULL) delete _Font_BlocktablePtr;	
+	fciCache.clear();
+	if (_Font_BlocktablePtr != NULL) delete _Font_BlocktablePtr;
 	CloseFontFile();
+}
+
+void DiskFont::clear() {
+	end();
 }
 
 

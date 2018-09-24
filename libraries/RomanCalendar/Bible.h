@@ -54,6 +54,9 @@ public:
 	bool get(String refs);
 
 	void dump_refs();
+	String getBookShortName(int booknum);
+	bool getUniqueBookInRefs(int& booknum, int& index);
+	
 	String sentence_ref(int from, int to);
 
 	void add_reference(String refs, int book_index, 

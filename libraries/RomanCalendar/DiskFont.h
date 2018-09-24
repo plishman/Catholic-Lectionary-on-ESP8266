@@ -28,8 +28,8 @@ extern "C" {
 //extern const uint16_t colored;
 //extern const int UNCOLORED;
 
-extern const int PANEL_SIZE_X;
-extern const int PANEL_SIZE_Y;
+//extern const int PANEL_SIZE_X;
+//extern const int PANEL_SIZE_Y;
 
 const unsigned long FONT_HEADER_OFFSET_START = 8;
 const unsigned long FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
@@ -107,6 +107,7 @@ public:
 	bool begin(String fontfilename, double font_tuning_percent);
 	bool begin(ConfigParams c);
 	void end(void);
+	void clear(); // does the same thing as end, but can be called as an alternative when diskfont.begin() has not been called (means the rom/default font is selected)
 
 	bool OpenFontFile();
 	bool CloseFontFile();

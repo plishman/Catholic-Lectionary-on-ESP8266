@@ -57,6 +57,19 @@ bool BibleVerse::get_bible_filename(String* filename) {
 	return false;
 }
 */
+String BibleVerse::getBookNameFromBible(int booknum) {
+	Csv csv;
+	
+	String vt = "";
+	int nr = 0;
+	
+	if (get(booknum, 1, 1, &vt, &nr)) {
+		int pos = 0;
+		return csv.getCsvField(vt, &pos); // first csv string should be book name in the language of the currently selected Bible
+	}
+	
+	return "";
+}
 
 bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* numRecords) {
     File file;

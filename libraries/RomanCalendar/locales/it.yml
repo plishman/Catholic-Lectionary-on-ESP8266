@@ -19,7 +19,6 @@ it:
       easter_sunday: Domenica di Resurrezione
       ascension: Ascensione di Gesù
       pentecost: Domenica Pentecoste
-      christ_eternal_priest: Gesù Cristo, il Sacerdote eterno
       holy_trinity: Santissima Trinità
       corpus_christi: Santissimo Corpo e Sangue di Cristo
       sacred_heart: Sacro Cuore di Gesù
@@ -97,9 +96,12 @@ it:
     '10': ott.
     '11': nov.
     '12': dic.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: latin
   colour:
     violet: viola
     white: bianco
     green: verde
     red: rosso
+  holy_day_of_obligation: <b>+</b>
+  or: o

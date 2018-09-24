@@ -19,7 +19,6 @@ cs:
       easter_sunday: Zmrtvýchvstání Páně
       ascension: Nanebevstoupení Páně
       pentecost: Seslání Ducha svatého
-      christ_eternal_priest: Svátek Ježíše Krista
       holy_trinity: Nejsvětější Trojice
       corpus_christi: Těla a krve Páně
       sacred_heart: Nejsvětějšího srdce Ježíšova
@@ -99,9 +98,12 @@ cs:
     '10': ríj.
     '11': list.
     '12': pros.
+  date: %{d} %{mmm} %{yyyy}
   ordinals: period
   colour:
     violet: fialová
     white: bílá
     green: zelená
     red: červená
+  holy_day_of_obligation: <b>+</b>
+  or: nebo

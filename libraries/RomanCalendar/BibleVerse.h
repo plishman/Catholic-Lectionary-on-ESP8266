@@ -39,6 +39,7 @@ public:
 	BibleVerse(I18n* i);
 	~BibleVerse();
 	
+	String getBookNameFromBible(int booknum);
 	bool get(int book, int chapter, int verse, String* verse_text, int* numRecords);
 };
 

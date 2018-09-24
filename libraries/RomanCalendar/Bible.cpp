@@ -142,13 +142,20 @@ bool Bible::get(String refs) {
 		add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range);
 	}
 
+	//DEBUG_PRT.printf("Bible::get(): remaining refs=[%s]\n", refs.substring(startpos).c_str());
+
 	while (startpos < len && bResult && (expect(refs, ",", &startpos) || 
 											expect(refs, "+", &startpos) || 
 											expect(refs, ";", &startpos) || 
 											expect(refs, " or ", &startpos))) {
 		expect(refs, " ", &startpos); //skip optional space
 
+		
+		//DEBUG_PRT.printf("Bible::get(): remaining refs=[%s]", refs.substring(startpos).c_str());
+
 		if (expect_book(refs, &startpos, &book_index)) expect(refs, " ", &startpos); // if no book specified, assume refers to the same book
+
+		//DEBUG_PRT.printf("Bible::get(): remaining refs=[%s]", refs.substring(startpos).c_str());
 
 		expect_chapter(refs, &startpos, &start_chapter); // if no chapter specified, assume refers to the same chapter
 
@@ -197,6 +204,39 @@ void Bible::dump_refs() {
 		//DEBUG_PRT.println(".");
 	} 
 	//DEBUG_PRT.println("finished");
+}
+
+String Bible::getBookShortName(int booknum) {
+	if (booknum >= 0 && booknum < _book_count) {
+		return books_shortnames[booknum];
+	}
+	return "";
+}
+
+bool Bible::getUniqueBookInRefs(int& booknum, int& index) {
+	Ref* r;
+	
+	//index = 0;
+	r = refsList.get(index);
+
+	bool bResult = false;
+	
+	while (r != NULL && bResult == false) {
+		//DEBUG_PRT.printf("getUniqueBookInRefs() refs:[%s] refs->book_index[%d] in:booknum=%d in:index=%d\n", r->refs.c_str(), r->book_index, booknum, index);
+		
+		if (r->book_index != booknum) {
+			booknum = r->book_index;
+			bResult = true;
+		}
+		else {
+			r = refsList.get(index);
+		}
+		index++;
+	}
+	
+	//DEBUG_PRT.printf("getUniqueBookInRefs() bResult=%d out:booknum=%d out:index=%d\n", bResult, booknum, index);	
+	
+	return bResult;
 }
 
 /*
@@ -267,6 +307,8 @@ void Bible::add_reference(String refs, int book_index,
 	int start_verse, int end_verse,
 	String start_verse_sentence_range, String end_verse_sentence_range) {
 
+	DEBUG_PRT.printf("Bible::add_reference(): refs=%s [%d %d:%d - %d:%d]\n", refs.c_str(), book_index, start_chapter, start_verse, end_chapter, end_verse);
+
 	Ref* r = new Ref();
 	r->book_index = book_index;
 	r->start_chapter = start_chapter;
@@ -305,7 +347,7 @@ bool Bible::expect_book(String refs, int* startpos, int* book_index) {
 			refs_start = refs.indexOf(book, *startpos);
 		}
 
-		if (refs_start == 0) {
+		if (refs_start == *startpos) {
 			bFound = true;
 		}
 		else {
@@ -430,6 +472,8 @@ bool Bible::parse_verse(String refs, int* startpos, int* chapter, int* verse, St
 	expect_chapter(refs, startpos, chapter); // optional chapter ref
 
 	*verse = readnumber(refs, startpos);
+
+	//DEBUG_PRT.printf("Bible::parse_verse(): refs=[%s], startpos=%d, readnumber returned %d\n", refs.c_str(), *startpos, *verse);
 
 	if (*verse == 0) return false;
 
