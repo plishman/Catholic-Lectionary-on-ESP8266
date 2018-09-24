@@ -23,6 +23,9 @@ Several Toolchain projects are provided, written in C# and C++, one of which - T
 In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX to SDA and RX to SCL, and enabling debug output through the web page served from the ESP8266 to configure the Lectionary and Bible translation to be used. (Provide the argument "?debug=1" to the url to which the initial config page is submitted).
 </p>
 
+<h3>Hardware</h3>
+The current printed circuit board schematic and design can be found at https://easyeda.com/plishman/lectionary_2-3
+
 <p>
 There is a lot to this project, and it has taken me over a year to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
 </p>
