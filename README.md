@@ -7,7 +7,8 @@ This project implements a Calendar, Liturgical calendar, Lectionary and Feast Da
 It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the some of the same configuration files and file formats as this program, with some modifications to support month names etc.
 </p>
 
-![Preview1](./lectionary.jpg)
+![Preview1](./lectionary2.jpg)
+![Preview2](./lectionary3.jpg)
 
 <h3>Localization</h3>
 <p>
@@ -28,9 +29,17 @@ In order to maximize available pins on the ESP8266, the TX and RX pins are used 
 <h3>Hardware</h3>
 The current printed circuit board schematic and design can be found at https://easyeda.com/plishman/lectionary_2-3
 
+The current case design is at https://www.tinkercad.com/things/h8xbfqkVT7G
+
+As well as the other Arduino libraries, this project uses the following libraries:
+Adafruit GFX - https://travis-ci.org/adafruit/Adafruit-GFX-Library
+brzo_i2c - https://github.com/pasko-zh/brzo_i2c
+LinkedList - https://github.com/ivanseidel/LinkedList
+
+Modified versions of the Time and SPI libraries are used.
+
+Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the other libraries on which this project depends.
 <p>
 There is a lot to this project, and it has taken me over a year to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
 </p>
 [This readme is still in the process of being updated]
-
-Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the Arduino libraries on which this project depends.
