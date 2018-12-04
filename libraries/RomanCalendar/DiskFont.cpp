@@ -167,7 +167,7 @@ bool DiskFont::begin() {
 	_font_fixed_spacing			 	= 1;
 	_font_fixed_spacecharwidth		= 2;
 
-	begin("builtin");
+	return begin("builtin");
 }
 
 bool DiskFont::begin(ConfigParams c) {
@@ -198,7 +198,7 @@ bool DiskFont::begin(ConfigParams c) {
 	_font_fixed_spacing 			= c.font_fixed_spacing;
 	_font_fixed_spacecharwidth 		= c.font_fixed_spacecharwidth;
 	
-	begin(c.font_filename);
+	return begin(c.font_filename);
 }
 
 
@@ -207,7 +207,7 @@ bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
 		_font_tuning_percent = font_tuning_percent;
 	}
 	
-	begin(fontfilename);
+	return begin(fontfilename);
 }
 
 bool DiskFont::begin(String fontfilename) {
@@ -227,6 +227,10 @@ bool DiskFont::begin(String fontfilename) {
 		_FontHeader.descent = romfont->descent;
 		_FontHeader.linespacing = romfont->lineheight;
 		
+		if (_fontfilename == "builtin") {
+			return true;
+		}
+
 		return false;
 	}
 	
@@ -256,7 +260,7 @@ bool DiskFont::begin(String fontfilename) {
 	
 	//_file.seek(FONT_HEADER_OFFSET_START);
 	if (!Seek(FONT_HEADER_OFFSET_START)) {
-		DEBUG_PRT.printf("couldn't find diskfont header\n");
+		DEBUG_PRT.println(F("couldn't find diskfont header"));
 		CloseFontFile();
 		return false;
 	};
@@ -270,7 +274,7 @@ bool DiskFont::begin(String fontfilename) {
 		&& Read(&_FontHeader.descent)
 		&& Read(&_FontHeader.linespacing))) 
 	{		
-		DEBUG_PRT.printf("Problem reading diskfont header\n");
+		DEBUG_PRT.println(F("Problem reading diskfont header"));
 		CloseFontFile();
 		return false;
 	}
@@ -285,7 +289,7 @@ bool DiskFont::begin(String fontfilename) {
 	
 	if (font_blocktablesize > (system_get_free_heap_size() - 10240)) {
 		//_I18n.closeFile(_file); // not enough memory for blocktable (leaves a minimum of 10k free)
-		DEBUG_PRT.printf("Not enough room for diskfont blocktable\n");
+		DEBUG_PRT.println(F("Not enough room for diskfont blocktable"));
 		CloseFontFile();
 		return false;
 	}
@@ -294,7 +298,7 @@ bool DiskFont::begin(String fontfilename) {
 
 	if (_Font_BlocktablePtr == NULL) {
 		//_I18n.closeFile(_file);
-		DEBUG_PRT.printf("Could not allocate memory for diskfont blocktable\n");
+		DEBUG_PRT.println(F("Could not allocate memory for diskfont blocktable"));
 		CloseFontFile();	// 'new' failed (shouldn't happen, since we calculated the available memory beforehand, but still...)
 		return false;
 	}
@@ -303,7 +307,7 @@ bool DiskFont::begin(String fontfilename) {
 	
 	available = true;
 	
-	DEBUG_PRT.printf("Diskfont is available\n");
+	DEBUG_PRT.println(F("Diskfont is available"));
 	
 	return true; // ready to access font
 }
@@ -631,6 +635,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//printf("refcolumn=%d\n", refcolumn);
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
+			//DEBUG_PRT.printf("*%s*", ch.c_str());		
 			
 			byte bidi_info = getBidiDirection(ch);
 			
@@ -837,8 +842,13 @@ double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo* &pfci) {								
 }
 
 
-
 void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
+	GetTextWidth(text, width, advanceWidth, -1);
+}
+
+void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth, int limit) {
+	bool bLimit = (limit != -1 && limit > 0);
+
 	//DEBUG_PRT.printf("len:");
 
 	// remove supported tags before calculating text width
@@ -869,13 +879,26 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	
 	bool bresult = false;
 	DiskFont_FontCharInfo* pfci;
+	bool bLimitReached = false;
+	double dLimit = (double)limit;
 	
-	while (i < len) {
+//	DEBUG_PRT.printf("GetTextWidth: text = %s\n", text.c_str());
+//	DEBUG_PRT.printf("GetTextWidth: len  = %d\n", text.length());
+
+//	DEBUG_PRT.printf("/%s/\n", text.c_str());		
+	
+	while (i < len || (bLimit && !bLimitReached)) {
 		ch = utf8CharAt(text, i);
+		//DEBUG_PRT.printf("*%s %d*", ch.c_str(), i);		
+
 		int codepoint = codepointUtf8(ch);
 		bresult = getCharInfo(codepoint, &blockToCheckFirst, pfci);
 
-		if (!bresult) DEBUG_PRT.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());
+		if (!bresult) {
+			DEBUG_PRT.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());		
+			DEBUG_PRT.print(F("free memory = "));
+			DEBUG_PRT.println(String(system_get_free_heap_size()));
+		}
 		
 		if (bresult){
 			uint16_t char_width = 0;
@@ -886,6 +909,10 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 			//refcolumn += 0;
 		}
 		i += ch.length();
+		
+		if (bLimit && advwidth > dLimit) {
+			bLimitReached = true;
+		}
 	}
 	
 	//DEBUG_PRT.printf("refcolumn=%d\n", refcolumn);
@@ -895,42 +922,65 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 }
 
 
+// GetTextWidth returns the integer width of the string in pixels
 int DiskFont::GetTextWidth(const char* text) {
-	return GetTextWidth(String(text));
+	return GetTextWidth(text, -1);
+}
+
+int DiskFont::GetTextWidth(String text) {
+	return GetTextWidth(text, -1);
 }
 
 
-double DiskFont::GetTextWidthA(const char* text) {
-	return GetTextWidth(String(text));
+int DiskFont::GetTextWidth(const char* text, int limit) {
+	return GetTextWidth(String(text), limit);
 }
 
-
-double DiskFont::GetTextWidthA(String text) {
+int DiskFont::GetTextWidth(String text, int limit) {
 	int width = 0;
 	double advwidth = 0.0;
 	
-	GetTextWidth(text, width, advwidth);
+	GetTextWidth(text, width, advwidth, limit);
+	return width;
+}
+
+
+// GetTextWidthA returns a double, with the advance width of the string in pixels, using a non-integer calculation for improved accuracy of rendering
+double DiskFont::GetTextWidthA(const char* text, int limit) {
+	return GetTextWidthA(String(text), limit); // changed to use GetTextWidthA - was recasting int as double by returning the result from GetTextWidth(String text)
+}
+
+double DiskFont::GetTextWidthA(const char* text) {
+	return GetTextWidthA(text, -1);
+}
+
+double DiskFont::GetTextWidthA(String text, int limit) {
+	int width = 0;
+	double advwidth = 0.0;
+	
+	GetTextWidth(text, width, advwidth, limit);
 	return advwidth;	
 }
 
-double DiskFont::GetTextWidthA(String text, bool shape_text) {
+double DiskFont::GetTextWidthA(String text) {
+	return GetTextWidthA(text, -1);	// -1 = don't limit
+}
+
+
+double DiskFont::GetTextWidthA(String text, bool shape_text, int limit) {
 	if (shape_text) {
 		String alshapedtext = "";
 		int level = ArabicLigaturizer::ar_nothing; //ArabicLigaturizer::ar_composedtashkeel | ArabicLigaturizer::ar_lig | ArabicLigaturizer::DIGITS_EN2AN;
 		ArabicLigaturizer::Shape(text, alshapedtext, level);
-		return GetTextWidthA(alshapedtext);
+		return GetTextWidthA(alshapedtext, limit);
 	}
 	else {
-		return GetTextWidthA(text);
+		return GetTextWidthA(text, limit);
 	}
 }
 
-int DiskFont::GetTextWidth(String text) {
-	int width = 0;
-	double advwidth = 0.0;
-	
-	GetTextWidth(text, width, advwidth);
-	return width;
+double DiskFont::GetTextWidthA(String text, bool shape_text) {
+	return GetTextWidthA(text, shape_text, -1);
 }
 
 
@@ -942,6 +992,10 @@ bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* &pfci) {
 
 
 bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* &pfci) {
+	//DEBUG_PRT.print(F("@"));
+	//DEBUG_PRT.print(String(codepoint));
+	//DEBUG_PRT.print(F("@"));
+	
 	if (!available) {
 		// will use rom font if diskfont is not available
 		//DEBUG_PRT.printf("getCharInfo() diskfont _file is not available\n");
@@ -1065,21 +1119,28 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t code
 }
 
 const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, FONT_INFO* font) {
+	//DEBUG_PRT.printf("{%x}{%s}:", codepoint, utf8fromCodepoint(codepoint).c_str());
+	
+	if (codepoint == 0) return NULL;
+	
 	if (font->charInfo != NULL) {
+		DEBUG_PRT.println("DiskFont::getCharInfo() font->charInfo is NULL");
 		return &font->charInfo[codepoint - font->startChar];
 	} 
 	else {
 		if (font->blockCount > 0 && font->fontcharinfoBlockLookup != NULL) {
 			if (*blockToCheckFirst < font->blockCount) {
 				if ((font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar <= codepoint) && (font->fontcharinfoBlockLookup[*blockToCheckFirst].endChar >= codepoint)) {
-					//DEBUG_PRT.printf("default BlockIndex = %d\n", *blockToCheckFirst);
+					//DEBUG_PRT.printf("DiskFont::getCharInfo() default BlockIndex = %d\n", *blockToCheckFirst);
 					return &font->fontcharinfoBlockLookup[*blockToCheckFirst].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[*blockToCheckFirst].startChar];
 				}
 				else {
 					uint16_t blockIndex = 0;
 					bool bFound = false;
 					
+					//DEBUG_PRT.printf("\nDiskFont::getCharInfo() codepoint=%x font->blockCount = %d", codepoint, font->blockCount);
 					while (!bFound && blockIndex < font->blockCount) {
+						DEBUG_PRT.printf("+");
 						if ((font->fontcharinfoBlockLookup[blockIndex].startChar <= codepoint) && (font->fontcharinfoBlockLookup[blockIndex].endChar >= codepoint)) {
 							bFound = true;
 						} else {
@@ -1087,11 +1148,16 @@ const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToChec
 						}
 					}
 					
-					if (!bFound) return NULL;
+					//DEBUG_PRT.println();
+					
+					if (!bFound) {
+						DEBUG_PRT.printf("DiskFont::getCharInfo() codepoint=%x : failed to find fontcharinfoBlock: returning NULL\n", codepoint);
+						return NULL;
+					}
 					
 					*blockToCheckFirst = blockIndex;
 					
-					//DEBUG_PRT.printf("BlockIndex = %d\n", blockIndex);
+					//DEBUG_PRT.printf("DiskFont::getCharInfo() BlockIndex = %d\n", blockIndex);
 					
 					return &font->fontcharinfoBlockLookup[blockIndex].fontcharinfoBlock[codepoint - font->fontcharinfoBlockLookup[blockIndex].startChar];
 				}
@@ -1099,6 +1165,7 @@ const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToChec
 		}
 	}
 	
+	//DEBUG_PRT.println("DiskFont::getCharInfo() dropped through: returning NULL");
 	return NULL;
 }
 

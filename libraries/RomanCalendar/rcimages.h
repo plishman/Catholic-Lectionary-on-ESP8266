@@ -17,4 +17,10 @@ extern EPD_DISPLAY_IMAGE clock_not_set_image;
 
 extern EPD_DISPLAY_IMAGE sd_card_not_inserted_image;
 
-extern EPD_DISPLAY_IMAGE replace_cr2032_image;
+extern EPD_DISPLAY_IMAGE wireless_network_connected_image;
+
+extern EPD_DISPLAY_IMAGE wps_setup_failed_no_network_image;
+
+extern EPD_DISPLAY_IMAGE font_missing_image;
+
+extern EPD_DISPLAY_IMAGE crash_bug_image;

@@ -171,6 +171,15 @@ void Bidi::GetString(String s,
 	DEBUG_PRT.println();
 }
 
+String Bidi::strEllipsis = "";
+
+
+void Bidi::SetEllipsisText(String ellipsis_text) {
+	Bidi::strEllipsis = ellipsis_text;
+	DEBUG_PRT.print("Bidi::Ellipsis text set to ");
+	DEBUG_PRT.println(Bidi::strEllipsis);
+}
+
 // render bidi text using disk font
 bool Bidi::RenderText(String s, 
 				      int* xpos, int* ypos, 
@@ -201,13 +210,37 @@ bool Bidi::RenderText(String s,
 	
 	int font_ascent = (int)diskfont._FontHeader.ascent;
 	
+	bool bLastLine = false;
+	int currfbwidth = fbwidth;
+	int ellipsiswidth = (int)diskfont.GetTextWidthA(Bidi::strEllipsis);
+	bool bInsertEllipsis = false;
+	
 	while ((*ypos + font_ascent) < fbheight && endstrpos < s.length()) {
+		bLastLine = (wrap_text && (*ypos + font_ascent < fbheight && *ypos + (font_ascent * 2) >= fbheight)); //only worry about last line if wrapping text
+		if (bLastLine) {
+			DEBUG_PRT.println(F("bLastLine is true"));
+			currfbwidth = fbwidth - ellipsiswidth;
+		} 
+		else {
+			DEBUG_PRT.println(F("bLastLine is false"));
+			currfbwidth = fbwidth;
+		}
+	
 		bLineBreak = false;
 
-		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, bEmphasisOn, &bLineBreak, &bRTL, &bDirectionChanged, &bNewLine, fbwidth, *xpos, wrap_text);
+		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, bEmphasisOn, &bLineBreak, &bRTL, &bDirectionChanged, &bNewLine, currfbwidth, *xpos, wrap_text);
 		DEBUG_PRT.printf("bRTL = %s\n", bRTL ? "<-" : "->");
 		DEBUG_PRT.printf("xpos=%d, s.length=%d, startstrpos=%d, endstrpos=%d\n", *xpos, s.length(), startstrpos, endstrpos);
 
+		if (textwidth > 0 && bLastLine && bNewLine && diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos) { // ellipsiswidth is limit to GetTextWidthA, so it stops processing when the calculated string width is greater than ellipsiswidth
+			//if *some text was processed (ie, not html tags) and;
+			//	 *this is the last line and;
+			//	 *the line overflowed the width of the screen minus the width of the ellipsis and;
+			//   *and *the text remaining to be printed would overflow the width of the screen were the ellipsis not printed*
+			//		then need to insert the ellipsis.
+			bInsertEllipsis = true;
+		}
+		
 		if (textwidth > 0) {
 			bRTLrender = bRTL;
 			
@@ -217,8 +250,15 @@ bool Bidi::RenderText(String s,
 			
 			uint16_t color = *bEmphasisOn ? GxEPD_RED : GxEPD_BLACK;			
 			tb.add(*xpos, *ypos, s.substring(startstrpos, endstrpos), color, render_right_to_left, bRTLrender, diskfont);
-			
-			*xpos += textwidth;		
+		
+			*xpos += textwidth;
+
+			if (bInsertEllipsis && Bidi::strEllipsis.length() > 0) {
+				// insert the ellipsis at the current xpos, ypos
+				tb.add(*xpos, *ypos, Bidi::strEllipsis, GxEPD_BLACK, render_right_to_left, bRTLrender, diskfont);		
+				
+				*xpos += ellipsiswidth;
+			}
 		}
 
 		if (bLineBreak) {

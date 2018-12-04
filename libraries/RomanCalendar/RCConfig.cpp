@@ -623,7 +623,7 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 		*t = 0;
 		return false;
 	}
-  
+   
 	bool bResult = Config::getDateTime(t);
   
 	if (DstIsValid(c)) {
@@ -637,7 +637,7 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 			// done at least once per year in order to keep the DST start and end dates current. (No user input is required in the configuration page, just click on the form submit button and 
 			// the new start and end dates for DST will automatically be recorded.)
 			//
-			//dump_config(c);
+			dump_config(c);
 			
 			tmElements_t dst_start = {0};
 			tmElements_t dst_end = {0};
@@ -658,13 +658,13 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 
 			
 			if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
-				if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+				if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
 					dst_end.Year++; // end dst month is in next year						 //	next year
 					DEBUG_PRT.printf("dst_end is in next year (southern hemisphere)\n");
 				}
 			}
 			else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
-				if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month) {
+				if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day) {
 					dst_start.Year++; // start dst month is in next year
 					DEBUG_PRT.printf("dst_start is in next year (northern hemisphere)\n");
 				}			
@@ -754,7 +754,7 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 		buf[1] = (dec2bcd(tm.Second));
 		buf[2] = (dec2bcd(tm.Minute));
 		buf[3] = (dec2bcd(tm.Hour));      // sets 24 hour format
-		buf[4] = (dec2bcd(tm.Day));		  // also sets DY/DT = 0 -> Match Day of Month, and A1M4 to 0
+		buf[4] = (dec2bcd(tm.Day));		  // also sets DY/DT = 0 -> Match Day of Month, and A1M4 to 0 (Default for flags == A1_MATCH_DATE_AND_TIME (==0))
 		
 		switch(flags) {	
 		case A1_MATCH_DAY_AND_TIME:
@@ -807,22 +807,22 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 		buf[3] = (dec2bcd(tm.Day));		  // also sets DY/DT = 0 -> Match Day of Month, and A2M4 to 0
 		
 		switch(flags) {	
-		case A1_MATCH_DAY_AND_TIME:
+		case A2_MATCH_DAY_AND_TIME_MINS: 	//25-11-2018 was A1_MATCH_DAY_AND_TIME:
 			buf[3] = (dec2bcd(tm.Wday));   
 			buf[3] |= 0x40;	// set DY/DT = 1 -> Match Weekday, A2M2 = A2M3 = A2M4 = 0
 			break;
 		
-		case A1_ONCE_PER_SECOND:
+		case A2_ONCE_PER_MINUTE: 			//25-11-2018 was A1_ONCE_PER_SECOND:
 			buf[1] |= 0x80;	// set A2M2, A2M3 and A2M4, alarm once per minute (there is no A2M1!)
 			buf[2] |= 0x80;
 			buf[3] |= 0x80;
 
-		case A1_MATCH_SECONDS:
+		case A2_MATCH_MINUTES: 				//25-11-2018 was A1_MATCH_SECONDS:
 			buf[2] |= 0x80; // set A2M3 and A2M4, match minutes
 			buf[3] |= 0x80;
 			break;
 		
-		case A1_MATCH_MINUTES_SECONDS:
+		case A2_MATCH_HOURS_MINUTES:		//25-11-2018 was A1_MATCH_MINUTES_SECONDS:
 			buf[3] |= 0x80; // set A1M4, match hours and minutes
 			break;			
 		}
@@ -1184,13 +1184,14 @@ wake_reasons Config::Wake_Reason() {
 		return WAKE_USB_5V;
 	}
 	
+	DEBUG_PRT.println("Woken by Unknown");
 	return WAKE_UNKNOWN;
 }
 
 
 bool Config::PowerOff(time64_t wake_datetime) {
 	if (wake_datetime != 0) {
-		if (Config::setAlarm(wake_datetime, 1, A1_MATCH_DAY_AND_TIME, true)) {
+		if (Config::setAlarm(wake_datetime, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
 			DEBUG_PRT.print("Alarm 1 set");
 			tmElements_t ts;
 			breakTime(wake_datetime, ts);

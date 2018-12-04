@@ -9,7 +9,13 @@ Transfers::Transfers(bool transfer_to_sunday, I18n* i) {
 }
 
 Transfers::~Transfers() {
+	for (int i = 0; i < transfersList.size(); i++) { // delete transfer objects stored in linked list, before deleting list itself
+		Transfer* pTransfer = transfersList.get(i);
+		delete pTransfer;
+	}
+
 	transfersList.clear();
+	
 	if (_tc != NULL ) { delete _tc; DEBUG_PRT.println(F("Transfers:~Transfers: deleted _tc")); }
 	if (_sc != NULL ) { delete _sc; DEBUG_PRT.println(F("Transfers:~Transfers: deleted _sc")); }
 	_year = 0;

@@ -91,6 +91,11 @@ Bible::Bible(I18n* i)
 
 Bible::~Bible(void)
 {
+	for (int i = 0; i < refsList.size(); i++) { // delete refslist objects stored in linked list, before deleting list itself
+		Ref* pRef = refsList.get(i);
+		delete pRef;
+	}
+	
 	refsList.clear();
 }
 

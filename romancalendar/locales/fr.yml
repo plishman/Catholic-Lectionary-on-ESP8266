@@ -103,5 +103,6 @@ fr:
     white: blanc
     green: vert
     red: rouge
-  holy_day_of_obligation: (+)
-  
+  holy_day_of_obligation: <b>+</b>
+  or: ou
+  ellipsis: [..]

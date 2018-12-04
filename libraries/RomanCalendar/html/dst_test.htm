@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<script type="text/javascript">
+			Date.prototype.stdTimezoneOffset = function () {
+				var jan = new Date(this.getFullYear(), 0, 1);
+				var jul = new Date(this.getFullYear(), 6, 1);
+				return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+			}
+
+			Date.prototype.isDstObserved = function () {
+				return this.getTimezoneOffset() < this.stdTimezoneOffset();
+			}
+
+			function  getDstDates() {
+				var dstStart = new Date();
+				var dstEnd = new Date();
+				var dstoffset = 0;
+			
+				for (var i=0;i < 365; i++) {
+					var d1 = new Date();
+					var d2 = new Date();
+					d1.setDate(i);
+					d2.setDate(i+1);
+					
+					if (d1.getTimezoneOffset() > d2.getTimezoneOffset()) {
+						dstStart = d1;
+						dstoffset = d1.getTimezoneOffset() - d2.getTimezoneOffset();
+					}
+					
+					if (d1.getTimezoneOffset() < d2.getTimezoneOffset()) {
+						dstEnd = d1;
+					}
+				}
+
+				alert("DST start = " + dstStart.getMonth() + " " + dstStart.getDate() + " at " + dstStart.getHours() + 
+					  "\n DST end = " + dstEnd.getMonth() + " " + dstEnd.getDate() + " at " + dstEnd.getHours() + 
+					  "\n offset (minutes) = " + dstoffset);
+			}
+		
+		
+			getDstDates();
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

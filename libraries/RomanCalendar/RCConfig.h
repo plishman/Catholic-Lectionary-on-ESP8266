@@ -56,7 +56,12 @@
 #define DS3231_A2F      0x2
 #define DS3231_OSF      0x80
 
+#define WAKE_FLAGS_NONE 0x0
+#define WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING 0xff
+#define WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE 0xf0
 enum wake_reasons {WAKE_UNKNOWN, WAKE_ALARM_1, WAKE_ALARM_2, WAKE_USB_5V, WAKE_DEEPSLEEP};
+
+
 
 // https://stackoverflow.com/questions/30223983/c-add-up-all-bytes-in-a-structure
 template<typename T> int CountBytes(const T & t)
@@ -94,6 +99,9 @@ typedef struct {
 
 typedef struct {
   uint8_t wake_hour_counter; // set number of hours to the next reading. Decreased by 1 each wake
+  uint8_t wake_flags; // this so far is only used to detect when the lectionary woke while on charge (from deepSleep) without USB5V power being interrupted - and
+					  // only after a WPS config failure. This means that during charging with no network available (which it would otherwise search for) the lectionary
+					  // will still display a reading 10 minutes after the WPS config failure.
 //  DisplayCardShown dcs; // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
 } lectionary_data_t;
 

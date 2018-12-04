@@ -103,5 +103,6 @@ la:
     white: albus
     green: viridis
     red: rubeus
-  holy_day_of_obligation: (+)
-  
+  holy_day_of_obligation: <b>+</b>
+  or: aut
+  ellipsis: [..]

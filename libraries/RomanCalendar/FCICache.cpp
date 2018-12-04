@@ -28,6 +28,7 @@ int FCICache::Prune(int highestUseCountToPrune){
 				DiskFont_FontCharInfo* pfci = fci_ll->get(m);
 				if (pfci->useCount <= highestUseCountToPrune) {
 					fci_ll->remove(m);
+					delete pfci;
 					n--;
 					numPruned++;
 					_fci_count--;
@@ -39,7 +40,10 @@ int FCICache::Prune(int highestUseCountToPrune){
 		}
 	}
 
-	DEBUG_PRT.printf("FCICache prune: pruned %d entries\n", numPruned);
+//	DEBUG_PRT.print(F("FCICache prune: pruned "));
+//	DEBUG_PRT.print(String(numPruned));
+//	DEBUG_PRT.print(F(" entries, with highestUseCountToPrune="));
+//	DEBUG_PRT.println(String(highestUseCountToPrune));	
 	
 	return numPruned;
 }
@@ -83,14 +87,20 @@ DiskFont_FontCharInfo* FCICache::get(uint32_t codepoint){
 }
 
 void FCICache::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
+	//DEBUG_PRT.print(F("FCICache add "));
+	//DEBUG_PRT.print(utf8fromCodepoint(codepoint));
+
 	DiskFont_FontCharInfo* existing_item = get(codepoint);
 	if (existing_item == NULL) {
 		int pruneMaxUseCount = 1;
-		while (_fci_count == FCI_MAXFCIBLOCKS) {	// make room
-			Prune(pruneMaxUseCount);
-			pruneMaxUseCount++;
+		if (_fci_count == FCI_MAXFCIBLOCKS) {
+			while (_fci_count > FCI_MAXFCIBLOCKS - FCI_MINTOFREE) {	// make room should be > greater than? (was ==)
+				wdt_reset();
+				Prune(pruneMaxUseCount);
+				pruneMaxUseCount++;
+			}
 		}
-	
+		
 		uint16_t fcitable_index = hash(codepoint); // will return a number between 0 and FCI_NUMENTRIES - 1, should be evenly distributed
 
 		if (_fciTable[fcitable_index] == NULL) {
@@ -105,9 +115,14 @@ void FCICache::add(uint32_t codepoint, DiskFont_FontCharInfo* &fci){
 		fci_ll->sort(fci_compare);
 		
 		_fci_count++;
-		//DEBUG_PRT.printf("FCICache add %s\n", utf8fromCodepoint(codepoint).c_str());
+		//DEBUG_PRT.print(F("FCICache add "));
+		//DEBUG_PRT.print(utf8fromCodepoint(codepoint));
+		//DEBUG_PRT.print(F("_fci_count="));
+		//DEBUG_PRT.println(String(_fci_count));
+		
 	}
 	else {
+		//DEBUG_PRT.print(F("FCICache hit"));
 		delete fci;
 		fci = existing_item;
 		//DEBUG_PRT.printf("FCICache add %s (already present)\n", utf8fromCodepoint(codepoint).c_str());
@@ -118,6 +133,11 @@ void FCICache::clear(){
 	for (int i = 0 ; i < FCI_NUMENTRIES; i++) {
 		FCILinkedList* fci_ll = _fciTable[i];
 		if (fci_ll != NULL) {
+			for (int i = 0; i < fci_ll->size(); i++) { // delete fci objects stored in linked list, before deleting list itself
+				DiskFont_FontCharInfo* pfci = fci_ll->get(i);
+				delete pfci;
+			}
+
 			fci_ll->clear();
 			delete fci_ll;
 			_fciTable[i] = NULL;

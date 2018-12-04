@@ -11,7 +11,7 @@ I2CSerialPort::I2CSerialPort() {
 		_b_enable = c.data.debug_on;
 	} 
 	else {
-		_b_enable = true; // turn on debug output if the EEPROM settings are corrupt or invalid.
+		_b_enable = false; //turn off - was true Need to manage debug output on a module basis now! // turn on debug output if the EEPROM settings are corrupt or invalid.
 	}
 }
 

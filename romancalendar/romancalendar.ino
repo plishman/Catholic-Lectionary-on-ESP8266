@@ -47,6 +47,9 @@
 #include <GxIO/GxIO_SPI/GxIO_SPI.cpp>
 #include <GxIO/GxIO.cpp>
 
+// FreeFonts from Adafruit_GFX
+#include <Fonts/FreeMonoBold9pt7b.h> //(used for crash dump output)
+
 extern "C" {
 #include "user_interface.h"
 }
@@ -58,7 +61,18 @@ I2CSerialPort I2CSerial;
 GxIO_Class io(SPI, /*CS=D16*/ D8, /*DC=D4*/ -1, /*RST=D5*/ D2);  // dc=-1 -> not used (using 3-wire SPI)
 GxEPD_Class ePaper(io, D2, D3 /*RST=D5*/ /*BUSY=D12*/);
 
-enum DISPLAY_UPDATE_TYPE {display_reading, battery_recharge, connect_power, wps_connect, clock_not_set, sd_card_not_inserted};
+enum DISPLAY_UPDATE_TYPE {
+  display_reading, 
+  battery_recharge, 
+  connect_power, 
+  wps_connect, 
+  clock_not_set, 
+  sd_card_not_inserted, 
+  wireless_network_connected, 
+  wps_setup_failed, 
+  font_missing, 
+  crash_bug
+};
 
 TextBuffer tb;
 DiskFont diskfont;
@@ -93,6 +107,39 @@ ESP8266WebServer server(80);
 bool bEEPROM_checksum_good = false;
 
 wake_reasons wake_reason = WAKE_UNKNOWN;
+bool bNetworkAvailable = false; 
+bool bRetryWPSConnect = true;
+bool bDisplayWifiConnectedScreen = true;      
+
+bool CrashCheck(String& resetreason) { // returns true if crash is detected
+  char reset_info_buf[200];
+  
+  struct rst_info *rtc_info = system_get_rst_info();
+  
+  os_sprintf(reset_info_buf, "reset reason: %x\n",  rtc_info->reason);
+  resetreason += String(reset_info_buf);
+
+  os_sprintf(reset_info_buf, "Lectionary " LECT_VER "\n");
+  resetreason += String(reset_info_buf);
+
+  if (rtc_info->reason == REASON_WDT_RST || rtc_info->reason == REASON_EXCEPTION_RST || rtc_info->reason == REASON_SOFT_WDT_RST)  
+  {
+      if (rtc_info->reason == REASON_EXCEPTION_RST) {
+        os_sprintf(reset_info_buf, "Fatal exception (%d):\n", rtc_info->exccause);
+        resetreason += String(reset_info_buf);
+      }
+      
+      os_sprintf(reset_info_buf, "epc1=0x%08x\nepc2=0x%08x\nepc3=0x%08x\nexcvaddr=0x%08x\ndepc=0x%08x\n", 
+                 rtc_info->epc1, rtc_info->epc2, rtc_info->epc3, rtc_info->excvaddr,  rtc_info->depc); 
+                 //The address of the last crash is printed, which is used to debug garbled output.
+
+      resetreason += String(reset_info_buf);
+      return true;
+  }
+
+  return false;
+}
+
 
 void setup() { 
   pinMode(D1, OUTPUT);
@@ -102,6 +149,22 @@ void setup() {
   SPIFFS.begin();
   //Serial.begin(9600);
   DEBUG_PRT.begin(1,3,8);
+  delay(100);
+
+  DEBUG_PRT.print(F("free memory = "));
+  DEBUG_PRT.println(String(system_get_free_heap_size()));
+
+  String resetreason = "";
+  bool bCrashed = false;
+  
+  bCrashed = CrashCheck(resetreason);
+  DEBUG_PRT.println(resetreason);
+
+  if (bCrashed) {
+    display_image(crash_bug, resetreason, false);
+    Config::PowerOff(0); // power off until USB5V is (re)connected
+    ESP.deepSleep(0); 
+  }
 
   wake_reason = Config::Wake_Reason();
 
@@ -112,9 +175,6 @@ void setup() {
   DEBUG_PRT.println("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   DEBUG_PRT.println("0123456789");
   DEBUG_PRT.println("--------------------------");
-
-  //while(!Serial) {
-  //}
   
   DEBUG_PRT.println("Running");
 
@@ -130,36 +190,99 @@ void setup() {
   bEEPROM_checksum_good = Config::EEPROMChecksumValid();
 
   if (!bEEPROM_checksum_good && !Battery::power_connected()) {
-    DEBUG_PRT.println("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM");
+    DEBUG_PRT.println(F("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM"));
     display_image(connect_power);
     if (!Config::PowerOff(0)) {
-      DEBUG_PRT.println("Attempt to power off via DS3231 failed, using deepsleep mode");
+      DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
       ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
     }
   }
 
   rtcData_t rtcData = {0};
+//  bool bRetryWPSConnect = true; // is now module level variable (used in loop to replicate state of this flag in the RTC memory)
+  if (Config::readRtcMemoryData(rtcData)) {
+    DEBUG_PRT.printf("Read rtc memory data, wake_flags == %d\n", rtcData.data.wake_flags);
+    
+    if (rtcData.data.wake_flags == WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING) {
+      DEBUG_PRT.println(F("rtcData flags = WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING, setting bRetryWPSConnect to False"));
+      bRetryWPSConnect = false;
+    }
+
+    if (rtcData.data.wake_flags == WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE) {
+      DEBUG_PRT.println(F("rtcData flags = WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE, setting bDisplayWifiConnectedScreen to False"));
+      bDisplayWifiConnectedScreen = false;      
+    }
+  } else {
+      DEBUG_PRT.println(F("rtcData memory is invalid (ESP8266 has been powered off), bRetryWPSConnect defaulting to True"));    
+  }
 
   if (Battery::power_connected()) {
     if (!network.connect()){
-      DEBUG_PRT.println("Need to configure Wifi with WPS to enable web configuration");
-      DEBUG_PRT.println("On USB power and no network configured: Prompting user to connect using WPS button");
-      if (!connect_wps()) {
-        DEBUG_PRT.println("Failed to configure Wifi network via WPS - sleeping until USB power is reconnected");
-        display_image(connect_power);
-        if (!Config::PowerOff(0)) {
-          DEBUG_PRT.println("Attempt to power off via DS3231 failed, using deepsleep mode");
-          ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+      DEBUG_PRT.println(F("Need to configure Wifi with WPS to enable web configuration"));
+      if (bRetryWPSConnect) {
+        DEBUG_PRT.println(F("On USB power and no network configured: Prompting user to connect using WPS button"));
+        if (!connect_wps()) {
+          DEBUG_PRT.println(F("Failed to configure Wifi network via WPS - will wake in 10 minutes to display reading if power is not disconnected and reconnected to start WPS configuration again."));
+  
+          /////
+          // 24-11-2018 Fix to allow lectionary to display verses even when no network is configured, following USB5V being connected (which will try to
+          // detect a network).
+          
+          if (bEEPROM_checksum_good) { // * If the EEPROM contains sensible values, lectionary will wake after 1 minute and display verses as normal, *if 
+            display_image(wps_setup_failed); // USB5V is not still connected when the lectionary wakes (ie, the USB5V as not been removed and/or reattached)*. 
+                                       // * This means that the lectionary can be charged and used without configuring a network if none is available, 
+                                       //   provided it is already configured (so it works and can be charged if taken on holiday etc, when no WiFi is available).
+                                       // * If USB5V is disconnected then reconnected though at any time, the lectionary will prompt to connect to a network 
+                                       //   again, until WPS configuration is completed successfully.
+                                       // * The lectionary will not wake by itself again without disconnecting and reconnecting 5V if the 5V power is left 
+                                       //   connected after WPS configuration has failed.
+            DEBUG_PRT.println(F("EEPROM checksum is good, so will setting WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING in RTC memory"));
+          
+            rtcData.data.wake_hour_counter = 1;  // Write 1 hour until display of next reading in RTC memory. This will mean that, after being decremented 
+                                                 // to 0, a reading should be displayed immediately (at next wake from deepSleep mode, if 5V power remains 
+                                                 // applied.
+            rtcData.data.wake_flags = WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING; // will ensure that if power remains applied (lectionary is
+                                                                                             // left charging), it will not attempt to retry the WPS connect
+                                                                                             // on waking, but will instead display a reading. Only if the power
+                                                                                             // is disconnected then reconnected should it reattempt WPS config.
+            Config::writeRtcMemoryData(rtcData); //
+  
+            SleepFor(0,1,0);                    // Sleep for 0hrs 2minutes 0sec - will display reading after that, if power is not disconnected and reconnected
+                                                 // in which case, will reattempt WPS config.
+            //SleepForHours(1);                    // SleepForHours() will most probably end up using deepSleep mode, since the USB5V has been
+                                                 // detected as connected already at this point (which keeps the esp8266 powered). If the USB5V  
+                                                 // is disconnected sometime during the deepSleep the DS3231 should still wake up the lectionary
+                                                 // on time.                                                 
+          }
+          else {
+          /////
+            DEBUG_PRT.println(F("EEPROM checksum is bad and no network configured, sleeping until power is disconnected and reconnected, to restart WPS configuration"));
+            display_image(connect_power);
+            if (!Config::PowerOff(0)) {
+              DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+              ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+            }
+          }
         }
-      } else {
-        //ESP.deepSleep(1e6); // reset esp, network is configured
-        //ESP.reset();
-        ESP.restart();
+        else {
+          //ESP.deepSleep(1e6); // reset esp, network is configured
+          //ESP.reset();
+          ESP.restart();
+        }
+      }
+    }
+    else {
+      bNetworkAvailable = true;
+      if (bDisplayWifiConnectedScreen) {
+        display_image(wireless_network_connected);
+        rtcData.data.wake_flags = WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE;
+        Config::writeRtcMemoryData(rtcData); // set the wake flag to say don't redisplay the wifi connected image on next boot, if still charging by 
+                                             // that time.
       }
     }
   }
   else {
-    DEBUG_PRT.println("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/).");  
+    DEBUG_PRT.println(F("On battery power - not attempting to connect to network. Connect power to use lectionary setup (http://lectionary.local/)."));  
 
 //    rst_info *rinfo;
 //    rinfo = ESP.getResetInfoPtr();
@@ -183,7 +306,7 @@ void setup() {
         }
       }
       else {
-        DEBUG_PRT.println("Updating now - Woken from deepsleep but RTC memory (which should contain time of next reading update) contains no valid data");
+        DEBUG_PRT.println(F("Updating now - Woken from deepsleep but RTC memory (which should contain time of next reading update) contains no valid data"));
       }
     }
   }
@@ -201,17 +324,26 @@ void setup() {
 }
 
 void battery_test() {
-  DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
+  DEBUG_PRT.print(F("Battery voltage is "));
+  DEBUG_PRT.println(String(Battery::battery_voltage()));
+  
   if (!Battery::power_connected()) {
     if (Battery::recharge_level_reached()) {
-      DEBUG_PRT.println("Battery recharge level is " + String(MIN_BATT_VOLTAGE));
+      DEBUG_PRT.print(F("Battery recharge level is "));
+      DEBUG_PRT.println(String(MIN_BATT_VOLTAGE));
       DEBUG_PRT.println(F("Battery recharge level reached - sleeping until power is connected"));
       display_image(battery_recharge);
       //while(!Battery::power_connected()) {
       //  wdt_reset();
       //  delay(2000); // testing - when finished, will be sleep (indefinite, wakes when charger is connected through reset pulse)
       //}
-      ESP.deepSleep(0); // sleep indefinitely (will wake when the power is connected, which applies a reset pulse) //sleep for an hour or until power is connected SLEEP_HOUR
+
+      if (!Config::PowerOff(0)) { // **24-11-2018 use RTC power switch to turn off all peripherals rather than just place esp8266 in deepSleep mode
+        DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+        ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
+      }
+      
+      //ESP.deepSleep(0); // sleep indefinitely (will wake when the power is connected, which applies a reset pulse) //sleep for an hour or until power is connected SLEEP_HOUR
     }
   }
   else {
@@ -267,14 +399,14 @@ void clock_battery_test() {
 }
 
 bool connect_wps(){
-  DEBUG_PRT.println("Please press WPS button on your router.\n Press any key to continue...");
+  DEBUG_PRT.println(F("Please press WPS button on your router.\n Press any key to continue..."));
   display_image(wps_connect);
   wdt_reset();
   delay(10000);
   bool connected = network.startWPSPBC();      
     
   if (!connected) {
-    DEBUG_PRT.println("Failed to connect with WPS :-(");  
+    DEBUG_PRT.println(F("Failed to connect with WPS :-("));  
     return false;
   }
   
@@ -299,30 +431,31 @@ void loop(void) {
 
   int next_wake_hours_count = 1; // will store the number of hours until the next wake up
   
-  DEBUG_PRT.println("*1*\n");
+  DEBUG_PRT.println(F("*1*\n"));
   //timeserver.gps_wake();
   Calendar c(D1);
 
   if (bEEPROM_checksum_good) {  
     if (!c._I18n->configparams.have_config) {
-      DEBUG_PRT.println("Error: Failed to get config: config.csv is missing or bad or no SD card inserted");
+      DEBUG_PRT.println(F("Error: Failed to get config: config.csv is missing or bad or no SD card inserted"));
       display_image(sd_card_not_inserted);
       //ESP.deepSleep(SLEEP_HOUR);    
       if (!Config::PowerOff(0)) {
-        DEBUG_PRT.println("Attempt to power off via DS3231 failed, using deepsleep mode");
+        DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
         ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
       }
 
     }
   
     bool right_to_left = c._I18n->configparams.right_to_left;
+    Bidi::SetEllipsisText(c._I18n->get("ellipsis"));
 
     /************************************************/ 
     // *2* Get date and time from DS3231 clock chip
     wdt_reset();
-    DEBUG_PRT.println("*2*\n");
+    DEBUG_PRT.println(F("*2*\n"));
     //time64_t date = c.temporale->date(12,11,2017);
-    DEBUG_PRT.println("Getting datetime...");
+    DEBUG_PRT.println(F("Getting datetime..."));
     //time64_t date = timeserver.local_datetime();
     time64_t date;
     Config::getLocalDateTime(&date);
@@ -337,7 +470,7 @@ void loop(void) {
     //  Serial.print(".");
     //  delay(1000);
     //}
-    DEBUG_PRT.println("Got datetime.");
+    DEBUG_PRT.println(F("Got datetime."));
     //network.wifi_sleep(); // no longer needed, sleep wifi to save power
   
   
@@ -345,14 +478,14 @@ void loop(void) {
     /************************************************/ 
     // *3* get Bible reference for date (largest task)
     wdt_reset();
-    DEBUG_PRT.println("*3*\n");
+    DEBUG_PRT.println(F("*3*\n"));
     c.get(date);
   
   
   
     /************************************************/ 
     // *4* Make calendar entry text string for day
-    DEBUG_PRT.println("*4*\n");
+    DEBUG_PRT.println(F("*4*\n"));
     //String mth = c._I18n->get("month." + String(ts.Month));
     ////String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
     //String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
@@ -366,7 +499,7 @@ void loop(void) {
     
     /************************************************/ 
     // *5* Get lectionary (readings) for this date
-    DEBUG_PRT.println("*5*\n");
+    DEBUG_PRT.println(F("*5*\n"));
     String refs = "";
     wdt_reset();
     Lectionary l(c._I18n);
@@ -382,8 +515,9 @@ void loop(void) {
     
     Lectionary::ReadingsFromEnum r;
 
-    bool getLectionaryReadingEveryHour = false;
-    if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V || Battery::power_connected()) getLectionaryReadingEveryHour = true;
+    bool getLectionaryReadingEveryHour = true; // was false. If we get here, must return a reading, since reading scheduling when using DeepSleep mode 
+                                               // (which wakes *every hour* to check if a reading is due) is now handled in the init() code
+    //if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V || Battery::power_connected()) getLectionaryReadingEveryHour = true;    
         
     if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true Battery::power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
@@ -399,22 +533,40 @@ void loop(void) {
       /************************************************/ 
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
       if (!display_calendar(datetime, &c, refs, right_to_left)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
-        DEBUG_PRT.printf("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n");
+        DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
         r=Lectionary::READINGS_G;
         l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
         display_calendar(datetime, &c, refs, right_to_left);
       }
     }
     else {
-      DEBUG_PRT.println("On battery, reading will not be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight");    
+      if (wake_reason == WAKE_DEEPSLEEP) {
+        DEBUG_PRT.println(F("Lectionary was woken from ESP8266 DeepSleep mode (wake_reason == WAKE_DEEPSLEEP. ESP8266 DeepSleep mode must wake every hour, even if the reading does not need to be updated. Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));    
+      }
+      else {
+        DEBUG_PRT.println(F("Lectionary was woken from unknown cause (wake_reason == WAKE_UNKNOWN). Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));            
+      }
     }
 
-    DEBUG_PRT.printf("Calculating next wake time:\n");
+    DEBUG_PRT.println(F("Calculating next wake time:"));
 
     rtcData_t rtcData = {0};
-    //rtcData.data.dcs = dc_normal;        
-    rtcData.data.wake_hour_counter = 1;
 
+    //preserve wake flags
+    if (!Config::readRtcMemoryData(rtcData)) {
+      rtcData = {0}; // if crc failed, make sure rtcData struct is emptied
+      rtcData.data.wake_flags = WAKE_FLAGS_NONE; // if the RTC memory was corrupted (crc fail), treat this is a cold boot and make sure wake flags cleared
+    } // otherwise, preserve the wake_flags read from the rtc memory.
+
+    //at present, wake_flags should be one of: * WAKE_FLAGS_NONE
+    //                                         * WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING
+    //                                         * WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE
+    // As coded, they are not presently combinable - only one of these flags is set at a time.
+    
+    //rtcData.data.wake_flags = (bRetryWPSConnect ? WAKE_FLAGS_NONE : WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING);
+    
+    //calculate number of hours to next wake up
+    rtcData.data.wake_hour_counter = 1;
     uint8_t Hour = ts.Hour;
     int i = 1;
     
@@ -431,19 +583,19 @@ void loop(void) {
 
     Config::writeRtcMemoryData(rtcData);        
 
-    next_wake_hours_count = rtcData.data.wake_hour_counter;
+    next_wake_hours_count = rtcData.data.wake_hour_counter; // for setting wake alarm
   
-    DEBUG_PRT.println("*6*\n");
+    DEBUG_PRT.println(F("*6*\n"));
   } // if(bEEPROM_checksum_good)
   
   
   /************************************************/ 
   // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
-  DEBUG_PRT.println("*7*\n");
+  DEBUG_PRT.println(F("*7*\n"));
   //timeserver.gps_sleep();
 
   if (!bEEPROM_checksum_good) {
-    if (Battery::power_connected()) {
+    if (Battery::power_connected() && bNetworkAvailable) {
       display_image(clock_not_set, Network::getDHCPAddressAsString(), true);
     } else {
       display_image(connect_power);
@@ -452,9 +604,14 @@ void loop(void) {
 
   bool bSettingsUpdated = false;
 
-  if (Battery::power_connected()) {
-    DEBUG_PRT.println("Power is connected, starting config web server");
-    DEBUG_PRT.println("USB voltage is " + String(Battery::battery_voltage()));
+  if (!bNetworkAvailable && Battery::power_connected()) {
+    DEBUG_PRT.println(F("On USB power, but Network is not available - disconnect and reconnect power to use WPS setup"));
+  }
+
+  if (Battery::power_connected() && bNetworkAvailable) {
+    DEBUG_PRT.println(F("Power is connected, starting config web server"));
+    DEBUG_PRT.print(F("USB voltage is "));
+    DEBUG_PRT.println(String(Battery::battery_voltage()));
 
     // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
     //if (!network.connect()) {
@@ -463,14 +620,14 @@ void loop(void) {
     //  ESP.reset();
     //}
     
-    uint32_t free = system_get_free_heap_size();
-    DEBUG_PRT.println("free memory = " + String(free));
+    DEBUG_PRT.print(F("free memory = "));
+    DEBUG_PRT.println(String(system_get_free_heap_size()));
 
     unsigned long server_start_time = millis();
     bool bTimeUp = false;
    
     if (Config::StartServer()) {
-      DEBUG_PRT.println("Config web server started, listening for requests...");
+      DEBUG_PRT.println(F("Config web server started, listening for requests..."));
       while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
         server.handleClient();
         wdt_reset();
@@ -482,35 +639,36 @@ void loop(void) {
       Config::StopServer();
 
       if (Config::bSettingsUpdated) {
-        DEBUG_PRT.println("Settings updated, resetting lectionary...");
+        DEBUG_PRT.println(F("Settings updated, resetting lectionary..."));
         ESP.deepSleep(1e6); //reboot after 1 second
         //ESP.reset();
       }
       else if (bTimeUp) {
-        DEBUG_PRT.println("Server timed out, stopping web server and going to sleep");
+        DEBUG_PRT.println(F("Server timed out, stopping web server and going to sleep"));
         //ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
         SleepForHours(next_wake_hours_count);
         //SleepUntilStartOfHour();
       }
       else {
-        DEBUG_PRT.println("Power disconnected, stopping web server and going to sleep");
+        DEBUG_PRT.println(F("Power disconnected, stopping web server and going to sleep"));
       }
   
       //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
       
-      free = system_get_free_heap_size();
-      DEBUG_PRT.println("free memory = " + String(free));
+      DEBUG_PRT.print(F("free memory = "));
+      DEBUG_PRT.println(String(system_get_free_heap_size()));
     }
   }
   else {
-    DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
+    DEBUG_PRT.print(F("Battery voltage is "));
+    DEBUG_PRT.println(String(Battery::battery_voltage()));
   }
 
   /************************************************/ 
   // *8* completed all tasks, go to sleep
-  DEBUG_PRT.println("*8*\n");
+  DEBUG_PRT.println(F("*8*\n"));
   
-  DEBUG_PRT.println("Going to sleep");
+  DEBUG_PRT.println(F("Going to sleep"));
   //ESP.deepSleep(SLEEP_HOUR); //1 hour
   SleepForHours(next_wake_hours_count);
   //SleepUntilStartOfHour();
@@ -530,6 +688,46 @@ void roundupdatetohour(time64_t& date) {
   DEBUG_PRT.printf("Rounded date = %02d/%02d/%04d %02d:%02d:%02d\n", tso.Day, tso.Month, tmYearToCalendar(tso.Year), tso.Hour, tso.Minute, tso.Second);
 }
 
+// Powers down ESP and peripherals for the number of hours, minutes and seconds specified (no rounding), using the DS3231 clock chip alarm,
+// or if that fails (because micro is on 5V etc) then deepSleep is used. Sleep duration of up to a year should be possible
+void SleepFor(int hours, int minutes, int seconds) {
+    time64_t date;
+    Config::getLocalDateTime(&date);
+    
+    tmElements_t ts;
+    breakTime(date, ts);
+
+    //ts.Minute = 0;
+    //ts.Second = 0; // reset ts to top of current hour
+
+    time64_t waketime = makeTime(ts);
+    waketime += ((hours * 3600) + (minutes * 60) + seconds);
+
+    Config::PowerOff(waketime);
+    
+    delay(250);
+    //SleepUntilStartOfHour(); // shouldn't happen - should be powered off by this point (use the deepsleep timer as a backup for the DS3231 alarm)  
+
+    DEBUG_PRT.println(F("Failed to shutdown using DS3231, using deepSleep mode"));
+
+    uint32_t deepSleepDurationSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    
+    if (deepSleepDurationSeconds > MAX_DEEPSLEEP_SECONDS) {
+      DEBUG_PRT.println(F("Requested sleep period exceeds maximum deepSleep, setting deepSleep to maximum 1 hour 11 mins 34 sec."));      
+      deepSleepDurationSeconds = MAX_DEEPSLEEP_SECONDS;
+    }
+    else {
+      DEBUG_PRT.print(F("Using deepSleep mode, will wake in "));
+      DEBUG_PRT.print(String(deepSleepDurationSeconds));
+      DEBUG_PRT.println(F(" seconds"));
+    }
+    
+    ESP.deepSleep(deepSleepDurationSeconds * 1e6); // maximum sleep duration using deepSleep is 4294 seconds, or ((1<<32)-1) / 1e6) seconds, or 
+                                                   // 1 hr 11 mins and 34 sec (deepSleep timing is in uSeconds).
+}
+
+// Powers down ESP and peripherals for the number of hours specified (rounded down to the top of the hour), using the DS3231 clock chip alarm,
+// or if that fails (because micro is on 5V etc), then deepSleep is used.
 void SleepForHours(int num_hours) {
     time64_t date;
     Config::getLocalDateTime(&date);
@@ -582,7 +780,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   bool bHaveLectionaryValue = false;
 
   if(tm.Day == 24 && tm.Month == 12 && tm.Hour >= 18) { // Christmas Eve Vigil Mass
-    DEBUG_PRT.printf("Christmas Eve vigil Mass\n");
+    DEBUG_PRT.println(F("Christmas Eve vigil Mass"));
     bHaveLectionaryValue = true;
     
     switch(tm.Hour) { // covers hours 18:00 - 23:59
@@ -611,7 +809,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
   } 
   
   if(tm.Day == 25 && tm.Month == 12) { // Christmas Day: Midnight Mass, Mass at Dawn
-    DEBUG_PRT.printf("Christmas Day\n");
+    DEBUG_PRT.println(F("Christmas Day"));
     bHaveLectionaryValue = true;
     switch(tm.Hour) { // covers hours 00:00 - 07:59. Later hours (Mass during the day) are handled by the last switch statement (used for all other days also).
     case 0: // mass at midnight
@@ -822,11 +1020,15 @@ void init_panel() {
 bool display_calendar(String date, Calendar* c, String refs, bool right_to_left) {  
   //DiskFont diskfont;
   
+  DEBUG_PRT.print(F("Selected font is "));
+  DEBUG_PRT.println(c->_I18n->configparams.font_filename);
+  
   if (diskfont.begin(c->_I18n->configparams)) {
-    DEBUG_PRT.printf("Using disk font\n");
+    DEBUG_PRT.println(F("Font opened successfully"));
   }
   else {
-    DEBUG_PRT.printf("Using internal font\n");    
+    display_image(font_missing, c->_I18n->configparams.font_filename, false);
+    DEBUG_PRT.println(F("Font not found, using internal font"));    
   }
   
   //FONT_INFO* font = &calibri_10pt;
@@ -842,15 +1044,15 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left)
   
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
-  DEBUG_PRT.println("Displaying calendar");
-  DEBUG_PRT.println("Displaying verses");
+  DEBUG_PRT.println(F("Displaying calendar"));
+  DEBUG_PRT.println(F("Displaying verses"));
 //  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
 //  //refs="1 Chr 29:9-10bc";              //debugging
 //  refs="John 3:16"; // debugging
 //  refs="2 John 1:1"; // debugging
 
   if (!display_verses(c, refs, right_to_left)) {
-    DEBUG_PRT.printf("display_verses returned false\n");
+    DEBUG_PRT.println(F("display_verses returned false"));
     return false;
   }
 
@@ -894,14 +1096,16 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left)
   //epd.Sleep();
   
   uint32_t free = system_get_free_heap_size();
-  DEBUG_PRT.println("free memory = " + String(free));
-  DEBUG_PRT.println("done"); 
+  DEBUG_PRT.print(F("free memory = "));
+  DEBUG_PRT.println(String(free));
+  DEBUG_PRT.println(F("done")); 
 
   return true;
 }
 
 void display_day(String d, bool bRed, bool right_to_left) {
-  DEBUG_PRT.println("display_day() d=" + d);
+  DEBUG_PRT.print(F("display_day() d="));
+  DEBUG_PRT.println(String(d));
   
   int text_xpos = (PANEL_SIZE_X / 2) - (int)((diskfont.GetTextWidthA(d, true))/2); // true => shape text before calculating width
   //DEBUG_PRT.println("display_day() text_xpos = " + String(text_xpos));
@@ -918,7 +1122,8 @@ void display_day(String d, bool bRed, bool right_to_left) {
 }
 
 void display_date(String date, String day, bool right_to_left) {
-  DEBUG_PRT.println("\ndisplay_date: s=" + date);
+  DEBUG_PRT.print(F("\ndisplay_date: s="));
+  DEBUG_PRT.println(date);
 
   bool bEmphasisOn = false;
 
@@ -949,11 +1154,12 @@ void display_date(String date, String day, bool right_to_left) {
 bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
 //  bool right_to_left = c->_I18n->configparams.right_to_left;
 
-  DEBUG_PRT.printf("refs from lectionary: [%s]\n", refs.c_str());
+  DEBUG_PRT.print(F("refs from lectionary: "));
+  DEBUG_PRT.println(refs);
   
   Bible b(calendar->_I18n);
   if (!b.get(refs)) {
-    DEBUG_PRT.printf("Couldn't get refs (no Apocrypha?)\n");
+    DEBUG_PRT.println(F("Couldn't get refs (no Apocrypha?)"));
     return false;
   }
     
@@ -1057,12 +1263,12 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
           //bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
           bEndOfScreen = epd_verse(verse_text, &xpos, &ypos, &bEmphasis_On, right_to_left); // returns false if at end of screen
           DEBUG_PRT.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
-          DEBUG_PRT.printf("\n");
+          DEBUG_PRT.println();
           v++;
           if (v > end_verse) bDone = true; // end_verse will be set to -1 if all verses up to the end of the chapter are to be returned.
         }
         else {
-          DEBUG_PRT.printf("Verse is missing from this Bible (variation in Psalms?)\n");
+          DEBUG_PRT.println(F("Verse is missing from this Bible (variation in Psalms?)\n"));
           //return false;
           //bDone = true;
           v++;
@@ -1078,7 +1284,8 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
 }
 
 bool epd_verse(String verse, int* xpos, int* ypos, bool* bEmphasis_On, bool right_to_left) {
-  DEBUG_PRT.println("epd_verse() verse=" + verse);
+  DEBUG_PRT.print(F("epd_verse() verse="));
+  DEBUG_PRT.println(verse);
 
   int fbwidth = PANEL_SIZE_X;
   int fbheight = PANEL_SIZE_Y;
@@ -1111,7 +1318,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
     verse_fragment_array[i] = ""; // intialize array
   }
 
-  DEBUG_PRT.printf("get_verse() *1*");      
+  DEBUG_PRT.println(F("get_verse() *1*"));      
   do {
     int i = 0;
     do {
@@ -1135,7 +1342,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
     sentence_count++;
   } while (pos < verse_record.length());
 
-  DEBUG_PRT.printf("get_verse() *2*");      
+  DEBUG_PRT.println(F("get_verse() *2*"));      
 
   String letters = "abcdefghijklmnopqrstuvwxyz";
 
@@ -1145,14 +1352,14 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
 
     if (fragment_number > max_fragment_number) max_fragment_number = fragment_number;
   }
-  DEBUG_PRT.printf("get_verse() *3*");      
+  DEBUG_PRT.println(F("get_verse() *3*"));      
 
   if (sentence_range == "" || max_fragment_number > (numRecords - 1)) {
-    DEBUG_PRT.println("Sentence range is empty or max fragment number > numRecords: returning whole verse");
+    DEBUG_PRT.println(F("Sentence range is empty or max fragment number > numRecords: returning whole verse"));
     return verse;  
   }
   else {
-    DEBUG_PRT.println("parsing subrange reference");
+    DEBUG_PRT.println(F("parsing subrange reference"));
     unsigned int charpos = 0;
     int fragment_number = 0;
     String output = "";
@@ -1175,7 +1382,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
       charpos++;
     }
 
-    DEBUG_PRT.printf("get_verse() *4*");      
+    DEBUG_PRT.println(F("get_verse() *4*"));      
   
     c = sentence_range.charAt(charpos);
     while (c != '-' && charpos < sentence_range.length()) {
@@ -1186,7 +1393,7 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
       c = sentence_range.charAt(charpos);
     }
 
-    DEBUG_PRT.printf("get_verse() *5*");      
+    DEBUG_PRT.println(F("get_verse() *5*"));      
 
     if (c == '-') {
       DEBUG_PRT.printf("adding fragments at end from %d to %d\n", fragment_number + 1, verse_fragment_array_index - 1);
@@ -1195,12 +1402,12 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
       }
     }
 
-    DEBUG_PRT.printf("get_verse() *6*");      
+    DEBUG_PRT.println(F("get_verse() *6*"));      
 
     return output;
   }
 
-  DEBUG_PRT.printf("get_verse() *7*");      
+  DEBUG_PRT.println(F("get_verse() *7*"));      
 
   return verse;
 }
@@ -1219,18 +1426,18 @@ void reader (unsigned long address, byte* data, unsigned int recsize) {
 
 void printDbError(EDB_Status err)
 {
-    Serial.print("ERROR: ");
+    DEBUG_PRT.print(F("ERROR: "));
     switch (err)
     {
         case EDB_OUT_OF_RANGE:
-            Serial.println("Recno out of range");
+            DEBUG_PRT.println(F("Recno out of range"));
             break;
         case EDB_TABLE_FULL:
-            Serial.println("Table full");
+            DEBUG_PRT.println(F("Table full"));
             break;
         case EDB_OK:
         default:
-            Serial.println("OK");
+            DEBUG_PRT.println(F("OK"));
             break;
     }
 }

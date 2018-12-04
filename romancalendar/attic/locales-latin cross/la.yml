@@ -1,0 +1,107 @@
+la:
+  temporale:
+    season:
+      advent: Tempus Adventus
+      christmas: Tempus Nativitatis
+      lent: Tempus Quadragesimae
+      easter: Tempus Paschale
+      ordinary: Tempus per annum
+    solemnity:
+      nativity: In Nativitate Domini
+      holy_family: Sanctae Familiae Iesu, Mariae et Ioseph
+      mother_of_god: In Octava Nativitatis Domini, Sanctae Dei Genitricis Mariae
+      epiphany: In Epiphania Domini
+      baptism_of_lord: In Baptismate Domini
+      ash_wednesday: Feria IV Cinerum
+      palm_sunday: Dominica in Palmis de Passione Domini
+      good_friday: Feria VI in Passione Domini
+      holy_saturday: Sabbato sancto
+      easter_sunday: Dominica Paschae in Resurrectione Domini
+      ascension: In Ascensione Domini
+      pentecost: Dominica Pentecostes
+      holy_trinity: Sanctissimae Trinitatis
+      corpus_christi: Sanctissimi Corporis et Sanguinis Christi
+      sacred_heart: Sacratissimi Cordis Iesu
+      immaculate_heart: Immaculati Cordis B. Mariae Virginis
+      christ_king: Domini nostri Iesu Christi universorum regis
+    ordinary:
+      sunday: 'Dominica %{week} per annum'
+      ferial: '%{weekday}, hebdomada %{week} per annum'
+    advent:
+      sunday: 'Dominica %{week} Adventus'
+      ferial: '%{weekday}, hebdomada %{week} Adventus'
+      before_christmas: 'Die %{day} decembris'
+      vigil: vigilia Nativitatis Domini
+    christmas:
+      nativity_octave:
+        ferial: 'De die %{day} infra octavam Nativitatis'
+      sunday: 'Dominica %{week} post Nativitatem'
+      ferial: '%{weekday} post octavam Nativitatis'
+      after_epiphany:
+        ferial: '%{weekday} post Epiphaniam'
+    lent:
+      after_ashes:
+        ferial: '%{weekday} post Cineres'
+      sunday: 'Dominica %{week} Quadragesimae'
+      ferial: '%{weekday}, hebdomada %{week} Quadragesimae'
+      holy_week:
+        ferial: '%{weekday} Hebdomadae Sanctae'
+        thursday: 'Cena Domini'
+    easter:
+      octave:
+        ferial: '%{weekday} infra octavam Paschae'
+      sunday: 'Dominica %{week} Paschae'
+      ferial: '%{weekday}, hebdomada %{week} temporis paschalis'
+  rank:
+    '1_1': Triduum paschale
+    '1_2': Dies liturgici primarii
+    '1_3': Sollemnitates in Calendario generali inscriptae
+    '1_4': Sollemnitates propriae
+    '2_5': Festa Domini in Calendario generali inscripta
+    '2_6': Dominicae temporis Nativitatis et dominicae per annum
+    '2_7': Festa sanctorum in Calendario generali inscripta
+    '2_8': Festa propria
+    '2_9': Feriae privilegiatae
+    '3_10': Memoriae obligatoriae in Calendario generali inscriptae
+    '3_11': Memoriae obligatoriae propriae
+    '3_12': Memoriae ad libitum
+    '3_13': Feriae
+    '4_0': Commemorationes
+    short:
+      solemnity: sollemnitas
+      feast: festum
+      sunday: dominica
+      memorial: memoria
+      memorial_opt: memoria ad libitum
+      ferial: feria
+      commemoration: commemoratio
+  weekday:
+    '0': Dominica
+    '1': Feria secunda
+    '2': Feria tertia
+    '3': Feria quarta
+    '4': Feria quinta
+    '5': Feria sexta
+    '6': Sabbato
+  month:
+    '1': Ian.
+    '2': Febr.
+    '3': Mart.
+    '4': Apr.
+    '5': Mai.
+    '6': Iun.
+    '7': Iul.
+    '8': Aug.
+    '9': Sept.
+    '10': Oct.
+    '11': Nov.
+    '12': Dec.
+  date: %{d} %{mmm} %{yyyy}
+  ordinals: latin
+  colour:
+    violet: violaceus # sc. color
+    white: albus
+    green: viridis
+    red: rubeus
+  holy_day_of_obligation: <b>✝</b>
+  

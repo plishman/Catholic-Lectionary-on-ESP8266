@@ -52,7 +52,7 @@ void DisplayString::set(String t, int px, int py, uint16_t pcolor, bool rtl, boo
 }
 
 bool DisplayString::IsEmpty() {
-	return text == "" && x == 0 && y == 0 && w == 0 && h == 0 && color == GxEPD_WHITE &&  right_to_left == false && reverse_string == false;
+	return text == "" && x == 0 && y == 0 && w == 0 && h == 0 && color == GxEPD_WHITE && right_to_left == false && reverse_string == false;
 }
 
 DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
@@ -67,9 +67,9 @@ DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
 }
 
 void DisplayString::dump() {
-	Serial.println("Text: " + text);
-	Serial.printf("x:%d, y:%d, w:%d, h:%d, color:%d, right_to_left:%d, reverse_string:%d\n\n", x, y, w, h, color, right_to_left, reverse_string);
-	Serial.printf("IsEmpty: %s\n", IsEmpty() ? "true" : "false");
+	DEBUG_PRT.println("Text: " + text);
+	DEBUG_PRT.printf("x:%d, y:%d, w:%d, h:%d, color:%d, right_to_left:%d, reverse_string:%d\n\n", x, y, w, h, color, right_to_left, reverse_string);
+	DEBUG_PRT.printf("IsEmpty: %s\n", IsEmpty() ? "true" : "false");
 }
 
 /*
@@ -83,14 +83,19 @@ TextBuffer::TextBuffer() {
 }
 
 TextBuffer::~TextBuffer() {
+	for (int i = 0; i < displayStringsList.size(); i++) { // delete displaystring objects stored in linked list, before deleting list itself
+		DisplayString* pDisplayString = displayStringsList.get(i);
+		delete pDisplayString;
+	}
+	
 	displayStringsList.clear();
 }
 
 void TextBuffer::add(DisplayString* d) {
-	Serial.println("add:");
-	d->dump();
+	//DEBUG_PRT.println(F("add:"));
+	//d->dump();
 	displayStringsList.add(d);
-	Serial.println("-");
+	//DEBUG_PRT.println(F("-"));
 }
 
 void TextBuffer::add(int x, int y, String text, uint16_t color, bool right_to_left, bool reverse_string, DiskFont& diskfont) {
@@ -115,7 +120,7 @@ void sort_on_y() {
 bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage) {	
 	diskfont.setDisplayPage(displayPage);
 	
-	Serial.println("render():--------------------------");
+	//DEBUG_PRT.println(F("render()..."));
 	int numListEntries = displayStringsList.size();
 
 	//ePaper.setRotation(1); //90 degrees				
@@ -125,22 +130,28 @@ bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage
 	
 	for (int i = 0; i < displayStringsList.size(); i++) {
 		ds = displayStringsList.get(i);
+		//DEBUG_PRT.print(F("["));
+		//DEBUG_PRT.print("{" + ds->text + "}");
 		diskfont.DrawStringAt(ds->x, ds->y, ds->text, ePaper, ds->color, ds->right_to_left, ds->reverse_string);
-		Serial.print("render():");
-		ds->dump();
+		//DEBUG_PRT.print(F("]"));
+		//DEBUG_PRT.print(F("render():"));
+		//ds->dump();
 	}
-	Serial.println("render():++++++++++++++++++++++++++");
+	//DEBUG_PRT.println(F("ok"));
 }
 
 void TextBuffer::dump() {
+	return;
+	
 	DisplayString* ds;
 
-	Serial.println("TextBuffer Dump:");
+	DEBUG_PRT.println(F("TextBuffer Dump:"));
 	for (int i = 0; i < displayStringsList.size(); i++) {
 		ds = displayStringsList.get(i);
-		Serial.printf("List entry %d:\n", i);
+		DEBUG_PRT.print(F("List entry "));
+		DEBUG_PRT.println(String(i));
 		ds->dump();
-		Serial.println("-");
+		DEBUG_PRT.println(F("-"));
 	}
-	Serial.println("-complete-");
+	DEBUG_PRT.println(F("-complete-"));
 }

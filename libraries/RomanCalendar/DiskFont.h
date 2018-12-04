@@ -146,9 +146,12 @@ public:
 	
 	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t colored, bool right_to_left, bool reverse_string);
 	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t colored, bool right_to_left);
-	
-	
+		
+	void GetTextWidth(String text, int& width, double& advanceWidth, int limit);
 	void GetTextWidth(String text, int& width, double& advanceWidth);
+
+	int GetTextWidth(const char* text, int limit);
+	int GetTextWidth(String text, int limit);
 	int GetTextWidth(const char* text);
 	int GetTextWidth(String text);
 
@@ -170,6 +173,10 @@ public:
 	double GetTextWidthA(String text);
 	double GetTextWidthA(String text, bool shape_text);
 	double GetTextWidthA(const char* text);
+
+	double GetTextWidthA(String text, int limit);
+	double GetTextWidthA(String text, bool shape_text, int limit);
+	double GetTextWidthA(const char* text, int limit);
 		
 	bool getCharInfo(String ch, DiskFont_FontCharInfo* &pfci);
 	bool getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* &pfci);

@@ -103,4 +103,6 @@ en:
     white: white
     green: green
     red: red
-  holy_day_of_obligation: (+)
+  holy_day_of_obligation: <b>+</b>
+  or: or
+  ellipsis: [..]

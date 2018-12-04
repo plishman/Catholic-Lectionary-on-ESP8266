@@ -1,5 +1,8 @@
 #ifndef _RCGLOBALS_H
 #define _RCGLOBALS_H
+	#define LECT_VER "0.7"
+
+    #define MAX_DEEPSLEEP_SECONDS 4294
 
 	#define DEBUG_PRT I2CSerial
 	#define PAGE_HEIGHT GxGDEW027C44_PAGE_HEIGHT

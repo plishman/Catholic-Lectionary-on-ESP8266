@@ -2,6 +2,8 @@
 #ifndef _TEXTBUFFER_H
 #define _TEXTBUFFER_H
 
+#include "RCGlobals.h"
+
 #include "Arduino.h"
 #include "I2CSerialPort.h"
 #include "LinkedList.h"

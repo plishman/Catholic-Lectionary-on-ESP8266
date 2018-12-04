@@ -11,6 +11,7 @@
 
 #define FCI_NUMENTRIES 256		// 256*4 bytes = 1024 (1k)
 #define FCI_MAXFCIBLOCKS 64		// 64*32 bytes = 2048 (2k) (each FontCharInfo structure is 32 bytes)
+#define FCI_MINTOFREE 8			// when pruning, free minimum of 8 FCI entries
 
 typedef struct {	// 32 bytes
 	//uint8_t rtlflag;

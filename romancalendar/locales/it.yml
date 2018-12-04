@@ -103,5 +103,6 @@ it:
     white: bianco
     green: verde
     red: rosso
-  holy_day_of_obligation: (+)
-  
+  holy_day_of_obligation: <b>+</b>
+  or: o
+  ellipsis: [..]
