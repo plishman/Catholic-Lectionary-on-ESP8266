@@ -23,7 +23,7 @@ Several Toolchain projects are provided, written in C# and C++, one of which - T
 
 <h3>Debug Output</h3>
 <p>
-In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX to SDA and RX to SCL, and enabling debug output through the web page served from the ESP8266 to configure the Lectionary and Bible translation to be used. (Provide the argument "?debug=1" to the url to which the initial config page is submitted).
+In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX to SDA and RX to SCL. Debug output can then be enabled using ?debug=1 as one of the parameters to the setconf webpage served by the lectionary, eg. http://lectionary.local/setconf.htm?debug=1.
 </p>
 
 <h3>Hardware</h3>
@@ -32,11 +32,13 @@ The current printed circuit board schematic and design can be found at https://e
 The current case design is at https://www.tinkercad.com/things/h8xbfqkVT7G
 
 As well as the other Arduino libraries, this project uses the following libraries:
-Adafruit GFX - https://travis-ci.org/adafruit/Adafruit-GFX-Library
-brzo_i2c - https://github.com/pasko-zh/brzo_i2c
-LinkedList - https://github.com/ivanseidel/LinkedList
+<ul>
+  <li>Adafruit GFX - https://travis-ci.org/adafruit/Adafruit-GFX-Library</li>
+  <li>brzo_i2c - https://github.com/pasko-zh/brzo_i2c</li>
+  <li>LinkedList - https://github.com/ivanseidel/LinkedList</li>
+</ul>
 
-Modified versions of the Time and SPI libraries are used.
+Modified versions of the Time and SPI arduino libraries are also used: The time library has been changed to use a 64-bit value to store the time in seconds since 1970 so that the 2038 bug will not occur. The SPI library has had an extra function which permits 9-bit SPI data to be written, so that the WaveShare/Dalian display used can be operated on 3 wires instead of 4 (no need for a data/command wire, the d/c value is stored in the 9th bit of each byte transmitted to the screen, which saves a pin on the ESP8266).
 
 Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the other libraries on which this project depends.
 <p>
