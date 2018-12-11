@@ -163,6 +163,8 @@ public:
 	static bool getDateTime(time64_t* t);
 	static bool getDateTime(time64_t* t, bool& clockwasreset);
 	static bool setDateTime(time64_t t);
+	
+	static bool setAlarmLocalTime(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm);
 	static bool setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm);
 	
 	static bool DS3231_set_addr(const uint8_t addr, const uint8_t val);

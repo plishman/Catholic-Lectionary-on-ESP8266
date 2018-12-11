@@ -879,7 +879,6 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 11:
         case 12:
         case 13:
-        case 14:
           *r=Lectionary::READINGS_G;
 
           if (!b_OT) {
@@ -891,6 +890,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
           }
           break;
           
+        case 14:
         case 15:
         case 16:
         case 17:

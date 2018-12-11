@@ -50,7 +50,7 @@ bool loadFromSdCard(String path) {
   if (server.hasArg("download")) dataType = "application/octet-stream";
 
   if (server.streamFile(dataFile, dataType) != dataFile.size()) {
-    DEBUG_PRT.println("Sent less data than expected!");
+    DEBUG_PRT.println(F("Sent less data than expected!"));
   }
 
   dataFile.close();
@@ -519,7 +519,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   
   if (day == 1 && date == 1 && month == 1 && year == 0 && hour == 0 && minute == 0 && second < 10) clockwasreset = true; // assume clock was reset (by power failure etc) if the values read are the same as the reset values (from DS3231 datasheet)
   
-  //DEBUG_PRT.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
+  DEBUG_PRT.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
 
   //DEBUG_PRT.printf("-1-");
   
@@ -580,7 +580,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 	  setDateTime(*t);
   }
  
-//  DEBUG_PRT.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
+  DEBUG_PRT.printf("UTC Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
   
   if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
@@ -628,6 +628,7 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
   
 	if (DstIsValid(c)) {
 		if (bResult) {
+			//DEBUG_PRT.printf("(int)(c.data.timezone_offset * 3600.0)=%d\n", (int)(c.data.timezone_offset * 3600.0));
 			*t += (int)(c.data.timezone_offset * 3600.0);	  	
 	  
 			breakTime(*t, ts);
@@ -639,51 +640,57 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 			//
 			dump_config(c);
 			
-			tmElements_t dst_start = {0};
-			tmElements_t dst_end = {0};
+			if (c.data.dst_offset != 0.0) {	
+				tmElements_t dst_start = {0};
+				tmElements_t dst_end = {0};
 
-			dst_start.Second = 0;
-			dst_start.Minute = 0;
-			dst_start.Hour   = c.data.dst_start_hour;
-			dst_start.Day    = c.data.dst_start_day;
-			dst_start.Month  = c.data.dst_start_month;
-			dst_start.Year   = ts.Year;	
+				dst_start.Second = 0;
+				dst_start.Minute = 0;
+				dst_start.Hour   = c.data.dst_start_hour;
+				dst_start.Day    = c.data.dst_start_day;
+				dst_start.Month  = c.data.dst_start_month;
+				dst_start.Year   = ts.Year;	
 
-			dst_end.Second   = 0;
-			dst_end.Minute   = 0;
-			dst_end.Hour     = c.data.dst_end_hour;
-			dst_end.Day      = c.data.dst_end_day;
-			dst_end.Month    = c.data.dst_end_month;
-			dst_end.Year     = ts.Year; 
+				dst_end.Second   = 0;
+				dst_end.Minute   = 0;
+				dst_end.Hour     = c.data.dst_end_hour;
+				dst_end.Day      = c.data.dst_end_day;
+				dst_end.Month    = c.data.dst_end_month;
+				dst_end.Year     = ts.Year; 
 
-			
-			if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
-				if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
-					dst_end.Year++; // end dst month is in next year						 //	next year
-					DEBUG_PRT.printf("dst_end is in next year (southern hemisphere)\n");
+				
+				if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+					if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+						dst_end.Year++; // end dst month is in next year						 //	next year
+						DEBUG_PRT.printf("dst_end is in next year (southern hemisphere)\n");
+					}
 				}
-			}
-			else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
-				if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day) {
-					dst_start.Year++; // start dst month is in next year
-					DEBUG_PRT.printf("dst_start is in next year (northern hemisphere)\n");
-				}			
-			}
-			
-			time64_t t_dst_start = makeTime(dst_start);
-			time64_t t_dst_end = makeTime(dst_end);
-			
-			if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
+				else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+					if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day) {
+						dst_start.Year++; // start dst month is in next year
+						DEBUG_PRT.printf("dst_start is in next year (northern hemisphere)\n");
+					}			
+				}
 				
-				*t += (int)(c.data.dst_offset * 3600.0);	  
-				*isdst = true;
+				time64_t t_dst_start = makeTime(dst_start);
+				time64_t t_dst_end = makeTime(dst_end);
 				
-				DEBUG_PRT.println(F("DST in effect"));
+				if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
+					
+					*t += (int)(c.data.dst_offset * 3600.0);	  
+					*isdst = true;
+					
+					DEBUG_PRT.println(F("DST in effect"));
+				}
+				else {
+					*isdst = false;
+
+					DEBUG_PRT.println(F("Standard Time in effect"));
+				}
 			}
 			else {
 				*isdst = false;
-
-				DEBUG_PRT.println(F("Standard Time in effect"));
+				DEBUG_PRT.println(F("DST is not required in this locale"));				
 			}
 		}
 	}
@@ -739,9 +746,29 @@ bool Config::setDateTime(time64_t t) {
   return true;
 }
 
+// input time64_t value is local time, so it must be adjusted to subtract both the timezone offset and DST (if applicable)
+bool Config::setAlarmLocalTime(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm) {
+	config_t c = {0};
+	if (Config::GetConfig(c)) {
+		t -= (int)(c.data.timezone_offset * 3600.0); // subtract timezone offset from local time
+		 
+		if (DstIsValid(c)) {
+			if (isDST()) t -= dstOffset();			 // and subtract the dst offset (if applicable)
+		}
+		else {
+			DEBUG_PRT.println(F("Config::setAlarmLocalTime() DST setting is not valid, so not adjusting alarm for local DST"));			
+		}
+	}
+	else {
+		DEBUG_PRT.println(F("Config::setAlarmLocalTime() couldn't read config, so not adjusting alarm for local time"));
+	}
+	
+	return setAlarm(t, alarm_number, flags, enable_alarm);
+}
+
 
 bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm) {
-	if (isDST()) t-=dstOffset();
+	//if (isDST()) t-=dstOffset();
 
 	tmElements_t tm;
 	breakTime(t, tm);
@@ -1073,7 +1100,7 @@ bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 bool Config::readRtcMemoryData(rtcData_t& rtcData) {
 	  // Read struct from RTC memory
   if (ESP.rtcUserMemoryRead(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
-    DEBUG_PRT.println("Read: ");
+    DEBUG_PRT.println(F("Read: "));
     //printMemory();
     //DEBUG_PRT.println("number of hours to next reading: " + String(rtcData.data.wake_hour_counter)); // set to true if the reading should be made this hour (read on waking)
     //DEBUG_PRT.println("card displayed: " + String(rtcData.data.dcs)); // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
@@ -1136,7 +1163,7 @@ void Config::printMemory(rtcData_t& rtcData) {
     if ((i + 1) % 32 == 0) {
       DEBUG_PRT.println();
     } else {
-      DEBUG_PRT.print(" ");
+      DEBUG_PRT.print(F(" "));
     }
   }
   Serial.println();
@@ -1162,12 +1189,12 @@ wake_reasons Config::Wake_Reason() {
 	}
 
 	if (triggered_a1) {
-		DEBUG_PRT.println("Woken by Alarm 1");
+		DEBUG_PRT.println(F("Woken by Alarm 1"));
 		return WAKE_ALARM_1;
 	}
   
 	if (triggered_a2) {
-		DEBUG_PRT.println("Woken by Alarm 2");
+		DEBUG_PRT.println(F("Woken by Alarm 2"));
 		return WAKE_ALARM_2;
 	}
 
@@ -1175,36 +1202,37 @@ wake_reasons Config::Wake_Reason() {
     rinfo = ESP.getResetInfoPtr();
 
     if ((*rinfo).reason == REASON_DEEP_SLEEP_AWAKE) { // only check the hour count to the next reading if we awoke because of the deepsleep timer
-		DEBUG_PRT.println(String("ResetInfo.reason = ") + (*rinfo).reason);		
+		DEBUG_PRT.print(F("ResetInfo.reason = ")); 
+		DEBUG_PRT.println(String((*rinfo).reason));		
 		return WAKE_DEEPSLEEP;
 	}
    
 	if (!(triggered_a1 || triggered_a2)) {
-		DEBUG_PRT.println("Woken by USB 5volts");
+		DEBUG_PRT.println(F("Woken by USB 5volts"));
 		return WAKE_USB_5V;
 	}
 	
-	DEBUG_PRT.println("Woken by Unknown");
+	DEBUG_PRT.println(F("Woken by Unknown"));
 	return WAKE_UNKNOWN;
 }
 
 
 bool Config::PowerOff(time64_t wake_datetime) {
 	if (wake_datetime != 0) {
-		if (Config::setAlarm(wake_datetime, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
-			DEBUG_PRT.print("Alarm 1 set");
+		if (Config::setAlarmLocalTime(wake_datetime, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
+			DEBUG_PRT.print(F("Alarm 1 set"));
 			tmElements_t ts;
 			breakTime(wake_datetime, ts);
 			DEBUG_PRT.printf(" for %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 			delay(200);
 		}
 		else {
-			DEBUG_PRT.print("Problem setting Alarm 1");
+			DEBUG_PRT.print(F("Problem setting Alarm 1"));
 			return false;
 		}
 	}
 	else {
-		DEBUG_PRT.print("Not setting alarm, power off until USB5V connected");    		
+		DEBUG_PRT.print(F("Not setting alarm, power off until USB5V connected"));
 	}
     
 	bool okCleared_a1 = false;
@@ -1220,7 +1248,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
   
 	//might not get here if A1F was just cleared, since clearing it removes power from ESP8266
   
-	DEBUG_PRT.println("Clearing A2F");
+	DEBUG_PRT.println(F("Clearing A2F"));
 	while(!okCleared_a2 && --retries != 0) {
 		okCleared_a2 = Config::DS3231_clear_a2f();
 		delay(50);
@@ -1239,7 +1267,7 @@ bool Config::SetPowerOn() {
 	
 	ok = getLocalDateTime(&t);	
 	if (ok) {
-		return Config::setAlarm(t+3, 1, A1_MATCH_DAY_AND_TIME, true); // this will go off in three seconds, and assert the /res line. This will hold up the ENable pin on the 3.3V LDO and keep the ESP on until the alarm is set to the wakeup time.
+		return Config::setAlarmLocalTime(t+3, 1, A1_MATCH_DAY_AND_TIME, true); // this will go off in three seconds, and assert the /res line. This will hold up the ENable pin on the 3.3V LDO and keep the ESP on until the alarm is set to the wakeup time.
 	}
 	
 	return false;

@@ -5,7 +5,7 @@ DisplayString::DisplayString() {
 }
 
 DisplayString::DisplayString(String t, int px, int py, uint16_t pcolor, bool rtl, bool reverse_str, DiskFont& diskfont) {
-	set(t, px, py, pcolor, rtl, reverse_str, diskfont);
+	set(t, "", px, py, pcolor, rtl, reverse_str, diskfont);
 }
 
 DisplayString::DisplayString(String t, int px, int py, DiskFont& diskfont) {
@@ -20,23 +20,45 @@ DisplayString::DisplayString(String t, int px, int py, uint16_t pcolor, DiskFont
 	DisplayString(t, px, py, pcolor, false, false, diskfont);
 }
 
+DisplayString::DisplayString(String t, String cmap, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont) {
+	set(t, cmap, px, py, GxEPD_BLACK, rtl, reverse_str, diskfont);	
+}
+
+DisplayString::DisplayString(String t, String cmap, int px, int py, DiskFont& diskfont) {
+	DisplayString(t, cmap, px, py, false, false, diskfont);
+}
+
+
+
+
 void DisplayString::set(String t, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont) {
-	set(t, px, py, GxEPD_BLACK, rtl, reverse_str, diskfont);
+	set(t, "", px, py, GxEPD_BLACK, rtl, reverse_str, diskfont);
 }
 
 void DisplayString::set(String t, int px, int py, DiskFont& diskfont) {
-	set(t, px, py, GxEPD_BLACK, false, false, diskfont);
+	set(t, "", px, py, GxEPD_BLACK, false, false, diskfont);
 }
 
 void DisplayString::set(String t, int px, int py, uint16_t pcolor, DiskFont& diskfont) {
-	set(t, px, py, pcolor, false, false, diskfont);
+	set(t, "", px, py, pcolor, false, false, diskfont);
 }
 
-void DisplayString::set(String t, int px, int py, uint16_t pcolor, bool rtl, bool reverse_str, DiskFont& diskfont) {
+void DisplayString::set(String t, String cmap, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont) {
+	set(t, cmap, px, py, GxEPD_BLACK, rtl, reverse_str, diskfont);
+}
+
+void DisplayString::set(String t, String cmap, int px, int py, DiskFont& diskfont) {
+	set(t, cmap, px, py, GxEPD_BLACK, false, false, diskfont);
+}
+
+
+void DisplayString::set(String t, String cmap, int px, int py, uint16_t pcolor, bool rtl, bool reverse_str, DiskFont& diskfont) {
+	// if cmap == "", pcolor is used to colour whole string
 	text = t;
 	x = px;
 	y = py;
 	color = pcolor;
+	colormap = cmap;
 	
 	right_to_left = rtl;
 	reverse_string = reverse_str;
@@ -52,7 +74,7 @@ void DisplayString::set(String t, int px, int py, uint16_t pcolor, bool rtl, boo
 }
 
 bool DisplayString::IsEmpty() {
-	return text == "" && x == 0 && y == 0 && w == 0 && h == 0 && color == GxEPD_WHITE && right_to_left == false && reverse_string == false;
+	return text == "" && colormap == "" && x == 0 && y == 0 && w == 0 && h == 0 && color == GxEPD_WHITE && right_to_left == false && reverse_string == false;
 }
 
 DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
@@ -61,6 +83,7 @@ DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
 	w 				= d2.w;
 	h	 			= d2.h;
 	text 			= d2.text;
+	colormap		= d2.colormap;
 	right_to_left 	= d2.right_to_left;
 	reverse_string 	= d2.reverse_string;
 	color	 		= d2.color;
@@ -68,6 +91,7 @@ DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
 
 void DisplayString::dump() {
 	DEBUG_PRT.println("Text: " + text);
+	DEBUG_PRT.println("Colormap: " + colormap);
 	DEBUG_PRT.printf("x:%d, y:%d, w:%d, h:%d, color:%d, right_to_left:%d, reverse_string:%d\n\n", x, y, w, h, color, right_to_left, reverse_string);
 	DEBUG_PRT.printf("IsEmpty: %s\n", IsEmpty() ? "true" : "false");
 }
@@ -103,6 +127,11 @@ void TextBuffer::add(int x, int y, String text, uint16_t color, bool right_to_le
 	displayStringsList.add(d);
 }
 
+void TextBuffer::add(int x, int y, String text, String colormap, bool right_to_left, bool reverse_string, DiskFont& diskfont) {
+	DisplayString* d = new DisplayString(text, colormap, x, y, right_to_left, reverse_string, diskfont);
+	displayStringsList.add(d);
+}
+
 bool TextBuffer::get(int displayListEntryNumber, DisplayString* displayString) {
 	if (displayStringsList.size() >= displayListEntryNumber) return false;
 	
@@ -132,7 +161,7 @@ bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage
 		ds = displayStringsList.get(i);
 		//DEBUG_PRT.print(F("["));
 		//DEBUG_PRT.print("{" + ds->text + "}");
-		diskfont.DrawStringAt(ds->x, ds->y, ds->text, ePaper, ds->color, ds->right_to_left, ds->reverse_string);
+		diskfont.DrawStringAt(ds->x, ds->y, ds->text, ePaper, ds->color, ds->colormap, ds->right_to_left, ds->reverse_string);
 		//DEBUG_PRT.print(F("]"));
 		//DEBUG_PRT.print(F("render():"));
 		//ds->dump();

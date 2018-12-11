@@ -588,21 +588,56 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 }
 
 
+void DiskFont::StripTags(String& text) {
+	text.replace("<b>", "");
+	text.replace("</b>", "");
+	text.replace("<i>", "");
+	text.replace("</i>", "");
+	text.replace("<br>", "");
+	text.replace("<br/>", "");
+
+	text.replace("<B>", "");
+	text.replace("</B>", "");
+	text.replace("<I>", "");
+	text.replace("</I>", "");
+	text.replace("<BR>", "");
+	text.replace("<BR/>", "");	
+}
 
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left) {
-	DrawStringAt(x, y, text, ePaper, color, right_to_left, false);
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left, bool reverse_string){
+	DrawStringAt(x, y, text, ePaper, color, "", right_to_left, reverse_string);		
+}
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left){
+	DrawStringAt(x, y, text, ePaper, color, right_to_left, false);	
+}
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left, bool reverse_string){
+	DrawStringAt(x, y, text, ePaper, GxEPD_BLACK, colormap, right_to_left, reverse_string);		
+}
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left){
+	DrawStringAt(x, y, text, ePaper, GxEPD_BLACK, colormap, right_to_left, false);			
 }
 
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left, bool reverse_string) {
+void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, String colormap, bool right_to_left, bool reverse_string) {
 	//DEBUG_PRT.printf("DrawStringAt: String is %s\n", text.c_str());
 
 	//if (!available) {
 	//	DEBUG_PRT.printf("Diskfont is not available.\n");
 	//	return;
 	//}
+
+	StripTags(text); // remove supported html tags <i>, <b>, <br>
+
+	bool bUsingCmap = true;
+	int cmaptextlen = colormap.length();
+	int utf8textlen = text.length(); //Utf8CharCount(text);
+	int utf8charnum = 0;
+	
+	if (cmaptextlen == 0 || utf8textlen > cmaptextlen) {
+		bUsingCmap = false;
+	}
 	
 	int charIndex = 0;
 	int len = text.length(); // Utf8CharCount(text); //text.length();
@@ -620,8 +655,12 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 	
 	if (reverse_string) {
 		text = Utf8ReverseString(text); // BUG: this is going to cause a bug when composing characters. The diacritic will appear left justified over the character to which it 
-	}									// applies because it's code will be encountered first in the text string, before the width of the character to which it applies is known.
+										// applies because it's code will be encountered first in the text string, before the width of the character to which it applies is known.
 										// Will have to look ahead to the first non-NSM mark when a compositing diacritic is found, get the width, then use this for compositing.
+		if (bUsingCmap) {
+			colormap = Utf8ReverseString(colormap);
+		}
+	}
 	//printf("text=%s\n", text.c_str());
     
     /* Send the string character by character on EPD */	
@@ -636,6 +675,21 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
 			//DEBUG_PRT.printf("*%s*", ch.c_str());		
+
+			if (bUsingCmap) {
+				char cmapentry = colormap.charAt(charIndex); //colormap.charAt(utf8charnum); // one byte per byte of string. Simpler, but wastes some memory
+				
+				color = GxEPD_BLACK;
+				
+				if (cmapentry == 'R') {
+					color = GxEPD_RED;
+				}
+				else if (cmapentry == 'W') {
+					color = GxEPD_WHITE;
+				} 
+				// black otherwise
+			}
+
 			
 			byte bidi_info = getBidiDirection(ch);
 			
@@ -677,6 +731,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//refcolumn += DrawCharAt(refcolumn, y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 			/* Point on the next character */
 			 charIndex += ch.length(); //charIndex++; // += ch.length();
+			 utf8charnum++;
 		}
 	}
 	else {
@@ -688,6 +743,20 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//printf("refcolumn=%d\n", refcolumn);
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
+
+			if (bUsingCmap) {
+				char cmapentry = colormap.charAt(charIndex); //colormap.charAt(utf8charnum); // one byte per byte of string. Simpler, but wastes some memory
+				
+				color = GxEPD_BLACK;
+				
+				if (cmapentry == 'R') {
+					color = GxEPD_RED;
+				}
+				else if (cmapentry == 'W') {
+					color = GxEPD_WHITE;
+				} 
+				// black otherwise
+			}
 			
 			byte bidi_info = getBidiDirection(ch);
 			
@@ -734,6 +803,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 			/* Point on the next character */
 			charIndex += ch.length(); //charIndex++; //+= ch.length();
+			utf8charnum++;
 		}		
 	}
 	
@@ -842,6 +912,8 @@ double DiskFont::GetCharWidth(String ch, DiskFont_FontCharInfo* &pfci) {								
 }
 
 
+
+// get width in pixels of text string
 void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 	GetTextWidth(text, width, advanceWidth, -1);
 }
@@ -852,6 +924,10 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth, int l
 	//DEBUG_PRT.printf("len:");
 
 	// remove supported tags before calculating text width
+
+	StripTags(text);
+	
+/*
 	text.replace("<b>", "");
 	text.replace("</b>", "");
 	text.replace("<i>", "");
@@ -865,6 +941,7 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth, int l
 	text.replace("</I>", "");
 	text.replace("<BR>", "");
 	text.replace("<BR/>", "");
+*/
 	//
 	
 	int charIndex = 0;

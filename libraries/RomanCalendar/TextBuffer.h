@@ -23,7 +23,8 @@ public:
 	int w = 0;
 	int h = 0;
 	String text = "";
-
+	String colormap = "";
+	
 	bool right_to_left = false;
 	bool reverse_string = false;
 	uint16_t color = GxEPD_WHITE;
@@ -35,10 +36,17 @@ public:
 	DisplayString(String t, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont);
 	DisplayString(String t, int px, int py, uint16_t pcolor, DiskFont& diskfont);
 
+	DisplayString(String t, String cmap, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont);
+	DisplayString(String t, String cmap, int px, int py, DiskFont& diskfont);
+	
 	void set(String t, int px, int py, DiskFont& diskfont);
 	void set(String t, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont);
 	void set(String t, int px, int py, uint16_t pcolor, DiskFont& diskfont);
-	void set(String t, int px, int py, uint16_t pcolor, bool rtl, bool reverse_str, DiskFont& diskfont);
+	
+	void set(String t, String cmap, int px, int py, bool rtl, bool reverse_str, DiskFont& diskfont);
+	void set(String t, String cmap, int px, int py, DiskFont& diskfont);
+
+	void set(String t, String cmap, int px, int py, uint16_t pcolor, bool rtl, bool reverse_str, DiskFont& diskfont); // if cmap == "", pcolor is used to colour whole string
 	
 	bool IsEmpty();
 	
@@ -63,6 +71,7 @@ public:
 	
 	void add(DisplayString* d);
 	void add(int x, int y, String text, uint16_t color, bool right_to_left, bool reverse_string, DiskFont& diskfont);
+	void add(int x, int y, String text, String colormap, bool right_to_left, bool reverse_string, DiskFont& diskfont);
 	
 	bool get(int displayListEntryNumber, DisplayString* displayString);
 
