@@ -62,15 +62,17 @@ typedef struct {	// 32 bytes
 const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 */
 
-//#include "romfont.h"
+////#include "romfont.h"
 #include "calibri10pt.h"
+//#include "calibri20pt.h"
+
 
 
 class DiskFont {
 public:
 	FCICache fciCache;
 	
-	FONT_INFO* romfont = &calibri_10pt;
+	FONT_INFO* romfont = &calibri_10pt; // 19-12-2018 20pt 10pt
 
 	String _fontfilename;
 	
@@ -94,6 +96,7 @@ public:
 		double ascent;
 		double descent;
 		double linespacing;
+		uint8_t antialias_level;
 	} _FontHeader;
 	
 	DiskFont_BlocktableEntry* _Font_BlocktablePtr = NULL;
