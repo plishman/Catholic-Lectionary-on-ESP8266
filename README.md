@@ -1,5 +1,5 @@
 # Catholic-Lectionary-on-ESP8266
-The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 with Dalian/Waveshare 2.7" red/black SPI display, SPI-mode SD card, DS3231 clock IC and Nanjing Top Power TP5410 PMIC/boost IC, with support for 8 grey/red levels, and antialiased text
+The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 with Dalian/Waveshare 2.7" red/black SPI display, SPI-mode SD card, DS3231 clock IC and Nanjing Top Power TP5410 PMIC/boost IC, with support for 8 grey/red levels + antialiased text
 
 <h2>Catholic Lectionary</h2>
 <p>
