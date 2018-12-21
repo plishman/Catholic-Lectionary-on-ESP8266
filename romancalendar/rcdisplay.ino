@@ -16,27 +16,9 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 
   if (d == display_reading) {
     DEBUG_PRT.println("display_reading");
-    
-    ePaper.setMode(LUT_MODE_CLEAR);
-    ePaper.eraseDisplay(true);
-  
-    ePaper.setMode(LUT_MODE_COMPOSITE);
-    
-    do {
-      //Serial.printf("refresh number = %d\n", ePaper.getRefreshNumber());
-      ePaper.drawPaged(epaperUpdate);
-      //Serial.println();
-    } while(ePaper.decRefreshNumber());
-    
-    return;
-  } 
-//  if (d == display_reading) {
-//    DEBUG_PRT.println("display_reading");
-//    ePaper.drawPaged(epaperUpdate);
-//    return;    
-//  }
-
-  ePaper.setMode(LUT_MODE_NORMAL);
+    ePaper.drawPaged(epaperUpdate);
+    return;    
+  }
 
   epaper_messagetext = messagetext;
   epaper_messagetext_color = messagecolor;

@@ -50,13 +50,6 @@ class GxEPD : public GxFont_GFX
     //GxEPD(int16_t w, int16_t h) : Adafruit_GFX(w, h) {};
     GxEPD(int16_t w, int16_t h) : GxFont_GFX(w, h) {};
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
-
-	virtual void drawPixel(int16_t x, int16_t y, uint16_t color, int saturation) = 0; //PLL 18-12-2018
-	virtual void setMode(int mode) = 0;						//PLL 18-12-2018
-	virtual	void resetRefreshNumber() = 0;	//PLL 18-12-2018 resets the refresh counter (3 refreshes are needed for 3 shades of grey/red)
-	virtual int getRefreshNumber() = 0;	//PLL 18-12-2018 refresh counter counts down to 0, decrements by 1 each refresh
-	virtual bool decRefreshNumber() = 0; //PLL 18-12-2018 decrement refresh counter, returns false when counter hits 0
-	
     virtual void init(uint32_t serial_diag_bitrate = 0) = 0; // = 0 : disabled
     virtual void fillScreen(uint16_t color) = 0; // to buffer
     virtual void update(void) = 0;

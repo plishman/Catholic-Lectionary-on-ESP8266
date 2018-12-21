@@ -12,7 +12,6 @@ typedef struct
 	const uint8_t heightBits;				// height, in bits (or pixels), of the character
 	const uint32_t offset;					// offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
 	const double advanceWidth;				// the number of pixels to advance before placing the next character
-	const double advanceHeight;				// the number of pixels to advance vertically before placing the next character
 } FONT_CHAR_INFO;	
 
 typedef struct 
@@ -37,7 +36,6 @@ typedef struct
 	const double ascent;		//Font ascent height (px)
 	const double descent;		//Font descent height (px)
 	const double lineheight;		//Font lineheight (px)
-	const uint8_t antialias_level;  // antialias level (0, 2 or 4) (up to 3bpp supported, lsbit ignored)
 } FONT_INFO;
 
 #endif

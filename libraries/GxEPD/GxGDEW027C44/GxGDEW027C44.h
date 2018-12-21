@@ -27,11 +27,6 @@
 #define GxGDEW027C44_PAGE_HEIGHT (GxGDEW027C44_HEIGHT / GxGDEW027C44_PAGES)
 #define GxGDEW027C44_PAGE_SIZE (GxGDEW027C44_BUFFER_SIZE / GxGDEW027C44_PAGES)
 
-#define LUT_MODE_NORMAL 0x00						// set normal lut
-#define LUT_MODE_COMPOSITE 0x01						// set lut for compositing (no pre-clear)
-#define LUT_MODE_CLEAR 0x02							// set lut for clearing display
-#define EPD_REFRESH_NUMBER 7			//was 3		// maximum number of times to refresh the display to produce all supported shades (2bpp)
-
 class GxGDEW027C44 : public GxEPD
 {
   public:
@@ -43,14 +38,7 @@ class GxGDEW027C44 : public GxEPD
     GxGDEW027C44(GxIO& io, int8_t rst = 9, int8_t busy = 7);
 #endif
     void drawPixel(int16_t x, int16_t y, uint16_t color);
-    
-	void drawPixel(int16_t x, int16_t y, uint16_t color, int saturation); // saturation 3=100% 2=66% 1=33% 0=0% (2bpp)
-	void resetRefreshNumber();							  // resets the refresh counter (3 refreshes are needed for 3 shades of grey/red)
-	int getRefreshNumber();								  // when 0, can stop refreshing
-	bool decRefreshNumber();							  // decrements the refresh number, returns false when refresh number = 0
-	
     void init(uint32_t serial_diag_bitrate = 0); // = 0 : disabled
-	void setMode(int mode); // 0 = LUT_MODE_NORMAL (clear before refresh) 1 = LUT_MODE_COMPOSITE (no clear before refresh) 2 = LUT_MODE_CLEAR (used for clearing display)
     void fillScreen(uint16_t color); // to buffer
     void update(void);
     // to buffer, may be cropped, drawPixel() used, update needed
@@ -94,9 +82,6 @@ class GxGDEW027C44 : public GxEPD
     void _writeData(uint8_t data);
     void _writeCommand(uint8_t command);
     void _writeLUT();
-	void _writeLUT_Clear(void);			//PLL 18-12-2018
-	void _writeLUT_Composite(void);		//PLL 18-12-2018
-    void _writeLUT(int mode);			//PLL 18-12-2018
     void _wakeUp();
     void _sleep();
     void _waitWhileBusy(const char* comment = 0);
@@ -115,29 +100,11 @@ class GxGDEW027C44 : public GxEPD
     bool _diag_enabled;
     int8_t _rst;
     int8_t _busy;
-
-	int8_t _refreshnumber;		//PLL 18-12-2018
-	int8_t _lut_mode;			//PLL 18-12-2018
-
-    static const uint8_t lut_20_vcomDC[];	// standard waveshare luts
+    static const uint8_t lut_20_vcomDC[];
     static const uint8_t lut_21[];
     static const uint8_t lut_22_red[];
     static const uint8_t lut_23_white[];
     static const uint8_t lut_24_black[];
-    
-	static const uint8_t lut_vcom_dc_clear[];// luts for clearing display fast //PLL 18-12-2018
-    static const uint8_t lut_ww_clear[];
-    static const uint8_t lut_bw_clear[];
-    static const uint8_t lut_wb_clear[];
-    static const uint8_t lut_bb_clear[];
-	
-    static uint8_t lut_vcom_dc_comp[]; // luts for compositing (for grey/red levels) //PLL 18-12-2018
-    static uint8_t lut_ww_comp[];
-    static uint8_t lut_bw_comp[];
-    static uint8_t lut_wb_comp[];
-    static uint8_t lut_bb_comp[];
-
-
 #if defined(ESP8266) || defined(ESP32)
   public:
     // the compiler of these packages has a problem with signature matching to base classes

@@ -1,8 +1,5 @@
 #include "TextBuffer.h"
 
-//#undef DEBUG_PRT
-//#define DEBUG_PRT Serial
-
 DisplayString::DisplayString() {
 	
 }
@@ -167,7 +164,7 @@ bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage
 		diskfont.DrawStringAt(ds->x, ds->y, ds->text, ePaper, ds->color, ds->colormap, ds->right_to_left, ds->reverse_string);
 		//DEBUG_PRT.print(F("]"));
 		//DEBUG_PRT.print(F("render():"));
-		ds->dump();
+		//ds->dump();
 	}
 	//DEBUG_PRT.println(F("ok"));
 }

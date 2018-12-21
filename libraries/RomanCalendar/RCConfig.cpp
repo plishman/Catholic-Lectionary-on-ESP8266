@@ -1166,7 +1166,7 @@ void Config::printMemory(rtcData_t& rtcData) {
       DEBUG_PRT.print(F(" "));
     }
   }
-  DEBUG_PRT.println();
+  Serial.println();
 }
 
 wake_reasons Config::Wake_Reason() {

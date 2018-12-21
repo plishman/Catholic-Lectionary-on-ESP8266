@@ -3,12 +3,6 @@ extern "C" {
 #include "user_interface.h"
 }
 
-//#undef DEBUG_PRT
-//#define DEBUG_PRT Serial
-
-// 20-12-2018 BUG: If no space character bitmap is included in the font, display corruption occurs (check: getCharInfo returns null)
-//				   The problem may occur with other characters too, if they are missing from the font and are intended to be displayed.
-
 bool DiskFont::OpenFontFile() {
 	_file_sd = SD.open(_fontfilename.c_str(), FILE_READ);
 
@@ -232,7 +226,6 @@ bool DiskFont::begin(String fontfilename) {
 		_FontHeader.ascent = romfont->ascent;
 		_FontHeader.descent = romfont->descent;
 		_FontHeader.linespacing = romfont->lineheight;
-		_FontHeader.antialias_level = romfont->antialias_level;
 		
 		if (_fontfilename == "builtin") {
 			return true;
@@ -271,8 +264,6 @@ bool DiskFont::begin(String fontfilename) {
 		CloseFontFile();
 		return false;
 	};
-	
-	_FontHeader.antialias_level = 0; // temporary
 	
 	if (!(Read(&_FontHeader.charheight)
 		&& Read(&_FontHeader.startchar)
@@ -544,24 +535,8 @@ int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FO
 	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), advanceWidth, font, fci, ePaper, color);
 }
  
-
-
-
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0')  
- 
- 
 int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
 	uint16_t char_width = fci.widthbits;
-	//DEBUG_PRT.printf("%s w:%d\n", utf8fromCodepoint(codepoint).c_str(), char_width);
 
 	if (codepoint == 32) {
 		//DEBUG_PRT.printf("DrawCharAt: space char width = %d\n", (int)fci.advanceWidth);
@@ -571,120 +546,35 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	else {
 		//DEBUG_PRT.printf("ch=%s, u+%x advanceWidth=%d\n", utf8fromCodepoint(codepoint).c_str(), codepoint, (int)fci.advanceWidth);
 	}
-		
+	
 	uint16_t char_height = (uint16_t)font->heightPages;
-	//DEBUG_PRT.printf("char_height=%d\n", char_height);
+	//printf("char_height=%d\n", char_height);
 
 	uint32_t char_offset = fci.bitmapfileoffset;
-	//DEBUG_PRT.printf("char_offset=%d\n", char_offset);
+	//printf("char_offset=%d\n", char_offset);
 	
     int i, j;
     //unsigned int char_offset = (ascii_char - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
     const uint8_t* ptr = &font->data[char_offset];
 	
-	int bc = 0;
-	
-	////DEBUG_PRT.printf("%02x: "BYTE_TO_BINARY_PATTERN, bc++, BYTE_TO_BINARY(pgm_read_byte(ptr)));
-	
-	if (font->antialias_level == 2) {
-		for (j = 0; j < char_height; j++) {
-			//DEBUG_PRT.println();
-			//DEBUG_PRT.printf("\n%d:\t|", j);
-			for (i = 0; i < char_width; i++) {
-				uint8_t pxvalue = pgm_read_byte(ptr) & (0xC0 >> ((i % 4) * 2));
-				pxvalue = pxvalue >> (6 - ((i % 4) * 2));
-				
-				//DEBUG_PRT.printf(BYTE_TO_BINARY_PATTERN" ", BYTE_TO_BINARY(pxvalue));
-				
-				//DEBUG_PRT.printf("%1d", pxvalue);
-				
-				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
-					
-					/*
-					switch(pxvalue){
-						case 1:
-							DEBUG_PRT.printf("*");
-							break;
-							
-						case 2:
-							DEBUG_PRT.printf("#");
-							break;
-							
-						case 3:
-							DEBUG_PRT.printf("@");
-							break;
-						
-					}
-					*/
-					//DEBUG_PRT.printf("#");
-				} else {
-					//DEBUG_PRT.printf(".");
-				}
-				
-				if (((i % 4) * 2) == 6) {
-					ptr++;
-					////DEBUG_PRT.printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(pgm_read_byte(ptr)));
-				}
+    for (j = 0; j < char_height; j++) {
+		//printf("\n%d:\t|", j);
+        for (i = 0; i < char_width; i++) {
+            if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
+                ePaper.drawPixel(x + i, y + j, color);
+				//DEBUG_PRT.printf("#");
+            } else {
+				//DEBUG_PRT.printf(" ");
 			}
-			if (char_width % 4 != 0) {
-				ptr++;
-				////DEBUG_PRT.printf("\n%02x: "BYTE_TO_BINARY_PATTERN, bc++, BYTE_TO_BINARY(pgm_read_byte(ptr)));
-			}
-			//DEBUG_PRT.println();
-		}
-		//DEBUG_PRT.println();
-	}
-	else if (font->antialias_level == 4) {
-		for (j = 0; j < char_height; j++) {
-			//DEBUG_PRT.println();
-			//DEBUG_PRT.printf("\n%d:\t|", j);
-			for (i = 0; i < char_width; i++) {
-				uint8_t pxvalue = pgm_read_byte(ptr) & (0xF0 >> ((i % 2) * 4));
-				pxvalue = pxvalue >> (4 - ((i % 2) * 4));
-				
-				//DEBUG_PRT.printf(BYTE_TO_BINARY_PATTERN" ", BYTE_TO_BINARY(pxvalue));
-				
-				//DEBUG_PRT.printf("%1d", pxvalue);
-				
-				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
-				}
-				
-				if (((i % 2) * 4) == 4) {
-					ptr++;
-					////DEBUG_PRT.printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(pgm_read_byte(ptr)));
-				}
-			}
-			if (char_width % 2 != 0) {
-				ptr++;
-				////DEBUG_PRT.printf("\n%02x: "BYTE_TO_BINARY_PATTERN, bc++, BYTE_TO_BINARY(pgm_read_byte(ptr)));
-			}
-			//DEBUG_PRT.println();
-		}
-		//DEBUG_PRT.println();		
-	}
-	else {
-		for (j = 0; j < char_height; j++) {
-			//printf("\n%d:\t|", j);
-			for (i = 0; i < char_width; i++) {
-				if (pgm_read_byte(ptr) & (0x80 >> (i % 8))) {
-					ePaper.drawPixel(x + i, y + j, color);
-					//DEBUG_PRT.printf("#");
-				} else {
-					//DEBUG_PRT.printf(" ");
-				}
-				
-				if (i % 8 == 7) {
-					ptr++;
-				}
-			}
-			if (char_width % 8 != 0) {
-				ptr++;
-			}
-		}		
-	}
-	
+			
+            if (i % 8 == 7) {
+                ptr++;
+            }
+        }
+        if (char_width % 8 != 0) {
+            ptr++;
+        }
+    }
 	
 	//printf("char width=%d\n", char_width);
 	
@@ -784,7 +674,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//printf("refcolumn=%d\n", refcolumn);
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
-			DEBUG_PRT.printf("*%s*", ch.c_str());		
+			//DEBUG_PRT.printf("*%s*", ch.c_str());		
 
 			if (bUsingCmap) {
 				char cmapentry = colormap.charAt(charIndex); //colormap.charAt(utf8charnum); // one byte per byte of string. Simpler, but wastes some memory
