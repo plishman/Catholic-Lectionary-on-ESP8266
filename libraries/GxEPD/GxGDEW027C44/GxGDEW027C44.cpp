@@ -73,6 +73,209 @@ const uint8_t GxGDEW027C44::lut_24_black[] = {
   0x00  , 0x23  , 0x00  , 0x00  , 0x00  , 0x01
 };
 
+
+//////////////////////////////////
+/// composite (no invert/clear) 3 shades + white (2bpp)
+#define LUT_VCOM_DC_RED_COUNT1 		33
+#define LUT_VCOM_DC_RED_COUNT2 		34
+#define LUT_VCOM_DC_RED_REPCOUNT 	37
+
+#define LUT_RED_COUNT1 				31
+#define LUT_RED_COUNT2 				32
+#define LUT_RED_REPCOUNT 			35
+
+#define LUT_RED_REPS_7 		0x0F	
+#define LUT_RED_C1_7 		0x03
+#define LUT_RED_C2_7 		0x0E
+
+#define LUT_RED_REPS_6 		0x01	
+#define LUT_RED_C1_6 		0x01
+#define LUT_RED_C2_6 		0x0C
+
+#define LUT_RED_REPS_5 		0x01	
+#define LUT_RED_C1_5 		0x01
+#define LUT_RED_C2_5 		0x0C
+
+#define LUT_RED_REPS_4 		0x01	
+#define LUT_RED_C1_4 		0x01
+#define LUT_RED_C2_4 		0x0C
+
+#define LUT_RED_REPS_3 		0x01	
+#define LUT_RED_C1_3 		0x01
+#define LUT_RED_C2_3 		0x0C
+
+#define LUT_RED_REPS_2 		0x01	
+#define LUT_RED_C1_2 		0x01
+#define LUT_RED_C2_2 		0x0C
+
+#define LUT_RED_REPS_1 		0x01	
+#define LUT_RED_C1_1 		0x01
+#define LUT_RED_C2_1 		0x0C
+
+
+
+
+#define LUT_VCOM_DC_BLACK_COUNT1 	9
+#define LUT_VCOM_DC_BLACK_COUNT2 	10
+#define LUT_VCOM_DC_BLACK_REPCOUNT 	13
+
+#define LUT_BLACK_COUNT1 			7
+#define LUT_BLACK_COUNT2 			8
+#define LUT_BLACK_REPCOUNT 			11
+
+#define LUT_BLACK_REPS_7 	0x08	//8*10*2 = 160
+#define LUT_BLACK_C1_7 		0x0A
+#define LUT_BLACK_C2_7 		0x0A
+
+#define LUT_BLACK_REPS_6 	0x03	//8*3*2 = 48
+#define LUT_BLACK_C1_6 		0x03
+#define LUT_BLACK_C2_6 		0x03
+
+#define LUT_BLACK_REPS_5 	0x03	//4*3*2 = 24
+#define LUT_BLACK_C1_5 		0x02
+#define LUT_BLACK_C2_5		0x02
+
+#define LUT_BLACK_REPS_4 	0x03	//2*3*2 = 12
+#define LUT_BLACK_C1_4 		0x01
+#define LUT_BLACK_C2_4 		0x01
+
+#define LUT_BLACK_REPS_3 	0x03	//1*3*2 = 6
+#define LUT_BLACK_C1_3 		0x01
+#define LUT_BLACK_C2_3 		0x01
+
+#define LUT_BLACK_REPS_2 	0x03	//1*2*2 = 4
+#define LUT_BLACK_C1_2 		0x01
+#define LUT_BLACK_C2_2 		0x01
+
+#define LUT_BLACK_REPS_1 	0x03	//1*1*2 = 2
+#define LUT_BLACK_C1_1 		0x01
+#define LUT_BLACK_C2_1 		0x01
+									// 48+24+12+6+4+2 = 96
+uint8_t GxGDEW027C44::lut_vcom_dc_comp[] =
+{
+0x00, 0x00,
+0x00, 0x1A, 0x1A, 0x00, 0x00, 0x00,        //0x00 0x1A 0x1A 0x00 0x00 0x00
+0x00, 0x02, 0x02, 0x00, 0x00, 0x01,        
+0x00, 0x0E, 0x01, 0x0E, 0x01, 0x00,        //0x0E 0x01 0x0E 0x01
+0x00, 0x0A, 0x0A, 0x00, 0x00, 0x00,        
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,        
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x02,        
+0x00, 0x01, 0x00, 0x00, 0x00, 0x01
+};
+
+//R21H
+uint8_t GxGDEW027C44::lut_ww_comp[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x00,
+0x40, 0x02, 0x02, 0x00, 0x00, 0x01,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x80, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x02,
+0x00, 0x01, 0x00, 0x00, 0x00, 0x01
+};
+
+//R22H    r
+uint8_t GxGDEW027C44::lut_bw_comp[] =
+{
+0xA0, 0x1A, 0x1A, 0x00, 0x00, 0x00,
+0x00, 0x02, 0x02, 0x00, 0x00, 0x01,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x90, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0xB0, 0x04, 0x10, 0x00, 0x00, 0x00,
+0xB0, 0x03, 0x0E, 0x00, 0x00, 0x02,
+0xC0, 0x01, 0x00, 0x00, 0x00, 0x01
+};
+
+//R23H    w
+uint8_t GxGDEW027C44::lut_bb_comp[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x00,
+0x40, 0x02, 0x02, 0x00, 0x00, 0x01,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x80, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x02,
+0x00, 0x01, 0x00, 0x00, 0x00, 0x01
+};
+
+//R24H    b
+uint8_t GxGDEW027C44::lut_wb_comp[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x00,	// applies the image in inverse (0x01). At this point, red is shown as black. As an alternative to this, the screen is cleared separately, before any drawing takes place
+0x20, 0x02, 0x02, 0x00, 0x00, 0x01,	// 0x04 shows the image in non-inverse (0x08). At this point, red and black are only faintly visible (as whiter-than-white) 0x20, 0x0A, 0x0A, 0x00, 0x00, 0x01
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x10, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x02,	// 0x02 does the red (0x0A). With line 2 set to 0x08 (and all the rest 0x00), get pink from red areas
+0x00, 0x01, 0x00, 0x00, 0x00, 0x01	// turns reds into browns (adds black) 0x00 0x23 0x00 0x00 0x00 0x01 // 0x00 0x01 0x00 0x00 0x00 0x01
+};
+
+
+//////////////////////////////////
+/// composite (for clearing)
+const uint8_t GxGDEW027C44::lut_vcom_dc_clear[] =
+{
+0x00, 0x00,
+0x00, 0x1A, 0x1A, 0x00, 0x00, 0x04,        
+0x00, 0x0A, 0x0A, 0x00, 0x00, 0x04,        
+0x00, 0x0E, 0x01, 0x0E, 0x01, 0x00,        
+0x00, 0x0A, 0x0A, 0x00, 0x00, 0x00,        
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,        
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x00,        
+0x00, 0x23, 0x00, 0x00, 0x00, 0x00
+};
+
+//R21H
+const uint8_t GxGDEW027C44::lut_ww_clear[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x04,
+0x40, 0x0A, 0x0A, 0x00, 0x00, 0x04,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x80, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x00,
+0x00, 0x23, 0x00, 0x00, 0x00, 0x00
+};
+
+//R22H    r
+const uint8_t GxGDEW027C44::lut_bw_clear[] =
+{
+0xA0, 0x1A, 0x1A, 0x00, 0x00, 0x04,
+0x00, 0x0A, 0x0A, 0x00, 0x00, 0x04,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x90, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0xB0, 0x04, 0x10, 0x00, 0x00, 0x00,
+0xB0, 0x03, 0x0E, 0x00, 0x00, 0x00,
+0xC0, 0x23, 0x00, 0x00, 0x00, 0x00
+};
+
+//R23H    w
+const uint8_t GxGDEW027C44::lut_bb_clear[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x04,
+0x40, 0x0A, 0x0A, 0x00, 0x00, 0x04,
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x80, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x00,
+0x00, 0x23, 0x00, 0x00, 0x00, 0x00
+};
+
+//R24H    b
+const uint8_t GxGDEW027C44::lut_wb_clear[] =
+{
+0x90, 0x1A, 0x1A, 0x00, 0x00, 0x04, // applies the image in inverse (0x01). At this point, red is shown as black
+0x20, 0x0A, 0x0A, 0x00, 0x00, 0x04, // shows the image in non-inverse (0x08). At this point, red and black are only faintly visible (as whiter-than-white)
+0x84, 0x0E, 0x01, 0x0E, 0x01, 0x00,
+0x10, 0x0A, 0x0A, 0x00, 0x00, 0x00,
+0x00, 0x04, 0x10, 0x00, 0x00, 0x00,
+0x00, 0x03, 0x0E, 0x00, 0x00, 0x00, // does the red (0x0A). With line 2 set to 0x08 (and all the rest 0x00), get pink from red areas
+0x00, 0x23, 0x00, 0x00, 0x00, 0x00
+};
+
+
+
 GxGDEW027C44::GxGDEW027C44(GxIO& io, int8_t rst, int8_t busy)
   : GxEPD(GxGDEW027C44_WIDTH, GxGDEW027C44_HEIGHT), IO(io),
     _current_page(-1), _using_partial_mode(false), _diag_enabled(false),
@@ -128,6 +331,48 @@ void GxGDEW027C44::drawPixel(int16_t x, int16_t y, uint16_t color)
 }
 
 
+void GxGDEW027C44::drawPixel(int16_t x, int16_t y, uint16_t color, int saturation)
+{	
+	// saturation=3 -> refresh on update 1, 2 and 3
+	// saturation=2 -> refresh on update 2 and 3
+	// saturation=1 -> refresh on update 3 only
+	//Serial.printf("[%d,%d]", saturation, _refreshnumber);
+//	if ((saturation >> 1) >= (_refreshnumber)) { // make 4bpp into 3bpp (ignore lsbit)
+//		drawPixel(x, y, color);
+//	}
+
+	if ((saturation >> 1) >= (EPD_REFRESH_NUMBER - _refreshnumber + 1)) {
+		drawPixel(x, y, color);
+	}
+
+}
+
+// refresh number - used for grey level compositing. Varies between 1 and 3 (2bpp) 3 grey/red levels plus white
+void GxGDEW027C44::resetRefreshNumber() 
+{
+	if (_lut_mode == LUT_MODE_COMPOSITE) {
+		_refreshnumber = EPD_REFRESH_NUMBER;
+	}
+	else {
+		_refreshnumber = 1;
+	}
+}
+
+int GxGDEW027C44::getRefreshNumber() 
+{
+	return _refreshnumber;
+}
+
+bool GxGDEW027C44::decRefreshNumber() 
+{	
+	if (_refreshnumber > 0) {
+		_refreshnumber--;
+	}
+	
+	return (_refreshnumber > 0);
+}
+
+
 void GxGDEW027C44::init(uint32_t serial_diag_bitrate)
 {
   if (serial_diag_bitrate > 0)
@@ -146,6 +391,12 @@ void GxGDEW027C44::init(uint32_t serial_diag_bitrate)
   fillScreen(GxEPD_WHITE);
   _current_page = -1;
   _using_partial_mode = false;
+}
+
+void GxGDEW027C44::setMode(int mode)
+{
+	_lut_mode = mode;
+	resetRefreshNumber();
 }
 
 void GxGDEW027C44::fillScreen(uint16_t color)
@@ -337,7 +588,7 @@ void GxGDEW027C44::drawBitmap(const uint8_t* bitmap, uint32_t size, int16_t mode
 }
 
 void GxGDEW027C44::eraseDisplay(bool using_partial_update)
-{
+{  
   if (_current_page != -1) return;
   if (using_partial_update)
   {
@@ -616,7 +867,8 @@ void GxGDEW027C44::_wakeUp()
 
   _writeCommand(0X50);      // define by OTP
   _writeData(0x87);   // define by OTP
-  _writeLUT();              //д��lut
+  
+  _writeLUT(_lut_mode);              //д��lut
 }
 
 void GxGDEW027C44::_sleep(void)
@@ -665,6 +917,493 @@ void GxGDEW027C44::_writeLUT(void)
     }
   }
 }
+
+
+
+void GxGDEW027C44::_writeLUT_Clear(void)
+{
+//lut_vcom_dc_clear[]
+//lut_ww_clear[]
+//lut_bw_clear[]
+//lut_wb_clear[]
+//lut_bb_clear[]
+  unsigned int count;
+  {
+    _writeCommand(0x20);							//vcom
+    for (count = 0; count < 44; count++)
+    {
+      _writeData(lut_vcom_dc_clear[count]);
+    }
+
+    _writeCommand(0x21);							//ww --
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_ww_clear[count]);
+    }
+
+    _writeCommand(0x22);							//bw r
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_bw_clear[count]);
+    }
+
+    _writeCommand(0x23);							//wb w
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_wb_clear[count]);
+    }
+
+    _writeCommand(0x24);							//bb b
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_bb_clear[count]);
+    }
+  }
+}
+
+void GxGDEW027C44::_writeLUT_Composite(void)
+{
+//lut_vcom_dc_comp[]
+//lut_ww_comp[]
+//lut_bw_comp[]
+//lut_wb_comp[]
+//lut_bb_comp[]
+
+  unsigned int count;
+  {
+    _writeCommand(0x20);							//vcom
+    for (count = 0; count < 44; count++)
+    {
+      _writeData(lut_vcom_dc_comp[count]);
+    }
+
+    _writeCommand(0x21);							//ww --
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_ww_comp[count]);
+    }
+
+    _writeCommand(0x22);							//bw r
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_bw_comp[count]);
+    }
+
+    _writeCommand(0x23);							//wb w
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_wb_comp[count]);
+    }
+
+    _writeCommand(0x24);							//bb b
+    for (count = 0; count < 42; count++)
+    {
+      _writeData(lut_bb_comp[count]);
+    }
+  }
+}
+
+
+//#define LUT_MODE_NORMAL 0x00						// set normal lut
+//#define LUT_MODE_COMPOSITE 0x01						// set lut for compositing (no pre-clear)
+//#define LUT_MODE_CLEAR 0x02							// set lut for clearing display
+
+//////////////////
+//#define LUT_VCOM_DC_RED_COUNT1 		33
+//#define LUT_VCOM_DC_RED_COUNT2 		34
+//#define LUT_VCOM_DC_RED_REPCOUNT 		37
+//
+//#define LUT_RED_COUNT1 				31
+//#define LUT_RED_COUNT2 				32
+//#define LUT_RED_REPCOUNT 				35
+//
+//#define LUT_RED_REPS_7 	0x0A	
+//#define LUT_RED_C1_7 		0x03
+//#define LUT_RED_C2_7 		0x0E
+//
+//#define LUT_RED_REPS_6 	0x01	
+//#define LUT_RED_C1_6 		0x03
+//#define LUT_RED_C2_6 		0x0E
+//
+//#define LUT_RED_REPS_5 	0x01	
+//#define LUT_RED_C1_5 		0x03
+//#define LUT_RED_C2_5 		0x0E
+//
+//#define LUT_RED_REPS_4 	0x01	
+//#define LUT_RED_C1_4 		0x03
+//#define LUT_RED_C2_4 		0x0E
+//
+//#define LUT_RED_REPS_3 	0x01	
+//#define LUT_RED_C1_3 		0x03
+//#define LUT_RED_C2_3 		0x0E
+//
+//#define LUT_RED_REPS_2 	0x01	
+//#define LUT_RED_C1_2 		0x03
+//#define LUT_RED_C2_2 		0x0E
+//
+//#define LUT_RED_REPS_1 	0x01	
+//#define LUT_RED_C1_1 		0x03
+//#define LUT_RED_C2_1 		0x0E
+//
+//
+//
+//
+//#define LUT_VCOM_DC_BLACK_COUNT1 		9
+//#define LUT_VCOM_DC_BLACK_COUNT2 		10
+//#define LUT_VCOM_DC_BLACK_REPCOUNT 	13
+//
+//#define LUT_BLACK_COUNT1 				7
+//#define LUT_BLACK_COUNT2 				8
+//#define LUT_BLACK_REPCOUNT 			11
+//
+//#define LUT_BLACK_REPS_7 		0x08	//8*10*2 = 160
+//#define LUT_BLACK_C1_7 		0x0A
+//#define LUT_BLACK_C2_7 		0x0A
+//
+//#define LUT_BLACK_REPS_6 		0x03	//8*3*2 = 48
+//#define LUT_BLACK_C1_6 		0x03
+//#define LUT_BLACK_C2_6 		0x03
+//
+//#define LUT_BLACK_REPS_5 		0x03	//4*3*2 = 24
+//#define LUT_BLACK_C1_5 		0x02
+//#define LUT_BLACK_C2_5		0x02
+//
+//#define LUT_BLACK_REPS_4 		0x03	//2*3*2 = 12
+//#define LUT_BLACK_C1_4 		0x01
+//#define LUT_BLACK_C2_4 		0x01
+//
+//#define LUT_BLACK_REPS_3 		0x03	//1*3*2 = 6
+//#define LUT_BLACK_C1_3 		0x01
+//#define LUT_BLACK_C2_3 		0x01
+//
+//#define LUT_BLACK_REPS_2 		0x03	//1*2*2 = 4
+//#define LUT_BLACK_C1_2 		0x01
+//#define LUT_BLACK_C2_2 		0x01
+//
+//#define LUT_BLACK_REPS_1 		0x03	//1*1*2 = 2
+//#define LUT_BLACK_C1_1 		0x01
+//#define LUT_BLACK_C2_1 		0x01
+////uint8_t GxGDEW027C44::lut_vcom_dc_comp[] =
+
+void GxGDEW027C44::_writeLUT(int mode)
+{
+	switch(mode) {
+		case LUT_MODE_CLEAR:
+			_writeLUT_Clear();
+			break;
+		
+		case LUT_MODE_COMPOSITE:
+			//Serial.printf("_writeLUT() Composite mode: _refreshnumber=%d\n", _refreshnumber);
+			switch(_refreshnumber) 
+			{
+				case 7:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_7;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_7;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_7;
+					
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_7;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_7;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_7;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_7;
+
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_7;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_7;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_7;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_7;				
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_7;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_7;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_7;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_7;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_7;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_7;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_7;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_7;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_7;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_7;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_7;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_7;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_7;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_7;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_7;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_7;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_7;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_7;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_7;
+					break;
+				
+				case 6:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_6;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_6;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_6;
+					
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_6;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_6;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_6;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_6;
+
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_6;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_6;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_6;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_6;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_6;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_6;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_6;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_6;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_6;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_6;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_6;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_6;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_6;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_6;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_6;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_6;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_6;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_6;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_6;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_6;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_6;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_6;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_6;
+
+					break;
+				
+				case 5:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_5;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_5;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_5;
+
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_5;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_5;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_5;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_5;
+
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_5;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_5;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_5;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_5;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_5;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_5;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_5;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_5;
+					
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_5;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_5;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_5;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_5;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_5;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_5;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_5;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_5;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_5;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_5;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_5;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_5;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_5;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_5;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_5;
+					break;
+				
+				case 4:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_4;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_4;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_4;
+
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_4;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_4;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_4;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_4;
+
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_4;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_4;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_4;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_4;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_4;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_4;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_4;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_4;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_4;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_4;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_4;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_4;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_4;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_4;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_4;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_4;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_4;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_4;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_4;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_4;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_4;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_4;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_4;
+					break;
+				
+				case 3:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_3;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_3;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_3;
+
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_3;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_3;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_3;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_3;
+																 
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_3;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_3;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_3;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_3;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_3;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_3;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_3;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_3;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_3;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_3;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_3;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_3;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_3;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_3;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_3;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_3;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_3;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_3;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_3;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_3;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_3;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_3;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_3;
+					break;
+				
+				case 2:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_2;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_2;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_2;
+
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_2;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_2;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_2;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_2;
+																 
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_2;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_2;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_2;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_2;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_2;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_2;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_2;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_2;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_2;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_2;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_2;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_2;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_2;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_2;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_2;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_2;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_2;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_2;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_2;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_2;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_2;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_2;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_2;
+					break;
+				
+				case 1:
+					//BLACK
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT1] = LUT_BLACK_C1_1;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_COUNT2] = LUT_BLACK_C2_1;
+					lut_vcom_dc_comp[LUT_VCOM_DC_BLACK_REPCOUNT] = LUT_BLACK_REPS_1;
+
+					lut_ww_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_1;
+					lut_bw_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_1;
+					lut_wb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_1;
+					lut_bb_comp[LUT_BLACK_COUNT1] = LUT_BLACK_C1_1;
+																 
+					lut_ww_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_1;
+					lut_bw_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_1;
+					lut_wb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_1;
+					lut_bb_comp[LUT_BLACK_COUNT2] = LUT_BLACK_C2_1;
+
+					lut_ww_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_1;
+					lut_bw_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_1;
+					lut_wb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_1;
+					lut_bb_comp[LUT_BLACK_REPCOUNT] = LUT_BLACK_REPS_1;
+
+					//RED
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT1] = LUT_RED_C1_1;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_COUNT2] = LUT_RED_C2_1;
+					lut_vcom_dc_comp[LUT_VCOM_DC_RED_REPCOUNT] = LUT_RED_REPS_1;
+
+					lut_ww_comp[LUT_RED_COUNT1] = LUT_RED_C1_1;
+					lut_bw_comp[LUT_RED_COUNT1] = LUT_RED_C1_1;
+					lut_wb_comp[LUT_RED_COUNT1] = LUT_RED_C1_1;
+					lut_bb_comp[LUT_RED_COUNT1] = LUT_RED_C1_1;
+                                                      
+					lut_ww_comp[LUT_RED_COUNT2] = LUT_RED_C2_1;
+					lut_bw_comp[LUT_RED_COUNT2] = LUT_RED_C2_1;
+					lut_wb_comp[LUT_RED_COUNT2] = LUT_RED_C2_1;
+					lut_bb_comp[LUT_RED_COUNT2] = LUT_RED_C2_1;				
+
+					lut_ww_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_1;
+					lut_bw_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_1;
+					lut_wb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_1;
+					lut_bb_comp[LUT_RED_REPCOUNT] = LUT_RED_REPS_1;
+					break;
+				
+				default:
+					break;
+			}
+
+			_writeLUT_Composite();		
+			break;
+		
+		default:
+			_writeLUT();
+			break;
+	}
+}
+
 
 void GxGDEW027C44::drawPaged(void (*drawCallback)(void))
 {

@@ -83,9 +83,32 @@ extern const unsigned char lut_bw[];
 extern const unsigned char lut_bb[];
 extern const unsigned char lut_wb[];
 
+extern const unsigned char lut_vcom_dc_quick[];
+extern const unsigned char lut_ww_quick[];
+extern const unsigned char lut_bw_quick[];
+extern const unsigned char lut_bb_quick[];
+extern const unsigned char lut_wb_quick[];
+
+extern const unsigned char lut_vcom_dc_comp[];
+extern const unsigned char lut_ww_comp[];
+extern const unsigned char lut_bw_comp[];
+extern const unsigned char lut_bb_comp[];
+extern const unsigned char lut_wb_comp[];
+
+extern const unsigned char lut_vcom_dc_clear[];
+extern const unsigned char lut_ww_clear[];
+extern const unsigned char lut_bw_clear[];
+extern const unsigned char lut_bb_clear[];
+extern const unsigned char lut_wb_clear[];
+
+const int LUT_NORMAL = 0;
+const int LUT_QUICK = 1;
+const int LUT_COMPOSITE = 2;
+const int LUT_CLEAR = 3;
+
 class Epd : EpdIf {
 public:
-    unsigned int width;
+	unsigned int width;
     unsigned int height;
 	
 	BUS_SELECT bs = SPI_4WIRE;
@@ -94,11 +117,16 @@ public:
     Epd(BUS_SELECT bs);
     ~Epd();
     int  Init(void);
+	int  Init(int lt);
     void SendCommand(unsigned char command);
     void SendData(unsigned char data);
     void WaitUntilIdle(void);
     void Reset(void);
     void SetLut(void);
+	void SetLutQuick(void);
+	void SetLutComposite(void);
+	void SetLutClear(void);
+	void SetLut(int lt);
     void TransmitPartial(const unsigned char* buffer_black, const unsigned char* buffer_red, int x, int y, int w, int l);
     void TransmitPartialBlack(const unsigned char* buffer_black, int x, int y, int w, int l);
     void TransmitPartialRed(const unsigned char* buffer_red, int x, int y, int w, int l);
