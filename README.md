@@ -1,5 +1,5 @@
 # Catholic-Lectionary-on-ESP8266
-The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 with Dalian/Waveshare 2.7" red/black SPI display, SPI-mode SD card, DS3231 clock IC and Nanjing Top Power TP5410 PMIC/boost IC, with support for 8 grey/red levels, and antialiased text
+The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 with Dalian/Waveshare 2.7" red/black SPI display, SPI-mode SD card, DS3231 clock IC and Nanjing Top Power TP5410 PMIC/boost IC, with support for 8 grey/red levels + antialiased text
 
 <h2>Catholic Lectionary</h2>
 <p>
@@ -7,9 +7,8 @@ This project implements a Calendar, Liturgical calendar, Lectionary and Feast Da
 It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the some of the same configuration files and file formats as this program, with some modifications to support month names etc.
 </p>
 
-![Preview1](./lectionary2.jpg)
+![Preview1](./lectionary4.jpg)
 ![Preview2](./lectionary3.jpg)
-![Preview3](./lectionary3.jpg)
 
 <h3>Localization</h3>
 <p>
