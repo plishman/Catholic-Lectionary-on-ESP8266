@@ -136,7 +136,7 @@
 						config = CSVToArray(xhttp.responseText);
 						document.getElementById("config").innerHTML = MakeConfigOpt(config);
 						LoadConfigState();
-						document.getElementById("spinner_container").style.visibility = "hidden";
+						//document.getElementById("spinner_container").style.visibility = "hidden";
 					}
 				};
 				xhttp.open("GET", "config.csv", true);
@@ -154,6 +154,15 @@
 						if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
 							lectionaryselect[configstate.lectionary_config_number].selected = 1;
 						}
+						
+						if (configstate.contrast && configstate.contrast > 1 && configstate.contrast < 8) {
+							document.getElementById("contrast").value = configstate.contrast.toString();
+						}
+						else {
+							configstate.contrast = "7";
+						}
+						
+						document.getElementById("spinner_container").style.visibility = "hidden";
 					}
 				};
 				xhttp.open("GET", "settings.json", true);
@@ -348,6 +357,42 @@
 			  }
 			}
 		</style>
+		<style>
+			.slidecontainer {
+			  width: 100%;
+			}
+
+			.slider {
+			  -webkit-appearance: none;
+			  width: 61%;
+			  height: 25px;
+			  background: #d3d3d3;
+			  outline: none;
+			  opacity: 0.7;
+			  -webkit-transition: .2s;
+			  transition: opacity .2s;
+			}
+
+			.slider:hover {
+			  opacity: 1;
+			}
+			
+			.slider::-webkit-slider-thumb {
+			  -webkit-appearance: none;
+			  appearance: none;
+			  width: 25px;
+			  height: 25px;
+			  background: #4CAF50;
+			  cursor: pointer;
+			}
+
+			.slider::-moz-range-thumb {
+			  width: 25px;
+			  height: 25px;
+			  background: #4CAF50;
+			  cursor: pointer;
+			}
+		</style>
 	</head>
 	<body onload="InitOpts();">
 		<div id="spinner_container">
@@ -374,7 +419,8 @@
 						<input type="hidden" id="dststarthour" name="dststarthour"/>
 						<input type="hidden" id="dstendmonth" name="dstendmonth"/>
 						<input type="hidden" id="dstendday" name="dstendday"/>
-						<input type="hidden" id="dstendhour" name="dstendhour"/>					
+						<input type="hidden" id="dstendhour" name="dstendhour"/>
+						<div><span>Contrast: </span><input type="range" min="1" max="7" value="6" class="slider" id="contrast" name="contrast" step="1"></div>
 						<input id="update" type="submit" value=" Update Settings " />
 					</form>
 				</div>

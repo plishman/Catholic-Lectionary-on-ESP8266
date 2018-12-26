@@ -6,9 +6,6 @@ extern "C" {
 //#undef DEBUG_PRT
 //#define DEBUG_PRT Serial
 
-// 20-12-2018 BUG: If no space character bitmap is included in the font, display corruption occurs (check: getCharInfo returns null)
-//				   The problem may occur with other characters too, if they are missing from the font and are intended to be displayed.
-
 bool DiskFont::OpenFontFile() {
 	_file_sd = SD.open(_fontfilename.c_str(), FILE_READ);
 
@@ -259,8 +256,9 @@ bool DiskFont::begin(String fontfilename) {
             const unsigned long FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
 			const double 		FONT_HEADER_OFFSET_ASCENT = 21;
             const double 		FONT_HEADER_OFFSET_DESCENT = 29;
-            const unsigned long FONT_HEADER_OFFSET_END = 37;
-            const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
+			const unsigned long FONT_HEADER_OFFSET_DEPTH_BPP = 21; // byte
+			const unsigned long FONT_HEADER_OFFSET_END = 22;
+			const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
 	*/
 	
 	_FontHeader = {0};
@@ -272,7 +270,7 @@ bool DiskFont::begin(String fontfilename) {
 		return false;
 	};
 	
-	_FontHeader.antialias_level = 0; // temporary
+	//_FontHeader.antialias_level = 0; // temporary
 	
 	if (!(Read(&_FontHeader.charheight)
 		&& Read(&_FontHeader.startchar)
@@ -281,7 +279,8 @@ bool DiskFont::begin(String fontfilename) {
 		&& Read(&_FontHeader.spacecharwidth)
 		&& Read(&_FontHeader.ascent)
 		&& Read(&_FontHeader.descent)
-		&& Read(&_FontHeader.linespacing))) 
+		&& Read(&_FontHeader.linespacing)
+		&& Read(&_FontHeader.antialias_level))) // should be 1, 2 or 4
 	{		
 		DEBUG_PRT.println(F("Problem reading diskfont header"));
 		CloseFontFile();
@@ -458,57 +457,156 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	int numbytes = 0;
 	int numbits = fci.widthbits;
 	
-	do {
-			numbytes++;
-			numbits-=8;
-	} while (numbits > 0);
-	
-	bytesremaining = numbytes * fci.heightbits;
-	
-	//DEBUG_PRT.printf("bytesremaining = %d\n", bytesremaining);
-	
-	for (j = 0; j < char_height; j++) {
-		//printf("\n%d:\t|", j);
-		for (i = 0; i < char_width; i++) {
+	if (_FontHeader.antialias_level == 4) {
+		do {
+				numbytes++;
+				numbits-=2; // 2 pixels per byte (4bpp)
+		} while (numbits > 0);
+		
+		bytesremaining = numbytes * fci.heightbits;
+		//DEBUG_PRT.printf("bytesremaining = %d\n", bytesremaining);
 
-			if (buf_offset == 0 && i % 8 == 0) {
-				if ((Size() - Position()) > bytesremaining) {
-					int bytestoread = CHARBUFF_SIZE;
-					if (bytesremaining < CHARBUFF_SIZE) bytestoread = bytesremaining;
-					Read(_char_buffer, bytestoread);
-					bytesremaining -= bytestoread;
-					/* 
-					//debugging
-					for (int o=0;o<CHARBUFF_SIZE;o++) {
-						DEBUG_PRT.printf("%x ", _char_buffer[o]);
+		for (j = 0; j < char_height; j++) {
+			//DEBUG_PRT.println();
+			//DEBUG_PRT.printf("\n%d:\t|", j);
+			for (i = 0; i < char_width; i++) {
+				if (buf_offset == 0 && i % 2 == 0) {
+					if ((Size() - Position()) > bytesremaining) {
+						int bytestoread = CHARBUFF_SIZE;
+						if (bytesremaining < CHARBUFF_SIZE) bytestoread = bytesremaining;
+						Read(_char_buffer, bytestoread);
+						bytesremaining -= bytestoread;
 					}
-					DEBUG_PRT.printf("\n");
-					*/
+					else {
+						// error - found unexpected end of file
+						DEBUG_PRT.println(F("Diskfont Error (unexpected EOF)"));
+						return char_width + 1;
+					}
 				}
-				else {
-					// error - found unexpected end of file
-					DEBUG_PRT.println(F("Diskfont Error (unexpected EOF)"));
-					return char_width + 1;
-				}
-			}
 
-			if (_char_buffer[buf_offset] & (0x80 >> (i % 8))) {
-				ePaper.drawPixel(x + i, y + j, color);
-				//DEBUG_PRT.printf("#");
-			} else {
-				//DEBUG_PRT.printf(" ");
+				uint8_t pxvalue = _char_buffer[buf_offset] & (0xF0 >> ((i % 2) * 4));
+				pxvalue = pxvalue >> (4 - ((i % 2) * 4));
+
+				if (pxvalue != 0) {
+					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+				}
+				
+				if (((i % 2) * 4) == 4) {
+					buf_offset++;
+					if (buf_offset == CHARBUFF_SIZE) buf_offset = 0; // will trigger a read of the next buffer full of character image data when buf_offset resets to 0
+					////DEBUG_PRT.printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(pgm_read_byte(ptr)));
+				}
 			}
-										
-			if (i % 8 == 7) {
-				buf_offset++;
+			
+			if (char_width % 2 != 0) { // check if already incremented the buffer pointer last thing before we dropped out of the i loop - will have happened if
+				buf_offset++;		   // width of char occurs on a byte boundary. If not, then increment the pointer to begin the next line of the character
 				//bytesremaining--;
-				if (buf_offset == CHARBUFF_SIZE) buf_offset = 0; // will trigger a read of the next buffer full of character image data when buf_offset resets to 0
+				if (buf_offset == CHARBUFF_SIZE) buf_offset = 0;
 			}
 		}
-		if (char_width % 8 != 0) { // check if already incremented the buffer pointer last thing before we dropped out of the i loop - will have happened if
-			buf_offset++;		   // width of char occurs on a byte boundary. If not, then increment the pointer to begin the next line of the character
-			//bytesremaining--;
-			if (buf_offset == CHARBUFF_SIZE) buf_offset = 0;
+		//DEBUG_PRT.println();		
+	}
+	else if (_FontHeader.antialias_level == 2) {
+		do {
+				numbytes++;
+				numbits-=4; // 4 pixels per byte (2bpp)
+		} while (numbits > 0);
+		
+		bytesremaining = numbytes * fci.heightbits;
+		//DEBUG_PRT.printf("bytesremaining = %d\n", bytesremaining);
+
+		for (j = 0; j < char_height; j++) {
+			//DEBUG_PRT.println();
+			//DEBUG_PRT.printf("\n%d:\t|", j);
+			for (i = 0; i < char_width; i++) {
+				if (buf_offset == 0 && i % 4 == 0) {
+					if ((Size() - Position()) > bytesremaining) {
+						int bytestoread = CHARBUFF_SIZE;
+						if (bytesremaining < CHARBUFF_SIZE) bytestoread = bytesremaining;
+						Read(_char_buffer, bytestoread);
+						bytesremaining -= bytestoread;
+					}
+					else {
+						// error - found unexpected end of file
+						DEBUG_PRT.println(F("Diskfont Error (unexpected EOF)"));
+						return char_width + 1;
+					}
+				}
+
+				uint8_t pxvalue = _char_buffer[buf_offset] & (0xC0 >> ((i % 4) * 2));
+				pxvalue = pxvalue >> (6 - ((i % 4) * 2));
+
+				if (pxvalue != 0) {
+					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+				}
+				
+				if (((i % 4) * 2) == 6) {
+					buf_offset++;
+					if (buf_offset == CHARBUFF_SIZE) buf_offset = 0; // will trigger a read of the next buffer full of character image data when buf_offset resets to 0
+					////DEBUG_PRT.printf(" "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(pgm_read_byte(ptr)));
+				}
+			}
+			
+			if (char_width % 4 != 0) { // check if already incremented the buffer pointer last thing before we dropped out of the i loop - will have happened if
+				buf_offset++;		   // width of char occurs on a byte boundary. If not, then increment the pointer to begin the next line of the character
+				//bytesremaining--;
+				if (buf_offset == CHARBUFF_SIZE) buf_offset = 0;
+			}
+		}
+		//DEBUG_PRT.println();		
+	}
+	else {
+		do {
+				numbytes++;
+				numbits-=8; // 8 pixels per byte (1bpp)
+		} while (numbits > 0);
+		
+		bytesremaining = numbytes * fci.heightbits;
+		//DEBUG_PRT.printf("bytesremaining = %d\n", bytesremaining);
+
+		for (j = 0; j < char_height; j++) {
+			//printf("\n%d:\t|", j);
+			for (i = 0; i < char_width; i++) {
+
+				if (buf_offset == 0 && i % 8 == 0) {
+					if ((Size() - Position()) > bytesremaining) {
+						int bytestoread = CHARBUFF_SIZE;
+						if (bytesremaining < CHARBUFF_SIZE) bytestoread = bytesremaining;
+						Read(_char_buffer, bytestoread);
+						bytesremaining -= bytestoread;
+						/* 
+						//debugging
+						for (int o=0;o<CHARBUFF_SIZE;o++) {
+							DEBUG_PRT.printf("%x ", _char_buffer[o]);
+						}
+						DEBUG_PRT.printf("\n");
+						*/
+					}
+					else {
+						// error - found unexpected end of file
+						DEBUG_PRT.println(F("Diskfont Error (unexpected EOF)"));
+						return char_width + 1;
+					}
+				}
+
+				if (_char_buffer[buf_offset] & (0x80 >> (i % 8))) {
+					ePaper.drawPixel(x + i, y + j, color);
+					//DEBUG_PRT.printf("#");
+				} else {
+					//DEBUG_PRT.printf(" ");
+				}
+											
+				if (i % 8 == 7) {
+					buf_offset++;
+					//bytesremaining--;
+					if (buf_offset == CHARBUFF_SIZE) buf_offset = 0; // will trigger a read of the next buffer full of character image data when buf_offset resets to 0
+				}
+			}
+			if (char_width % 8 != 0) { // check if already incremented the buffer pointer last thing before we dropped out of the i loop - will have happened if
+				buf_offset++;		   // width of char occurs on a byte boundary. If not, then increment the pointer to begin the next line of the character
+				//bytesremaining--;
+				if (buf_offset == CHARBUFF_SIZE) buf_offset = 0;
+			}
 		}
 	}
 	//printf("char width=%d\n", char_width);
@@ -563,6 +661,8 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 	uint16_t char_width = fci.widthbits;
 	//DEBUG_PRT.printf("%s w:%d\n", utf8fromCodepoint(codepoint).c_str(), char_width);
 
+	//DEBUG_PRT.print("DrawCharAt() ");
+	
 	if (codepoint == 32) {
 		//DEBUG_PRT.printf("DrawCharAt: space char width = %d\n", (int)fci.advanceWidth);
 		advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth;
@@ -692,6 +792,8 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 
 	advanceWidth = GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, char_width); //fci.advanceWidth; bitmapwidth, advancewidth, isSpaceChar, bidi_info
 	
+	//DEBUG_PRT.println("char=[" + utf8fromCodepoint(codepoint) + "] advanceWidth=" + String(advanceWidth) + " char_width=" + String(char_width));
+	
 	return char_width;
 
 //	return char_width + 1;
@@ -784,7 +886,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 			//printf("refcolumn=%d\n", refcolumn);
 			/* Display one character on EPD */
 			ch = utf8CharAt(text, charIndex); //GetUtf8CharByIndex(text, charIndex); //utf8CharAt(text, charIndex);
-			DEBUG_PRT.printf("*%s*", ch.c_str());		
+			//DEBUG_PRT.printf("*%s*", ch.c_str());		
 
 			if (bUsingCmap) {
 				char cmapentry = colormap.charAt(charIndex); //colormap.charAt(utf8charnum); // one byte per byte of string. Simpler, but wastes some memory
@@ -812,8 +914,12 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				//DEBUG_PRT.printf("overlaych = [%s], refcolumn = %d, charwidth = %d, overlaycharwidth = %d, midpoint=%d, offsetoverlaychar=%d\n", ch.c_str(), refcolumn, charwidth, overlaycharwidth, refcolumn + (charwidth / 2), refcolumn + ((charwidth - overlaycharwidth) / 2));
 				dnsmcolumn = dnsmcolumn + ((dcharwidth - doverlaycharwidth) / 2.0);
 
-				DrawCharAt((int)dnsmcolumn, y, ch, *pfci, ePaper, color); // first, so they will apply to the next non-nsm character to print, not the previous
-				
+				if (pfci != NULL) {
+					DrawCharAt((int)dnsmcolumn, y, ch, *pfci, ePaper, color); // first, so they will apply to the next non-nsm character to print, not the previous
+				}
+				else {
+					//DEBUG_PRT.println("	pfci is NULL for NSM char [" + ch + "]");
+				}
 				//drefcolumn += dcharwidth;
 				//refcolumn += charwidth;									// one. In that case, do not need to subtract the last printed char width (ie do 
 			}																					// backspace over it before overprinting the diacritic).
@@ -824,9 +930,16 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 
 				//DEBUG_PRT.printf("ch=%s, drc=%d, fcx=%d, co=%d\n", ch.c_str(), (int)drefcolumn, (int)finalcharx, (int)charoffset);
 				
-				DrawCharAt((int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
-				//refcolumn += charwidth;
-				drefcolumn += dcharwidth;
+				if (pfci != NULL) {
+					DrawCharAt((int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
+					//refcolumn += charwidth;
+					drefcolumn += dcharwidth;
+				}
+				else {
+					//DEBUG_PRT.println("	pfci is NULL for char [" + ch + "]");			
+				}
+				
+				//DEBUG_PRT.println("char=[" + ch + "] advancewidth=" + String(dcharwidth) + " char_bmwidth=" + String(char_bmwidth));
 				
 				/*
 				if (ch == " ") {
@@ -879,7 +992,13 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				//int refcolumnoverlaychar =(int)(float)(refcolumn + ((charwidth - overlaycharwidth) / 2));
 
 				dnsmcolumn = (dcharwidth - doverlaycharwidth) / 2.0;
-				DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, *pfci, ePaper, color);
+				
+				if (pfci != NULL) {
+					DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, *pfci, ePaper, color);
+				}
+				else {
+					//DEBUG_PRT.println("	pfci is NULL for NSM char [" + ch + "]");
+				}
 
 //				dnsmcolumn = dnsmcolumn + (dcharwidth - doverlaycharwidth) / 2.0;
 //				DrawCharAt(PANEL_SIZE_X - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
@@ -896,9 +1015,14 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 
 				finalcharx = drefcolumn + (dcharwidth - charoffset);
 				
-				char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
-				//refcolumn += charwidth;
-				drefcolumn += dcharwidth;
+				if (pfci != NULL) {
+					char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
+					//refcolumn += charwidth;
+					drefcolumn += dcharwidth;
+				}
+				else {
+					//DEBUG_PRT.println("	pfci is NULL for char [" + ch + "]");
+				}
 
 				/*
 				if (ch == " ") {
@@ -975,6 +1099,10 @@ double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint
 void DiskFont::GetCharWidth(uint32_t codepoint, uint16_t& width, double& advanceWidth, DiskFont_FontCharInfo* &pfci, uint16_t& blockToCheckFirst) { 	//with blocktocheckfirst optimization
 	if (getCharInfo(codepoint, &blockToCheckFirst, pfci)) {
 		advanceWidth = GetAdvanceWidth(pfci->widthbits, pfci->advanceWidth, codepoint, width); 	// width is modified by GetAdvanceWidth()		
+	}
+	else {
+		advanceWidth = 0.0; // PLL 21-12-2018
+		width = 0; 			// PLL 21-12-2018
 	}
 }
 
@@ -1182,6 +1310,8 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	//DEBUG_PRT.print(F("@"));
 	//DEBUG_PRT.print(String(codepoint));
 	//DEBUG_PRT.print(F("@"));
+
+	pfci = NULL; //PLL 21-12-2018 now defaults to null, was leaving it unchanged before
 	
 	if (!available) {
 		// will use rom font if diskfont is not available

@@ -83,8 +83,14 @@ void handleSettingsJson() {
 	DEBUG_PRT.println(String(c.data.timezone_offset));
     DEBUG_PRT.print(F("lectionary = "));
 	DEBUG_PRT.println(String(c.data.lectionary_config_number));
+    DEBUG_PRT.print(F("contrast = "));
+	DEBUG_PRT.println(String(c.data.epd_contrast));
 	
-    String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + "\"}"; // output in JSON format
+    String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + 
+				   "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + 
+				   "\", \"contrast\":\"" + String(c.data.epd_contrast) + 
+				   "\"}"; // output in JSON format
+				   
     server.send(200, "application/json", line);
     DEBUG_PRT.println(line);
 }
@@ -93,7 +99,8 @@ void handleSettingsJson() {
 void handleSetConf() {
     String tz = getQueryStringParam("timezone", ""); // "timezone", "0"
     String lect = getQueryStringParam("lectionary", ""); // "lectionary", "0"	
-
+	String epdcontrast = getQueryStringParam("contrast", "");
+	
 	String debug_mode = getQueryStringParam("debug", "");
 	
     DEBUG_PRT.print(F("timezone = "));
@@ -139,7 +146,7 @@ void handleSetConf() {
 	uint32_t dstendhour = 0; 
 	uint32_t dstendday = 0; 
 	uint32_t dstendmonth = 0;
-
+	
     String dstoffset = getQueryStringParam("dstoffset", "0");
 
 	bool bresult = false;
@@ -151,10 +158,10 @@ void handleSetConf() {
 		testArg(getQueryStringParam("dstendday",     ""), 1, 31, &dstendday) &&
 		testArg(getQueryStringParam("dstendmonth",   ""), 1, 12, &dstendmonth)) {
 
-		bresult = Config::SaveConfig(tz, lect, debug_mode, dststartmonth, dststartday, dststarthour, dstendmonth, dstendday, dstendhour, dstoffset);
+		bresult = Config::SaveConfig(tz, lect, debug_mode, epdcontrast, dststartmonth, dststartday, dststarthour, dstendmonth, dstendday, dstendhour, dstoffset);
 	}
 	else {
-		bresult = Config::SaveConfig(tz, lect, debug_mode);
+		bresult = Config::SaveConfig(tz, lect, debug_mode, epdcontrast);
 	}
 	
     DEBUG_PRT.print(F("SaveConfig returned "));
@@ -246,18 +253,19 @@ void Config::StopServer( void ) {
 //}
 
 
-bool Config::SaveConfig(String tz, String lect_num, String debug_mode) {
-	return SaveConfig(tz, lect_num, debug_mode, 0,0,0,0,0,0,"0.0");
+bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast) {
+	return SaveConfig(tz, lect_num, debug_mode, epdcontrast, 0, 0, 0, 0, 0, 0, "0.0");
 }
 
 
-bool Config::SaveConfig(String tz, String lect_num, String debug_mode, 
+bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast,
 						uint32_t dstStartMonth, uint32_t dstStartDay, uint32_t dstStartHour,
 						uint32_t dstEndMonth,   uint32_t dstEndDay,   uint32_t dstEndHour,
 						String dstoffset) 
 {
   float timezone_offset = 0.0;
   int lectionary_config_number = 0;
+  uint16_t lectionary_epd_contrast = 0;
   bool debug_on = false;
   bool debug_not_set = true;
   
@@ -265,6 +273,7 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
   
   bool bGotTz = false;
   bool bGotLectNum = false;
+  bool bGotContrast = false;
   
   if (tz != "") {
 	  if (IsNumeric(tz)) {
@@ -290,8 +299,8 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 		DEBUG_PRT.println(F("lectionary config is not a number"));
 		return false;
 	  }
-  }
-
+  }  
+  
   if (debug_mode == "1" || debug_mode == "true") {
 	  debug_on = true;
 	  debug_not_set = false;
@@ -299,6 +308,22 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
   else if (debug_mode == "0" || debug_mode == "false") {
 	  debug_on = false;
 	  debug_not_set = false;
+  }
+  
+  if (epdcontrast != "") {
+	  if (IsNumeric(epdcontrast)) {
+		lectionary_epd_contrast = atoi(epdcontrast.c_str());  
+		if (lectionary_epd_contrast < 1) lectionary_epd_contrast = 1;
+		if (lectionary_epd_contrast > 7) lectionary_epd_contrast = 7;
+		
+		bGotContrast = true;
+		DEBUG_PRT.print(F("lectionary_epd_contrast="));
+		DEBUG_PRT.println(String(lectionary_epd_contrast));
+	  }
+	  else {
+		DEBUG_PRT.println(F("epdcontrast is not a number"));
+		return false;
+	  }
   }
   
   if (bGotTz && bGotLectNum) {
@@ -343,12 +368,27 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode,
 	c.data.dst_end_month = dstEndMonth;
 	c.data.dst_end_day = dstEndDay;
 	c.data.dst_end_hour = dstEndHour;
-  }  
+  }
+
+  if(bGotContrast) {
+	  c.data.epd_contrast = lectionary_epd_contrast;
+  }
+  
   SaveConfig(c);
   
   dump_config(c);
   
   return true;
+}
+
+uint16_t Config::GetEPDContrast() {
+  config_t c = {0};
+  if (GetConfig(c)) {
+	return c.data.epd_contrast;		//7 = lowest contrast, 1 refreshes, 1 = highest contrast, 7 refreshes
+  }
+  else {
+	  return 7;
+  }
 }
 
 void Config::dump_config(config_t& c) {
@@ -365,6 +405,7 @@ void Config::dump_config(config_t& c) {
 	if (!DstIsValid(c)) {
 		DEBUG_PRT.print(F("DST settings invalid"));
 	}
+	DEBUG_PRT.print(F("c.data.epd_contrast:\t")); 				DEBUG_PRT.println(String(c.data.epd_contrast));
 	
 	DEBUG_PRT.print(F("\nc.crc32:\t")); 						DEBUG_PRT.println(String(c.crc32, HEX));
 }

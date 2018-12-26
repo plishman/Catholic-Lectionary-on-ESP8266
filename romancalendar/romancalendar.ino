@@ -274,7 +274,7 @@ void setup() {
     else {
       bNetworkAvailable = true;
       if (bDisplayWifiConnectedScreen) {
-        display_image(wireless_network_connected);
+        display_image(wireless_network_connected, Network::getDHCPAddressAsString(), true);
         rtcData.data.wake_flags = WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE;
         Config::writeRtcMemoryData(rtcData); // set the wake flag to say don't redisplay the wifi connected image on next boot, if still charging by 
                                              // that time.
@@ -1190,7 +1190,7 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
     String verse_record;
     String verse_text;
     String output;
-                             
+                           
     for (int c = start_chapter; c <= end_chapter; c++) {
       DEBUG_PRT.printf("\n%d:", c);
       if (c < end_chapter) {
@@ -1261,7 +1261,7 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
           //
           //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
           //bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
-          bEndOfScreen = epd_verse(verse_text, &xpos, &ypos, &bEmphasis_On, right_to_left); // returns false if at end of screen
+          bEndOfScreen = epd_verse(verse_text, &xpos, &ypos, &bEmphasis_On, right_to_left, (v != end_verse)); // returns false if at end of screen
           DEBUG_PRT.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           DEBUG_PRT.println();
           v++;
@@ -1283,7 +1283,7 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
   return bGotVerses;
 }
 
-bool epd_verse(String verse, int* xpos, int* ypos, bool* bEmphasis_On, bool right_to_left) {
+bool epd_verse(String verse, int* xpos, int* ypos, bool* bEmphasis_On, bool right_to_left, bool bMoreText) {
   DEBUG_PRT.print(F("epd_verse() verse="));
   DEBUG_PRT.println(verse);
 
@@ -1293,7 +1293,7 @@ bool epd_verse(String verse, int* xpos, int* ypos, bool* bEmphasis_On, bool righ
 //  Bidi bidi;
 
   fbheight = PANEL_SIZE_Y - diskfont._FontHeader.charheight;
-  return Bidi::RenderText(verse, xpos, ypos, tb, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left, true);    
+  return Bidi::RenderText(verse, xpos, ypos, tb, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left, true, bMoreText);    
 
   return true;
 }

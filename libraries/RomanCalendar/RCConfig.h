@@ -16,6 +16,7 @@
 #include <EEPROM.h>
 #include <pins_arduino.h>
 
+#define EPD_CONTRAST_LEVELS 7
 
 // flags are: A1M1 (seconds), A1M2 (minutes), A1M3 (hour), 
 // A1M4 (day) 0 to enable, 1 to disable, DY/DT (dayofweek == 1/dayofmonth == 0)
@@ -86,6 +87,7 @@ typedef struct {
   uint32_t dst_end_month;
   uint32_t dst_end_day;
   uint32_t dst_end_hour;
+  uint16_t epd_contrast;
 } config_data_t;
 
 typedef struct {
@@ -138,8 +140,8 @@ public:
 	//String getQueryStringParam(String param, String querystring, String default_value);
 	//bool sendHttpFile(WiFiClient* client, String filename);
 	
-	static bool SaveConfig(String tz, String lect_num, String debug_mode);	
-	static bool SaveConfig(String tz, String lect_num, String debug_mode, 
+	static bool SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast);	
+	static bool SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast,
 					uint32_t dstStartMon, uint32_t dstStartDay, uint32_t dstStartHour, 
 					uint32_t dstEndMon, uint32_t dstEndDay, uint32_t dstEndHour, 
 					String dstoffset);
@@ -150,6 +152,7 @@ public:
 	static void InvalidateEEPROM();
 	static void SaveConfig(config_t& c);
 	static bool GetConfig(config_t& c);
+	static uint16_t GetEPDContrast();
 	static bool EEPROMChecksumValid();
 	static bool IsNumeric(String str);
 	static void storeStruct(void *data_source, size_t size);

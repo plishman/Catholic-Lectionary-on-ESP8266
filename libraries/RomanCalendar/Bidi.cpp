@@ -505,7 +505,6 @@ void Bidi::getColorMap(String word, bool& bEmphasisOn, String& colormap) {
 }
 
 
-// render bidi text using disk font
 bool Bidi::RenderText(String s, 
 				      int* xpos, int* ypos, 
 					  TextBuffer& tb, 
@@ -514,6 +513,20 @@ bool Bidi::RenderText(String s,
 					  int fbwidth, int fbheight, 
 					  bool render_right_to_left,
 					  bool wrap_text)
+{
+	RenderText(s, xpos, ypos, tb, diskfont, bEmphasisOn, fbwidth, fbheight, render_right_to_left, wrap_text, false);
+}
+
+// render bidi text using disk font
+bool Bidi::RenderText(String s, 
+				      int* xpos, int* ypos, 
+					  TextBuffer& tb, 
+					  DiskFont& diskfont, 
+					  bool* bEmphasisOn, 
+					  int fbwidth, int fbheight, 
+					  bool render_right_to_left,
+					  bool wrap_text,
+					  bool bMoreText)	// PLL 26-12-2018 bMoreText set to true if this is not the last string in the block to be drawn
 {
 	//if (diskfont.available == false) return true; // if no diskfont is available, return true to stop caller from trying to output more text (is used to indicate screen full)
 	
@@ -594,6 +607,8 @@ bool Bidi::RenderText(String s,
 		//DEBUG_PRT.printf("bOverflowWordWrapped = %s\n", bOverflowWordWrapped ? "true" : "false");			
 		//DEBUG_PRT.println("String s is [" + s + "]");
 
+		DEBUG_PRT.printf("Bidi::RenderText() bMoreText=%s\n", bMoreText ? "true" : "false");
+		
 		if(bOverflowWordWrapped) {
 			ExpectStr(s, &startstrpos, " "); // skip over the leading space added by FixNextWordWiderThanDisplay()
 		}
@@ -614,7 +629,8 @@ bool Bidi::RenderText(String s,
 		DEBUG_PRT.printf("bRTL = %s\n", bRTL ? "<-" : "->");
 		DEBUG_PRT.printf("xpos=%d, s.length=%d, startstrpos=%d, endstrpos=%d, textwidth=%d\n", *xpos, s.length(), startstrpos, endstrpos, textwidth);
 		
-		if (textwidth > 0 && bLastLine && bNewLine && diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos) { // ellipsiswidth is limit to GetTextWidthA, so it stops processing when the calculated string width is greater than ellipsiswidth
+		if (textwidth > 0 && bLastLine && bNewLine && diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos // ellipsiswidth is limit to GetTextWidthA, so it stops processing when the calculated string width is greater than ellipsiswidth
+	     || textwidth > 0 && bLastLine && bMoreText && endstrpos == s.length()) { 
 			//if *some text was processed (ie, not html tags) and;
 			//	 *this is the last line and;
 			//	 *the line overflowed the width of the screen minus the width of the ellipsis and;
@@ -677,7 +693,7 @@ bool Bidi::RenderText(String s,
 	
 	*bEmphasisOn = bEmphasisOnAtEnd;
 	
-	if (*ypos >= fbheight) return true; // will return true if the text overflows the screen
+	if (*ypos >= fbheight || (bLastLine && bMoreText)) return true; // will return true if the text overflows the screen
 	
 	return false;						// otherwise will return false if there is more space
 

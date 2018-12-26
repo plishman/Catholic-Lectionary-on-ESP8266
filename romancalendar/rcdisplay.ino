@@ -21,12 +21,12 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
     ePaper.eraseDisplay(true);
   
     ePaper.setMode(LUT_MODE_COMPOSITE);
-    
+
     do {
       //Serial.printf("refresh number = %d\n", ePaper.getRefreshNumber());
       ePaper.drawPaged(epaperUpdate);
       //Serial.println();
-    } while(ePaper.decRefreshNumber());
+    } while(ePaper.decRefreshNumber() && ePaper.getRefreshNumber() >= Config::GetEPDContrast());
     
     return;
   } 

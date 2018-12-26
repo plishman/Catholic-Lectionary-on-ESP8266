@@ -33,13 +33,14 @@ extern "C" {
 //extern const int PANEL_SIZE_Y;
 
 const unsigned long FONT_HEADER_OFFSET_START = 8;
-const unsigned long FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
-const unsigned long FONT_HEADER_OFFSET_STARTCHAR = 10; // dword
-const unsigned long FONT_HEADER_OFFSET_ENDCHAR = 14; // dword
-const unsigned long FONT_HEADER_OFFSET_NUMLOOKUPENTRIES = 18; // word
-const unsigned long FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
-const unsigned long FONT_HEADER_OFFSET_END = 21;
-const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
+//const unsigned long FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
+//const unsigned long FONT_HEADER_OFFSET_STARTCHAR = 10; // dword
+//const unsigned long FONT_HEADER_OFFSET_ENDCHAR = 14; // dword
+//const unsigned long FONT_HEADER_OFFSET_NUMLOOKUPENTRIES = 18; // word
+//const unsigned long FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
+//const unsigned long FONT_HEADER_OFFSET_DEPTH_BPP = 21; // byte
+//const unsigned long FONT_HEADER_OFFSET_END = 22;
+//const unsigned long BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
 
 typedef struct {
 	uint32_t startchar;

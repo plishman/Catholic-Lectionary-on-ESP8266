@@ -37,6 +37,7 @@ public:
 	
 	static void GetString(String s, int* startstrpos, int* endstrpos, int* textwidth, DiskFont& diskfont, bool* bLineBreak, bool* bRTL, bool* bDirectionChanged, bool* bNewLine, bool bOneWordOnly, bool bForceLineBreakAfterString, int fbwidth, int xpos, bool wrap_text);
 	static bool RenderText(String s, int* xpos, int* ypos, TextBuffer& tb, DiskFont& diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text);
+	static bool RenderText(String s, int* xpos, int* ypos, TextBuffer& tb, DiskFont& diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text, bool bMoreText);
 };
 
 #endif
