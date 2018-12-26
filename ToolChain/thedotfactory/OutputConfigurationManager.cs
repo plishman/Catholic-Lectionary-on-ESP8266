@@ -95,6 +95,13 @@ namespace TheDotFactory
             "In bytes"
         };
 
+        public enum AntialiasLevel
+        {
+            None,
+            x2,
+            x4
+        }
+
         // clone self
         public OutputConfiguration clone() { return (OutputConfiguration)this.MemberwiseClone(); }
 
@@ -159,6 +166,10 @@ namespace TheDotFactory
 
         public bool outputProgmemBitmaps = false;
         public bool outputProgmemCharInfo = false;
+
+        // Antialias level
+        public AntialiasLevel antialiasLevel = AntialiasLevel.None;
+        public bool bEnableHinting = true;
     }
 
     // the output configuration manager

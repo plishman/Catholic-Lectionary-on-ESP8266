@@ -279,7 +279,7 @@ namespace TheDotFactory
 
             // add to text
             txtInputFont.Text += " " + Math.Round(fnt.Size) + "pts";
-
+           
             // check if bold
             if (fnt.Bold)
             {
@@ -546,8 +546,25 @@ namespace TheDotFactory
             // create grahpics entity for drawing
             Graphics gfx = Graphics.FromImage(outputBitmap);
 
-            // disable anti alias
-            gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            System.Drawing.Text.TextRenderingHint textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+            if (m_outputConfig.bEnableHinting) textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+            // set anti alias as required
+            switch (m_outputConfig.antialiasLevel)
+            {
+                case OutputConfiguration.AntialiasLevel.x2:
+                    gfx.TextRenderingHint = textRenderingHint;
+                    break;
+
+                case OutputConfiguration.AntialiasLevel.x4:
+                    gfx.TextRenderingHint = textRenderingHint;
+                    break;
+
+                default:
+                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit; // defaults to 1bpp
+                    break;
+            }
 
             // draw centered text
             Rectangle bitmapRect = new System.Drawing.Rectangle(0, 0, outputBitmap.Width, outputBitmap.Height);
@@ -568,7 +585,9 @@ namespace TheDotFactory
             for (int row = 0; row < bitmap.Height; ++row)
             {
                 // is the pixel black?
-                if (bitmap.GetPixel(column, row).ToArgb() == System.Drawing.Color.Black.ToArgb())
+                //if (bitmap.GetPixel(column, row).ToArgb() == System.Drawing.Color.Black.ToArgb())
+                //if (bitmap.GetPixel(column, row).ToArgb() != System.Drawing.Color.Empty.ToArgb())
+                if (bitmap.GetPixel(column, row).G < 255)
                 {
                     // found. column is not empty
                     return false;
@@ -586,10 +605,12 @@ namespace TheDotFactory
             for (int column = 0; column < bitmap.Width; ++column)
             {
                 // is the pixel black?
-                if (bitmap.GetPixel(column, row).ToArgb() == System.Drawing.Color.Black.ToArgb())
+                //if (bitmap.GetPixel(column, row).ToArgb() == System.Drawing.Color.Black.ToArgb())
+                //if (bitmap.GetPixel(column, row).ToArgb() != System.Drawing.Color.Empty.ToArgb())
+                if (bitmap.GetPixel(column, row).G < 255)
                 {
-                    // found. column is not empty
-                    return false;
+                        // found. column is not empty
+                        return false;
                 }
             }
 
@@ -800,6 +821,7 @@ namespace TheDotFactory
             return true;
         }
 
+
         // create the page array
         private void convertBitmapToPageArray(Bitmap bitmapToGenerate, out ArrayList pages)
         {
@@ -859,6 +881,158 @@ namespace TheDotFactory
                 transposePageArray(bitmapToGenerate.Width, bitmapToGenerate.Height, pages, out pages);
             }
         }
+
+
+        // create the page array with 2x antialiasing (2bpp)
+        private void convertBitmapToPageArrayAA2X(Bitmap bitmapToGenerate, out ArrayList pages)
+        {
+            progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
+            progressBar1.Minimum = 0;
+            progressBar1.Value = 0;
+            progressBar1.Step = progressBar1.Width;
+            //progressBar1.PerformStep();
+
+            // create pages
+            pages = new ArrayList();
+
+            // for each row
+            for (int row = 0; row < bitmapToGenerate.Height; row++)
+            {
+                // current byte value
+                byte currentValue = 0, bitsRead = 0;
+
+                // for each column
+                for (int column = 0; column < bitmapToGenerate.Width; ++column)
+                {
+                    progressBar1.PerformStep();
+                    Application.DoEvents();
+
+                    // is pixel set?
+                    byte px = 0;
+                    byte gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
+                    
+                    // threshold to 4 values (2 bits)
+                    if (gval >= 0 && gval < 64)             // was 64
+                    {
+                        px = 3;
+                    }
+                    else if (gval >= 96 && gval < 128)      //  was 64 - 128
+                    {
+                        px = 2;
+                    }
+                    else if (gval >= 128 && gval < 192)     // was 128 - 192
+                    {
+                        px = 1;
+                    }
+                    else if (gval >= 192 && gval <= 255)
+                    {
+                        px = 0;
+                    }
+
+                    // set the appropriate bit in the page
+                    if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (6 - bitsRead));
+                    else currentValue |= (byte)(px << bitsRead);
+
+                    // increment number of bits read
+                    bitsRead+=2;
+
+                    // have we filled a page?
+                    if (bitsRead == 8)
+                    {
+                        // add byte to page array
+                        pages.Add(currentValue);
+
+                        // zero out current value
+                        currentValue = 0;
+
+                        // zero out bits read
+                        bitsRead = 0;
+                    }
+                }
+
+                // if we have bits left, add it as is
+                if (bitsRead != 0) pages.Add(currentValue);
+            }
+
+            // transpose the pages if column major data is requested
+            if (m_outputConfig.bitLayout == OutputConfiguration.BitLayout.ColumnMajor)
+            {
+                MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
+                //transposePageArray(bitmapToGenerate.Width, bitmapToGenerate.Height, pages, out pages);
+            }
+        }
+
+
+        // create the page array with 4x antialiasing (2bpp)
+        private void convertBitmapToPageArrayAA4X(Bitmap bitmapToGenerate, out ArrayList pages)
+        {
+            progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
+            progressBar1.Minimum = 0;
+            progressBar1.Value = 0;
+            progressBar1.Step = progressBar1.Width;
+            //progressBar1.PerformStep();
+
+            // create pages
+            pages = new ArrayList();
+
+            // for each row
+            for (int row = 0; row < bitmapToGenerate.Height; row++)
+            {
+                // current byte value
+                byte currentValue = 0, bitsRead = 0;
+
+                // for each column
+                for (int column = 0; column < bitmapToGenerate.Width; ++column)
+                {
+                    progressBar1.PerformStep();
+                    Application.DoEvents();
+
+                    // is pixel set?
+                    byte px = 0;
+                    int gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
+
+                    Console.Write(gval.ToString("x2").PadLeft(2,'0') + " ");
+
+                    // threshold to 16 values (4 bits)
+
+                    px = (byte) (15 - (gval / 16));
+
+                    // set the appropriate bit in the page
+                    if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (4 - bitsRead));
+                    else currentValue |= (byte)(px << bitsRead);
+
+                    // increment number of bits read
+                    bitsRead += 4;
+
+                    // have we filled a page?
+                    if (bitsRead == 8)
+                    {
+                        // add byte to page array
+                        pages.Add(currentValue);
+
+                        // zero out current value
+                        currentValue = 0;
+
+                        // zero out bits read
+                        bitsRead = 0;
+                    }
+                }
+
+                // if we have bits left, add it as is
+                if (bitsRead != 0) pages.Add(currentValue);
+
+                Console.WriteLine();
+            }
+
+            // transpose the pages if column major data is requested
+            if (m_outputConfig.bitLayout == OutputConfiguration.BitLayout.ColumnMajor)
+            {
+                MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
+                //transposePageArray(bitmapToGenerate.Width, bitmapToGenerate.Height, pages, out pages);
+            }
+        }
+
+
 
         // get absolute height/width of characters
         private void getAbsoluteCharacterDimensions(ref Bitmap charBitmap, ref int width, ref int height)
@@ -1065,7 +1239,20 @@ namespace TheDotFactory
                 if (fontInfo.characters[charIdx].bitmapToGenerate != null)
                 {
                     // create the page array for the character
-                    convertBitmapToPageArray(fontInfo.characters[charIdx].bitmapToGenerate, out fontInfo.characters[charIdx].pages);
+                    switch (m_outputConfig.antialiasLevel)
+                    {
+                        case OutputConfiguration.AntialiasLevel.x4:
+                            convertBitmapToPageArrayAA4X(fontInfo.characters[charIdx].bitmapToGenerate, out fontInfo.characters[charIdx].pages);
+                            break;
+
+                        case OutputConfiguration.AntialiasLevel.x2:
+                            convertBitmapToPageArrayAA2X(fontInfo.characters[charIdx].bitmapToGenerate, out fontInfo.characters[charIdx].pages);
+                            break;
+
+                        default:
+                            convertBitmapToPageArray(fontInfo.characters[charIdx].bitmapToGenerate, out fontInfo.characters[charIdx].pages);
+                            break;
+                    }
                 }
             }
 
@@ -1081,11 +1268,28 @@ namespace TheDotFactory
         {
             // generate the data rows
             string[] data;
-            generateData(width, height, pages, m_outputConfig.bitLayout, out data);
-
-            // generate the visualizer
             string[] visualizer;
-            generateVisualizer(width, height, pages, m_outputConfig.bitLayout, out visualizer);
+
+            switch(m_outputConfig.antialiasLevel)
+            {
+                case OutputConfiguration.AntialiasLevel.x4:
+                    generateDataAA4X(width, height, pages, m_outputConfig.bitLayout, out data);
+                    // generate the visualizer
+                    generateVisualizerAA4X(width, height, pages, m_outputConfig.bitLayout, out visualizer);
+                    break;
+
+                case OutputConfiguration.AntialiasLevel.x2:
+                    generateDataAA2X(width, height, pages, m_outputConfig.bitLayout, out data);
+                    // generate the visualizer
+                    generateVisualizerAA2X(width, height, pages, m_outputConfig.bitLayout, out visualizer);
+                    break;
+
+                default:
+                    generateData(width, height, pages, m_outputConfig.bitLayout, out data);
+                    // generate the visualizer
+                    generateVisualizer(width, height, pages, m_outputConfig.bitLayout, out visualizer);
+                    break;
+            }
 
             // build the result string
             StringBuilder resultString = new StringBuilder();
@@ -1264,6 +1468,192 @@ namespace TheDotFactory
             //foreach (var s in visualizer)
             //  System.Diagnostics.Debug.WriteLine(s);
         }
+
+
+        // generate strings for AA2X bitmaps
+        private void generateDataAA2X(int width, int height, ArrayList pages, OutputConfiguration.BitLayout layout, out string[] data)
+        {   // *2bpp
+            int colCount = ((width*2) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
+            int rowCount = height;          // (height + 7) / 8;    //(layout == OutputConfiguration.BitLayout.RowMajor) ? height : (height + 7) / 8;
+            // rowmajor not supported for aa2x
+
+            data = new string[rowCount];
+
+            // iterator over rows
+            for (int row = 0; row != rowCount; ++row)
+            {
+                data[row] = "";
+
+                // iterator over columns
+                for (int col = 0; col != colCount; ++col)
+                {
+                    // get the byte to output
+                    int page = (byte)pages[row * colCount + col];
+
+                    // add leading character
+                    data[row] += m_outputConfig.byteLeadingString;
+
+                    // check format
+                    if (m_outputConfig.byteFormat == OutputConfiguration.ByteFormat.Hex)
+                    {
+                        // convert byte to hex
+                        data[row] += page.ToString("X").PadLeft(2, '0');
+                    }
+                    else
+                    {
+                        // convert byte to binary
+                        data[row] += Convert.ToString(page, 2).PadLeft(8, '0');
+                    }
+
+                    // add comma
+                    data[row] += ", ";
+                }
+            }
+        }
+
+        // builds a string array visualization of 'pages'
+        private void generateVisualizerAA2X(int width, int height, ArrayList pages, OutputConfiguration.BitLayout layout, out string[] visualizer)
+        {
+            visualizer = new string[height];
+
+            // the number of pages per row in 'pages'
+            // *2bpp
+            int colCount = ((width * 2) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
+            int rowCount = height;                // (height + 7) / 8;    //(layout == OutputConfiguration.BitLayout.RowMajor) ? height : (height + 7) / 8;
+            // non-rowmajor not supported for aa2x
+
+            // iterator over rows
+            for (int row = 0; row != height; ++row)
+            {
+                // each row is started with a line comment
+                visualizer[row] = "// ";
+                // iterator over columns
+                int bit = 6;
+
+                for (int col = 0; col != width; ++col)
+                {
+                    // get the byte containing the bit we want
+                    //int page = (layout == OutputConfiguration.BitLayout.RowMajor)
+                    //    ? (byte)pages[row * colCount + (col / 8)]
+                    //    : (byte)pages[(row / 8) * colCount + col];
+
+                    int page = (byte)pages[row * colCount + ((col * 2) / 8)]; // 2 bpp
+
+                    int px = 0;
+
+                    // make a mask to extract the bit we want
+                    //int bitMask = (layout == OutputConfiguration.BitLayout.RowMajor)
+                    //    ? getBitMask(7 - (col % 8))
+                    //    : getBitMask(row % 8);
+
+                    px = (page & (3 << bit)) >> bit;
+
+                    visualizer[row] += px.ToString("x1");
+
+                    bit = (bit == 0) ? 6 : bit - 2;
+                }
+            }
+
+            // for debugging
+            //foreach (var s in visualizer)
+            //  System.Diagnostics.Debug.WriteLine(s);
+        }
+
+
+
+
+
+        // generate strings for AA2X bitmaps
+        private void generateDataAA4X(int width, int height, ArrayList pages, OutputConfiguration.BitLayout layout, out string[] data)
+        {   // *2bpp
+            int colCount = ((width * 4) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
+            int rowCount = height;          // (height + 7) / 8;    //(layout == OutputConfiguration.BitLayout.RowMajor) ? height : (height + 7) / 8;
+            // rowmajor not supported for aa2x
+
+            data = new string[rowCount];
+
+            // iterator over rows
+            for (int row = 0; row != rowCount; ++row)
+            {
+                data[row] = "";
+
+                // iterator over columns
+                for (int col = 0; col != colCount; ++col)
+                {
+                    // get the byte to output
+                    int page = (byte)pages[row * colCount + col];
+
+                    // add leading character
+                    data[row] += m_outputConfig.byteLeadingString;
+
+                    // check format
+                    if (m_outputConfig.byteFormat == OutputConfiguration.ByteFormat.Hex)
+                    {
+                        // convert byte to hex
+                        data[row] += page.ToString("X").PadLeft(2, '0');
+                    }
+                    else
+                    {
+                        // convert byte to binary
+                        data[row] += Convert.ToString(page, 2).PadLeft(8, '0');
+                    }
+
+                    // add comma
+                    data[row] += ", ";
+                }
+            }
+        }
+
+        // builds a string array visualization of 'pages'
+        private void generateVisualizerAA4X(int width, int height, ArrayList pages, OutputConfiguration.BitLayout layout, out string[] visualizer)
+        {
+            visualizer = new string[height];
+
+            // the number of pages per row in 'pages'
+            // *2bpp
+            int colCount = ((width * 4) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
+            int rowCount = height;                // (height + 7) / 8;    //(layout == OutputConfiguration.BitLayout.RowMajor) ? height : (height + 7) / 8;
+            // non-rowmajor not supported for aa2x
+
+            // iterator over rows
+            for (int row = 0; row != height; ++row)
+            {
+                // each row is started with a line comment
+                visualizer[row] = "// ";
+                // iterator over columns
+                int bit = 4;
+
+                for (int col = 0; col != width; ++col)
+                {
+                    // get the byte containing the bit we want
+                    //int page = (layout == OutputConfiguration.BitLayout.RowMajor)
+                    //    ? (byte)pages[row * colCount + (col / 8)]
+                    //    : (byte)pages[(row / 8) * colCount + col];
+
+                    int page = (byte)pages[row * colCount + ((col * 4) / 8)]; // 4 bpp
+
+                    int px = 0;
+
+                    // make a mask to extract the bit we want
+                    //int bitMask = (layout == OutputConfiguration.BitLayout.RowMajor)
+                    //    ? getBitMask(7 - (col % 8))
+                    //    : getBitMask(row % 8);
+
+                    px = (page & (0xf << bit)) >> bit;
+
+                    visualizer[row] += px.ToString("x1");
+
+                    bit = (bit == 0) ? 4 : bit - 4;
+                }
+            }
+
+            // for debugging
+            //foreach (var s in visualizer)
+            //  System.Diagnostics.Debug.WriteLine(s);
+        }
+
+
+
 
         // return a bitMask to pick out the 'bitIndex'th bit allowing for byteOrder
         // MsbFirst: bitIndex = 0 = 0x01, bitIndex = 7 = 0x80
@@ -2641,16 +3031,30 @@ namespace TheDotFactory
             }
 
 
-            const int FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
-            const int FONT_HEADER_OFFSET_STARTCHAR = 10; // dword
-            const int FONT_HEADER_OFFSET_ENDCHAR = 14; // dword
-            const int FONT_HEADER_OFFSET_NUMLOOKUPENTRIES = 18; // word
-            const int FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
-            const double FONT_HEADER_OFFSET_ASCENT = 21;
-            const double FONT_HEADER_OFFSET_DESCENT = 29;
-            const double FONT_HEADER_OFFSET_LINESPACING = 37;
-            const int FONT_HEADER_OFFSET_END = 45;
+            //const uint16_t FONT_HEADER_OFFSET_CHARHEIGHT = 8; // word
+            //const uint32_t FONT_HEADER_OFFSET_STARTCHAR = 10; // dword
+            //const uint32_t FONT_HEADER_OFFSET_ENDCHAR = 14; // dword
+            //const uint16_t FONT_HEADER_OFFSET_NUMLOOKUPENTRIES = 18; // word
+            //const uint8_t FONT_HEADER_OFFSET_SPACECHARWIDTH = 20; // byte
+            //const double FONT_HEADER_OFFSET_ASCENT = 21;
+            //const double FONT_HEADER_OFFSET_DESCENT = 29;
+            //const double FONT_HEADER_OFFSET_LINESPACING = 37;
+            //const uint8_t FONT_HEADER_OFFSET_DEPTH_BPP = 45; // byte
+            const int FONT_HEADER_OFFSET_END = 46;
             const int BLOCKTABLE_OFFSET_BEGIN = FONT_HEADER_OFFSET_END;
+            /*
+            struct {
+                uint16_t charheight;
+                uint32_t startchar;
+                uint32_t endchar;
+                uint16_t numlookupblocks;
+                uint8_t spacecharwidth;
+                double ascent;
+                double descent;
+                double linespacing;
+                uint8_t antialias_level;
+            } _FontHeader;
+            */
 
             // populate the font info
             FontInfo fontInfo = populateFontInfo(fontDlgInputFont.Font);
@@ -2680,6 +3084,26 @@ namespace TheDotFactory
                 return;
             }
 
+            byte aa_level = 0;
+
+            switch (m_outputConfig.antialiasLevel)
+            {
+                case OutputConfiguration.AntialiasLevel.x4:
+                    aa_level = 4;
+                    break;
+
+                case OutputConfiguration.AntialiasLevel.x2:
+                    aa_level = 2;
+                    break;
+
+                case OutputConfiguration.AntialiasLevel.None:
+                    aa_level = 1;
+                    break;
+
+                default:
+                    aa_level = 1;
+                    break;
+            }
 
             // write header and offset field which will be filled in later with offset of font header (12 bytes total)
             FileStream F = new FileStream(fontfilename, FileMode.Create, FileAccess.ReadWrite);
@@ -2707,10 +3131,11 @@ namespace TheDotFactory
                 writer.Write((UInt32)fontInfo.endChar);                            //32 bits FONT_HEADER_OFFSET_ENDCHAR                   14-17
                 writer.Write((UInt16)characterBlockList.Count);                    //16 bits FONT_HEADER_OFFSET_NUMLOOKUPENTRIES          18-19
                 writer.Write((byte)m_outputConfig.spaceGenerationPixels);          // 8 bits FONT_HEADER_OFFSET_SPACECHARWIDTH            20
-                writer.Write((double)ascent);                                      //64 bits FONT_HEADER_OFFSET_ASCENT                    21
-                writer.Write((double)descent);                                     //64 bits FONT_HEADER_OFFSET_DESCENT                   29
-                writer.Write((double)linespacing);                                 //64 bits FONT_HEADER_OFFSET_LINESPACING               37
-                                                                                            // Header blocksize is 45 bytes
+                writer.Write((double)ascent);                                      //64 bits FONT_HEADER_OFFSET_ASCENT                    21-28
+                writer.Write((double)descent);                                     //64 bits FONT_HEADER_OFFSET_DESCENT                   29-36
+                writer.Write((double)linespacing);                                 //64 bits FONT_HEADER_OFFSET_LINESPACING               37-44
+                writer.Write((byte)aa_level);                                      // 8 bits FONT_HEADER_OFFSET_DEPTH_BPP                 45
+                // Header blocksize is 46 bytes
 
                 // after the header, 1 or more of 3xUint32 blocks, containing startchar, endchar and file offset to start of bitmap for the block.
                 // write out font bitmap block lookup tables - 1 or more of 3xUInt32s, [startchar], [endchar] and [file offset to bitmap].

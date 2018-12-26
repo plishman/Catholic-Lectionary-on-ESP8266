@@ -31,14 +31,16 @@ namespace TheDotFactory
             cbxBitLayout.DataSource = Enum.GetNames(typeof(OutputConfiguration.BitLayout));
             cbxByteOrder.DataSource = Enum.GetNames(typeof(OutputConfiguration.ByteOrder));
             cbxByteFormat.DataSource = Enum.GetNames(typeof(OutputConfiguration.ByteFormat));
-            
+            cbxAntialiasLevel.DataSource = Enum.GetNames(typeof(OutputConfiguration.AntialiasLevel));
+
             // display string arrays
             foreach (string s in OutputConfiguration.RotationDisplayString) cbxRotation.Items.Add(s);
             foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxCharWidthFormat.Items.Add(s);
             foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxCharHeightFormat.Items.Add(s);
             foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxFontHeightFormat.Items.Add(s);
             foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxImgWidthFormat.Items.Add(s);
-            foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxImgHeightFormat.Items.Add(s); 
+            foreach (string s in OutputConfiguration.DescriptorFormatDisplayString) cbxImgHeightFormat.Items.Add(s);
+            //foreach (string s in OutputConfiguration.AntialiasLevelDisplayString) cbxAntialiasLevel.Items.Add(s);
 
             // add leading
             cbxByteLeadingChar.Items.Add(OutputConfiguration.ByteLeadingStringBinary);
@@ -67,7 +69,7 @@ namespace TheDotFactory
             cbxFontHeightFormat.SelectedIndex = (int)outputConfig.descFontHeight;
             cbxImgWidthFormat.SelectedIndex = (int)outputConfig.descImgWidth;
             cbxImgHeightFormat.SelectedIndex = (int)outputConfig.descImgHeight;
-
+            cbxAntialiasLevel.SelectedIndex = (int)outputConfig.antialiasLevel;
 
             // text boxes
             cbxByteLeadingChar.Text = outputConfig.byteLeadingString;
@@ -98,6 +100,8 @@ namespace TheDotFactory
             cbxProgmemBitmaps.Checked = outputConfig.outputProgmemBitmaps;
             cbxProgmemCharInfo.Checked = outputConfig.outputProgmemCharInfo;
 
+            cbxUseHinting.Checked = outputConfig.bEnableHinting;
+
             // radio buttons
             // -- wrap          
             rbnLineWrapAtColumn.Checked = (outputConfig.lineWrap == OutputConfiguration.LineWrap.AtColumn);
@@ -123,6 +127,7 @@ namespace TheDotFactory
             outputConfig.descFontHeight = (OutputConfiguration.DescriptorFormat)Array.IndexOf(OutputConfiguration.DescriptorFormatDisplayString, cbxFontHeightFormat.Text);
             outputConfig.descImgWidth = (OutputConfiguration.DescriptorFormat)Array.IndexOf(OutputConfiguration.DescriptorFormatDisplayString, cbxImgWidthFormat.Text);
             outputConfig.descImgHeight = (OutputConfiguration.DescriptorFormat)Array.IndexOf(OutputConfiguration.DescriptorFormatDisplayString, cbxImgHeightFormat.Text);
+            outputConfig.antialiasLevel = (OutputConfiguration.AntialiasLevel)Enum.Parse(typeof(OutputConfiguration.AntialiasLevel), cbxAntialiasLevel.Text);
 
             // text boxes
             outputConfig.byteLeadingString = cbxByteLeadingChar.Text;
@@ -152,6 +157,7 @@ namespace TheDotFactory
             outputConfig.outputProgmemBitmaps = cbxProgmemBitmaps.Checked;
             outputConfig.outputProgmemCharInfo = cbxProgmemCharInfo.Checked;
 
+            outputConfig.bEnableHinting = cbxUseHinting.Checked;
 
             // radio buttons
             // -- wrap
@@ -450,6 +456,15 @@ namespace TheDotFactory
         private void cbxProgmemBitmaps_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void groupBox9_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbxAntialiasLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }

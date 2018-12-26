@@ -86,6 +86,8 @@
             this.btnDeleteConfig = new System.Windows.Forms.Button();
             this.btnUpdateConfig = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbxProgmemCharInfo = new System.Windows.Forms.CheckBox();
+            this.cbxProgmemBitmaps = new System.Windows.Forms.CheckBox();
             this.txtVarNfHeight = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtVarNfWidth = new System.Windows.Forms.TextBox();
@@ -98,11 +100,13 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.cbxOutputAscDescLineheight = new System.Windows.Forms.CheckBox();
             this.cbxOutputAdvanceHeight = new System.Windows.Forms.CheckBox();
             this.cbxOutputAdvanceWidth = new System.Windows.Forms.CheckBox();
-            this.cbxOutputAscDescLineheight = new System.Windows.Forms.CheckBox();
-            this.cbxProgmemBitmaps = new System.Windows.Forms.CheckBox();
-            this.cbxProgmemCharInfo = new System.Windows.Forms.CheckBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.cbxAntialiasLevel = new System.Windows.Forms.ComboBox();
+            this.cbxUseHinting = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.gbxPadding.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -112,6 +116,7 @@
             this.groupBox7.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox8.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -798,6 +803,27 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Variable name format where {0} is the font/image name";
             // 
+            // cbxProgmemCharInfo
+            // 
+            this.cbxProgmemCharInfo.AutoSize = true;
+            this.cbxProgmemCharInfo.Location = new System.Drawing.Point(341, 55);
+            this.cbxProgmemCharInfo.Name = "cbxProgmemCharInfo";
+            this.cbxProgmemCharInfo.Size = new System.Drawing.Size(83, 17);
+            this.cbxProgmemCharInfo.TabIndex = 57;
+            this.cbxProgmemCharInfo.Text = "PROGMEM";
+            this.cbxProgmemCharInfo.UseVisualStyleBackColor = true;
+            // 
+            // cbxProgmemBitmaps
+            // 
+            this.cbxProgmemBitmaps.AutoSize = true;
+            this.cbxProgmemBitmaps.Location = new System.Drawing.Point(341, 31);
+            this.cbxProgmemBitmaps.Name = "cbxProgmemBitmaps";
+            this.cbxProgmemBitmaps.Size = new System.Drawing.Size(83, 17);
+            this.cbxProgmemBitmaps.TabIndex = 56;
+            this.cbxProgmemBitmaps.Text = "PROGMEM";
+            this.cbxProgmemBitmaps.UseVisualStyleBackColor = true;
+            this.cbxProgmemBitmaps.CheckedChanged += new System.EventHandler(this.cbxProgmemBitmaps_CheckedChanged);
+            // 
             // txtVarNfHeight
             // 
             this.txtVarNfHeight.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -915,6 +941,17 @@
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Output Advance Width/Height and Ascent, Descent, Lineheight";
             // 
+            // cbxOutputAscDescLineheight
+            // 
+            this.cbxOutputAscDescLineheight.AutoSize = true;
+            this.cbxOutputAscDescLineheight.Location = new System.Drawing.Point(15, 19);
+            this.cbxOutputAscDescLineheight.Name = "cbxOutputAscDescLineheight";
+            this.cbxOutputAscDescLineheight.Size = new System.Drawing.Size(149, 17);
+            this.cbxOutputAscDescLineheight.TabIndex = 2;
+            this.cbxOutputAscDescLineheight.Text = "Asc/Desc, Lineheight";
+            this.cbxOutputAscDescLineheight.UseVisualStyleBackColor = true;
+            this.cbxOutputAscDescLineheight.CheckedChanged += new System.EventHandler(this.cbxOutputAscDescLineheight_CheckedChanged);
+            // 
             // cbxOutputAdvanceHeight
             // 
             this.cbxOutputAdvanceHeight.AutoSize = true;
@@ -936,43 +973,57 @@
             this.cbxOutputAdvanceWidth.Text = "AdvanceWidth";
             this.cbxOutputAdvanceWidth.UseVisualStyleBackColor = true;
             // 
-            // cbxOutputAscDescLineheight
+            // groupBox9
             // 
-            this.cbxOutputAscDescLineheight.AutoSize = true;
-            this.cbxOutputAscDescLineheight.Location = new System.Drawing.Point(15, 19);
-            this.cbxOutputAscDescLineheight.Name = "cbxOutputAscDescLineheight";
-            this.cbxOutputAscDescLineheight.Size = new System.Drawing.Size(149, 17);
-            this.cbxOutputAscDescLineheight.TabIndex = 2;
-            this.cbxOutputAscDescLineheight.Text = "Asc/Desc, Lineheight";
-            this.cbxOutputAscDescLineheight.UseVisualStyleBackColor = true;
-            this.cbxOutputAscDescLineheight.CheckedChanged += new System.EventHandler(this.cbxOutputAscDescLineheight_CheckedChanged);
+            this.groupBox9.Controls.Add(this.cbxUseHinting);
+            this.groupBox9.Controls.Add(this.label25);
+            this.groupBox9.Controls.Add(this.cbxAntialiasLevel);
+            this.groupBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox9.Location = new System.Drawing.Point(443, 413);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(221, 49);
+            this.groupBox9.TabIndex = 48;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Antialias";
+            this.groupBox9.Enter += new System.EventHandler(this.groupBox9_Enter);
             // 
-            // cbxProgmemBitmaps
+            // label25
             // 
-            this.cbxProgmemBitmaps.AutoSize = true;
-            this.cbxProgmemBitmaps.Location = new System.Drawing.Point(341, 31);
-            this.cbxProgmemBitmaps.Name = "cbxProgmemBitmaps";
-            this.cbxProgmemBitmaps.Size = new System.Drawing.Size(83, 17);
-            this.cbxProgmemBitmaps.TabIndex = 56;
-            this.cbxProgmemBitmaps.Text = "PROGMEM";
-            this.cbxProgmemBitmaps.UseVisualStyleBackColor = true;
-            this.cbxProgmemBitmaps.CheckedChanged += new System.EventHandler(this.cbxProgmemBitmaps_CheckedChanged);
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(13, 22);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(38, 13);
+            this.label25.TabIndex = 1;
+            this.label25.Text = "Level";
             // 
-            // cbxProgmemCharInfo
+            // cbxAntialiasLevel
             // 
-            this.cbxProgmemCharInfo.AutoSize = true;
-            this.cbxProgmemCharInfo.Location = new System.Drawing.Point(341, 55);
-            this.cbxProgmemCharInfo.Name = "cbxProgmemCharInfo";
-            this.cbxProgmemCharInfo.Size = new System.Drawing.Size(83, 17);
-            this.cbxProgmemCharInfo.TabIndex = 57;
-            this.cbxProgmemCharInfo.Text = "PROGMEM";
-            this.cbxProgmemCharInfo.UseVisualStyleBackColor = true;
+            this.cbxAntialiasLevel.FormattingEnabled = true;
+            this.cbxAntialiasLevel.Location = new System.Drawing.Point(55, 19);
+            this.cbxAntialiasLevel.Name = "cbxAntialiasLevel";
+            this.cbxAntialiasLevel.Size = new System.Drawing.Size(61, 21);
+            this.cbxAntialiasLevel.TabIndex = 0;
+            this.cbxAntialiasLevel.SelectedIndexChanged += new System.EventHandler(this.onOutputConfigurationFormChange);
+            // 
+            // cbxUseHinting
+            // 
+            this.cbxUseHinting.AutoSize = true;
+            this.cbxUseHinting.Checked = true;
+            this.cbxUseHinting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxUseHinting.Location = new System.Drawing.Point(127, 21);
+            this.cbxUseHinting.Name = "cbxUseHinting";
+            this.cbxUseHinting.Size = new System.Drawing.Size(92, 17);
+            this.cbxUseHinting.TabIndex = 2;
+            this.cbxUseHinting.Text = "Use Hinting";
+            this.cbxUseHinting.UseVisualStyleBackColor = true;
+            this.cbxUseHinting.CheckedChanged += new System.EventHandler(this.onOutputConfigurationFormChange);
             // 
             // OutputConfigurationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(681, 510);
+            this.Controls.Add(this.groupBox9);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnUpdateConfig);
@@ -1012,6 +1063,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1093,5 +1146,9 @@
         private System.Windows.Forms.CheckBox cbxOutputAscDescLineheight;
         private System.Windows.Forms.CheckBox cbxProgmemCharInfo;
         private System.Windows.Forms.CheckBox cbxProgmemBitmaps;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.ComboBox cbxAntialiasLevel;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.CheckBox cbxUseHinting;
     }
 }
