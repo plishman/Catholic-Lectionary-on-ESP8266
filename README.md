@@ -7,7 +7,7 @@ This project implements a Calendar, Liturgical calendar, Lectionary and Feast Da
 It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the some of the same configuration files and file formats as this program, with some modifications to support month names etc.
 </p>
 
-![Preview1](./lectionary4.jpg)
+![Preview1](./lectionary5.jpg)
 ![Preview2](./lectionary3.jpg)
 
 <h3>Localization</h3>
