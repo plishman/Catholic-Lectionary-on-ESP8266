@@ -38,6 +38,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -77,6 +78,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -116,6 +118,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -155,6 +158,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -194,6 +198,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -233,6 +238,7 @@
     <outputProgmemBitmaps>false</outputProgmemBitmaps>
     <outputProgmemCharInfo>false</outputProgmemCharInfo>
     <antialiasLevel>None</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -272,6 +278,7 @@
     <outputProgmemBitmaps>true</outputProgmemBitmaps>
     <outputProgmemCharInfo>true</outputProgmemCharInfo>
     <antialiasLevel>x2</antialiasLevel>
+    <bEnableHinting>true</bEnableHinting>
   </OutputConfiguration>
   <OutputConfiguration>
     <commentVariableName>true</commentVariableName>
@@ -311,5 +318,6 @@
     <outputProgmemBitmaps>true</outputProgmemBitmaps>
     <outputProgmemCharInfo>true</outputProgmemCharInfo>
     <antialiasLevel>x4</antialiasLevel>
+    <bEnableHinting>false</bEnableHinting>
   </OutputConfiguration>
 </ArrayOfOutputConfiguration>

@@ -33,6 +33,7 @@
 //#include <epd2in7b.h>
 //#include <epdpaint.h>
 //#include <calibri10pt.h>
+//#include <times10x4.h>
 #include <edb.h>
 #include <pgmspace.h>
 #include <Network.h>
@@ -145,7 +146,7 @@ void setup() {
   pinMode(D1, OUTPUT);
   digitalWrite(D1, HIGH);
   SD.begin(D1, SPI_HALF_SPEED);
-  
+    
   SPIFFS.begin();
   //Serial.begin(9600);
   DEBUG_PRT.begin(1,3,8);

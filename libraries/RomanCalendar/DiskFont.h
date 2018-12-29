@@ -64,7 +64,8 @@ const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
 */
 
 ////#include "romfont.h"
-#include "calibri10pt.h"
+#include "times10x4.h"
+//#include "calibri10pt.h"
 //#include "calibri20pt.h"
 
 
@@ -73,7 +74,8 @@ class DiskFont {
 public:
 	FCICache fciCache;
 	
-	FONT_INFO* romfont = &calibri_10pt; // 19-12-2018 20pt 10pt
+	//FONT_INFO* romfont = &calibri_10pt; // 19-12-2018 20pt 10pt
+	FONT_INFO* romfont = &timesNewRoman_10pt; // 29-12-2018 20pt 10pt
 
 	String _fontfilename;
 	

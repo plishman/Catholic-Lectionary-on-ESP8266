@@ -530,6 +530,14 @@ bool Config::getDateTime(time64_t* t) {
 bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   clockwasreset = false;
 
+  bool ok = false;
+  config_t c = {0};
+
+  if (ClockStopped(ok) && ok) {		//PLL 28-12-2018
+	clockwasreset = true;
+	return false;
+  }
+  
   uint8_t buf[7];
   uint8_t bcode = 0; 
   
@@ -565,10 +573,10 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   //DEBUG_PRT.printf("-1-");
   
   int century = 0;
-  
-  config_t c = {0};
+    
   if (GetConfig(c)) {
 	if (century_overflowed) {
+	  DEBUG_PRT.println(F("Century overflowed"));
 	  c.data.century++; // century rolled over since last call, so save new century
 	  SaveConfig(c);
 	  
@@ -585,11 +593,11 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 		  DEBUG_PRT.println(F("Century overflowed, flag in clock chip has been reset and century value incremented in EEPROM"));		  
 	  }
 	}
-
+	
 	century = c.data.century;  
   }
   
-  //DEBUG_PRT.printf("-2-");
+//  DEBUG_PRT.printf("-2-");
   
   tmElements_t tm;
   
@@ -600,7 +608,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   tm.Month = month;
   tm.Year = y2kYearToTm(year + (century * 100));
 
-  //DEBUG_PRT.printf("-3- c.century=%d, year= %d", c.century, tm.Year);
+//  DEBUG_PRT.printf("-3- year=%d, century=%d, year= %d\n", year, century, tm.Year);
   
   bool b_incorrectleapyear = false;
   
@@ -610,10 +618,10 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 	b_incorrectleapyear = true;	 												   // So it will incorrectly treat 2100 as a leap year, when it is not (2400 will be)
  }
   
-  //DEBUG_PRT.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
-  //DEBUG_PRT.printf("-3-");
+//  DEBUG_PRT.printf("%02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tm.Year, tm.Hour, tm.Minute, tm.Second);
+//  DEBUG_PRT.printf("-3-");
   *t = makeTime(tm);
-  //DEBUG_PRT.printf("-4-");
+//  DEBUG_PRT.printf("-4-");
   
   if (b_incorrectleapyear) {
 	  DEBUG_PRT.print(F("Incorrect Leap Year detected from DS3231 - Feb 29 skipped, setting date to 1 March "));

@@ -236,6 +236,7 @@ bool I18n::get_config( void ) {
 	readLine(file); // skip first line, as it contains the column headings
 	
 	do {
+		c.Clear();
 	#ifndef _WIN32
 		csv_record = readLine(file);
 	#else
@@ -292,7 +293,7 @@ bool I18n::get_config( void ) {
 		} 
 		else {
 			i++;
-			c.Clear();
+			//c.Clear();
 		}
 
 #ifndef _WIN32
@@ -323,7 +324,7 @@ bool I18n::get_config( void ) {
 	configparams.have_config = true;
 	
 	if (!bFoundSelection) {
-		DEBUG_PRT.print(F("Can't find lectionary config entry number "));
+		DEBUG_PRT.print(F("Can't find lectionary config entry number, using last scanned entry in config.csv"));
 		DEBUG_PRT.println(String(_lectionary_config_number));
 		return false; // will simply use the last entry in the file if not found
 	}

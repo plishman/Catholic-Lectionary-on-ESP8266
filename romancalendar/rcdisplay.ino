@@ -17,16 +17,37 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
   if (d == display_reading) {
     DEBUG_PRT.println("display_reading");
     
-    ePaper.setMode(LUT_MODE_CLEAR);
-    ePaper.eraseDisplay(true);
+    //ePaper.setMode(LUT_MODE_CLEAR);
+    //ePaper.eraseDisplay(true);
+    
   
-    ePaper.setMode(LUT_MODE_COMPOSITE);
+    //ePaper.setMode(LUT_MODE_COMPOSITE);
+
+    int epd_contrast = Config::GetEPDContrast();
+    
+    switch (diskfont._FontHeader.antialias_level)
+    {
+      case 4:
+        ePaper.resetRefreshNumber(LUT_MODE_3BPP);
+        break;
+
+      case 2:
+        ePaper.resetRefreshNumber(LUT_MODE_2BPP);
+        epd_contrast = epd_contrast >> 1;
+        break;
+
+      case 1:
+      default:
+        ePaper.resetRefreshNumber(LUT_MODE_1BPP);
+        epd_contrast = 1;
+        break;
+    }
 
     do {
       //Serial.printf("refresh number = %d\n", ePaper.getRefreshNumber());
       ePaper.drawPaged(epaperUpdate);
-      //Serial.println();
-    } while(ePaper.decRefreshNumber() && ePaper.getRefreshNumber() >= Config::GetEPDContrast());
+      DEBUG_PRT.println();
+    } while(ePaper.decRefreshNumber() && ePaper.getRefreshNumber() >= epd_contrast);
     
     return;
   } 
@@ -36,7 +57,7 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 //    return;    
 //  }
 
-  ePaper.setMode(LUT_MODE_NORMAL);
+  ePaper.resetRefreshNumber(LUT_MODE_1BPP);
 
   epaper_messagetext = messagetext;
   epaper_messagetext_color = messagecolor;

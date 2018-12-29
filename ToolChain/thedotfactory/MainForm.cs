@@ -912,6 +912,10 @@ namespace TheDotFactory
                     byte gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
                     
                     // threshold to 4 values (2 bits)
+                    px = (byte)(3 - (gval / 64));
+
+                    // threshold to 4 values (2 bits)
+/*
                     if (gval >= 0 && gval < 64)             // was 64
                     {
                         px = 3;
@@ -928,6 +932,7 @@ namespace TheDotFactory
                     {
                         px = 0;
                     }
+*/
 
                     // set the appropriate bit in the page
                     if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (6 - bitsRead));
