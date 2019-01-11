@@ -1,0 +1,316 @@
+Waiting for display to become ready
+Power On : 36640
+Display is ready
+Waiting for display to turn off
+Power Off : 39577
+Display is off
+
+*luts for different temperatures: (starts with a5) -40, 5, 10, 15, 20, 25, 30, 35, 40 celsius (ends in 0x7f)
+0000  a5 d8 05 0a 0f 14 19 1e  23 28 7f ff ff ff ff ff 
+
+0010  01 90 01 2c 58 30 37 37  01 ff ff ff ff ff ff ff 
+
+* default values for registers, starts with a5
+*PSR, PFS, BTST(3), TSE, CDI, TCON, TRES(2x2), GSST(2x2), CCSET, PWS, TSSET (19 bytes + 1 byte (enable=a5))
+0020  a5 0f 00 d7 d7 1e 00 77  22 01 90 01 2c 00 00 00 
+0030  00 00 00 00 ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+0040  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0050  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0060  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0070  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0080  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0090  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00a0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00b0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00c0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00d0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+00f0  a5 fc e0 f0 f9 fa f9 f9  f9 f0 fb f0 f0 f0 ff fc 
+
+
+d8 = -40C
+
+0100  3c 00 2b 2b 1d 1e 00 36  36 36 03 02 90 78 78 00 
+0110  00 01 48 19 01 19 01 09  48 78 01 78 05 01 40 03 
+0120  02 23 19 04 00 04 02 19  19 08 00 0d 0c 00 00 01 
+0130  00 00 90 36 36 36 03 02  50 78 78 00 00 01 84 19 
+0140  01 19 01 09 88 78 01 78  05 01 40 03 02 23 19 04 
+0150  00 04 02 19 19 08 00 0d  0c 00 00 01 88 36 36 36 
+0160  03 02 90 78 78 00 00 01  84 19 01 19 01 09 84 78 
+0170  01 78 05 01 8c 03 02 23  19 04 8c 04 02 19 19 08 
+0180  f0 0d 0c 00 00 01 90 36  36 36 03 02 50 78 78 00 
+0190  00 01 84 19 01 19 01 09  88 78 01 78 05 01 40 03 
+01a0  02 23 19 04 00 04 02 19  19 08 00 0d 0c 00 00 01 
+01b0  90 36 36 36 03 02 60 78  78 00 00 01 84 19 01 19 
+01c0  01 09 84 78 01 78 05 01  40 03 02 23 19 04 00 04 
+01d0  02 19 19 08 00 0d 0c 00  00 01 ff ff ff ff ff ff 
+01e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+01f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+05 = 5C
+
+0200  3c 00 2b 2b 1c 1e 00 34  34 34 03 02 90 78 78 00 
+0210  00 01 48 14 01 14 01 09  48 78 01 78 05 01 40 03 
+0220  02 23 19 04 00 04 02 19  19 08 00 0b 0c 00 00 01 
+0230  00 00 90 34 34 34 03 02  50 78 78 00 00 01 84 14 
+0240  01 14 01 09 88 78 01 78  05 01 40 03 02 23 19 04 
+0250  00 04 02 19 19 08 00 0b  0c 00 00 01 88 34 34 34 
+0260  03 02 90 78 78 00 00 01  84 14 01 14 01 09 84 78 
+0270  01 78 05 01 8c 03 02 23  19 04 8c 04 02 19 19 08 
+0280  f0 0b 0c 00 00 01 90 34  34 34 03 02 50 78 78 00 
+0290  00 01 84 14 01 14 01 09  88 78 01 78 05 01 40 03 
+02a0  02 23 19 04 00 04 02 19  19 08 00 0b 0c 00 00 01 
+02b0  90 34 34 34 03 02 60 78  78 00 00 01 84 14 01 14 
+02c0  01 09 84 78 01 78 05 01  40 03 02 23 19 04 00 04 
+02d0  02 19 19 08 00 0b 0c 00  00 01 ff ff ff ff ff ff 
+02e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+02f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+0A = 10C
+
+0300  3c 00 2b 2b 18 1e 00 67  67 67 03 01 90 64 64 00 
+0310  00 01 48 14 01 14 01 09  48 64 01 64 05 01 40 02 
+0320  02 23 16 05 00 04 02 19  14 08 00 0a 0a 00 00 01 
+0330  00 00 90 67 67 67 03 01  50 64 64 00 00 01 84 14 
+0340  01 14 01 09 88 64 01 64  05 01 40 02 02 23 16 05 
+0350  00 04 02 19 14 08 00 0a  0a 00 00 01 88 67 67 67 
+0360  03 01 90 64 64 00 00 01  84 14 01 14 01 09 84 64 
+0370  01 64 05 01 8c 02 02 23  16 05 8c 04 02 19 14 08 
+0380  f0 0a 09 00 00 01 90 67  67 67 03 01 50 64 64 00 
+0390  00 01 84 14 01 14 01 09  88 64 01 64 05 01 40 02 
+03a0  02 23 16 05 00 04 02 19  14 08 00 0a 0a 00 00 01 
+03b0  90 67 67 67 03 01 60 64  64 00 00 01 84 14 01 14 
+03c0  01 09 84 64 01 64 05 01  40 02 02 23 16 05 00 04 
+03d0  02 19 14 08 00 0a 0a 00  00 01 ff ff ff ff ff ff 
+03e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+03f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+0F = 15C
+
+0400  3a 00 2b 2b 14 1e 00 59  59 59 08 01 00 0f 0f 01 
+0410  00 07 84 14 01 14 01 08  00 0f 01 0f 03 07 40 03 
+0420  01 23 0f 04 00 04 01 1e  0f 08 00 0b 01 0b 08 01 
+0430  00 00 90 59 59 59 08 01  40 0f 0f 01 00 07 48 14 
+0440  01 14 01 08 80 0f 01 0f  03 07 40 03 01 23 0f 04 
+0450  00 04 01 1e 0f 08 00 0b  01 0b 08 01 88 59 59 59 
+0460  08 01 80 0f 0f 01 00 07  48 14 01 14 01 08 04 0f 
+0470  01 0f 03 07 8c 03 01 23  0f 04 8c 04 01 1e 0f 08 
+0480  cc 0b 01 0b 08 01 90 59  59 59 08 01 40 0f 0f 01 
+0490  00 07 48 14 01 14 01 08  80 0f 01 0f 03 07 40 03 
+04a0  01 23 0f 04 00 04 01 1e  0f 08 00 0b 01 0b 08 01 
+04b0  92 59 59 59 08 01 20 0f  0f 01 00 07 48 14 01 14 
+04c0  01 08 04 0f 01 0f 03 07  40 03 01 23 0f 04 00 04 
+04d0  01 1e 0f 08 01 0b 01 0b  08 01 ff ff ff ff ff ff 
+04e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+04f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+14 = 20C
+
+0500  3a 00 2b 2b 11 1e 00 37  37 37 08 01 00 0c 0c 01 
+0510  00 07 84 11 01 11 01 08  00 0c 01 0c 02 07 00 04 
+0520  02 18 0c 06 00 03 02 14  0c 08 00 0b 0b 01 08 01 
+0530  00 00 90 37 37 37 08 01  40 0c 0c 01 00 07 48 11 
+0540  01 11 01 08 80 0c 01 0c  02 07 00 04 02 18 0c 06 
+0550  00 03 02 14 0c 08 00 0b  0b 01 08 01 88 37 37 37 
+0560  08 01 80 0c 0c 01 00 07  48 11 01 11 01 08 06 0c 
+0570  01 0c 02 07 8c 04 02 18  0c 06 8c 03 02 14 0c 08 
+0580  f0 0b 0b 01 08 01 90 37  37 37 08 01 40 0c 0c 01 
+0590  00 07 48 11 01 11 01 08  80 0c 01 0c 02 07 00 04 
+05a0  02 18 0c 06 00 03 02 14  0c 08 00 0b 0b 01 08 01 
+05b0  92 37 37 37 08 01 20 0c  0c 01 00 07 48 11 01 11 
+05c0  01 08 04 0c 01 0c 02 07  00 04 02 18 0c 06 00 03 
+05d0  02 14 0c 08 01 0b 0b 01  08 01 ff ff ff ff ff ff 
+05e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+05f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+19 = 25C
+
+0600  3a 00 2b 2b 11 1e 00 37  37 37 08 01 00 0c 0c 01 
+0610  00 07 84 11 01 11 01 08  00 0c 01 0c 02 07 00 04 
+0620  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+0630  00 00 90 37 37 37 08 01  40 0c 0c 01 00 07 48 11 
+0640  01 11 01 08 80 0c 01 0c  02 07 00 04 02 18 08 06 
+0650  00 03 02 14 08 08 00 0b  0b 01 08 01 88 37 37 37 
+0660  08 01 80 0c 0c 01 00 07  48 11 01 11 01 08 06 0c 
+0670  01 0c 02 07 8c 04 02 18  08 06 8c 03 02 14 08 08 
+0680  f0 0b 0b 01 08 01 90 37  37 37 08 01 40 0c 0c 01 
+0690  00 07 48 11 01 11 01 08  80 0c 01 0c 02 07 00 04 
+06a0  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+06b0  92 37 37 37 08 01 20 0c  0c 01 00 07 48 11 01 11 
+06c0  01 08 04 0c 01 0c 02 07  00 04 02 18 08 06 00 03 
+06d0  02 14 08 08 01 0b 0b 01  08 01 ff ff ff ff ff ff 
+06e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+06f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+1E = 30C
+
+0700  3a 00 2b 2b 11 1e 00 37  37 37 08 01 00 0c 0c 01 
+0710  00 07 84 10 01 10 01 08  00 0c 01 0c 02 07 00 04 
+0720  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+0730  00 00 90 37 37 37 08 01  40 0c 0c 01 00 07 48 10 
+0740  01 10 01 08 80 0c 01 0c  02 07 00 04 02 18 08 06 
+0750  00 03 02 14 08 08 00 0b  0b 01 08 01 88 37 37 37 
+0760  08 01 80 0c 0c 01 00 07  48 10 01 10 01 08 06 0c 
+0770  01 0c 02 07 8c 04 02 18  08 06 8c 03 02 14 08 08 
+0780  f0 0b 0b 01 08 01 90 37  37 37 08 01 40 0c 0c 01 
+0790  00 07 48 10 01 10 01 08  80 0c 01 0c 02 07 00 04 
+07a0  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+07b0  92 37 37 37 08 01 20 0c  0c 01 00 07 48 10 01 10 
+07c0  01 08 04 0c 01 0c 02 07  00 04 02 18 08 06 00 03 
+07d0  02 14 08 08 01 0b 0b 01  08 01 ff ff ff ff ff ff 
+07e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+07f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+23 = 35C
+
+0800  3a 00 2b 2b 11 1e 00 37  37 37 08 01 00 0c 0c 01 
+0810  00 07 84 0f 01 0f 01 08  00 0c 01 0c 02 07 00 04 
+0820  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+0830  00 00 90 37 37 37 08 01  40 0c 0c 01 00 07 48 0f 
+0840  01 0f 01 08 80 0c 01 0c  02 07 00 04 02 18 08 06 
+0850  00 03 02 14 08 08 00 0b  0b 01 08 01 88 37 37 37 
+0860  08 01 80 0c 0c 01 00 07  48 0f 01 0f 01 08 06 0c 
+0870  01 0c 02 07 8c 04 02 18  08 06 8c 03 02 14 08 08 
+0880  f0 0b 0b 01 08 01 90 37  37 37 08 01 40 0c 0c 01 
+0890  00 07 48 0f 01 0f 01 08  80 0c 01 0c 02 07 00 04 
+08a0  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+08b0  92 37 37 37 08 01 20 0c  0c 01 00 07 48 0f 01 0f 
+08c0  01 08 04 0c 01 0c 02 07  00 04 02 18 08 06 00 03 
+08d0  02 14 08 08 01 0b 0b 01  08 01 ff ff ff ff ff ff 
+08e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+08f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+28 = 40C
+
+0900  3a 00 2b 2b 11 1e 00 37  37 37 08 01 00 0c 0c 01 
+0910  00 07 84 0f 01 0f 01 08  00 0c 01 0c 02 07 00 04 
+0920  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+0930  00 00 90 37 37 37 08 01  40 0c 0c 01 00 07 48 0f 
+0940  01 0f 01 08 80 0c 01 0c  02 07 00 04 02 18 08 06 
+0950  00 03 02 14 08 08 00 0b  0b 01 08 01 88 37 37 37 
+0960  08 01 80 0c 0c 01 00 07  48 0f 01 0f 01 08 06 0c 
+0970  01 0c 02 07 8c 04 02 18  08 06 8c 03 02 14 08 08 
+0980  f0 0b 0b 01 08 01 90 37  37 37 08 01 40 0c 0c 01 
+0990  00 07 48 0f 01 0f 01 08  80 0c 01 0c 02 07 00 04 
+09a0  02 18 08 06 00 03 02 14  08 08 00 0b 0b 01 08 01 
+09b0  92 37 37 37 08 01 20 0c  0c 01 00 07 48 0f 01 0f 
+09c0  01 08 04 0c 01 0c 02 07  00 04 02 18 08 06 00 03 
+09d0  02 14 08 08 01 0b 0b 01  08 01 ff ff ff ff ff ff 
+09e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+09f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+
+
+
+
+
+
+
+
+
+
+
+0a00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0a90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0aa0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ab0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ac0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ad0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ae0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0af0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0b90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ba0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0bb0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0bc0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0bd0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0be0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0bf0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0c90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ca0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0cb0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0cc0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0cd0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ce0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0cf0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0d90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0da0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0db0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0dc0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0dd0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0de0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0df0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0e90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ea0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0eb0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ec0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ed0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ee0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ef0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f10  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f20  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f30  7f 7f ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f40  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f50  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f60  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f70  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f80  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0f90  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0fa0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0fb0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0fc0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0fd0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0fe0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 
+0ff0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff 

@@ -116,7 +116,7 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 void epaperUpdate() {
   wdt_reset();
   ePaper.eraseDisplay();
-  ePaper.setRotation(1); //90 degrees 
+  ePaper.setRotation(EPD_ROTATION); //90 degrees 
   
   tb.render(ePaper, diskfont, displayPage);
   
@@ -131,24 +131,30 @@ void epaperUpdate() {
 
 void epaperDisplayImage() {
   if (epd_image == NULL) return;
+
+  int image_size_x = 264;
+  int image_size_y = 176;
+
+  int image_offset_x = (PANEL_SIZE_X - image_size_x) / 2;
+  int image_offset_y = (PANEL_SIZE_Y - image_size_y) / 2;
   
   wdt_reset();
-  ePaper.setRotation(0); //90 degrees       
+  ePaper.setRotation(EPD_ROTATION == 1 ? 0 : 3); //These pictures are pre-rotated 90 degrees, for use on the 2.7 in display, byte order of which is portrait mode
   ePaper.eraseDisplay();
-  if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, 0, 0, PANEL_SIZE_Y, PANEL_SIZE_X, GxEPD_BLACK, GxEPD::bm_transparent); 
-  if (epd_image->bitmap_red   != NULL) ePaper.drawBitmap(epd_image->bitmap_red,   0, 0, PANEL_SIZE_Y, PANEL_SIZE_X, GxEPD_RED,   GxEPD::bm_transparent); 
+  if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_BLACK, GxEPD::bm_transparent); 
+  if (epd_image->bitmap_red   != NULL) ePaper.drawBitmap(epd_image->bitmap_red,   image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_RED,   GxEPD::bm_transparent); 
 
   if (epaper_messagetext != "") {
     //int strwidth = diskfont.GetTextWidth(epaper_messagetext);
-    ePaper.setRotation(1); //90 degrees       
+    ePaper.setRotation(EPD_ROTATION); //90 degrees       
     //diskfont.DrawStringAt(PANEL_SIZE_X - strwidth, 0, epaper_messagetext, ePaper, epaper_messagetext_color, false);
 
     ePaper.setFont(&FreeMonoBold9pt7b);
 
     int strend = 0;
     int strstart = 0;
-    int cursor_x = 0;
-    int cursor_y = 10;
+    int cursor_x = image_offset_x + 0;
+    int cursor_y = image_offset_y + 12;
     String substr = "";
 
     String charheightstr = "Ag";

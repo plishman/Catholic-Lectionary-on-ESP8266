@@ -760,7 +760,7 @@ String Temporale::ferial_temporale(time64_t date) {
 			_day.replace("%{day}", _ordinalizer->ordinalize(dayofmonth(date) - dayofmonth(nativity(Temporale::year(date))) + 1));
 			bIsSet = true;
 		}
-		else if (date > epiphany(Temporale::year(date))) {
+		else if (date > epiphany(Temporale::liturgical_year(date))) {
 			_day = _I18n->get("temporale.christmas.after_epiphany.ferial");
 			_day.replace("%{weekday}", weekday);
 			bIsSet = true;

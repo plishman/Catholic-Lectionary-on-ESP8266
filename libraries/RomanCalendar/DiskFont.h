@@ -10,11 +10,16 @@
 #define FS_NO_GLOBALS
 #include <FS.h>
 #include <math.h>
-//#include <epd2in7b.h>
-//#include <epdpaint.h>
 
-#include <GxEPD.h>
-#include <GxGDEW027C44/GxGDEW027C44.h>      // 7.5" b/w  640x384 GxGDEW075T8/GxGDEW075T8.cpp  // 2.7" color 176x264 GxGDEW027C44/GxGDEW027C44.cpp
+#ifdef EPAPER_GxGDEW027C44
+	#include <GxEPD.h>
+	#include <GxGDEW027C44/GxGDEW027C44.h>      // 2.7" b/w/r 176x264 GxGDEW027C44/GxGDEW027C44.cpp
+#endif
+
+#ifdef EPAPER_GxGDEW042Z15
+	#include <GxEPD.h>
+	#include <GxGDEW042Z15/GxGDEW042Z15.h>      // 4.2" b/w/r
+#endif
 
 #include <utf8string.h>
 #include <ArabicLigaturizer.h>

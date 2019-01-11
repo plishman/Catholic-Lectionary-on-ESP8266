@@ -228,7 +228,7 @@ uint8_t GxGDEW027C44::lut_bw_comp[] =
 };
 
 //R23H    w
-uint8_t GxGDEW027C44::lut_bb_comp[] =
+uint8_t GxGDEW027C44::lut_bb_comp[] =		// should swap these last two (lut_bb_comp <-> lut_wb_comp) ?
 {
 0x90, 0x1A, 0x1A, 0x00, 0x00, 0x00,
 0x40, 0x02, 0x02, 0x00, 0x00, 0x01,
