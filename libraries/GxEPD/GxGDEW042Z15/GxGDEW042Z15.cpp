@@ -140,27 +140,27 @@ const uint8_t GxGDEW042Z15::lut_24_black[] =
 #define LUT_BLACK_C1_7 				0x0A
 #define LUT_BLACK_C2_7 				0x0A
 		
-#define LUT_BLACK_REPS_6 			0x03	//8*3*2 = 48
-#define LUT_BLACK_C1_6 				0x03
-#define LUT_BLACK_C2_6 				0x03
+#define LUT_BLACK_REPS_6 			0x04 //0x03	//8*3*2 = 48
+#define LUT_BLACK_C1_6 				0x03 //0x03
+#define LUT_BLACK_C2_6 				0x03 //0x03
 		
-#define LUT_BLACK_REPS_5 			0x03	//4*3*2 = 24
+#define LUT_BLACK_REPS_5 			0x03 //0x03	//4*3*2 = 24
 #define LUT_BLACK_C1_5 				0x02
 #define LUT_BLACK_C2_5				0x02
 		
-#define LUT_BLACK_REPS_4 			0x03	//2*3*2 = 12
+#define LUT_BLACK_REPS_4 			0x02	//2*3*2 = 12
 #define LUT_BLACK_C1_4 				0x01
 #define LUT_BLACK_C2_4 				0x01
 		
-#define LUT_BLACK_REPS_3 			0x03	//1*3*2 = 6
+#define LUT_BLACK_REPS_3 			0x02	//1*3*2 = 6
 #define LUT_BLACK_C1_3 				0x01
 #define LUT_BLACK_C2_3 				0x01
 		
-#define LUT_BLACK_REPS_2 			0x03	//1*2*2 = 4
+#define LUT_BLACK_REPS_2 			0x02	//1*2*2 = 4
 #define LUT_BLACK_C1_2 				0x01
 #define LUT_BLACK_C2_2 				0x01
 		
-#define LUT_BLACK_REPS_1 			0x03	//1*1*2 = 2
+#define LUT_BLACK_REPS_1 			0x02	//1*1*2 = 2
 #define LUT_BLACK_C1_1 				0x01
 #define LUT_BLACK_C2_1 				0x01
 									// 48+24+12+6+4+2 = 96

@@ -1,9 +1,7 @@
 #include <RCGlobals.h>
 
-//#include <LiquidCrystal.h>
-
 // Catholic Lectionary on ESP
-// Copyright (c) 2017 Philip Lishman, All rights reserved.
+// Copyright (c) 2017-2019 Philip Lishman, Licensed under GPL3, see LICENSE
 
 //extern const int COLORED    = 1;
 //extern const int UNCOLORED  = 0;
