@@ -454,6 +454,9 @@ void loop(void) {
     }
   
     bool right_to_left = c._I18n->configparams.right_to_left;
+    bool verse_per_line = c._I18n->configparams.cr_after_verse;
+    bool show_verse_numbers = c._I18n->configparams.show_verse_numbers;
+    
     Bidi::SetEllipsisText(c._I18n->get("ellipsis"));
 
     /************************************************/ 
@@ -538,11 +541,11 @@ void loop(void) {
             
       /************************************************/ 
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
-      if (!display_calendar(datetime, &c, refs, right_to_left)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
+      if (!display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
         DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
         r=Lectionary::READINGS_G;
         l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
-        display_calendar(datetime, &c, refs, right_to_left);
+        display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers);
       }
     }
     else {
@@ -1023,7 +1026,7 @@ void init_panel() {
 }
 */
 
-bool display_calendar(String date, Calendar* c, String refs, bool right_to_left) {  
+bool display_calendar(String date, Calendar* c, String refs, bool right_to_left, bool verse_per_line, bool show_verse_numbers) {  
   //DiskFont diskfont;
   
   DEBUG_PRT.print(F("Selected font is "));
@@ -1057,7 +1060,7 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left)
 //  refs="John 3:16"; // debugging
 //  refs="2 John 1:1"; // debugging
 
-  if (!display_verses(c, refs, right_to_left)) {
+  if (!display_verses(c, refs, right_to_left, verse_per_line, show_verse_numbers)) {
     DEBUG_PRT.println(F("display_verses returned false"));
     return false;
   }
@@ -1157,7 +1160,10 @@ void display_date(String date, String day, bool right_to_left) {
 //#define FORMAT_DEFAULT String("") // keep whatever formatting is currently selected
 //#define FORMAT_LINEBREAK String("br")
 
-bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
+//bool bVersePerLine = true;
+//bool bShowVerseNumbers = true;
+
+bool display_verses(Calendar* calendar, String refs, bool right_to_left, bool bVersePerLine, bool bShowVerseNumbers) {
 //  bool right_to_left = c->_I18n->configparams.right_to_left;
 
   DEBUG_PRT.print(F("refs from lectionary: "));
@@ -1186,16 +1192,17 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
 
   bool bGotVerses = false; // I found that Psalm 85:14 is missing from the NJB, but not the French version, because in the English version verse 14 is included in verse 13.
                            // If something was found, this flag will be set, so only if nothing was found will the function return false.
+//  bool bShowChapter = false;
 
   while (r != NULL && !bEndOfScreen) {     
     int start_chapter = r->start_chapter;
     int end_chapter = r->end_chapter;
-    int start_verse;
-    int end_verse;
-    String sentence_range;
-    String verse_record;
-    String verse_text;
-    String output;
+    int start_verse = 0;
+    int end_verse = 0;
+    String sentence_range = "";
+    String verse_record = "";
+    String verse_text = "";
+    String output = "";
                            
     for (int c = start_chapter; c <= end_chapter; c++) {
       DEBUG_PRT.printf("\n%d:", c);
@@ -1238,6 +1245,10 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
           DEBUG_PRT.printf("sentence_range=%s, numRecords=%d\n", sentence_range == "" ? "[All]" : sentence_range.c_str(), numRecords);
           verse_text = get_verse(verse_record, &book_name, sentence_range, numRecords);
 
+          if (bShowVerseNumbers) {
+            verse_text = "<i>" + SuperScriptNumber(v) + "</i>" + verse_text;
+          }
+
           if (bDisplayRefs) {
             String refs_i18n = refs;
             int booknum = -1;
@@ -1254,19 +1265,18 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left) {
             }
             
             //if (book_name != "") refs_i18n.replace(b.books_shortnames[r->book_index], book_name);
-            verse_text = "<i>" + refs_i18n + "</i> " + verse_text;
-            
-            //verse_text = "The quick brown fox لنور و jumps over the";// lazy dog. Now is the time for all good men to come to the aid of the party. ";
+            refs_i18n = "<i>" + refs_i18n + "</i>";
+            epd_verse(refs_i18n, &xpos, &ypos, &bEmphasis_On, right_to_left, true);
 
             DEBUG_PRT.printf("refs_i18n = %s\n", refs_i18n.c_str());
-            //format_state = FORMAT_EMPHASIS_ON;
-            //bEndOfScreen = epd_verse(refs_i18n, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
             bDisplayRefs = false;
-            //format_state = FORMAT_EMPHASIS_OFF;
+            verse_text = " " + verse_text;
           }
-          //
-          //bEndOfScreen = epd_verse(String(v), paint_red, &xpos, &ypos, font); // returns false if at end of screen
-          //bEndOfScreen = epd_verse(verse_text, paint_black, paint_red, &xpos, &ypos, font, diskfont, &format_state, right_to_left); // returns false if at end of screen
+
+          if (bVersePerLine) {
+            verse_text = verse_text + "<br>";
+          }        
+
           bEndOfScreen = epd_verse(verse_text, &xpos, &ypos, &bEmphasis_On, right_to_left, (v != end_verse)); // returns false if at end of screen
           DEBUG_PRT.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
           DEBUG_PRT.println();

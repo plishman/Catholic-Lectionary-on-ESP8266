@@ -659,16 +659,22 @@ bool Bidi::RenderText(String s,
 			if (bInsertEllipsis && Bidi::strEllipsis.length() > 0) {
 				// insert the ellipsis at the current xpos, ypos
 				tb.add(*xpos, *ypos, Bidi::strEllipsis, GxEPD_BLACK, render_right_to_left, bRTLrender, diskfont);		
-				
 				*xpos += ellipsiswidth;
 			}
 		}
 
 		if (bLineBreak) {
 			if (wrap_text) {
-				DEBUG_PRT.println("[linebreak]");
-				*ypos += diskfont._FontHeader.charheight * 2;
-				*xpos = 0;
+				if (!bLastLine) {
+					DEBUG_PRT.println("[linebreak]");
+					*ypos += diskfont._FontHeader.charheight; // * 2;
+					*xpos = 0;
+				}
+				else if (Bidi::strEllipsis.length() > 0){
+					tb.add(*xpos, *ypos, Bidi::strEllipsis, GxEPD_BLACK, render_right_to_left, bRTLrender, diskfont);		
+					*ypos += diskfont._FontHeader.charheight; // * 2;		// this will ensure that the next line overflows the display, so ending output
+					*xpos = 0;
+				}
 			}
 			else {
 				return true; // overflowed line

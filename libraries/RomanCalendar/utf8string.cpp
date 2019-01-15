@@ -602,3 +602,17 @@ byte getBidiDirection(uint16_t uch) {
 byte getBidiDirection(String ch) {
 	return getBidiDirection((uint16_t)codepointUtf8(ch));
 }
+
+String SuperScriptNumber(int v) {
+	uint16_t ucsuperscriptnumbers[10] = {0x2070, 0x00b9, 0x00b2, 0x00b3, 0x2074, 0x2075, 0x2076, 0x2077, 0x2078, 0x2079};
+	
+	String ssnum = "";
+	
+	while (v > 0) {
+		String ssd = utf8fromCodepoint(uint32_t(ucsuperscriptnumbers[v % 10])); 
+		ssnum = ssd + ssnum;
+		v = v / 10;
+	}
+	
+	return ssnum;
+}

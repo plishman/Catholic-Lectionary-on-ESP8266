@@ -97,4 +97,6 @@ uint16_t baseTypes[];
 
 byte getBidiDirection(uint16_t uch);
 byte getBidiDirection(String ch);
+
+String SuperScriptNumber(int v);
 #endif

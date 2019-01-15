@@ -40,6 +40,8 @@ public:
 	bool font_use_fixed_spacecharwidth = false;
 	int font_fixed_spacing = 1;
 	int font_fixed_spacecharwidth = 2;
+	bool cr_after_verse = false;
+	bool show_verse_numbers = false;
 	
 	void Clear();	
 	void Dump();

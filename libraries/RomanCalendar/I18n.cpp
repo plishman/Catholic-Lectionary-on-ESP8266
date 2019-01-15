@@ -20,6 +20,8 @@ void ConfigParams::Clear() {
 	font_use_fixed_spacecharwidth = false;
 	font_fixed_spacing = 1;
 	font_fixed_spacecharwidth = 2;		
+	cr_after_verse = false;
+	show_verse_numbers = false;
 }
 
 void ConfigParams::Dump() {
@@ -52,6 +54,9 @@ void ConfigParams::Dump() {
 	else {
 		DEBUG_PRT.println(F("No (If not using builtin font, will use space character advanceWidth and percent tuning value instead)"));				
 	}
+	
+	DEBUG_PRT.print(F("\t<cr> after verse=")); 							DEBUG_PRT.println(String(cr_after_verse));
+	DEBUG_PRT.print(F("\tshow verse numbers=")); 						DEBUG_PRT.println(String(show_verse_numbers));
 }
 
 ConfigParams::ConfigParams() {};
@@ -73,7 +78,10 @@ ConfigParams::ConfigParams(const ConfigParams &p2) {
 	font_use_fixed_spacing = p2.font_use_fixed_spacing;
 	font_use_fixed_spacecharwidth = p2.font_use_fixed_spacecharwidth;
 	font_fixed_spacing = p2.font_fixed_spacing;
-	font_fixed_spacecharwidth = p2.font_fixed_spacecharwidth;		
+	font_fixed_spacecharwidth = p2.font_fixed_spacecharwidth;
+	cr_after_verse = p2.cr_after_verse;
+	show_verse_numbers = p2.show_verse_numbers;
+	
 }
 ///////
 
@@ -218,6 +226,9 @@ bool I18n::get_config( void ) {
 	String s_celebrate_feast_of_christ_priest = "";
 	String s_right_to_left = "";
 	String s_font_tuning = "";
+	
+	String s_cr_after_verse = "";
+	String s_show_verse_numbers = "";
 /*
 	bool transfer_to_sunday = false;
 	bool celebrate_feast_of_christ_priest = false;
@@ -284,7 +295,12 @@ bool I18n::get_config( void ) {
 		else {
 			c.font_tuning_percent = (double)s_font_tuning.toFloat();
 		}
-				
+
+		s_cr_after_verse = csv.getCsvField(csv_record, &pos);
+		c.cr_after_verse = ((s_cr_after_verse.indexOf("true") != -1) || s_cr_after_verse == "1");		
+		s_show_verse_numbers = csv.getCsvField(csv_record, &pos);
+		c.show_verse_numbers = ((s_show_verse_numbers.indexOf("true") != -1) || s_show_verse_numbers == "1");		
+		
 		if (_lectionary_config_number == i) {
 			c.Dump();
 			bFoundSelection = true;
