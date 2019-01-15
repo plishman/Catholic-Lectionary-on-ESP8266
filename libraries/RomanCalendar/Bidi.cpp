@@ -665,12 +665,12 @@ bool Bidi::RenderText(String s,
 
 		if (bLineBreak) {
 			if (wrap_text) {
-				if (!bLastLine) {
+				if (!bLastLine) { 
 					DEBUG_PRT.println("[linebreak]");
 					*ypos += diskfont._FontHeader.charheight; // * 2;
 					*xpos = 0;
 				}
-				else if (Bidi::strEllipsis.length() > 0){
+				else if (!bInsertEllipsis && Bidi::strEllipsis.length() > 0){ // if bInsertEllipsis is true, then have already inserted the ellipsis, no need to to it twice
 					tb.add(*xpos, *ypos, Bidi::strEllipsis, GxEPD_BLACK, render_right_to_left, bRTLrender, diskfont);		
 					*ypos += diskfont._FontHeader.charheight; // * 2;		// this will ensure that the next line overflows the display, so ending output
 					*xpos = 0;
