@@ -36,7 +36,7 @@ The current case design is at https://www.tinkercad.com/things/h8xbfqkVT7G
 
 As well as the other Arduino libraries, this project uses the following libraries:
 <ul>
-  <li>GxEPD - https://github.com/ZinggJM/GxEPD</li>
+  <li>GxEPD - https://github.com/ZinggJM/GxEPD (modified for 3bpp - 7 grey/red levels, plus white)</li>
   <li>Adafruit GFX - https://travis-ci.org/adafruit/Adafruit-GFX-Library</li>
   <li>brzo_i2c - https://github.com/pasko-zh/brzo_i2c</li>
   <li>LinkedList - https://github.com/ivanseidel/LinkedList</li>
