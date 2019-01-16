@@ -115,7 +115,7 @@ bool BibleVerse::get(int book, int chapter, int verse, String* verse_text, int* 
 	
 	String fileOffsetStr;
 	
-	Serial.print("Opening verse offset table... ");
+	DEBUG_PRT.print("Opening verse offset table... ");
 	EDB_Status result = EDB_OK;
 	
 	result = ::db.open(0);

@@ -432,6 +432,10 @@ void display_image(DISPLAY_UPDATE_TYPE d, String messagetext, bool bMessageRed) 
 
 void loop(void) { 
   /************************************************/ 
+  // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+  config_server();  // config server will run if battery power is connected
+  
+  /************************************************/ 
   // *1* Create calendar object and load config.csv
   wdt_reset();
 
@@ -600,6 +604,7 @@ void loop(void) {
   
   /************************************************/ 
   // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+/*
   DEBUG_PRT.println(F("*7*\n"));
   //timeserver.gps_sleep();
 
@@ -672,17 +677,82 @@ void loop(void) {
     DEBUG_PRT.print(F("Battery voltage is "));
     DEBUG_PRT.println(String(Battery::battery_voltage()));
   }
-
+*/
   /************************************************/ 
   // *8* completed all tasks, go to sleep
   DEBUG_PRT.println(F("*8*\n"));
   
   DEBUG_PRT.println(F("Going to sleep"));
-  //ESP.deepSleep(SLEEP_HOUR); //1 hour
   SleepForHours(next_wake_hours_count);
-  //SleepUntilStartOfHour();
 }
 
+void config_server()
+{
+  // Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+  DEBUG_PRT.println(F("*0*\n"));
+
+  if (!bDisplayWifiConnectedScreen) return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
+
+  if (!bEEPROM_checksum_good) {
+    if (Battery::power_connected() && bNetworkAvailable) {
+      display_image(clock_not_set, Network::getDHCPAddressAsString(), true);
+    } else {
+      display_image(connect_power);
+    }
+  }
+
+  bool bSettingsUpdated = false;
+
+  if (!bNetworkAvailable && Battery::power_connected()) {
+    DEBUG_PRT.println(F("On USB power, but Network is not available - disconnect and reconnect power to use WPS setup"));
+  }
+
+  if (Battery::power_connected() && bNetworkAvailable) {
+    DEBUG_PRT.println(F("Power is connected, starting config web server"));
+    DEBUG_PRT.print(F("USB voltage is "));
+    DEBUG_PRT.println(String(Battery::battery_voltage()));
+
+    // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
+    //if (!network.connect()) {
+    //  DEBUG_PRT.println("Network is not configured, starting WPS setup");
+    //  connect_wps();
+    //  ESP.reset();
+    //}
+    
+    DEBUG_PRT.print(F("free memory = "));
+    DEBUG_PRT.println(String(system_get_free_heap_size()));
+
+    unsigned long server_start_time = millis();
+    bool bTimeUp = false;
+   
+    if (Config::StartServer()) {
+      DEBUG_PRT.println(F("Config web server started, listening for requests..."));
+      while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
+        server.handleClient();
+        wdt_reset();
+        delay(1000);
+        //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
+        if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
+      }
+
+      Config::StopServer();
+
+      if (Config::bSettingsUpdated) {
+        DEBUG_PRT.println(F("Settings updated, resetting lectionary..."));
+        ESP.deepSleep(1e6); //reboot after 1 second
+      }
+      else if (bTimeUp) {
+        DEBUG_PRT.println(F("Server timed out, stopping web server and displaying reading"));
+        //ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
+        //SleepForHours(next_wake_hours_count);
+        //SleepUntilStartOfHour();
+      }
+      else {
+        DEBUG_PRT.println(F("Power disconnected, stopping web server and displaying reading"));
+      }
+    }
+  }
+}
 void roundupdatetohour(time64_t& date) {
   tmElements_t ts;
   breakTime(date, ts);

@@ -220,17 +220,26 @@ void Bidi::GetString(String s,
 	int pos_start_spaceordot_start = -1;	// saves start and end pos of runs of dots and/or spaces, which attach to the word ahead or behind, depending on the reading order
 	int pos_start_spaceordot_end = -1;
 	
+	bool bLineBreakTagFound = false;
+	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
 	while (  (pos < s.length()) 	 			 				// keep doing the following while: not at end of string
 		  && (dcurrwidth < dmaxwidth || !wrap_text)  		    // and the width of the string in pixels doesn't exceed the remaining space, (or if text is not being wrapped)
-		  && (!*bLineBreak) 									// and an linebreak tag has not been fount
+		  /*&& (!*bLineBreak)*/ 									// and an linebreak tag has not been fount
+		  && !bLineBreakTagFound
 		  && (bCurrCharRightToLeft == bLookingForRightToLeft)	// and the reading direction hasn't changed
 		  && (!(bOneWordOnly && wordcount == 1))  )				    // and fewer than 1 word has been processed if the bOneWordOnly flag is set			
 	{				
 		
-		if (ExpectLineBreakTag(s, &pos)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
-			*bLineBreak = true;
+		int curpos = pos;
+		if (ExpectLineBreakTag(s, &curpos)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
+			//*bLineBreak = true;
+			bLineBreakTagFound = true;
 			DEBUG_PRT.println(F("found linebreak tag-"));			
+			lastwordendstrpos = pos; // save this position as it is a word boundary
+			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
+
+			wordcount++;
 			continue;
 		}
 

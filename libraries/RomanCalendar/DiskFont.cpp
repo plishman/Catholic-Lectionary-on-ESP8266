@@ -814,6 +814,7 @@ void DiskFont::StripTags(String& text) {
 	text.replace("</I>", "");
 	text.replace("<BR>", "");
 	text.replace("<BR/>", "");	
+
 }
 
 /**
