@@ -5,6 +5,35 @@
 	
 //Bidi::Bidi() {
 //}
+
+bool Bidi::IsSpace(String ch) {
+	uint32_t code = codepointUtf8(ch);
+	
+	switch(code)
+	{
+		case 0x0020:
+		case 0x1680:
+		case 0x2000:
+		case 0x2001:
+		case 0x2002:
+		case 0x2003:
+		case 0x2004:
+		case 0x2005:
+		case 0x2006:
+		case 0x2007:
+		case 0x2008:
+		case 0x2009:
+		case 0x200A:
+		case 0x3000:
+			return true;
+		
+		default:
+			return false;
+	}
+	
+	return false;
+}
+
 	
 bool Bidi::ExpectRTL(String s, int* pos) {
 	String ch = utf8CharAt(s, *pos);
@@ -286,6 +315,18 @@ void Bidi::GetString(String s,
 		DEBUG_PRT.printf("%s", ch.c_str());
 	}
 
+	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
+		if (!ExpectLineBreakTag(s, &pos)) {
+			DEBUG_PRT.print("GetString() Newline: dcurrwidth=%d dmaxwidth=%d\n"); 
+			DEBUG_PRT.println("dcurrwidth=" + String((int)dcurrwidth) + " dmaxwidth=" + String((int)dmaxwidth));
+			*bNewLine = true;		 // *startstrpos and *endstrpos).
+		}
+		else {
+			DEBUG_PRT.print("GetString() Newline at end of line being suppressed, as it is followed immediately by a linebreak tag: ");
+			DEBUG_PRT.println("dcurrwidth=" + String((int)dcurrwidth) + " dmaxwidth=" + String((int)dmaxwidth));
+		}
+	}
+	
 	DEBUG_PRT.printf("GetString() *startstrpos = %d, *endstrpos = %d, lastwordendstrpos = %d\n", *startstrpos, *endstrpos, lastwordendstrpos);
 	
 	if (wrap_text) {
@@ -300,11 +341,6 @@ void Bidi::GetString(String s,
 	else {
 		*endstrpos = pos;	// make the end pos the index of the last character of the last whole word scanned that fitted on the line
 		*textwidth = (int)dcurrwidth;	// make the width of the text to be rendered the width of the whole line up to and including the last whole word scanned which fitted on the line		
-	}
-
-	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
-		DEBUG_PRT.printf("GetString() Newline: dcurrwidth=%d dmaxwidth=%d\n", (int)dcurrwidth, (int)dmaxwidth);
-		*bNewLine = true;		 // *startstrpos and *endstrpos).
 	}
 
 	//DEBUG_PRT.printf("GetString() %d words processed\n", wordcount);
@@ -555,7 +591,7 @@ bool Bidi::RenderText(String s,
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	bool bDirectionChanged = true; // at the start of the string, want to force GetString to check which direction the text is reading, otherwise inherit it from the preceding text
 	
-	int font_ascent = (int)diskfont._FontHeader.ascent;
+	int font_ascent = (int)diskfont._FontHeader.ascent; //**** BUG - will not work with new diskfonts PLL 03-02-2019
 	
 	bool bLastLine = false;
 	int currfbwidth = fbwidth;

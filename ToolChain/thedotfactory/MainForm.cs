@@ -12,16 +12,25 @@
  * with The Dot Factory. If not, see http://www.gnu.org/licenses/.
  */
 
+using FontLibrary;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using System.Windows.Forms.Integration;
+using System.Windows.Documents;
 
 namespace TheDotFactory
 {
@@ -50,11 +59,14 @@ namespace TheDotFactory
         public class FontInfo
         {
             public int charHeight;
-            public char startChar;
-            public char endChar;
+            public int startChar;   //utf-32
+            public int endChar;     //utf-32
             public CharacterGenerationInfo[] characters;
             public Font font;
-            public string generatedChars;
+            //public string generatedChars;
+            public SortedList<int, string> generatedChars;
+            public Typeface typeface;
+            public double fontsize;
         }
 
         // to allow mapping string/value
@@ -94,7 +106,7 @@ namespace TheDotFactory
             public FontInfo fontInfo;
 
             // the character
-            public char character;
+            public int character; // utf-32 format
 
             // the original bitmap
             public Bitmap bitmapOriginal;
@@ -119,14 +131,14 @@ namespace TheDotFactory
             // characters
             public ArrayList characters;
 
-            public char startchar;
-            public char endchar;
+            public int startchar;   // utf-32
+            public int endchar;     // utf-32
 
             // holds a range of chars
             public class Character
             {
                 public FontInfo font;
-                public char character;
+                public int character; // utf-32
                 public int height;
                 public int width;
                 public int offset;
@@ -145,7 +157,8 @@ namespace TheDotFactory
         ComboBoxItem CbxCharacterRange;
         string characterrange = "";
 
-        private Font g_font = null;
+        //private Font g_font = null;
+        //private FontGlyphSet g_fontGlyphSet = null;
 
         public MainForm()
         {
@@ -160,57 +173,82 @@ namespace TheDotFactory
             CbxCharacterRange = new ComboBoxItem("Utf8 Character Range", characterrange);
         }
 
-        public bool IsCharPresentInFont(int charindex)
+        //        public void RemoveNonGlyphsFromString(ref SortedList<int, string> characterList)
+        //        {
+        //            SortedList<int, string> characterListCleaned;
+        //
+        //            if (g_fontGlyphSet != null)
+        //            {
+        //                // Remove non-printable characters from "myString"
+        //                for (int i = 0; )
+        //
+        //                s = g_fontGlyphSet.RemoveAbsent(s);
+        //            }
+        //        }
+
+        /*
+                public bool IsCharPresentInFont(int charindex)
+                {
+                    //try
+                    //{
+                    if (g_font == null) return false;
+
+                    string fontname = g_font.Name;
+
+                    if (g_font.Bold) fontname += " Bold";
+                    if (g_font.Italic) fontname += " Italic";
+
+                    Typeface typeface = new Typeface(fontname);
+
+                    //GlyphTypeface glyph;
+                    typeface.TryGetGlyphTypeface(out GlyphTypeface glyph);
+
+                    if (glyph == null) return false;
+
+                    IDictionary<int, ushort> characterMap = glyph.CharacterToGlyphMap;
+
+                    ushort value;
+
+                    bool glyphIsPresent = characterMap.TryGetValue(charindex, out value);
+
+                    return glyphIsPresent;
+                    //}
+
+                    //catch(Exception e)
+                    //{
+                    //   return false;
+                    //}
+                }
+        */
+
+        public bool GetFontAscentAndDescent(ref double ascent, ref double descent, ref double linespacing, ref double baseline)
         {
-            //try
-            //{
-            if (g_font == null) return false;
+            ascent = 1.0;
+            descent = 1.0;
+            linespacing = 1.0;
 
-            string fontname = g_font.Name;
+            double toPixels = (96 / 72) * g_wpf_fontsize;
 
-            if (g_font.Bold) fontname += " Bold";
-            if (g_font.Italic) fontname += " Italic";
+            //linespacing = g_wpf_typeface.FontFamily.LineSpacing;
+            linespacing = g_wpf_typeface.FontFamily.LineSpacing * toPixels;
+            baseline = g_wpf_typeface.FontFamily.Baseline * toPixels;
 
-            Typeface typeface = new Typeface(fontname);
-
-            //GlyphTypeface glyph;
-            typeface.TryGetGlyphTypeface(out GlyphTypeface glyph);
-
-            if (glyph == null) return false;
-
-            IDictionary<int, ushort> characterMap = glyph.CharacterToGlyphMap;
-
-            ushort value;
-
-            bool glyphIsPresent = characterMap.TryGetValue(charindex, out value);
-
-            return glyphIsPresent;
-            //}
-
-            //catch(Exception e)
-            //{
-            //   return false;
-            //}
-        }
-
-        public bool GetFontAscentAndDescent(ref double ascent, ref double descent, ref double linespacing)
-        {
-            if (g_font == null) return false;
-
-            FontStyle f = FontStyle.Regular;
-
-            if (g_font.Bold) f |= FontStyle.Bold;
-            if (g_font.Italic) f |= FontStyle.Italic;
-
-            Graphics g = this.CreateGraphics();
-
-            ascent = g_font.FontFamily.GetCellAscent(f); //* (g.DpiX / 72) * g_font.Size;
-            descent = g_font.FontFamily.GetCellDescent(f); //* (g.DpiX / 72) * g_font.Size;
-            linespacing = g_font.FontFamily.GetLineSpacing(f); //* (g.DpiX / 72) * g_font.Size;
-
-            ascent = g_font.Size * ascent / g_font.FontFamily.GetEmHeight(f);
-            descent = g_font.Size * descent / g_font.FontFamily.GetEmHeight(f);
-            linespacing = g_font.Size * linespacing / g_font.FontFamily.GetEmHeight(f);
+//            if (g_font == null) return false;
+//
+//            System.Drawing.FontStyle f = System.Drawing.FontStyle.Regular;
+//            
+//            if (g_font.Bold) f |= System.Drawing.FontStyle.Bold;
+//            if (g_font.Italic) f |= System.Drawing.FontStyle.Italic;
+//
+//            Graphics g = this.CreateGraphics();
+//
+//            ascent = g_font.FontFamily.GetCellAscent(f); //* (g.DpiX / 72) * g_font.Size;
+//            descent = g_font.FontFamily.GetCellDescent(f); //* (g.DpiX / 72) * g_font.Size;
+//            linespacing = g_font.FontFamily.GetLineSpacing(f); //* (g.DpiX / 72) * g_font.Size;
+//
+//            ascent = g_font.Size * ascent / g_font.FontFamily.GetEmHeight(f);
+//            descent = g_font.Size * descent / g_font.FontFamily.GetEmHeight(f);
+//            linespacing = g_font.Size * linespacing / g_font.FontFamily.GetEmHeight(f);
 
             return true;
         }
@@ -218,49 +256,76 @@ namespace TheDotFactory
 
         public bool GetCharAdvanceWidthAndHeight(int charindex, ref double width, ref double height)
         {
-            if (g_font == null) return false;
+            //if (g_font == null) return false;
 
             try
             {
-                string fontname = g_font.Name;
+                //                string fontname = g_font.Name;
+                //
+                //                if (g_font.Bold) fontname += " Bold";
+                //                if (g_font.Italic) fontname += " Italic";
 
-                if (g_font.Bold) fontname += " Bold";
-                if (g_font.Italic) fontname += " Italic";
-
-                var typeface = new Typeface(fontname);
+                var typeface = g_wpf_typeface; //new Typeface(fontname);
 
                 //new GlyphTypeface(new Uri(fontname));
                 GlyphTypeface glyph;
                 typeface.TryGetGlyphTypeface(out glyph);
 
-                var character = (char)charindex;
-                var charIndex = glyph.CharacterToGlyphMap[character];
+                double w = 0;
+                double h = 0;
+                //double w2 = 0;
+                //double h2 = 0;
 
-                var w = glyph.AdvanceWidths[charIndex];
-                var h = glyph.Height - glyph.TopSideBearings[charIndex]
-                                                - glyph.BottomSideBearings[charIndex];
-                //And then I found the pixel size by
+                if (charindex < 65536)
+                {
+                    var character = (char)charindex;
+                    var glyphIndex = glyph.CharacterToGlyphMap[character];
 
-                double dx, dy;
+                    w = glyph.AdvanceWidths[glyphIndex];
+                    h = glyph.Height - glyph.TopSideBearings[glyphIndex]
+                                                    - glyph.BottomSideBearings[glyphIndex];
 
-                Graphics g = this.CreateGraphics();
-                dx = g.DpiX;
-                dy = g.DpiY;
+                    //getTextAdvance(Char.ConvertFromUtf32(charindex), ref w2, ref h2);
 
-                var widthInEms = w * (g.DpiX / 72) * g_font.Size;
-                var heightInEms = h * (g.DpiY / 72) * g_font.Size;
+                    width = w * (/*g.DpiX*/ 96 / 72) * g_wpf_fontsize; // g_font.Size;
+                    height = h * (/*g.DpiY*/ 96 / 72) * g_wpf_fontsize; // g_font.Size;
+                }
+                else
+                {
+                    getTextAdvance(Char.ConvertFromUtf32(charindex), ref width, ref height);
+                }
 
-                width = widthInEms; // (int)Math.Round(widthInEms);
-                height = heightInEms; // (int)Math.Round(heightInEms);
 
                 return true;
             }
 
             catch (Exception e)
             {
+                System.Windows.Forms.MessageBox.Show(e.Message);
                 return false;
             }
         }
+
+        private void getTextAdvance(string text, ref double width, ref double height)
+        {
+            var formattedText = new FormattedText(
+                text,
+                CultureInfo.CurrentCulture,
+                System.Windows.FlowDirection.LeftToRight,
+                g_wpf_typeface, /*new Typeface(this.textBlock.FontFamily, this.textBlock.FontStyle, this.textBlock.FontWeight, this.textBlock.FontStretch),*/
+                g_wpf_fontsize, /*this.textBlock.FontSize,*/
+                System.Windows.Media.Brushes.Black,
+                1.0
+            );
+
+            width = formattedText.Width;
+            height = formattedText.Extent + formattedText.OverhangAfter; // formattedText.Height + formattedText.OverhangAfter;
+
+            return;
+        }
+
+
+
 
         // force a redraw on size changed
         protected override void OnSizeChanged(EventArgs e)
@@ -270,37 +335,111 @@ namespace TheDotFactory
         }
 
         // update input font
-        private void updateSelectedFont(Font fnt)
+        private void updateSelectedFont(Typeface typeface, double fontsize)
         {
-            g_font = fnt;
+            g_wpf_typeface = typeface;
+            g_wpf_fontsize = fontsize;
 
-            // set text name in the text box
-            txtInputFont.Text = fnt.Name;
+            txtInputFont.Text = getFontDescription(typeface, fontsize);
 
-            // add to text
-            txtInputFont.Text += " " + Math.Round(fnt.Size) + "pts";
-           
-            // check if bold
-            if (fnt.Bold)
-            {
-                // add to text
-                txtInputFont.Text += " / Bold";
-            }
+            txtInputText.TextBoxControl_Typeface = g_wpf_typeface;
+            txtInputText.TextBoxControl_FontSize = g_wpf_fontsize;
 
-            // check if italic
-            if (fnt.Italic)
-            {
-                // add to text
-                txtInputFont.Text += " / Italic";
-            }
+            //setDefaultFont(typeface, fontsize);
+        }
 
-            // set the font in the text box
-            txtInputText.Font = (Font)fnt.Clone();
+        private double PointsToPixels(double value) => value * (96.0 / 72.0);
+        private double PixelsToPoints(double value) => value * (72.0 / 96.0);
 
-            // save into settings
-            Properties.Settings.Default.InputFont = fnt;
+        private string getFontDescription(Typeface t, double size)
+        {
+            string s = "";
+
+            s = String.Format("{0} {1} {2} {3} {4}",
+                                t.FontFamily.Source,
+                                t.Style.ToString(),
+                                t.Weight.ToString(),
+                                t.Stretch.ToString(),
+                                String.Format("{0:0.##}", size));
+
+            return s;
+        }
+
+        private void setDefaultFont(Typeface t, double size)
+        {
+            Properties.Settings.Default.InputFontFamily = t.FontFamily.ToString();
+            Properties.Settings.Default.InputFontStyle = t.Style.ToString();
+            Properties.Settings.Default.InputFontWeight = t.Weight.ToString();
+            Properties.Settings.Default.InputFontStretch = t.Stretch.ToString();
+
+            Properties.Settings.Default.InputFontSize = size;
             Properties.Settings.Default.Save();
         }
+
+        private void getDefaultFont(ref Typeface t, ref double size)
+        {
+            try
+            {
+                var ff = new System.Windows.Media.FontFamily(Properties.Settings.Default.InputFontFamily);
+
+                var fsc = new FontStyleConverter();
+                System.Windows.FontStyle fs = (System.Windows.FontStyle)fsc.ConvertFromString(Properties.Settings.Default.InputFontStyle);
+
+                var fwc = new FontWeightConverter();
+                System.Windows.FontWeight fw = (System.Windows.FontWeight)fwc.ConvertFromString(Properties.Settings.Default.InputFontWeight);
+
+                var ftc = new FontStretchConverter();
+                System.Windows.FontStretch ft = (System.Windows.FontStretch)ftc.ConvertFromString(Properties.Settings.Default.InputFontStretch);
+
+                t = new Typeface(ff, fs, fw, ft);
+                size = Properties.Settings.Default.InputFontSize;
+                size = size == 0 ? 10.0 : size;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                t = new Typeface("Arial");
+                size = 10.0;
+            }
+        }
+
+
+        //        private void updateSelectedFont(Font fnt)
+        //        {
+        //            g_font = fnt;
+        //
+        //            g_fontGlyphSet = new FontGlyphSet(g_font);
+        //            // Enable fast Contains method
+        //            g_fontGlyphSet.IsFastContains = true;
+        //
+        //            // set text name in the text box
+        //            txtInputFont.Text = fnt.Name;
+        //
+        //            // add to text
+        //            txtInputFont.Text += " " + Math.Round(fnt.Size) + "pts";
+        //           
+        //            // check if bold
+        //            if (fnt.Bold)
+        //            {
+        //                // add to text
+        //                txtInputFont.Text += " / Bold";
+        //            }
+        //
+        //            // check if italic
+        //            if (fnt.Italic)
+        //            {
+        //                // add to text
+        //                txtInputFont.Text += " / Italic";
+        //            }
+        //
+        //            // set the font in the text box
+        //            //txtInputText.Font = (Font)fnt.Clone();
+        //
+        //            // save into settings
+        //            Properties.Settings.Default.InputFont = fnt;
+        //            Properties.Settings.Default.Save();
+        //        }
 
         private void btnFontSelect_Click(object sender, EventArgs e)
         {
@@ -308,9 +447,28 @@ namespace TheDotFactory
             label1.Focus();
 
             // open font chooser dialog
-            if (fontDlgInputFont.ShowDialog(this) == DialogResult.OK)
+
+            //            if (fontDlgInputFont.ShowDialog(this) == DialogResult.OK)
+            //            {
+            //                updateSelectedFont(fontDlgInputFont.Font);
+            //            }
+
+            var fontChooser = new FontDialog.FontChooser();
+
+            //fontChooser.SetPropertiesFromObject(textBox);
+            //fontChooser.PreviewSampleText = textBox.SelectedText;
+
+            var showDialog = fontChooser.ShowDialog();
+
+            if (showDialog != null && showDialog.Value)
             {
-                updateSelectedFont(fontDlgInputFont.Font);
+                //fontChooser.ApplyPropertiesToObject(textBox);
+
+                Typeface typeface = new Typeface(fontChooser.SelectedFontFamily, fontChooser.SelectedFontStyle, fontChooser.SelectedFontWeight, fontChooser.SelectedFontStretch);
+                double fontsize = PixelsToPoints(fontChooser.SelectedFontSize);
+
+                updateSelectedFont(typeface, fontsize);
+                setDefaultFont(typeface, fontsize);
             }
         }
 
@@ -344,8 +502,20 @@ namespace TheDotFactory
             cbxTextInsert.SelectedIndex = 0;
         }
 
+        private ElementHost ctrlHost;
+        private TheDotFactoryWPFControls.TextBoxControl txtInputText;
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            ctrlHost = new ElementHost();
+            ctrlHost.Dock = DockStyle.Fill;
+            panel5.Controls.Add(ctrlHost);
+            txtInputText = new TheDotFactoryWPFControls.TextBoxControl();
+            txtInputText.InitializeComponent();
+            txtInputText.Loaded += new RoutedEventHandler(
+            avTextBoxControl_Loaded);
+            ctrlHost.Child = txtInputText;
+
             // use double buffering
             DoubleBuffered = true;
 
@@ -353,10 +523,14 @@ namespace TheDotFactory
             Text = String.Format("The Dot Factory v.{0}", ApplicationVersion);
 
             // set input box
-            txtInputText.Text = Properties.Settings.Default.InputText;
+            //txtInputText.TextBoxControl_Text = Properties.Settings.Default.InputText;
 
             // load font
             fontDlgInputFont.Font = Properties.Settings.Default.InputFont;
+            Typeface typeface = null;
+            double fontsize = 0.0;
+            getDefaultFont(ref typeface, ref fontsize);
+            updateSelectedFont(typeface, fontsize);
 
             // load configurations from file
             m_outputConfigurationManager.loadFromFile("OutputConfigs.xml");
@@ -390,8 +564,19 @@ namespace TheDotFactory
             populateTextInsertCheckbox();
 
             // apply font to all appropriate places
-            updateSelectedFont(Properties.Settings.Default.InputFont);
+            //updateSelectedFont(Properties.Settings.Default.InputFont);
         }
+
+        void avTextBoxControl_Loaded(object sender, EventArgs e)
+        {
+            // set input box
+            txtInputText.TextBoxControl_Text = Properties.Settings.Default.InputText;
+
+            txtInputText.TextBoxControl_Typeface = g_wpf_typeface;
+            txtInputText.TextBoxControl_FontSize = g_wpf_fontsize;
+        }
+
+
 
         // try to parse character range
         bool characterRangePointParse(string rangePointString, ref int rangePoint)
@@ -473,110 +658,363 @@ namespace TheDotFactory
             }
         }
 
-        // get the characters we need to generate
-        string getCharactersToGenerate()
+
+        public int[] ToCodePoints(string str)
         {
-            string inputText = txtInputText.Text;
+            if (str == null)
+                throw new ArgumentNullException("str");
+
+            var codePoints = new List<int>(str.Length);
+            for (int i = 0; i < str.Length; i++)
+            {
+                codePoints.Add(Char.ConvertToUtf32(str, i));
+                if (Char.IsHighSurrogate(str[i]))
+                    i += 1;
+            }
+
+            return codePoints.ToArray();
+        }
+
+        // get the characters we need to generate
+        SortedList<int, string> getCharactersToGenerate()
+        {
+            string cleanedString = "";
+            return getCharactersToGenerate(ref cleanedString);
+        }
+
+        SortedList<int, string> getCharactersToGenerate(ref string cleanedString)
+        {
+            string inputText = txtInputText.TextBoxControl_Text;
+
+            var codepoints32 = ToCodePoints(inputText);
+
+            resetProgressBarSteps(codepoints32.Length * 2);
 
             //
             // Expand and remove all ranges from the input text (look for << x - y >>
             //
 
             // espand the ranges into the input text
-            expandAndRemoveCharacterRanges(ref inputText);
+            //expandAndRemoveCharacterRanges(ref inputText);
 
             //
             // iterate through the inputted text and shove to sorted string, removing all duplicates
             //
 
             // sorted list for insertion/duplication removal
-            SortedList<char, char> characterList = new SortedList<char, char>();
+            SortedList<int, string> characterList = new SortedList<int, string>();
 
             // iterate over the characters in the textbox
-            for (int charIndex = 0; charIndex < inputText.Length; ++charIndex)
+            for (int charIndex = 0; charIndex < codepoints32.Length; ++charIndex)
             {
+                bumpProgressBar();
+                
                 // get teh char
-                char insertionCandidateChar = inputText[charIndex];
+                int insertionCandidateUtf32Value = codepoints32[charIndex];
+                string insertionCandidateChar = Char.ConvertFromUtf32(insertionCandidateUtf32Value); //inputText[charIndex];
 
                 // insert the char, if not already in the list and if not space ()
-                if (!characterList.ContainsKey(insertionCandidateChar))
+                if (!characterList.ContainsKey(insertionCandidateUtf32Value))
                 {
                     // check if space character
-                    if (insertionCandidateChar == ' ' && !m_outputConfig.generateSpaceCharacterBitmap)
+                    if (insertionCandidateChar == " " && !m_outputConfig.generateSpaceCharacterBitmap)
                     {
                         // skip - space is not encoded rather generated dynamically by the driver
                         continue;
                     }
 
                     // dont generate newlines
-                    if (insertionCandidateChar == '\n' || insertionCandidateChar == '\r')
+                    if (insertionCandidateChar == "\n" || insertionCandidateChar == "\r")
                     {
                         // no such characters
                         continue;
                     }
 
                     // not in list, add
-                    characterList.Add(inputText[charIndex], ' ');
+                    characterList.Add(insertionCandidateUtf32Value, insertionCandidateChar);
                 }
             }
 
-            // now output the sorted list to a string
-            string characterListString = "";
+            cleanedString = "";
+            characterList = RemoveNonGlyphsFromString(characterList, ref cleanedString);
 
-            // iterate over the sorted characters to create the string
-            foreach (char characterKey in characterList.Keys)
+            return characterList;
+            //            // now output the sorted list to a string
+            //            string characterListString = "";
+            //
+            //            // iterate over the sorted characters to create the string
+            //            foreach (char characterKey in characterList.Keys)
+            //            {
+            //                // add to string
+            //                characterListString += Char.ConvertFromUtf32(characterKey);
+            //            }
+            //
+            //            // return the character
+            //            return characterListString;
+        }
+
+
+        private BitmapSource getGlyphBitmapImage(string text)
+        {
+            int bmWidth = 0;
+            int bmHeight = 0;
+            return getGlyphBitmapImage(text, false, ref bmWidth, ref bmHeight);
+        }
+
+        private BitmapSource getGlyphBitmapImage(string text, bool bMeasureOnly, ref int bmWidth, ref int bmHeight)
+        {
+            var formattedText = new FormattedText(
+                text,
+                CultureInfo.CurrentCulture,
+                System.Windows.FlowDirection.LeftToRight,
+                g_wpf_typeface, /*new Typeface(this.textBlock.FontFamily, this.textBlock.FontStyle, this.textBlock.FontWeight, this.textBlock.FontStretch),*/
+                10, /*this.textBlock.FontSize,*/
+                System.Windows.Media.Brushes.Black,
+                1.0
+            );
+
+            bmWidth = (int)Math.Ceiling(formattedText.Width - formattedText.OverhangLeading + formattedText.OverhangTrailing);
+            bmHeight = (int)Math.Ceiling(formattedText.Height + formattedText.OverhangAfter);
+
+            if (bMeasureOnly || bmWidth == 0 || bmHeight == 0) return null;
+
+            var visual = new DrawingVisual();
+            using (DrawingContext drawingContext = visual.RenderOpen())
             {
-                // add to string
-                characterListString += characterKey;
+                //drawingContext.DrawImage(bitmapSource, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
+                drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
             }
 
-            // return the character
-            return characterListString;
+            RenderTargetBitmap bm = new RenderTargetBitmap(bmWidth, bmHeight, 96, 96, PixelFormats.Pbgra32);
+            bm.Render(visual);
+
+            return bm;
+        }
+
+        private SortedList<int, string> RemoveNonGlyphsFromString(SortedList<int, string> characterList, ref string textstring)
+        { 
+            var glyphTypeface = new GlyphTypeface();
+            g_wpf_typeface.TryGetGlyphTypeface(out glyphTypeface);
+            
+            SortedList<int, string> characterListWithEmptyGlyphsRemoved = new SortedList<int, string>();
+
+            int notdefBmWidth = 0;
+            int notdefBmHeight = 0;
+
+            BitmapSource notdefBitmapSource = getGlyphBitmapImage(Char.ConvertFromUtf32(0x10ffff), false, ref notdefBmWidth, ref notdefBmHeight); // should be the .notdef glyph
+            //BitmapImage notdefBitmapImage = BitmapImageExtensions.convertBitmapSourceToBitmapImage(notdefBitmapSource);
+
+            for (int i = 0; i < characterList.Count; i++)
+            {
+                bumpProgressBar();
+
+                bool bGlyphIsNotdef = false;
+
+                if (characterList.Values[i] != " ")
+                { // space will definitely be in
+                    if (characterList.Keys[i] < 65536) // can use glyphTypeface.CharacterToGlyphMap[character];
+                    {
+                        bGlyphIsNotdef = !glyphTypeface.CharacterToGlyphMap.ContainsKey(characterList.Values[i][0]); //ContainsKey(characterList.Values[i][0]);
+                    }
+                    else
+                    {
+                        int charBmWidth = 0;
+                        int charBmHeight = 0;
+                        BitmapSource charBitmapSource = getGlyphBitmapImage(characterList.Values[i], true, ref charBmWidth, ref charBmHeight);
+
+                        //bGlyphIsNotdef = false;
+
+                        if (charBmWidth == notdefBmWidth && charBmHeight == notdefBmHeight)
+                        {
+                            if (charBmWidth == 0 || charBmHeight == 0)  // know the bitmaps are the same size at this point, if any dimension is 0 then we have a match
+                            {
+                                bGlyphIsNotdef = true;
+                            }
+                            else // otherwise, need to compare the bitmap glyphs as well
+                            {
+                                charBitmapSource = getGlyphBitmapImage(characterList.Values[i]); // now get the glyph, and compare the two bitmapsources
+                                                                                                 //BitmapImage charBitmapImage = BitmapImageExtensions.convertBitmapSourceToBitmapImage(charBitmapSource);
+
+                                if (BitmapImageExtensions.IsEqual(notdefBitmapSource, charBitmapSource))
+                                {
+                                    // glyph is the notdef glyph, so exclude the character
+                                    bGlyphIsNotdef = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!bGlyphIsNotdef)
+                {
+                    characterListWithEmptyGlyphsRemoved.Add(characterList.Keys[i], characterList.Values[i]);
+                    textstring += characterList.Values[i];
+                }
+
+            }
+
+            return characterListWithEmptyGlyphsRemoved;
+
+            //            int count = 0;
+            //            ICollection<System.Windows.Media.FontFamily> fontFamilies = System.Windows.Media.Fonts.GetFontFamilies(@"C:\Windows\Fonts\");
+            //            ushort glyphIndex;
+            //            int unicodeValue = Convert.ToUInt16(characterToCheck);
+            //            GlyphTypeface glyph;
+            //            string familyName;
+            //
+            //            foreach (System.Windows.Media.FontFamily family in fontFamilies)
+            //            {
+            //                var typefaces = family.GetTypefaces();
+            //                foreach (Typeface typeface in typefaces)
+            //                {
+            //                    typeface.TryGetGlyphTypeface(out glyph);
+            //                    if (glyph != null && glyph.CharacterToGlyphMap.TryGetValue(unicodeValue, out glyphIndex))
+            //                    {
+            //                        family.FamilyNames.TryGetValue(XmlLanguage.GetLanguage("en-us"), out familyName);
+            //                        Console.WriteLine(familyName + " Supports ");
+            //                        count++;
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //            Console.WriteLine();
+            //            Console.WriteLine("Total {0} fonts support {1}", count, characterToCheck);
         }
 
         // convert a letter to bitmap
-        private void convertCharacterToBitmap(char character, Font font, out Bitmap outputBitmap, Rectangle largestBitmap)
+        private void convertCharacterToBitmap(int character, Typeface typeface, double fontsize,/*Font font,*/ out Bitmap outputBitmap, Rectangle largestBitmap)
         {
             // get the string
-            string letterString = character.ToString();
+            string letterString = Char.ConvertFromUtf32(character);
 
-            // create bitmap, sized to the correct size
-            outputBitmap = new Bitmap((int)largestBitmap.Width, (int)largestBitmap.Height);
+            var formattedText = new FormattedText(
+                letterString,
+                CultureInfo.CurrentCulture,
+                System.Windows.FlowDirection.LeftToRight,
+                typeface, /*new Typeface(this.textBlock.FontFamily, this.textBlock.FontStyle, this.textBlock.FontWeight, this.textBlock.FontStretch),*/
+                fontsize, /*this.textBlock.FontSize,*/
+                System.Windows.Media.Brushes.Black,
+                1.0
+            );
 
-            // create grahpics entity for drawing
-            Graphics gfx = Graphics.FromImage(outputBitmap);
 
-            System.Drawing.Text.TextRenderingHint textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            //            // create bitmap, sized to the correct size
+            //            outputBitmap = new Bitmap((int)largestBitmap.Width, (int)largestBitmap.Height);
+            //
+            //            // create grahpics entity for drawing
+            //            Graphics gfx = Graphics.FromImage(outputBitmap);
+            //
+            //            System.Drawing.Text.TextRenderingHint textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            //
+            //            if (m_outputConfig.bEnableHinting) textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-            if (m_outputConfig.bEnableHinting) textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-
+            System.Windows.Media.PixelFormat pixelFormat = PixelFormats.Pbgra32;
             // set anti alias as required
             switch (m_outputConfig.antialiasLevel)
             {
                 case OutputConfiguration.AntialiasLevel.x2:
-                    gfx.TextRenderingHint = textRenderingHint;
+                    //gfx.TextRenderingHint = textRenderingHint;
+                    //pixelFormat = PixelFormats.Gray2;
                     break;
 
                 case OutputConfiguration.AntialiasLevel.x4:
-                    gfx.TextRenderingHint = textRenderingHint;
+                    //gfx.TextRenderingHint = textRenderingHint;
+                    //pixelFormat = PixelFormats.Gray4;
                     break;
 
                 default:
-                    gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit; // defaults to 1bpp
+                    //gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit; // defaults to 1bpp
+                    //pixelFormat = PixelFormats.BlackWhite;
+                    //TextOptions.SetTextRenderingMode(formattedText, TextRenderingMode.Aliased);
                     break;
             }
 
+
+            int stride = (largestBitmap.Width * pixelFormat.BitsPerPixel + 7) / 8;
+            byte[] pixels = new byte[stride * largestBitmap.Height];
+            BitmapSource bitmapSource = BitmapSource.Create(largestBitmap.Width, largestBitmap.Height, 96, 96, pixelFormat, null, pixels, stride);
+
+            var visual = new DrawingVisual();
+            using (DrawingContext drawingContext = visual.RenderOpen())
+            {
+                //drawingContext.DrawImage(bitmapSource, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
+                drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
+            }
+
+            RenderTargetBitmap bm = new RenderTargetBitmap(largestBitmap.Width, largestBitmap.Height, 96, 96, PixelFormats.Pbgra32);
+            bm.Render(visual);
+            outputBitmap = getBitmap((BitmapSource)bm);
+
+            outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height);
+            for (int y = 0; y < bm.PixelHeight; y++)
+            {
+                for (int x = 0; x < bm.PixelWidth; x++)
+                {
+                    int b = (~getPixel(bm, x, y)) & 0xff;
+                    byte p = (byte)b;
+
+                    int c = (0xff << 24) | (p << 16) | (p << 8) | p;
+                    outputBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(c));
+
+                    //Console.Write(String.Format("{0} ", b.ToString("x2")));
+                }
+                //Console.WriteLine();
+            }
+
+
             // draw centered text
-            Rectangle bitmapRect = new System.Drawing.Rectangle(0, 0, outputBitmap.Width, outputBitmap.Height);
+            //Rectangle bitmapRect = new System.Drawing.Rectangle(0, 0, outputBitmap.Width, outputBitmap.Height);
 
             // Set format of string.
-            StringFormat drawFormat = new StringFormat();
-            drawFormat.Alignment = StringAlignment.Center;
+            //StringFormat drawFormat = new StringFormat();
+            //drawFormat.Alignment = StringAlignment.Center;
 
             // draw the character
-            gfx.FillRectangle(System.Drawing.Brushes.White, bitmapRect);
-            gfx.DrawString(letterString, font, System.Drawing.Brushes.Black, bitmapRect, drawFormat);
+            //gfx.FillRectangle(System.Drawing.Brushes.White, bitmapRect);
+            //gfx.DrawString(letterString, font, System.Drawing.Brushes.Black, bitmapRect, drawFormat);
         }
+
+        public byte getPixel(BitmapSource bitmap, int x, int y)
+        {
+            var bytesPerPixel = (bitmap.Format.BitsPerPixel + 7) / 8;
+            var bytes = new byte[bytesPerPixel];
+            var rect = new Int32Rect(x, y, 1, 1);
+
+            bitmap.CopyPixels(rect, bytes, bytesPerPixel, 0);
+
+            if (bitmap.Format == PixelFormats.Pbgra32)
+            {
+                return bytes[3];
+            }
+            return 0;
+        }
+
+
+        public static System.Windows.Media.Color GetPixelColor(BitmapSource bitmap, int x, int y)
+        {
+            System.Windows.Media.Color color;
+            var bytesPerPixel = (bitmap.Format.BitsPerPixel + 7) / 8;
+            var bytes = new byte[bytesPerPixel];
+            var rect = new Int32Rect(x, y, 1, 1);
+
+            bitmap.CopyPixels(rect, bytes, bytesPerPixel, 0);
+
+            if (bitmap.Format == PixelFormats.Pbgra32)
+            {
+                color = System.Windows.Media.Color.FromArgb(bytes[3], bytes[2], bytes[1], bytes[0]);
+            }
+            else if (bitmap.Format == PixelFormats.Bgr32)
+            {
+                color = System.Windows.Media.Color.FromRgb(bytes[2], bytes[1], bytes[0]);
+            }
+            // handle other required formats
+            else
+            {
+                color = Colors.Black;
+            }
+
+            return color;
+        }
+
 
         // returns whether a bitmap column is empty (empty means all is back color)
         private bool bitmapColumnIsEmpty(Bitmap bitmap, int column)
@@ -609,8 +1047,8 @@ namespace TheDotFactory
                 //if (bitmap.GetPixel(column, row).ToArgb() != System.Drawing.Color.Empty.ToArgb())
                 if (bitmap.GetPixel(column, row).G < 255)
                 {
-                        // found. column is not empty
-                        return false;
+                    // found. column is not empty
+                    return false;
                 }
             }
 
@@ -669,6 +1107,8 @@ namespace TheDotFactory
             // iterate through bitmaps
             for (int charIdx = 0; charIdx < charInfoArray.Length; ++charIdx)
             {
+                bumpProgressBar();
+
                 // create a border
                 BitmapBorder bitmapBorder = new BitmapBorder();
 
@@ -825,10 +1265,10 @@ namespace TheDotFactory
         // create the page array
         private void convertBitmapToPageArray(Bitmap bitmapToGenerate, out ArrayList pages)
         {
-            progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             // create pages
@@ -843,8 +1283,8 @@ namespace TheDotFactory
                 // for each column
                 for (int column = 0; column < bitmapToGenerate.Width; ++column)
                 {
-                    progressBar1.PerformStep();
-                    Application.DoEvents();
+                    //progressBar1.PerformStep();
+                    //System.Windows.Forms.Application.DoEvents();
 
                     // is pixel set?
                     if (bitmapToGenerate.GetPixel(column, row).ToArgb() == System.Drawing.Color.Black.ToArgb())
@@ -886,10 +1326,10 @@ namespace TheDotFactory
         // create the page array with 2x antialiasing (2bpp)
         private void convertBitmapToPageArrayAA2X(Bitmap bitmapToGenerate, out ArrayList pages)
         {
-            progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             // create pages
@@ -904,42 +1344,42 @@ namespace TheDotFactory
                 // for each column
                 for (int column = 0; column < bitmapToGenerate.Width; ++column)
                 {
-                    progressBar1.PerformStep();
-                    Application.DoEvents();
+                    //progressBar1.PerformStep();
+                    //System.Windows.Forms.Application.DoEvents();
 
                     // is pixel set?
                     byte px = 0;
                     byte gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
-                    
+
                     // threshold to 4 values (2 bits)
                     px = (byte)(3 - (gval / 64));
 
                     // threshold to 4 values (2 bits)
-/*
-                    if (gval >= 0 && gval < 64)             // was 64
-                    {
-                        px = 3;
-                    }
-                    else if (gval >= 96 && gval < 128)      //  was 64 - 128
-                    {
-                        px = 2;
-                    }
-                    else if (gval >= 128 && gval < 192)     // was 128 - 192
-                    {
-                        px = 1;
-                    }
-                    else if (gval >= 192 && gval <= 255)
-                    {
-                        px = 0;
-                    }
-*/
+                    /*
+                                        if (gval >= 0 && gval < 64)             // was 64
+                                        {
+                                            px = 3;
+                                        }
+                                        else if (gval >= 96 && gval < 128)      //  was 64 - 128
+                                        {
+                                            px = 2;
+                                        }
+                                        else if (gval >= 128 && gval < 192)     // was 128 - 192
+                                        {
+                                            px = 1;
+                                        }
+                                        else if (gval >= 192 && gval <= 255)
+                                        {
+                                            px = 0;
+                                        }
+                    */
 
                     // set the appropriate bit in the page
                     if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (6 - bitsRead));
                     else currentValue |= (byte)(px << bitsRead);
 
                     // increment number of bits read
-                    bitsRead+=2;
+                    bitsRead += 2;
 
                     // have we filled a page?
                     if (bitsRead == 8)
@@ -962,7 +1402,7 @@ namespace TheDotFactory
             // transpose the pages if column major data is requested
             if (m_outputConfig.bitLayout == OutputConfiguration.BitLayout.ColumnMajor)
             {
-                MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
+                System.Windows.Forms.MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
                 //transposePageArray(bitmapToGenerate.Width, bitmapToGenerate.Height, pages, out pages);
             }
         }
@@ -971,10 +1411,10 @@ namespace TheDotFactory
         // create the page array with 4x antialiasing (2bpp)
         private void convertBitmapToPageArrayAA4X(Bitmap bitmapToGenerate, out ArrayList pages)
         {
-            progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             // create pages
@@ -989,18 +1429,18 @@ namespace TheDotFactory
                 // for each column
                 for (int column = 0; column < bitmapToGenerate.Width; ++column)
                 {
-                    progressBar1.PerformStep();
-                    Application.DoEvents();
+                    //progressBar1.PerformStep();
+                    //System.Windows.Forms.Application.DoEvents();
 
                     // is pixel set?
                     byte px = 0;
                     int gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
 
-                    Console.Write(gval.ToString("x2").PadLeft(2,'0') + " ");
+                    //Console.Write(gval.ToString("x2").PadLeft(2, '0') + " ");
 
                     // threshold to 16 values (4 bits)
 
-                    px = (byte) (15 - (gval / 16));
+                    px = (byte)(15 - (gval / 16));
 
                     // set the appropriate bit in the page
                     if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (4 - bitsRead));
@@ -1026,13 +1466,13 @@ namespace TheDotFactory
                 // if we have bits left, add it as is
                 if (bitsRead != 0) pages.Add(currentValue);
 
-                Console.WriteLine();
+                //Console.WriteLine();
             }
 
             // transpose the pages if column major data is requested
             if (m_outputConfig.bitLayout == OutputConfiguration.BitLayout.ColumnMajor)
             {
-                MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
+                System.Windows.Forms.MessageBox.Show("Column Major output is not supported if generating Antialiased font!");
                 //transposePageArray(bitmapToGenerate.Width, bitmapToGenerate.Height, pages, out pages);
             }
         }
@@ -1079,8 +1519,8 @@ namespace TheDotFactory
             int dummy = 0;
 
             // set start char
-            fontInfo.startChar = (char)0xFFFF;
-            fontInfo.endChar = ' ';
+            fontInfo.startChar = 0x7FFFFFFF;
+            fontInfo.endChar = 32;
 
             // the fixed absolute character height
             // int fixedAbsoluteCharHeight;
@@ -1089,11 +1529,13 @@ namespace TheDotFactory
             // iterate through letter string
             for (int charIdx = 0; charIdx < fontInfo.characters.Length; ++charIdx)
             {
+                bumpProgressBar();
+                
                 // skip empty bitmaps
                 if (fontInfo.characters[charIdx].bitmapToGenerate == null) continue;
 
                 // get char
-                char currentChar = fontInfo.characters[charIdx].character;
+                int currentChar = fontInfo.characters[charIdx].character;
 
                 // is this character smaller than start char?
                 if (currentChar < fontInfo.startChar) fontInfo.startChar = currentChar;
@@ -1114,6 +1556,82 @@ namespace TheDotFactory
             }
         }
 
+        Bitmap getBitmap(BitmapSource source)
+        {
+            Bitmap bmp = new Bitmap(
+              source.PixelWidth,
+              source.PixelHeight,
+              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            BitmapData data = bmp.LockBits(
+              new Rectangle(System.Drawing.Point.Empty, bmp.Size),
+              ImageLockMode.WriteOnly,
+              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            source.CopyPixels(
+              System.Windows.Int32Rect.Empty,
+              data.Scan0,
+              data.Height * data.Stride,
+              data.Stride);
+            bmp.UnlockBits(data);
+            return bmp;
+        }
+
+        //        public static void DoEvents()
+        //        {
+        //            System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+        //        }
+
+        private Typeface g_wpf_typeface = null;
+        private double g_wpf_fontsize = 10.0;
+
+        Rectangle WPFgetLargestBitmapFromCharInfo(CharacterGenerationInfo[] charInfoArray)
+        {
+            double largestWidth = 0;
+            double largestHeight = 0;
+
+            // iterate through chars
+            for (int charIdx = 0; charIdx < charInfoArray.Length; ++charIdx)
+            {
+                // get the string of the characer
+                string letterString = Char.ConvertFromUtf32(charInfoArray[charIdx].character);
+
+                // measure the size of teh character in pixels
+                //Size stringSize = TextRenderer.MeasureText(letterString, charInfoArray[charIdx].fontInfo.font);
+                var formattedText = new FormattedText(
+                    letterString,
+                    CultureInfo.CurrentCulture,
+                    System.Windows.FlowDirection.LeftToRight,
+                    g_wpf_typeface, /*new Typeface(this.textBlock.FontFamily, this.textBlock.FontStyle, this.textBlock.FontWeight, this.textBlock.FontStretch),*/
+                    g_wpf_fontsize, /*this.textBlock.FontSize,*/
+                    System.Windows.Media.Brushes.Black,
+                    1.0
+                );
+
+                //return new Size(formattedText.Width, formattedText.Height);
+
+                // check if larger
+                largestHeight = Math.Max(largestHeight, formattedText.Height + formattedText.OverhangAfter);
+                largestWidth = Math.Max(largestWidth, formattedText.Width - formattedText.OverhangLeading + formattedText.OverhangTrailing);
+                //textBlock.Measure(new System.Windows.Size(Double.PositiveInfinity, Double.PositiveInfinity));
+                //textBlock.Arrange(new Rect(textBlock.DesiredSize));
+
+                //                largestHeight = Math.Max(largestHeight, textRect.Bottom);
+                //                largestWidth  = Math.Max(largestWidth, textRect.Right);
+
+                // check if larger
+                largestHeight = Math.Max(largestHeight, formattedText.Height);
+                largestWidth = Math.Max(largestWidth, formattedText.Width);
+            }
+
+            // largest rect
+            Rectangle largestRect = new Rectangle(0, 0, 0, 0);
+
+            largestRect.Height = (int)Math.Ceiling(largestHeight);
+            largestRect.Width = (int)Math.Ceiling(largestWidth);
+
+            // return largest
+            return largestRect;
+        }
+
         // get widest bitmap
         Rectangle getLargestBitmapFromCharInfo(CharacterGenerationInfo[] charInfoArray)
         {
@@ -1127,7 +1645,7 @@ namespace TheDotFactory
                 string letterString = charInfoArray[charIdx].character.ToString();
 
                 // measure the size of teh character in pixels
-                Size stringSize = TextRenderer.MeasureText(letterString, charInfoArray[charIdx].fontInfo.font);
+                System.Drawing.Size stringSize = TextRenderer.MeasureText(letterString, charInfoArray[charIdx].fontInfo.font);
 
                 // check if larger
                 largestRect.Height = Math.Max(largestRect.Height, stringSize.Height);
@@ -1138,34 +1656,73 @@ namespace TheDotFactory
             return largestRect;
         }
 
-        // populate the font info
-        private FontInfo populateFontInfo(Font font)
+        private void resetProgressBarSteps(int numsteps)
         {
+            progressBar1.Minimum = 0;
+            progressBar1.Step = 1;
+            progressBar1.Maximum = numsteps;
+            progressBar1.Value = 0;
+            System.Windows.Forms.Application.DoEvents();
+        }
+
+        private void bumpProgressBar()
+        {
+            progressBar1.PerformStep();
+
+            double pbmax = (double)progressBar1.Maximum;
+            double pbval = (double)progressBar1.Value;
+
+            if ((((pbval / pbmax) * 100) % 2) == 0)
+            {
+                System.Windows.Forms.Application.DoEvents();
+            }
+        }
+
+        // populate the font info
+        private FontInfo populateFontInfo(/*Font font*/ Typeface typeface, double fontsize)
+        {
+           
             // the font information
             FontInfo fontInfo = new FontInfo();
 
             // get teh characters we need to generate from the input text, removing duplicates
             fontInfo.generatedChars = getCharactersToGenerate();
 
+            int numprocedures = 8;
+
+            if (m_outputConfig.paddingRemovalHorizontal == OutputConfiguration.PaddingRemoval.Fixed ||
+                m_outputConfig.paddingRemovalVertical == OutputConfiguration.PaddingRemoval.Fixed)
+            {
+                numprocedures = 9;
+            }
+
+            resetProgressBarSteps(fontInfo.generatedChars.Count * numprocedures);
+
             // set font into into
-            fontInfo.font = font;
+            //fontInfo.font = font;
+            fontInfo.typeface = typeface;
+            fontInfo.fontsize = fontsize;
 
             // array holding all bitmaps and info per character
-            fontInfo.characters = new CharacterGenerationInfo[fontInfo.generatedChars.Length];
+            fontInfo.characters = new CharacterGenerationInfo[fontInfo.generatedChars.Count];
 
             //
             // init char infos
             //
-            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Length; ++charIdx)
+
+            int fontInfoCharacterIndex = 0;
+            foreach (int characterKey in fontInfo.generatedChars.Keys)
             {
+                bumpProgressBar();
+
                 // create char info entity
-                fontInfo.characters[charIdx] = new CharacterGenerationInfo();
+                fontInfo.characters[fontInfoCharacterIndex] = new CharacterGenerationInfo();
 
                 // point back to teh font
-                fontInfo.characters[charIdx].fontInfo = fontInfo;
+                fontInfo.characters[fontInfoCharacterIndex].fontInfo = fontInfo;
 
                 // set the character
-                fontInfo.characters[charIdx].character = fontInfo.generatedChars[charIdx];
+                fontInfo.characters[fontInfoCharacterIndex].character = characterKey;
                 /*
                                 double w = 0;
                                 double h = 0;
@@ -1175,23 +1732,27 @@ namespace TheDotFactory
                                 fontInfo.characters[charIdx].advanceWidth = w;
                                 fontInfo.characters[charIdx].advanceHeight = h;
                 */
+                fontInfoCharacterIndex++;
             }
 
             //
             // Find the widest bitmap size we are going to draw
             //
-            Rectangle largestBitmap = getLargestBitmapFromCharInfo(fontInfo.characters);
-
+            //Rectangle largestBitmap = getLargestBitmapFromCharInfo(fontInfo.characters);
+            Rectangle largestBitmap = WPFgetLargestBitmapFromCharInfo(fontInfo.characters);
             //
             // create bitmaps per characater
             //
 
             // iterate over characters
-            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Length; ++charIdx)
+            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Count; ++charIdx)
             {
+                bumpProgressBar();
+
                 // generate the original bitmap for the character
-                convertCharacterToBitmap(fontInfo.generatedChars[charIdx],
-                                         font,
+                convertCharacterToBitmap(fontInfo.generatedChars.Keys[charIdx],
+                                         /*font,*/
+                                         typeface, fontsize,
                                          out fontInfo.characters[charIdx].bitmapOriginal, largestBitmap);
 
                 // save
@@ -1220,8 +1781,10 @@ namespace TheDotFactory
             //
 
             // iterate over characters
-            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Length; ++charIdx)
+            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Count; ++charIdx)
             {
+                bumpProgressBar();
+
                 // generate the original bitmap for the character
                 manipulateBitmap(fontInfo.characters[charIdx].bitmapOriginal,
                                  tightestCommonBorder,
@@ -1238,8 +1801,10 @@ namespace TheDotFactory
             //
 
             // iterate over characters
-            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Length; ++charIdx)
+            for (int charIdx = 0; charIdx < fontInfo.generatedChars.Count; ++charIdx)
             {
+                bumpProgressBar();
+                
                 // check if bitmap exists
                 if (fontInfo.characters[charIdx].bitmapToGenerate != null)
                 {
@@ -1275,7 +1840,7 @@ namespace TheDotFactory
             string[] data;
             string[] visualizer;
 
-            switch(m_outputConfig.antialiasLevel)
+            switch (m_outputConfig.antialiasLevel)
             {
                 case OutputConfiguration.AntialiasLevel.x4:
                     generateDataAA4X(width, height, pages, m_outputConfig.bitLayout, out data);
@@ -1478,7 +2043,7 @@ namespace TheDotFactory
         // generate strings for AA2X bitmaps
         private void generateDataAA2X(int width, int height, ArrayList pages, OutputConfiguration.BitLayout layout, out string[] data)
         {   // *2bpp
-            int colCount = ((width*2) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
+            int colCount = ((width * 2) + 7) / 8; // width;               //(layout == OutputConfiguration.BitLayout.RowMajor) ? (width + 7) / 8 : width;
             int rowCount = height;          // (height + 7) / 8;    //(layout == OutputConfiguration.BitLayout.RowMajor) ? height : (height + 7) / 8;
             // rowmajor not supported for aa2x
 
@@ -1694,9 +2259,10 @@ namespace TheDotFactory
         }
 
         // get the font name and format it
-        private string getFontName(ref Font font)
+        private string getFontName(Typeface typeface)
         {
-            return scrubVariableName(font.Name + "_" + Math.Round(font.Size) + "pt");
+            return typeface.FontFamily.Source + "_" + Math.Round(g_wpf_fontsize) + "pt";
+            //return scrubVariableName(font.Name + "_" + Math.Round(font.Size) + "pt");
         }
 
         // convert bits to bytes according to desc format
@@ -1804,7 +2370,7 @@ namespace TheDotFactory
         // add a character to teh current char descriptor array
         private void charDescArrayAddCharacter(CharacterDescriptorArrayBlock desciptorBlock,
                                                FontInfo fontInfo,
-                                               char character,
+                                               int character,
                                                int width, int height, int offset)
         {
             // create character descriptor
@@ -1834,7 +2400,7 @@ namespace TheDotFactory
         // gnereate a list of blocks describing the characters
         private void generateCharacterDescriptorBlockList(FontInfo fontInfo, ref ArrayList characterBlockList)
         {
-            char currentCharacter, previousCharacter = '\0';
+            int currentCharacter, previousCharacter = 0;
 
             // initialize first block
             CharacterDescriptorArrayBlock characterBlock = null;
@@ -1844,28 +2410,29 @@ namespace TheDotFactory
                     m_outputConfig.lookupBlocksNewAfterCharCount : int.MaxValue;
 
             // iterate over characters, saving previous character each time
-            progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             for (int charIndex = 0;
                  charIndex < fontInfo.characters.Length;
                  ++charIndex)
             {
-                progressBar1.PerformStep();
-                Application.DoEvents();
+                //progressBar1.PerformStep();
+                bumpProgressBar();
+                System.Windows.Forms.Application.DoEvents();
 
                 // get character
-                currentCharacter = fontInfo.characters[charIndex].character;
+                currentCharacter = fontInfo.generatedChars.Keys[charIndex];
 
                 // check if this character is too far from the previous character and it isn't the first char
-                if (currentCharacter - previousCharacter < differenceBetweenCharsForNewGroup && previousCharacter != '\0')
+                if (currentCharacter - previousCharacter < differenceBetweenCharsForNewGroup && previousCharacter != 0)
                 {
                     // it may not be far enough to generate a new group but it still may be non-sequential
                     // in this case we need to generate place holders
-                    for (char sequentialCharIndex = (char)(previousCharacter + 1);
+                    for (int sequentialCharIndex = previousCharacter + 1;
                             sequentialCharIndex < currentCharacter;
                             ++sequentialCharIndex)
                     {
@@ -1914,7 +2481,7 @@ namespace TheDotFactory
             string blockIdString = String.Format("Block{0}", currentBlockIndex);
 
             // variable name
-            string variableName = String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font));
+            string variableName = String.Format(m_outputConfig.varNfCharInfo, getFontName(g_wpf_typeface));
 
             // remove type unless required
             if (!includeTypeDefinition) variableName = getVariableNameFromExpression(variableName);
@@ -1928,13 +2495,13 @@ namespace TheDotFactory
         }
 
         // get the display string for a character (ASCII is displayed as 'x', non-ASCII as numeric)
-        private string getCharacterDisplayString(char character)
+        private string getCharacterDisplayString(int character)
         {
             // ASCII?
             if (character < 255)
             {
                 // as character
-                return String.Format("'{0}'", character);
+                return String.Format("'{0}'", Char.ConvertFromUtf32(character));
             }
             else
             {
@@ -1964,18 +2531,18 @@ namespace TheDotFactory
             // Generate descriptor arrays
             //
 
-            progressBar1.Maximum = characterBlockList.Count * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = characterBlockList.Count * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             // iterate over blocks
 
             foreach (CharacterDescriptorArrayBlock block in characterBlockList)
             {
-                progressBar1.PerformStep();
-                Application.DoEvents();
+                //progressBar1.PerformStep();
+                //System.Windows.Forms.Application.DoEvents();
 
                 // according to config
                 if (m_outputConfig.commentVariableName)
@@ -1984,8 +2551,8 @@ namespace TheDotFactory
 
                     // result string
                     resultTextSource += String.Format("{0}Character descriptors for {1} {2}pt{3}{4}" + nl,
-                                                        m_commentStartString, fontInfo.font.Name,
-                                                        Math.Round(fontInfo.font.Size), multipleDescBlocksExist ? blockNumberString : "",
+                                                        m_commentStartString, getFontName(g_wpf_typeface), /*fontInfo.font.Name,*/
+                                                        g_wpf_fontsize, /*Math.Round(fontInfo.font.Size),*/ multipleDescBlocksExist ? blockNumberString : "",
                                                         m_commentEndString);
 
                     // describe character array
@@ -1993,7 +2560,7 @@ namespace TheDotFactory
                                                         m_commentStartString,
                                                         getCharacterDescName("width", m_outputConfig.descCharWidth),
                                                         getCharacterDescName("height", m_outputConfig.descCharHeight),
-                                                        getFontName(ref fontInfo.font),
+                                                        getFontName(g_wpf_typeface),
                                                         m_commentEndString);
                 }
 
@@ -2004,6 +2571,7 @@ namespace TheDotFactory
                 foreach (CharacterDescriptorArrayBlock.Character character in block.characters)
                 {
                     //byte flags = (byte)(IsRightToLeftChar(character.character) ? 1 : 0); // right to left char flag
+                    bumpProgressBar();
 
                     double advanceWidth = character.advanceWidth; //!= -1.0 ? character.advanceWidth : (double)character.width;
                     double advanceHeight = character.advanceHeight; //!= -1.0 ? character.advanceHeight : (double)character.height;
@@ -2035,9 +2603,14 @@ namespace TheDotFactory
                 if (m_outputConfig.commentVariableName)
                 {
                     // result string
-                    resultTextSource += String.Format("{0}Block lookup array for {1} {2}pt {3}" + nl,
-                                                        m_commentStartString, fontInfo.font.Name,
-                                                        Math.Round(fontInfo.font.Size), m_commentEndString);
+                    //resultTextSource += String.Format("{0}Block lookup array for {1} {2}pt {3}" + nl,
+                    //                                    m_commentStartString, getFontName(g_wpf_typeface),
+                    //                                    Math.Round(g_wpf_fontsize), m_commentEndString);
+                    
+                    resultTextSource += String.Format("{0}Block lookup array for {1} {2}" + nl,
+                                                        m_commentStartString, 
+                                                        getFontName(g_wpf_typeface),
+                                                        m_commentEndString);
 
                     // describe character array
                     resultTextSource += String.Format("{0}{{ start character, end character, ptr to descriptor block array }}{1}" + nl,
@@ -2072,7 +2645,7 @@ namespace TheDotFactory
         private string getCharacterDescriptorArrayLookupDisplayString(FontInfo fontInfo)
         {
             // return the string
-            return String.Format("{0}BlockLookup", getFontName(ref fontInfo.font));
+            return String.Format("{0}BlockLookup", getFontName(g_wpf_typeface));
         }
 
         // generate lookup array
@@ -2099,10 +2672,12 @@ namespace TheDotFactory
             double ascent = 0.0;
             double descent = 0.0;
             double linespacing = 0.0;
+            double baseline = 0.0;
 
-            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing))
+            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing, ref baseline))
             {
-                Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
+                //Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
+                Console.WriteLine("linespacing = " + linespacing.ToString() + "px, baseline = " + baseline.ToString() + "px" );
             }
 
             if (!bOutputString)
@@ -2163,7 +2738,7 @@ namespace TheDotFactory
                 "\t\tconst FONT_CHAR_INFO* charInfo;\t\t// pointer to array of char information (NULL if multiple blocks are used in the font, in which case FONT_CHAR_INFO_LOOKUP* will be used)" + nl +
                 "\t\tconst uint16_t blockCount;\t\t// number of blocks in font (set to 0 if a single-block font)" + nl +
                 "\t\tconst uint8_t* data;\t\t// pointer to generated array of character visual representation" + nl +
-                "{0}" + 
+                "{0}" +
                 "\t}} FONT_INFO;" + nl + nl, strAscentDescentAndLineHeightString);
         }
 
@@ -2179,34 +2754,36 @@ namespace TheDotFactory
             {
                 // add source header
                 resultTextSource += String.Format("{0}Character bitmaps for {1} {2}pt{3}" + nl,
-                                                    m_commentStartString, fontInfo.font.Name,
-                                                    Math.Round(fontInfo.font.Size), m_commentEndString);
+                                                    m_commentStartString, /*fontInfo.font.Name,*/ g_wpf_typeface.FaceNames,
+                                                    Math.Round(g_wpf_fontsize),/*Math.Round(fontInfo.font.Size),*/ m_commentEndString);
             }
 
             resultTextHeader += generateFontStructTypedefs();
 
             // get bitmap name
-            string charBitmapVarName = String.Format(m_outputConfig.varNfBitmaps, getFontName(ref fontInfo.font)) + "[]";
+            string charBitmapVarName = String.Format(m_outputConfig.varNfBitmaps, getFontName(g_wpf_typeface)) + "[]";
 
             if (m_outputConfig.outputProgmemBitmaps) charBitmapVarName += " PROGMEM";
-                    
+
             // header var
             resultTextHeader += String.Format("extern {0};" + nl, charBitmapVarName);
 
             // source var
-            resultTextSource += String.Format("{0} = " + nl+"{{" + nl, charBitmapVarName);
+            resultTextSource += String.Format("{0} = " + nl + "{{" + nl, charBitmapVarName);
 
-            progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
-            progressBar1.Step = progressBar1.Width;
+            //progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
+            //progressBar1.Minimum = 0;
+            //progressBar1.Value = 0;
+            //progressBar1.Step = progressBar1.Width;
             //progressBar1.PerformStep();
 
             // iterate through letters
             for (int charIdx = 0; charIdx < fontInfo.characters.Length; ++charIdx)
             {
-                progressBar1.PerformStep();
-                Application.DoEvents();
+                //progressBar1.PerformStep();
+                bumpProgressBar();
+
+                System.Windows.Forms.Application.DoEvents();
                 // skip empty bitmaps
                 if (fontInfo.characters[charIdx].bitmapToGenerate == null) continue;
 
@@ -2252,26 +2829,27 @@ namespace TheDotFactory
             //
             // Font descriptor
             //
-            
+
             // according to config
             if (m_outputConfig.commentVariableName)
             {
                 // result string
                 resultTextSource += String.Format("{0}Font information for {1} {2}pt{3}" + nl,
                                                     m_commentStartString,
-                                                    fontInfo.font.Name, Math.Round(fontInfo.font.Size),
+                                                    /*fontInfo.font.Name, Math.Round(fontInfo.font.Size),*/
+                                                    g_wpf_typeface.FontFamily.Source, Math.Round(g_wpf_fontsize),
                                                     m_commentEndString);
             }
 
             // character name
-            string fontInfoVarName = String.Format(m_outputConfig.varNfFontInfo, getFontName(ref fontInfo.font));
+            string fontInfoVarName = String.Format(m_outputConfig.varNfFontInfo, getFontName(g_wpf_typeface));
 
             // add character array for header
             resultTextHeader += String.Format("extern {0};" + nl, fontInfoVarName);
 
             // the font character height
             string fontCharHeightString = "", spaceCharacterPixelWidthString = "";
-            
+
             // get character height sstring - displayed according to output configuration
             if (m_outputConfig.descFontHeight != OutputConfiguration.DescriptorFormat.DontDisplay)
             {
@@ -2313,7 +2891,7 @@ namespace TheDotFactory
                                                           spaceCharacterPixelWidthString,
                                                           getFontInfoDescriptorsString(fontInfo, blockLookupGenerated),
                                                           num_blocks,
-                                                          getVariableNameFromExpression(String.Format(m_outputConfig.varNfBitmaps, getFontName(ref fontInfo.font))),
+                                                          getVariableNameFromExpression(String.Format(m_outputConfig.varNfBitmaps, getFontName(g_wpf_typeface))),
                                                           getAscentDescentAndLineHeightString(m_outputConfig.outputAscDescLineheight)
                                               );
 
@@ -2326,10 +2904,10 @@ namespace TheDotFactory
             else
             {
                 // add block lookup to header
-                resultTextHeader += String.Format("extern {0}[];" + nl, String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font)));
+                resultTextHeader += String.Format("extern {0}[];" + nl, String.Format(m_outputConfig.varNfCharInfo, getFontName(g_wpf_typeface)));
             }
         }
-    
+
         // get the descriptors
         private string getFontInfoDescriptorsString(FontInfo fontInfo, bool blockLookupGenerated)
         {
@@ -2340,38 +2918,38 @@ namespace TheDotFactory
             {
                 // add to string
                 descriptorString += String.Format("\t{0}, {1} Character block lookup{2}" + nl,
-                                                    blockLookupGenerated ? getCharacterDescriptorArrayLookupDisplayString(fontInfo) : "NULL", 
+                                                    blockLookupGenerated ? getCharacterDescriptorArrayLookupDisplayString(fontInfo) : "NULL",
                                                     m_commentStartString, m_commentEndString);
 
                 // add to string
                 descriptorString += String.Format("\t{0}, {1} Character descriptor array{2}" + nl,
-                                                    blockLookupGenerated ? "NULL" : getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font))),
+                                                    blockLookupGenerated ? "NULL" : getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(g_wpf_typeface))),
                                                     m_commentStartString, m_commentEndString);
             }
             else
             {
                 // add descriptor array
-                descriptorString += String.Format("\t{0}, {1} Character descriptor array{2}" + nl, 
-                                                    getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(ref fontInfo.font))), 
+                descriptorString += String.Format("\t{0}, {1} Character descriptor array{2}" + nl,
+                                                    getVariableNameFromExpression(String.Format(m_outputConfig.varNfCharInfo, getFontName(g_wpf_typeface))),
                                                     m_commentStartString, m_commentEndString);
             }
 
             // return the string
             return descriptorString;
         }
-		
+
 
         // generate the required output for text
         private void generateOutputForFont(Font font, ref string resultTextSource, ref string resultTextHeader)
         {
             // do nothing if no chars defined
-            if (txtInputText.Text.Length == 0) return;
-            
+            if (txtInputText.TextBoxControl_Text.Length == 0) return;
+
             // according to config
             if (m_outputConfig.commentVariableName)
             {
                 // add source file header
-                resultTextSource += String.Format("{0}" + nl+"{1} Font data for {2} {3}pt" + nl+"{4}" + nl + nl,
+                resultTextSource += String.Format("{0}" + nl + "{1} Font data for {2} {3}pt" + nl + "{4}" + nl + nl,
                                                     m_commentStartString, m_commentBlockMiddleString, font.Name, Math.Round(font.Size),
                                                     m_commentBlockEndString);
 
@@ -2382,8 +2960,9 @@ namespace TheDotFactory
             }
 
             // populate the font info
-            FontInfo fontInfo = populateFontInfo(font);
-            
+            //FontInfo fontInfo = populateFontInfo(font);
+            FontInfo fontInfo = populateFontInfo(g_wpf_typeface, g_wpf_fontsize);
+
             // We now have all information required per font and per character. 
             // time to generate the string
             generateStringsFromFontInfo(fontInfo, ref resultTextSource, ref resultTextHeader);
@@ -2413,7 +2992,7 @@ namespace TheDotFactory
                 if (!manipulateBitmap(bitmapOriginal, bitmapBorder, out bitmapManipulated, 0, 0))
                 {
                     // show error
-                    MessageBox.Show("No black pixels found in bitmap (currently only monochrome bitmaps supported)",
+                    System.Windows.Forms.MessageBox.Show("No black pixels found in bitmap (currently only monochrome bitmaps supported)",
                                     "Can't convert bitmap",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
@@ -2429,7 +3008,7 @@ namespace TheDotFactory
                 if (m_outputConfig.commentVariableName)
                 {
                     // add source file header
-                    resultTextSource += String.Format("{0}" + nl+"{1} Image data for {2}" + nl+"{3}" + nl + nl,
+                    resultTextSource += String.Format("{0}" + nl + "{1} Image data for {2}" + nl + "{3}" + nl + nl,
                                                         m_commentStartString, m_commentBlockMiddleString, imageName,
                                                         m_commentBlockEndString);
 
@@ -2446,7 +3025,7 @@ namespace TheDotFactory
                 resultTextHeader += String.Format("extern {0};" + nl, dataVarName);
 
                 // add header
-                resultTextSource += String.Format("{0} =" + nl+"{{" + nl, dataVarName);
+                resultTextSource += String.Format("{0} =" + nl + "{{" + nl, dataVarName);
 
                 //
                 // Bitmap to string
@@ -2503,10 +3082,25 @@ namespace TheDotFactory
                 else
                 {
                     // in pixels
-                    resultTextSource += String.Format("{0}Pixels = {1};"+nl, heightVarName, bitmapManipulated.Height);
-                    resultTextHeader += String.Format("extern {0}Pixels;"+nl, heightVarName);
+                    resultTextSource += String.Format("{0}Pixels = {1};" + nl, heightVarName, bitmapManipulated.Height);
+                    resultTextHeader += String.Format("extern {0}Pixels;" + nl, heightVarName);
                 }
             }
+        }
+
+        private uint ConvertUTF32ToUTF16(uint cUTF32, ref uint h, ref uint l)
+        {
+            if (cUTF32 < 0x10000)
+            {
+                h = 0;
+                l = cUTF32;
+                return cUTF32;
+            }
+            uint t = cUTF32 - 0x10000;
+            h = (((t << 12) >> 22) + 0xD800);
+            l = (((t << 22) >> 22) + 0xDC00);
+            uint ret = ((h << 16) | (l & 0x0000FFFF));
+            return ret;
         }
 
         private bool GetCharacterRangeUtf8()
@@ -2525,16 +3119,44 @@ namespace TheDotFactory
                 return false;
             }
 
-            characterrange = "";
+            if (startchar > 0x10ffff) startchar = 0x10ffff;
+            if (endchar > 0x10ffff) endchar = 0x10ffff;
+
+            if (startchar < 32) startchar = 32;
+            if (endchar < 32) endchar = 32;
+
+            if (endchar < startchar)
+            {
+                int tmp = startchar;
+                startchar = endchar;
+                endchar = tmp;
+            }
+
+            txtStartCharUtf8.Text = startchar.ToString();
+            txtEndCharUtf8.Text = endchar.ToString();
+            //System.Windows.Forms.Application.DoEvents();
+
+            //characterrange = "";
+
+            SortedList < int, string> charList = new SortedList<int, string>();
 
             for (int codepoint = startchar; codepoint <= endchar; codepoint++)
             {
                 //characterrange += Utf8fromCodepoint(codepoint);
-                if (IsCharPresentInFont(codepoint)) characterrange += (char)codepoint;
+                //if (IsCharPresentInFont(codepoint)) characterrange += (char)codepoint;
+                if (codepoint >= 0xd800 && codepoint <= 0xdfff) continue;
+                //characterrange += char.ConvertFromUtf32(codepoint);
+                charList.Add(codepoint, char.ConvertFromUtf32(codepoint));
+                //Console.WriteLine(char.ConvertToUtf32(charList[codepoint], 0));
             }
 
+            resetProgressBarSteps(charList.Count);
+
+            characterrange = "";
+            RemoveNonGlyphsFromString(charList, ref characterrange);
+
             CbxCharacterRange.value = characterrange;
-            txtInputText.Text = characterrange;
+            txtInputText.TextBoxControl_Text = characterrange;
             return true;
         }
 
@@ -2594,9 +3216,9 @@ namespace TheDotFactory
 
             // set focus somewhere else
             label1.Focus();
-            
+
             // save default input text
-            Properties.Settings.Default.InputText = txtInputText.Text;
+            Properties.Settings.Default.InputText = txtInputText.TextBoxControl_Text;
             Properties.Settings.Default.Save();
 
             // will hold the resutl string            
@@ -2646,12 +3268,12 @@ namespace TheDotFactory
         }
 
         // parse the output text line
-        void outputSyntaxColoredString(string outputString, ref RichTextBox outputTextBox)
+        void outputSyntaxColoredString(string outputString, ref System.Windows.Forms.RichTextBox outputTextBox)
         {
             // clear the current text
             outputTextBox.Text = "";
-            
-            String [] lines = outputString.Split(new string[] {nl}, StringSplitOptions.None);
+
+            String[] lines = outputString.Split(new string[] { nl }, StringSplitOptions.None);
 
             // for now don't syntax color for more than 2000 lines
             if (lines.Length > 1500)
@@ -2661,8 +3283,8 @@ namespace TheDotFactory
                 return;
             }
 
-            Font fRegular = new Font("Courier New", 10, FontStyle.Regular);
-            Font fBold = new Font("Courier New", 10, FontStyle.Bold);
+            Font fRegular = new Font("Courier New", 10, System.Drawing.FontStyle.Regular);
+            Font fBold = new Font("Courier New", 10, System.Drawing.FontStyle.Bold);
             String[] keywords = { "uint8_t", "const", "extern", "char", "unsigned", "int", "short", "long" };
             Regex re = new Regex(@"([ \t{}();])");
 
@@ -2727,7 +3349,7 @@ namespace TheDotFactory
                     }
 
                     // Check whether the token is a keyword. 
-                    
+
                     for (int i = 0; i < keywords.Length; i++)
                     {
                         if (keywords[i] == token)
@@ -2764,7 +3386,7 @@ namespace TheDotFactory
             label1.Focus();
 
             // insert text
-            txtInputText.Text += ((ComboBoxItem)cbxTextInsert.SelectedItem).value;
+            txtInputText.TextBoxControl_Text += ((ComboBoxItem)cbxTextInsert.SelectedItem).value;
         }
 
         private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -2776,7 +3398,7 @@ namespace TheDotFactory
             // show teh about form
             about.Show();
         }
-        
+
         // set comment strings according to config
         private void updateCommentStrings()
         {
@@ -2796,7 +3418,7 @@ namespace TheDotFactory
                 m_commentBlockEndString = "*/";
             }
         }
-        
+
         private void btnOutputConfig_Click(object sender, EventArgs e)
         {
             // no focus
@@ -2804,7 +3426,7 @@ namespace TheDotFactory
 
             // get it
             OutputConfigurationForm outputConfigForm = new OutputConfigurationForm(ref m_outputConfigurationManager);
-            
+
             // get the oc
             int selectedConfigurationIndex = outputConfigForm.getOutputConfiguration(cbxOutputConfiguration.SelectedIndex);
 
@@ -2843,7 +3465,7 @@ namespace TheDotFactory
 
         private void button4_Click_1(object sender, EventArgs e)
         {
-            
+
         }
 
         private void tsmCopySource_Click(object sender, EventArgs e)
@@ -2852,7 +3474,7 @@ namespace TheDotFactory
             if (txtOutputTextSource.Text != "")
             {
                 // copy
-                Clipboard.SetText(txtOutputTextSource.Text);
+                System.Windows.Forms.Clipboard.SetText(txtOutputTextSource.Text);
             }
         }
 
@@ -2862,7 +3484,7 @@ namespace TheDotFactory
             if (txtOutputTextHeader.Text != "")
             {
                 // copy
-                Clipboard.SetText(txtOutputTextHeader.Text);
+                System.Windows.Forms.Clipboard.SetText(txtOutputTextHeader.Text);
             }
         }
 
@@ -2936,7 +3558,7 @@ namespace TheDotFactory
         private void WriteUInt16LittleEndian(ref FileStream F, UInt16 word)
         {
             F.WriteByte((byte)(word & 0xff));
-            F.WriteByte((byte)((word &0xff00)>>8));
+            F.WriteByte((byte)((word & 0xff00) >> 8));
         }
 
         // https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
@@ -3029,10 +3651,12 @@ namespace TheDotFactory
             double ascent = 0.0;
             double descent = 0.0;
             double linespacing = 0.0;
+            double baseline = 0.0;
 
-            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing))
+            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing, ref baseline))
             {
-                Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
+                //Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
+                Console.WriteLine("linespacing = " + linespacing.ToString() + "px, baseline = " + baseline.ToString() + "px");
             }
 
 
@@ -3062,14 +3686,15 @@ namespace TheDotFactory
             */
 
             // populate the font info
-            FontInfo fontInfo = populateFontInfo(fontDlgInputFont.Font);
+            //FontInfo fontInfo = populateFontInfo(fontDlgInputFont.Font);
+            FontInfo fontInfo = populateFontInfo(g_wpf_typeface, g_wpf_fontsize);
             ArrayList characterBlockList = new ArrayList();
             // populate list of blocks
             generateCharacterDescriptorBlockList(fontInfo, ref characterBlockList);
 
             if (characterBlockList.Count == 0)
             {
-                MessageBox.Show("Save binary font", "No Characters", MessageBoxButtons.OK);
+                System.Windows.Forms.MessageBox.Show("Save binary font", "No Characters", MessageBoxButtons.OK);
                 return;
             }
 
@@ -3145,11 +3770,11 @@ namespace TheDotFactory
                 // after the header, 1 or more of 3xUint32 blocks, containing startchar, endchar and file offset to start of bitmap for the block.
                 // write out font bitmap block lookup tables - 1 or more of 3xUInt32s, [startchar], [endchar] and [file offset to bitmap].
                 //--------------------------------------------
-                progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
-                progressBar1.Minimum = 0;
-                progressBar1.Value = 0;
-                progressBar1.Step = progressBar1.Width;
-                //progressBar1.PerformStep();
+                //progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
+                //progressBar1.Minimum = 0;
+                //progressBar1.Value = 0;
+                //progressBar1.Step = progressBar1.Width;
+                ////progressBar1.PerformStep();
 
                 for (int i = 0; i < characterBlockList.Count; i++)
                 {
@@ -3163,6 +3788,7 @@ namespace TheDotFactory
                     WriteUInt32LittleEndian(ref F, endchar);
                     WriteUInt32LittleEndian(ref F, bitmapoffsetstartchar);
                     */
+
                     writer.Write(startchar);
                     writer.Write(endchar);
                     writer.Write(bitmapoffsetstartchar);
@@ -3173,11 +3799,11 @@ namespace TheDotFactory
 
                 // write out bitmap of entire font, iterate through letters
                 // --------------------------------------------------------
-                progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
-                progressBar1.Minimum = 0;
-                progressBar1.Value = 0;
-                progressBar1.Step = progressBar1.Width;
-                //progressBar1.PerformStep();
+                //progressBar1.Maximum = fontInfo.characters.Length * progressBar1.Width;
+                //progressBar1.Minimum = 0;
+                //progressBar1.Value = 0;
+                //progressBar1.Step = progressBar1.Width;
+                ////progressBar1.PerformStep();
 
                 Console.WriteLine("Writing out font bitmap...\n");
 
@@ -3186,8 +3812,8 @@ namespace TheDotFactory
                     var charInfo = fontInfo.characters[charIdx];
                     Console.WriteLine("char='" + charInfo.character + "'\tcharindex = " + charIdx.ToString("X4") + "\n");
 
-                    progressBar1.PerformStep();
-                    Application.DoEvents();
+                    //progressBar1.PerformStep();
+                    //System.Windows.Forms.Application.DoEvents();
                     // skip empty bitmaps
                     if (charInfo.bitmapToGenerate == null) continue;
 
@@ -3211,28 +3837,28 @@ namespace TheDotFactory
                 {
                     Console.WriteLine("Block " + blockIndex.ToString() + "\n");
 
-                    progressBar1.PerformStep();
-                    Application.DoEvents();
+                    //progressBar1.PerformStep();
+                    //System.Windows.Forms.Application.DoEvents();
 
                     //UInt32 fontlookupoffset = (UInt32)F.Position; // save current file position, which will be the offset of the start of the font
-                                                                  // lookup table (which will be stored in the font header, appended to the file)
+                    // lookup table (which will be stored in the font header, appended to the file)
                     UInt32 fontlookupoffset = (UInt32)writer.Seek(0, SeekOrigin.Current);
 
                     int charIndex = 0;
 
-                    UInt32 startchar = block.startchar;
-                    UInt32 endchar = block.endchar;
+                    Int32 startchar = block.startchar;
+                    Int32 endchar = block.endchar;
 
                     foreach (CharacterDescriptorArrayBlock.Character character in block.characters)
                     {
                         if (charIndex == 0)
                         {
-                            startchar = (UInt32)character.character;
+                            startchar = character.character;
                         }
 
                         if (charIndex == block.characters.Count - 1)
                         {
-                            endchar = (UInt32)character.character;
+                            endchar = character.character;
                         }
 
                         UInt16 widthBits = (UInt16)character.width;
@@ -3268,7 +3894,7 @@ namespace TheDotFactory
                         if (m_outputConfig.outputAdvanceWidth) writer.Write(advanceWidth);
                         if (m_outputConfig.outputAdvanceHeight) writer.Write(advanceHeight);
 
-                        Console.WriteLine("char='" + character.character + "'\tcharindex=" + charIndex.ToString("X4") + "\tw:" + widthBits.ToString("X4") + "\th:" + heightBits.ToString("X4") + "\toffset:" + offset.ToString("X8") + "\n");
+//                        Console.WriteLine("char='" + character.character + "'\tcharindex=" + charIndex.ToString("X4") + "\tw:" + widthBits.ToString("X4") + "\th:" + heightBits.ToString("X4") + "\toffset:" + offset.ToString("X8") + "\n");
 
                         charIndex++;
                     }
@@ -3282,6 +3908,8 @@ namespace TheDotFactory
                     WriteUInt32LittleEndian(ref F, endchar);
                     WriteUInt32LittleEndian(ref F, fontlookupoffset);
                     */
+
+                    Console.WriteLine("Block " + blockIndex.ToString() + ": startchar=" + startchar.ToString() + " endchar=" + endchar.ToString());
 
                     writer.Write(startchar);
                     writer.Write(endchar);
@@ -3297,7 +3925,7 @@ namespace TheDotFactory
             //F.Flush();
             F.Close();
 
-            MessageBox.Show("Lectionary Font binary saved", "Success", MessageBoxButtons.OK);
+            System.Windows.Forms.MessageBox.Show("Lectionary Font binary saved", "Success", MessageBoxButtons.OK);
 
             progressBar1.Value = 0;
             progressBar1.Enabled = false;
@@ -3346,6 +3974,21 @@ namespace TheDotFactory
         private void btnInsertUnicodeRange_Click(object sender, EventArgs e)
         {
             GetCharacterRangeUtf8();
+            Properties.Settings.Default.InputText = txtInputText.TextBoxControl_Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void button4_Click_3(object sender, EventArgs e)
+        {
+            FontGlyphSet fontGlyphSet = new FontGlyphSet(g_wpf_typeface);
+            fontGlyphSet.IsFastContains = true;
+
+            for (int i = 0x2F80; i < 0x3080; i++)
+            {
+                char c = (char)i;
+                bool b = fontGlyphSet.Contains(c);
+                Console.WriteLine(String.Format("{0} is {1}in font", c, b ? "" : "not "));
+            }
         }
 
         /*

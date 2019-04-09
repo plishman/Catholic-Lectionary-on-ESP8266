@@ -37,7 +37,7 @@ const uint8_t GxGDEW042Z15::lut_20_vcomDC[] =
   0x00, 0x0E, 0x0E, 0x00, 0x00, 0x02,        
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00,        
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
 //lut_ww
@@ -745,11 +745,10 @@ void GxGDEW042Z15::_wakeUp(void)
   if (_rst >= 0)
   {
     digitalWrite(_rst, 0);
-    delay(200);
-    digitalWrite(_rst, 1);		// was 10
-    delay(200);
+    delay(500);
+    digitalWrite(_rst, 1);
+    delay(500);
   }
-/*
   IO.writeCommandTransaction(0x06); //boost
   IO.writeDataTransaction (0x17);
   IO.writeDataTransaction (0x17);
@@ -758,55 +757,80 @@ void GxGDEW042Z15::_wakeUp(void)
   _waitWhileBusy("Power On");
   IO.writeCommandTransaction(0x00);
   IO.writeDataTransaction(0x0f); // LUT from OTP Pixel with B/W/R.
-*/
-//3a 00 2b 2b 11
-/*
-    _writeCommand(POWER_SETTING);
-    _writeData(0x3a);                  // VDS_EN, VDG_EN
-    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
-    _writeData(0x2b);                  // VDH
-    _writeData(0x2b);                  // VDL
-    _writeData(0x11);                  // VDHR
-
-    //_writeData(0x1e);                
-*/						// 11v   10v    9v    8v   7v     6v    5v
-	uint8_t voltages[8] = {0x2b, 0x26, 0x21, 0x1c, 0x17, 0x12, 0x0d};
-	
-	uint8_t v = voltages[_refreshnumber];
-	
-	
-	_writeCommand(POWER_SETTING);
-    _writeData(0x03);                  // VDS_EN, VDG_EN
-    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
-    _writeData(0x2b);                  // VDH 0x2b = +11V 0x20 = +8.8V 0x08 = +4.0V
-    _writeData(0x2b);                  // VDL 0x2b = -11V 0x20 = -8.8V 0x08 = -4.0V
-    _writeData(0x2b);                  // VDHR 0x2b = +11V (red pixel)
-
-    _writeCommand(BOOSTER_SOFT_START);
-    _writeData(0x17);
-    _writeData(0x17);
-    _writeData(0x17);                  //07 0f 17 1f 27 2F 37 2f
-    _writeCommand(POWER_ON);
-	_waitWhileBusy("Power On");
-//    _writeCommand(PANEL_SETTING);
-   // _writeData(0xbf);    // KW-BF   KWR-AF  BWROTP 0f
-  //  _writeData(0x0b);
-//	_writeData(0x0F);  //300x400 Red mode, LUT from OTP
-//	_writeData(0x1F);  //300x400 B/W mode, LUT from OTP
-//	_writeData(0x3F); //300x400 B/W mode, LUT set by register
-//	_writeData(0x2F); //300x400 Red mode, LUT set by register
 
     _writeCommand(PLL_CONTROL);
     _writeData(0x3A);        // 3A 100Hz   29 150Hz   39 200Hz    31 171Hz       3C 50Hz (default)    0B 10Hz
-	//_writeData(0x0B);   //0B is 10Hz
-    /* EPD hardware init end */
-
-
   
-  //_writeLUT_Normal();	//PLL 06-01-2019
-  _writeLUT();	//PLL 06-01-2019
-  
+	_writeLUT();	//PLL 06-01-2019
 }
+
+//void GxGDEW042Z15::_wakeUp(void)
+//{
+//  if (_rst >= 0)
+//  {
+//    digitalWrite(_rst, 0);
+//    delay(200);
+//    digitalWrite(_rst, 1);		// was 10
+//    delay(200);
+//  }
+///*
+//  IO.writeCommandTransaction(0x06); //boost
+//  IO.writeDataTransaction (0x17);
+//  IO.writeDataTransaction (0x17);
+//  IO.writeDataTransaction (0x17);
+//  IO.writeCommandTransaction(0x04);
+//  _waitWhileBusy("Power On");
+//  IO.writeCommandTransaction(0x00);
+//  IO.writeDataTransaction(0x0f); // LUT from OTP Pixel with B/W/R.
+//*/
+////3a 00 2b 2b 11
+///*
+//    _writeCommand(POWER_SETTING);
+//    _writeData(0x3a);                  // VDS_EN, VDG_EN
+//    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
+//    _writeData(0x2b);                  // VDH
+//    _writeData(0x2b);                  // VDL
+//    _writeData(0x11);                  // VDHR
+//
+//    //_writeData(0x1e);                
+//*/						// 11v   10v    9v    8v   7v     6v    5v
+//	uint8_t voltages[8] = {0x2b, 0x26, 0x21, 0x1c, 0x17, 0x12, 0x0d};
+//	
+//	uint8_t v = voltages[_refreshnumber];
+//	
+//	
+//	_writeCommand(POWER_SETTING);
+//    _writeData(0x03);                  // VDS_EN, VDG_EN
+//    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
+//    _writeData(0x2b);                  // VDH 0x2b = +11V 0x20 = +8.8V 0x08 = +4.0V
+//    _writeData(0x2b);                  // VDL 0x2b = -11V 0x20 = -8.8V 0x08 = -4.0V
+//    _writeData(0x2b);                  // VDHR 0x2b = +11V (red pixel)
+//
+//    _writeCommand(BOOSTER_SOFT_START);
+//    _writeData(0x17);
+//    _writeData(0x17);
+//    _writeData(0x17);                  //07 0f 17 1f 27 2F 37 2f
+//    _writeCommand(POWER_ON);
+//	_waitWhileBusy("Power On");
+////    _writeCommand(PANEL_SETTING);
+//   // _writeData(0xbf);    // KW-BF   KWR-AF  BWROTP 0f
+//  //  _writeData(0x0b);
+////	_writeData(0x0F);  //300x400 Red mode, LUT from OTP
+////	_writeData(0x1F);  //300x400 B/W mode, LUT from OTP
+////	_writeData(0x3F); //300x400 B/W mode, LUT set by register
+////	_writeData(0x2F); //300x400 Red mode, LUT set by register
+//
+//    _writeCommand(PLL_CONTROL);
+//    _writeData(0x3A);        // 3A 100Hz   29 150Hz   39 200Hz    31 171Hz       3C 50Hz (default)    0B 10Hz
+//	//_writeData(0x0B);   //0B is 10Hz
+//    /* EPD hardware init end */
+//
+//
+//  
+//  //_writeLUT_Normal();	//PLL 06-01-2019
+//  _writeLUT();	//PLL 06-01-2019
+//  
+//}
 
 void GxGDEW042Z15::_sleep(void)
 {
@@ -1152,7 +1176,7 @@ void GxGDEW042Z15::drawCornerTest(uint8_t em)
 
 void GxGDEW042Z15::_writeLUT_Normal(void)
 {
-  Serial.println("_writeLUT_Normal()");
+  //Serial.println("_writeLUT_Normal()");
   _writeCommand(0x00);
   _writeData(0x0f); // LUT from OTP Pixel with B/W/R.
 /*
@@ -1242,7 +1266,7 @@ void GxGDEW042Z15::_writeRegisters(void)
 
 void GxGDEW042Z15::_writeLUT_Composite(void)
 {
-  Serial.println("_writeLUT_Composite()");
+  //Serial.println("_writeLUT_Composite()");
     _writeCommand(PLL_CONTROL);
     _writeData(0x29);        // 3A 100Hz   29 150Hz   39 200Hz    31 171Hz       3C 50Hz (default)    0B 10Hz
 
@@ -1258,10 +1282,12 @@ void GxGDEW042Z15::_writeLUT_Composite(void)
 	unsigned int count;
   {
     _writeCommand(0x20);							//vcom
-    for (count = 0; count < 44; count++)
+    for (count = 0; count < 42; count++)	// was < 44
     {
       _writeData(lut_vcom_dc_comp[count]);
     }
+	_writeData(0x00);	// for safety, write these two control bytes individually, using flash-based code.
+	_writeData(0x00);	// writing a value other than 0 to these bytes will destroy the display.
 
     _writeCommand(0x21);							//ww --
     for (count = 0; count < 42; count++)
@@ -1293,7 +1319,7 @@ void GxGDEW042Z15::_writeLUT(void)
 {
 	switch(_lut_mode) {
 		case LUT_MODE_3BPP:
-			Serial.printf("_writeLUT() 3BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 3BPP: _refreshnumber=%d\n", _refreshnumber);
 			switch(_refreshnumber) 
 			{
 				case 7:
@@ -1577,7 +1603,7 @@ void GxGDEW042Z15::_writeLUT(void)
 			break;
 
 		case LUT_MODE_2BPP:
-			Serial.printf("_writeLUT() 2BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 2BPP: _refreshnumber=%d\n", _refreshnumber);
 			switch(_refreshnumber) 
 			{
 				case 3:
@@ -1681,12 +1707,12 @@ void GxGDEW042Z15::_writeLUT(void)
 			break;
 
 		case LUT_MODE_1BPP:
-			Serial.printf("_writeLUT() 1BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 1BPP: _refreshnumber=%d\n", _refreshnumber);
 			_writeLUT_Normal();
 			break;
 			
 		default:
-			Serial.printf("_writeLUT() unknown BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() unknown BPP: _refreshnumber=%d\n", _refreshnumber);
 			_writeLUT_Normal();
 			break;
 	}

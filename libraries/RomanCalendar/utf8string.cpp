@@ -6,24 +6,35 @@
 #include "utf8string.h"
 #endif
 
+#include <I2CSerialPort.h>
+
 int charLenBytesUTF8(char s) {
 	byte ch = (byte)s;
+	//DEBUG_PRT.printf("charLenBytesUTF8() char is %02x ", s);
 	//Serial.println(String(ch)+ ";");
 
 	byte b;
 
 	b = (ch & 0xE0);  // 2-byte utf-8 characters start with 110xxxxx
-	if (b == 0xC0) return 2;
+	if (b == 0xC0) { /*DEBUG_PRT.println("charlen = 2");*/ return 2; }
 
 	b = (ch & 0xF0);  // 3-byte utf-8 characters start with 1110xxxx
-	if (b == 0xE0) return 3;
+	if (b == 0xE0) { /*DEBUG_PRT.println("charlen = 3");*/ return 3; }
 
 	b = (ch & 0xF8);  // 4-byte utf-8 characters start with 11110xxx
-	if (b == 0xF0) return 4;
+	if (b == 0xF0) { /*DEBUG_PRT.println("charlen = 4");*/ return 4; }
 
+	b = (ch & 0xFC);  // 5-byte utf-8 characters start with 111110xx
+	if (b == 0xF8) { /*DEBUG_PRT.println("charlen = 5");*/ return 5; }
+
+	b = (ch & 0xFE);  // 6-byte utf-8 characters start with 1111110x
+	if (b == 0xFC) { /*DEBUG_PRT.println("charlen = 6");*/ return 6; }
+	
+	
 	b = (ch & 0xC0);  // bytes within multibyte utf-8 characters are 10xxxxxx
-	if (b == 0x80) return 0; //somewhere in a multi-byte utf-8 character, so don't know the length. Return 0 so the scanner can keep looking
+	if (b == 0x80) { /*DEBUG_PRT.println("intermediate char, returning 0");*/ return 0; }; //somewhere in a multi-byte utf-8 character, so don't know the length. Return 0 so the scanner can keep looking
 
+	//DEBUG_PRT.println("charlen = 1, ascii");
 	return 1; // character must be 0x7F or below, so return 1 (it is an ascii character)
 }
 
@@ -32,6 +43,8 @@ String utf8fromCodepoint(uint32_t c) {
 	unsigned char char1;
 	unsigned char char2;
 	unsigned char char3;
+	unsigned char char4;	//PLL-22-01-2019
+	unsigned char char5;	//
 
 	String ch;
 
@@ -65,6 +78,28 @@ String utf8fromCodepoint(uint32_t c) {
 		return String(u);
 	}
 
+	//PLL-22-01-2019
+	if (c >= 0x200000 && c < 0x4000000) {				// 5 bytes
+		char4 = ((c & 0x3f) | 0x80);
+		char3 = (((c & 0xfc0) >> 6) | 0x80);
+		char2 = (((c & 0x3f000) >> 12) | 0x80);
+		char1 = (((c & 0x1c0000)) >> 18 | 0x80);
+		char0 = (((c & 0x3f000000)) >> 24 | 0xF8);
+		char u[] = { char0, char1, char2, char3, char4, '\0' };
+		return String(u);
+	}
+	
+	if (c >= 0x4000000 && c < 0x7FFFFFFF) {				// 6 bytes
+		char5 = ((c & 0x3f) | 0x80);
+		char4 = (((c & 0xfc0) >> 6) | 0x80);
+		char3 = (((c & 0x3f000) >> 12) | 0x80);
+		char2 = (((c & 0x1c0000)) >> 18 | 0x80);
+		char1 = (((c & 0x3f000000)) >> 24 | 0x80);
+		char0 = (((c & 0xc0000000)) >> 30 | 0xFC);
+		char u[] = { char0, char1, char2, char3, char4, char5, '\0' };
+		return String(u);
+	}
+	
 	return String("");
 }
 
@@ -78,38 +113,45 @@ uint32_t codepointUtf8(String c) {
 
 	if (len == 0) return 0;
 
-	b = (ch[0] & 0x80);
-	if (b == 0 && len > 0) return (int)ch[0];	   // 1 byte character, u=0-0x7f
+	b = (ch[0] & 0x80); // 1 byte character, u=0-0x7f
+	if (b == 0 && len > 0)    return (uint32_t)ch[0];
 
-	b = (ch[0] & 0xE0);
-	if (b == 0xC0 && len > 1) return (int)(((ch[0] & 0x1f) << 6) | (ch[1] & 0x3F)); // 2 byte character, u=0x80-0x7ff
+	b = (ch[0] & 0xE0); // 2 byte character, u=0x80-0x7ff
+	if (b == 0xC0 && len > 1) return (uint32_t)(((ch[0] & 0x1f) << 6) | (ch[1] & 0x3F));
 
-	b = (ch[0] & 0xF0);
-	if (b == 0xE0 && len > 2) return (int)(((ch[0] & 0x0f) << 12) | ((ch[1] & 0x3F) << 6) | (ch[2] & 0x3F)); // 3 byte character, u=0x800-0xFFFF
+	b = (ch[0] & 0xF0); // 3 byte character, u=0x800-0xFFFF
+	if (b == 0xE0 && len > 2) return (uint32_t)(((ch[0] & 0x0f) << 12) | ((ch[1] & 0x3F) << 6) | (ch[2] & 0x3F));
 
-	b = (ch[0] & 0xF8);
-	if (b == 0xF0 && len > 3) return (int)(((ch[0] & 0x07) << 18) | ((ch[1] & 0x3F) << 12) | ((ch[2] & 0x3F) << 6) | (ch[3] & 0x3F)); // 4 byte character, u=0x800-0xFFFF
+	b = (ch[0] & 0xF8); // 4 byte character, u=0x10000-0x1FFFFF
+	if (b == 0xF0 && len > 3) return (uint32_t)(((ch[0] & 0x07) << 18) | ((ch[1] & 0x3F) << 12) | ((ch[2] & 0x3F) << 6) | (ch[3] & 0x3F));
 
+	//PLL 22-01-2019
+	b = (ch[0] & 0xFC); // 5 byte character, u=0x200000-0x3FFFFFF
+	if (b == 0xF8 && len > 4) return (uint32_t)(((ch[0] & 0x03) << 24) | ((ch[1] & 0x3F) << 18) | ((ch[2] & 0x3F) << 12) | ((ch[3] & 0x3F) << 6) | (ch[4] & 0x3F));
+	
+	b = (ch[0] & 0xFE); // 6 byte character, u=0x4000000-0x7FFFFFFF
+	if (b == 0xFC && len > 5) return (uint32_t)(((ch[0] & 0x01) << 30) | ((ch[1] & 0x3F) << 24) | ((ch[2] & 0x3F) << 18) | ((ch[3] & 0x3F) << 12) | ((ch[4] & 0x3F) << 6) | (ch[5] & 0x3F));
+	//
 	return 0;
 }
 
 String utf8CharAt(String s, unsigned int pos) {
-	//Serial.println("String=" + s);
+	//DEBUG_PRT.println("String=" + s);
 
 	if (pos >= s.length()) {
-		//Serial.println("utf8CharAt string length is " + String(ps->length()) + " *ppos = " + String(*ppos));
+		//DEBUG_PRT.println("utf8CharAt string length is " + String(s.length()) + " pos = " + String(pos));
 		return String("");
 	}
 
 	int charLen = charLenBytesUTF8(s.charAt(pos));
 
-	//Serial.println("char at pos " + String(*ppos) + " = " + String(ps->charAt(*ppos)) + "utf8 charLen = " + String(charLen));
+	//DEBUG_PRT.println("char at pos " + String(pos) + " = " + String(s.charAt(pos)) + "utf8 charLen = " + String(charLen));
 
 	if (charLen == 0) {
 		return String("");
 	}
 	else {
-		//Serial.print("substring is" + s.substring(pos, pos+charLen));
+		//DEBUG_PRT.print("substring is" + s.substring(pos, pos+charLen));
 		return s.substring(pos, pos + charLen);
 	}
 }

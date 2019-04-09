@@ -624,7 +624,7 @@
             int limit = start + length;
             for (int i = start; i < limit; ++i) {
                 String ch = GetUtf8CharByIndex(dest, i); //char ch = dest[i];
-                uint16_t uch = (uint16_t)codepointUtf8(ch);
+                uint32_t uch = (uint32_t)codepointUtf8(ch);
 				
 				switch (getBidiDirection(uch)) {
                 case BIDI_L:

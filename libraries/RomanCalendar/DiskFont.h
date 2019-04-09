@@ -55,14 +55,13 @@ typedef struct {
 
 /*
 typedef struct {	// 32 bytes
-	//uint8_t rtlflag;
 	uint16_t widthbits;
 	uint16_t heightbits;
 	uint32_t bitmapfileoffset;
 	double advanceWidth;
 	double advanceHeight;
-	uint32_t useCount;
-	uint32_t codepoint;
+	//uint32_t useCount;
+	//uint32_t codepoint;
 } DiskFont_FontCharInfo;
 
 const int DiskFont_FontCharInfo_RecSize = 2+2+4+8+8; //bytes
@@ -109,7 +108,7 @@ public:
 	
 	DiskFont_BlocktableEntry* _Font_BlocktablePtr = NULL;
 	
-	#define CHARBUFF_SIZE 32
+	#define CHARBUFF_SIZE 512	// was 32
 	uint8_t _char_buffer[CHARBUFF_SIZE];
 	
 	DiskFont();

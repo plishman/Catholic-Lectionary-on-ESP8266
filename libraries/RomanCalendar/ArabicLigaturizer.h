@@ -15,9 +15,9 @@
 
 class Charstruct {
 public:
-	uint16_t basechar = 0;
-	uint16_t mark1 = 0;               /* has to be initialized to zero */
-	uint16_t vowel = 0;
+	uint32_t basechar = 0;
+	uint32_t mark1 = 0;               /* has to be initialized to zero */
+	uint32_t vowel = 0;
 	int lignum = 0;           /* is a ligature with lignum aditional characters */
 	int numshapes = 1;
 		

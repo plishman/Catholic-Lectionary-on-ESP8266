@@ -12,21 +12,21 @@
 #include <I18n.h>
 #include "I2CSerialPort.h"
 
+enum ReadingsFromEnum {
+	READINGS_OT = 0,
+	READINGS_NT,
+	READINGS_PS,
+	READINGS_G 
+};
+
 class Lectionary {
-public:
-	enum ReadingsFromEnum {
-		READINGS_OT = 0,
-		READINGS_NT,
-		READINGS_PS,
-		READINGS_G 
-	};
-	
+public:	
 	I18n* _I18n;
 	Lectionary(I18n* i);
 	~Lectionary();
 	bool test(int number, String liturgical_year, String liturgical_cycle, bool *b_OT, bool *b_NT, bool *b_PS, bool *b_G);
 	bool testFile(String filename);
-	bool get(String liturgical_year, String liturgical_cycle, Lectionary::ReadingsFromEnum readings_from, int number, String* refs_text);
+	bool get(String liturgical_year, String liturgical_cycle, ReadingsFromEnum readings_from, int number, String* refs_text);
 };
 
 

@@ -18,6 +18,7 @@
 class Bidi {
 public:
 	//Bidi();
+	static bool IsSpace(String ch);
 	static bool ExpectRTL(String s, int* pos);
 	static bool ExpectStr(String s, int* pos, String strtoexpect);
 

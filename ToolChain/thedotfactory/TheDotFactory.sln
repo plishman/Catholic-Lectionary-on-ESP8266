@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDotFactory", "TheDotFactory.csproj", "{03FBC09E-C0BB-4D1D-BFDE-79454C60D78C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18B70FBE-4349-4226-9B26-511FE708B74B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontDialogDemo", "..\FontDialog\FontDialog\FontDialogDemo.csproj", "{18DA881E-FE67-46E6-95E5-6FDC99331E2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDotFactoryWPFControls", "..\TheDotFactoryWPFControls\TheDotFactoryWPFControls\TheDotFactoryWPFControls.csproj", "{9E229930-AF58-439C-96D2-F033A4609D2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,14 @@ Global
 		{03FBC09E-C0BB-4D1D-BFDE-79454C60D78C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03FBC09E-C0BB-4D1D-BFDE-79454C60D78C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03FBC09E-C0BB-4D1D-BFDE-79454C60D78C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18DA881E-FE67-46E6-95E5-6FDC99331E2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18DA881E-FE67-46E6-95E5-6FDC99331E2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18DA881E-FE67-46E6-95E5-6FDC99331E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18DA881E-FE67-46E6-95E5-6FDC99331E2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E229930-AF58-439C-96D2-F033A4609D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E229930-AF58-439C-96D2-F033A4609D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E229930-AF58-439C-96D2-F033A4609D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E229930-AF58-439C-96D2-F033A4609D2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

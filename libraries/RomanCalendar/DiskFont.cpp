@@ -35,6 +35,8 @@ bool DiskFont::CloseFontFile() {
 	available = false;
 
 	if (_file_sd.available()) {
+		//DEBUG_PRT.printf("Blocks read=%d\n", _file_sd.blockcount());
+		
 		_file_sd.close();
 	}	
 
@@ -316,6 +318,7 @@ bool DiskFont::begin(String fontfilename) {
 	available = true;
 	
 	DEBUG_PRT.println(F("Diskfont is available"));
+	//if (_file_sd.available()) _file_sd.resetblockcount();
 	
 	return true; // ready to access font
 }
@@ -401,10 +404,14 @@ int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth,
 int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
 	// allows pre-populated FontCharInfo structure to be passed in, for use where it would otherwise have to read from the disk more than once for each character
 
+	//DEBUG_PRT.printf("DrawCharAt() codepoint=%d\n", codepoint); 
+	
 	//if (codepoint == 32) return _FontHeader.spacecharwidth; // space character
 	uint16_t cw = fci.widthbits;
+	//DEBUG_PRT.print("[");
 	GetAdvanceWidth(fci.widthbits, fci.advanceWidth, codepoint, cw); //fci.advanceWidth;
 	if (!IsInPage(_displayPage, fci, codepoint, x, y, x+cw, y+_FontHeader.charheight)) return cw;
+	//DEBUG_PRT.print("]");
 	
 	if(!available) {
 		//DEBUG_PRT.printf("DrawCharAt() Diskfont is not available.\n");
@@ -878,6 +885,8 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
     
     /* Send the string character by character on EPD */	
 	
+	//DEBUG_PRT.printf("DrawStringAt() text is [%s]\n", text.c_str());
+	
 	if (!right_to_left) {
 		uint16_t char_bmwidth = 0;
 		double charoffset = 0.0;
@@ -1158,6 +1167,7 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth) {
 }
 
 void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth, int limit) {
+	//DEBUG_PRT.printf("GetTextWidth() text is[%s]\n", text.c_str());
 	bool bLimit = (limit != -1 && limit > 0);
 
 	//DEBUG_PRT.printf("len:");
@@ -1313,6 +1323,8 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	//DEBUG_PRT.print(F("@"));
 
 	pfci = NULL; //PLL 21-12-2018 now defaults to null, was leaving it unchanged before
+	//pfci = fciCache.get(codepoint);
+	//if (pfci != NULL) return true;
 	
 	if (!available) {
 		// will use rom font if diskfont is not available
@@ -1353,11 +1365,15 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 		
 		return false;
 	}
+
+	pfci = fciCache.get(codepoint);
+	if (pfci != NULL) return true;
 		
 	uint32_t foffset = 0;
 	bool bresult = false;
 	
 	if (*blockToCheckFirst < _FontHeader.numlookupblocks) {
+		//DEBUG_PRT.printf("default BlockIndex = %d\n", *blockToCheckFirst);
 		if ((_Font_BlocktablePtr[*blockToCheckFirst].startchar <= codepoint) && (_Font_BlocktablePtr[*blockToCheckFirst].endchar >= codepoint)) {
 			//DEBUG_PRT.printf("default BlockIndex = %d\n", *blockToCheckFirst);
 			//DEBUG_PRT.printf("sc=%x, ec=%x, cp=%x\n", _Font_BlocktablePtr[*blockToCheckFirst].startchar, _Font_BlocktablePtr[*blockToCheckFirst].endchar, codepoint);
@@ -1368,7 +1384,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 	
 			bresult = readFontCharInfoEntry(pfci, codepoint);
 			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
-			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(pfci->advanceWidth, 3).c_str(), pfci->widthbits);
 			return bresult;
 		}
 		else {
@@ -1376,6 +1392,8 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			bool bFound = false;
 			
 			while (!bFound && blockIndex < _FontHeader.numlookupblocks) {
+				//DEBUG_PRT.printf("blockIndex = %d, blockIndex.startchar = %d, blockIndex.endchar = %d, codepoint = %d\n", blockIndex, _Font_BlocktablePtr[blockIndex].startchar, _Font_BlocktablePtr[blockIndex].endchar, codepoint);
+				
 				if ((_Font_BlocktablePtr[blockIndex].startchar <= codepoint) && (_Font_BlocktablePtr[blockIndex].endchar >= codepoint)) {
 					bFound = true;
 				} else {
@@ -1384,7 +1402,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			}
 			
 			if (!bFound) {
-				//DEBUG_PRT.printf("block not found, _FontHeader.numlookupblocks = %d, codepoint=%x\n", _FontHeader.numlookupblocks, codepoint);
+				DEBUG_PRT.printf("block not found, _FontHeader.numlookupblocks = %d, codepoint=%x\n", _FontHeader.numlookupblocks, codepoint);
 				return false;
 			}
 			
@@ -1398,7 +1416,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			//DEBUG_PRT.printf("@ foffset=%x\n", foffset);			
 
 			bresult = readFontCharInfoEntry(pfci, codepoint);
-			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
+			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(pfci->advanceWidth, 3).c_str(), pfci->widthbits);
 			//DEBUG_PRT.printf("getCharInfo() bresult=%s\n", bresult?"true":"false");
 			return bresult;
 		}
@@ -1415,19 +1433,23 @@ bool DiskFont::readFontCharInfoEntry(DiskFont_FontCharInfo* &pfci, uint32_t code
 	pfci = fciCache.get(codepoint);
 	if (pfci != NULL) return true;
 	
+	//DEBUG_PRT.print("x");
+	
 	pfci = new DiskFont_FontCharInfo;
 	
 	//DEBUG_PRT.printf("pos:%x", _file.position());
+
+	bresult = Read((uint8_t*)pfci, DiskFont_FontCharInfo_RecSize);
 	
-	bresult = /*ReadUInt8(&(fci->rtlflag)) && */
-			   Read(&(pfci->widthbits))
-			&& Read(&(pfci->heightbits))
-			&& Read(&(pfci->bitmapfileoffset))
-			&& Read(&(pfci->advanceWidth))
-			&& Read(&(pfci->advanceHeight));
+//	bresult = /*ReadUInt8(&(fci->rtlflag)) && */
+//			   Read(&(pfci->widthbits))
+//			&& Read(&(pfci->heightbits))
+//			&& Read(&(pfci->bitmapfileoffset))
+//			&& Read(&(pfci->advanceWidth))
+//			&& Read(&(pfci->advanceHeight));
 
 	//DEBUG_PRT.printf(" fci: rtl:%x w:%x h:%x offset_char:%x bresult=%s\n", fci->rtlflag, fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
-	//DEBUG_PRT.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", fci->widthbits, fci->heightbits, fci->bitmapfileoffset, bresult?"true":"false");
+	//DEBUG_PRT.printf(" fci: w:%x h:%x offset_char:%x bresult=%s\n", pfci->widthbits, pfci->heightbits, pfci->bitmapfileoffset, bresult?"true":"false");
 	
 	if (bresult) {
 		fciCache.add(codepoint, pfci);
@@ -1503,7 +1525,11 @@ bool DiskFont::IsInPage(int displayPageNumber, DiskFont_FontCharInfo& fci, int c
 		swap(page_x1, page_y1);
 	}
 	
-	return ((x1 >= page_x0) && (y1 >= page_y0) && (x0 <= page_x1) && (y0 <= page_y1));
+	bool bresult = ((x1 >= page_x0) && (y1 >= page_y0) && (x0 <= page_x1) && (y0 <= page_y1));
+	
+	//DEBUG_PRT.print(bresult?"+":"-");
+
+	return bresult;
 }
 
 void DiskFont::swap(int& a, int& b) {

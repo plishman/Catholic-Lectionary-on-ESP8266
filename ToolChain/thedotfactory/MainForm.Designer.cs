@@ -47,8 +47,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.txtInputText = new System.Windows.Forms.TextBox();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.btnInsertUnicodeRange = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -103,7 +103,7 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label16 = new System.Windows.Forms.Label();
             this.dlgSaveAs = new System.Windows.Forms.SaveFileDialog();
-            this.btnInsertUnicodeRange = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -282,7 +282,6 @@
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.panel5, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.txtInputText, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.panel6, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
@@ -302,19 +301,8 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(3, 82);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(446, 1);
+            this.panel5.Size = new System.Drawing.Size(446, 409);
             this.panel5.TabIndex = 11;
-            // 
-            // txtInputText
-            // 
-            this.txtInputText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtInputText.Location = new System.Drawing.Point(3, 89);
-            this.txtInputText.Multiline = true;
-            this.txtInputText.Name = "txtInputText";
-            this.txtInputText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtInputText.Size = new System.Drawing.Size(446, 402);
-            this.txtInputText.TabIndex = 10;
-            this.txtInputText.TextChanged += new System.EventHandler(this.txtInputText_TextChanged);
             // 
             // panel6
             // 
@@ -335,6 +323,16 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(446, 70);
             this.panel6.TabIndex = 3;
+            // 
+            // btnInsertUnicodeRange
+            // 
+            this.btnInsertUnicodeRange.Location = new System.Drawing.Point(408, 37);
+            this.btnInsertUnicodeRange.Name = "btnInsertUnicodeRange";
+            this.btnInsertUnicodeRange.Size = new System.Drawing.Size(26, 25);
+            this.btnInsertUnicodeRange.TabIndex = 21;
+            this.btnInsertUnicodeRange.Text = "+";
+            this.btnInsertUnicodeRange.UseVisualStyleBackColor = true;
+            this.btnInsertUnicodeRange.Click += new System.EventHandler(this.btnInsertUnicodeRange_Click);
             // 
             // label5
             // 
@@ -386,7 +384,7 @@
             this.txtStartCharUtf8.Name = "txtStartCharUtf8";
             this.txtStartCharUtf8.Size = new System.Drawing.Size(62, 20);
             this.txtStartCharUtf8.TabIndex = 16;
-            this.txtStartCharUtf8.Text = "33";
+            this.txtStartCharUtf8.Text = "32";
             this.txtStartCharUtf8.TextChanged += new System.EventHandler(this.txtStartCharUtf8_TextChanged);
             // 
             // btnInsertText
@@ -909,21 +907,23 @@
             // 
             this.dlgSaveAs.Title = "Save source and header";
             // 
-            // btnInsertUnicodeRange
+            // button4
             // 
-            this.btnInsertUnicodeRange.Location = new System.Drawing.Point(408, 37);
-            this.btnInsertUnicodeRange.Name = "btnInsertUnicodeRange";
-            this.btnInsertUnicodeRange.Size = new System.Drawing.Size(26, 25);
-            this.btnInsertUnicodeRange.TabIndex = 21;
-            this.btnInsertUnicodeRange.Text = "+";
-            this.btnInsertUnicodeRange.UseVisualStyleBackColor = true;
-            this.btnInsertUnicodeRange.Click += new System.EventHandler(this.btnInsertUnicodeRange_Click);
+            this.button4.Location = new System.Drawing.Point(95, 1);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 5;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Visible = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click_3);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(998, 602);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -942,7 +942,6 @@
             this.tcInput.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -1020,7 +1019,6 @@
         private System.Windows.Forms.SaveFileDialog dlgSaveAs;
         private System.Windows.Forms.ToolStripMenuItem copySourceToClipboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyHeaderToClipboardToolStripMenuItem;
-        private System.Windows.Forms.TextBox txtInputText;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel panel5;
@@ -1037,6 +1035,7 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button btnSaveBinFont;
         private System.Windows.Forms.Button btnInsertUnicodeRange;
+        private System.Windows.Forms.Button button4;
     }
 }
 

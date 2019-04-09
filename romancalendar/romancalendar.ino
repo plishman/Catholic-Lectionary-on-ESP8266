@@ -1,5 +1,4 @@
 #include <RCGlobals.h>
-
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2019 Philip Lishman, Licensed under GPL3, see LICENSE
 
@@ -80,13 +79,239 @@ enum DISPLAY_UPDATE_TYPE {
   crash_bug
 };
 
+//void updateDisplay(DISPLAY_UPDATE_TYPE d);
+//void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor);
+//void epaperUpdate();
+//void epaperDisplayImage();
+////void display_image(DISPLAY_UPDATE_TYPE i);
+////void display_image(DISPLAY_UPDATE_TYPE d, String messagetext, bool bMessageRed);
+
 TextBuffer tb;
 DiskFont diskfont;
 
+void display_image(DISPLAY_UPDATE_TYPE i) {
+	display_image(i, "", false);
+}
+
+void display_image(DISPLAY_UPDATE_TYPE d, String messagetext, bool bMessageRed) {
+	uint16_t messagecolor = GxEPD_BLACK;
+	if (bMessageRed) messagecolor = GxEPD_RED;
+
+	updateDisplay(d, messagetext, messagecolor);
+}
+
+//#include "rcdisplay.h";
+
+/*
 void updateDisplay(DISPLAY_UPDATE_TYPE d);
 void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor);
 void epaperUpdate();
 void epaperDisplayImage();
+*/
+
+EPD_DISPLAY_IMAGE* epd_image = NULL;
+String epaper_messagetext = "";
+uint16_t epaper_messagetext_color = GxEPD_BLACK;
+int displayPage = 0;
+
+void updateDisplay(DISPLAY_UPDATE_TYPE d) {
+	updateDisplay(d, "", GxEPD_BLACK);
+}
+
+void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor) {
+	displayPage = 0;
+
+	DEBUG_PRT.println("Updating Display");
+	ePaper.init(); // disable diagnostic output on Serial (use 115200 as parameter to enable diagnostic output on Serial)
+	DEBUG_PRT.println("Init Display");
+
+	if (d == display_reading) {
+		DEBUG_PRT.println("display_reading");
+
+		//ePaper.setMode(LUT_MODE_CLEAR);
+		//ePaper.eraseDisplay(true);
+
+
+		//ePaper.setMode(LUT_MODE_COMPOSITE);
+
+		int epd_contrast = Config::GetEPDContrast();
+
+		switch (diskfont._FontHeader.antialias_level)
+		{
+		case 4:
+			ePaper.resetRefreshNumber(LUT_MODE_3BPP);
+			break;
+
+		case 2:
+			ePaper.resetRefreshNumber(LUT_MODE_2BPP);
+			epd_contrast = epd_contrast >> 1;
+			break;
+
+		case 1:
+		default:
+			ePaper.resetRefreshNumber(LUT_MODE_1BPP);
+			epd_contrast = 1;
+			break;
+		}
+
+		do {
+			//Serial.printf("refresh number = %d\n", ePaper.getRefreshNumber());
+			ePaper.drawPaged(epaperUpdate);
+			DEBUG_PRT.println();
+		} while (ePaper.decRefreshNumber() && ePaper.getRefreshNumber() >= epd_contrast);
+
+		return;
+	}
+	//  if (d == display_reading) {
+	//    DEBUG_PRT.println("display_reading");
+	//    ePaper.drawPaged(epaperUpdate);
+	//    return;    
+	//  }
+
+	ePaper.resetRefreshNumber(LUT_MODE_1BPP);
+
+	epaper_messagetext = messagetext;
+	epaper_messagetext_color = messagecolor;
+
+	switch (d) {
+	case battery_recharge:
+		DEBUG_PRT.println("display battery_recharge image");
+		epd_image = &battery_recharge_image;
+		break;
+
+	case connect_power:
+		DEBUG_PRT.println("display connect_power image");
+		epd_image = &connect_power_image;
+		break;
+
+	case wps_connect:
+		DEBUG_PRT.println("display wps_connect image");
+		epd_image = &wps_connect_image;
+		break;
+
+	case clock_not_set:
+		DEBUG_PRT.println("display clock_not_set image");
+		epd_image = &clock_not_set_image;
+		break;
+
+	case sd_card_not_inserted:
+		DEBUG_PRT.println("display sd_card_not_inserted image");
+		epd_image = &sd_card_not_inserted_image;
+		break;
+
+	case wireless_network_connected:
+		DEBUG_PRT.println("display wireless_network_connected image");
+		epd_image = &wireless_network_connected_image;
+		break;
+
+	case wps_setup_failed:
+		DEBUG_PRT.println("display wps_setup_failed image");
+		epd_image = &wps_setup_failed_no_network_image;
+		break;
+
+	case font_missing:
+		DEBUG_PRT.println("display font_missing image");
+		epd_image = &font_missing_image;
+		break;
+
+	case crash_bug:
+		DEBUG_PRT.println("display crash_bug image");
+		epd_image = &crash_bug_image;
+		break;
+
+	}
+
+	ePaper.drawPaged(epaperDisplayImage);
+}
+
+void epaperUpdate() {
+	wdt_reset();
+	ePaper.eraseDisplay();
+	ePaper.setRotation(EPD_ROTATION); //90 degrees 
+
+	tb.render(ePaper, diskfont, displayPage);
+
+	int charheight = diskfont._FontHeader.charheight;
+	ePaper.drawFastHLine(0, charheight, PANEL_SIZE_X, GxEPD_BLACK);
+
+	displayPage++;
+	if (displayPage >= PAGE_COUNT) displayPage = 0;
+
+	DEBUG_PRT.print(F("."));
+}
+
+void epaperDisplayImage() {
+	if (epd_image == NULL) return;
+
+	int image_size_x = 264;
+	int image_size_y = 176;
+
+	int image_offset_x = (PANEL_SIZE_X - image_size_x) / 2;
+	int image_offset_y = (PANEL_SIZE_Y - image_size_y) / 2;
+
+	wdt_reset();
+	ePaper.setRotation(EPD_ROTATION == 1 ? 0 : 3); //These pictures are pre-rotated 90 degrees, for use on the 2.7 in display, byte order of which is portrait mode
+	ePaper.eraseDisplay();
+	if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_BLACK, GxEPD::bm_transparent);
+	if (epd_image->bitmap_red != NULL) ePaper.drawBitmap(epd_image->bitmap_red, image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_RED, GxEPD::bm_transparent);
+
+	if (epaper_messagetext != "") {
+		//int strwidth = diskfont.GetTextWidth(epaper_messagetext);
+		ePaper.setRotation(EPD_ROTATION); //90 degrees       
+		//diskfont.DrawStringAt(PANEL_SIZE_X - strwidth, 0, epaper_messagetext, ePaper, epaper_messagetext_color, false);
+
+		ePaper.setFont(&FreeMonoBold9pt7b);
+
+		int strend = 0;
+		int strstart = 0;
+		int cursor_x = image_offset_x + 0;
+		int cursor_y = image_offset_y + 12;
+		String substr = "";
+
+		String charheightstr = "Ag";
+		int16_t x1, y1;
+		uint16_t w, h;
+		ePaper.getTextBounds(charheightstr, 0, 0, &x1, &y1, &w, &h);
+
+		int fontheight = h;
+
+		if (!epaper_messagetext.endsWith("\n")) epaper_messagetext += "\n";
+
+		while (strend != -1) {
+			strend = epaper_messagetext.indexOf("\n", strstart);
+
+			if (strend != -1) {
+				substr = epaper_messagetext.substring(strstart, strend);
+			}
+			else {
+				substr = epaper_messagetext.substring(strstart);
+			}
+
+			if (substr != "") {
+				ePaper.setTextColor(GxEPD_WHITE);
+				ePaper.setCursor(cursor_x - 1, cursor_y - 1);
+				ePaper.print(substr);
+
+				ePaper.setCursor(cursor_x + 1, cursor_y + 1);
+				ePaper.print(substr);
+
+				ePaper.setCursor(cursor_x - 1, cursor_y + 1);
+				ePaper.print(substr);
+
+				ePaper.setCursor(cursor_x + 1, cursor_y - 1);
+				ePaper.print(substr);
+
+				ePaper.setTextColor(epaper_messagetext_color);
+				ePaper.setCursor(cursor_x, cursor_y);
+				ePaper.print(substr);
+
+				cursor_y += fontheight; // if the substring has a \n at the end, Y cursor should have been moved to the next line by the GFX library
+			}
+			strstart = strend + 1; // ready to move onto the next substring
+		}
+	}
+	DEBUG_PRT.print(F("."));
+}
 
 //#ifdef DISPLAY_SPI_3WIRE
 //Epd epd(SPI_3WIRE);
@@ -211,12 +436,17 @@ void setup() {
     
     if (rtcData.data.wake_flags == WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING) {
       DEBUG_PRT.println(F("rtcData flags = WAKE_FLAGS_WPS_FAILED_LAST_ATTEMPT_BUT_STILL_CHARGING, setting bRetryWPSConnect to False"));
-      bRetryWPSConnect = false;
+	  bRetryWPSConnect = false;
     }
 
     if (rtcData.data.wake_flags == WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE) {
       DEBUG_PRT.println(F("rtcData flags = WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE, setting bDisplayWifiConnectedScreen to False"));
-      bDisplayWifiConnectedScreen = false;      
+	  if (bEEPROM_checksum_good) {
+		  bDisplayWifiConnectedScreen = false;
+	  }
+	  else {
+		  bDisplayWifiConnectedScreen = true; // always display wifi connected screen if the EEPROM contents are not valid
+	  }
     }
   } else {
       DEBUG_PRT.println(F("rtcData memory is invalid (ESP8266 has been powered off), bRetryWPSConnect defaulting to True"));    
@@ -419,17 +649,6 @@ bool connect_wps(){
   return true;
 }
 
-void display_image(DISPLAY_UPDATE_TYPE i) {
-  display_image(i, "", false);
-}
-
-void display_image(DISPLAY_UPDATE_TYPE d, String messagetext, bool bMessageRed) {
-  uint16_t messagecolor = GxEPD_BLACK;
-  if (bMessageRed) messagecolor = GxEPD_RED;
-  
-  updateDisplay(d, messagetext, messagecolor);  
-}
-
 void loop(void) { 
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
@@ -526,7 +745,7 @@ void loop(void) {
 
     DEBUG_PRT.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
     
-    Lectionary::ReadingsFromEnum r;
+    ReadingsFromEnum r;
 
     bool getLectionaryReadingEveryHour = true; // was false. If we get here, must return a reading, since reading scheduling when using DeepSleep mode 
                                                // (which wakes *every hour* to check if a reading is due) is now handled in the init() code
@@ -536,7 +755,7 @@ void loop(void) {
       l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
   
       if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
-        r=Lectionary::READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
+        r=READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
                                   // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
                                   // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
                                   // returned on Saints days (apart from those following Christmas day, which I did have).
@@ -547,7 +766,7 @@ void loop(void) {
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
       if (!display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
         DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
-        r=Lectionary::READINGS_G;
+        r=READINGS_G;
         l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
         display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers);
       }
@@ -848,9 +1067,9 @@ void SleepUntilStartOfHour() {
 }
 
 
-bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool bReturnReadingForAllHours, bool b_OT, bool b_NT, bool b_PS, bool b_G) {
+bool getLectionaryReading(time64_t date, ReadingsFromEnum* r, bool bReturnReadingForAllHours, bool b_OT, bool b_NT, bool b_PS, bool b_G) {
   DEBUG_PRT.printf("getLectionaryReading() bReturnReadingFromAllHours=%s ", bReturnReadingForAllHours?"true":"false");
-  //Lectionary::ReadingsFromEnum r;
+  //ReadingsFromEnum r;
   tmElements_t tm;
   breakTime(date, tm);
 
@@ -864,21 +1083,21 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
     
     switch(tm.Hour) { // covers hours 18:00 - 23:59
     case 18:
-      *r=Lectionary::READINGS_OT;    
+      *r=READINGS_OT;    
       break;
     
     case 19:
-      *r=Lectionary::READINGS_NT;    
+      *r=READINGS_NT;    
       break;
       
     case 20:
-      *r=Lectionary::READINGS_PS;    
+      *r=READINGS_PS;    
       break;
 
     case 21:
     case 22:
     case 23:
-      *r=Lectionary::READINGS_G;
+      *r=READINGS_G;
       break;
           
     default:
@@ -893,22 +1112,22 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
     switch(tm.Hour) { // covers hours 00:00 - 07:59. Later hours (Mass during the day) are handled by the last switch statement (used for all other days also).
     case 0: // mass at midnight
     case 4: // mass at dawn
-      *r=Lectionary::READINGS_OT;
+      *r=READINGS_OT;
       break;
       
     case 1: // mass at midnight
     case 5: // mass at dawn
-      *r=Lectionary::READINGS_NT;
+      *r=READINGS_NT;
       break;
       
     case 2: // mass at midnight
     case 6: // mass at dawn
-      *r=Lectionary::READINGS_PS;
+      *r=READINGS_PS;
       break;
       
     case 3: // mass at midnight
     case 7: // mass at dawn
-      *r=Lectionary::READINGS_G;
+      *r=READINGS_G;
       break;
     
     default:
@@ -925,24 +1144,24 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
       if (!bReturnReadingForAllHours) {
         switch(tm.Hour) {
         case 8:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
 
           if (!b_OT) {
-            *r=Lectionary::READINGS_NT;
+            *r=READINGS_NT;
           }
           
           if (!b_NT) {
-            *r=Lectionary::READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
+            *r=READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
           }
           break;
           
         case 14:
-          *r=Lectionary::READINGS_PS;
+          *r=READINGS_PS;
           break;
         
         case 0:
         case 20:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
           break;
         
         default:
@@ -958,14 +1177,14 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 11:
         case 12:
         case 13:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
 
           if (!b_OT) {
-            *r=Lectionary::READINGS_NT;
+            *r=READINGS_NT;
           }
           
           if (!b_NT) {
-            *r=Lectionary::READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
+            *r=READINGS_OT; // one or other of b_OT, b_NT should be true. Defaults to G if both are false.
           }
           break;
           
@@ -975,7 +1194,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 17:
         case 18:
         case 19:
-          *r=Lectionary::READINGS_PS;
+          *r=READINGS_PS;
           break;
     
         case 0:
@@ -990,7 +1209,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 21:
         case 22:
         case 23:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
           break;
         
         default:
@@ -1006,20 +1225,20 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
       if (!bReturnReadingForAllHours) {
         switch(tm.Hour) {
         case 8:
-          *r=Lectionary::READINGS_OT;
+          *r=READINGS_OT;
           break;
           
         case 12:
-          *r=Lectionary::READINGS_NT;
+          *r=READINGS_NT;
           break;
     
         case 16:
-          *r=Lectionary::READINGS_PS;
+          *r=READINGS_PS;
           break;
     
         case 0:
         case 20:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
           break;
         
         default:
@@ -1033,21 +1252,21 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 9:
         case 10:
         case 11:
-          *r=Lectionary::READINGS_OT;
+          *r=READINGS_OT;
           break;
           
         case 12:
         case 13:
         case 14:
         case 15:
-          *r=Lectionary::READINGS_NT;
+          *r=READINGS_NT;
           break;
     
         case 16:
         case 17:
         case 18:
         case 19:
-          *r=Lectionary::READINGS_PS;
+          *r=READINGS_PS;
           break;
     
         case 0:
@@ -1062,7 +1281,7 @@ bool getLectionaryReading(time64_t date, Lectionary::ReadingsFromEnum* r, bool b
         case 21:
         case 22:
         case 23:
-          *r=Lectionary::READINGS_G;
+          *r=READINGS_G;
           break;
         
         default:

@@ -77,7 +77,7 @@ bool Lectionary::testFile(String filename) {
 }
 
 
-bool Lectionary::get(String liturgical_year, String liturgical_cycle, Lectionary::ReadingsFromEnum readings_from, int number, String* refs_text) {
+bool Lectionary::get(String liturgical_year, String liturgical_cycle, ReadingsFromEnum readings_from, int number, String* refs_text) {
 	if (_I18n == NULL) return false;
 
 	String lect_path = _I18n->configparams.lectionary_path;

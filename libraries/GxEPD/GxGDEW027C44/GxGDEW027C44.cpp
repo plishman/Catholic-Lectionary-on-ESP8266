@@ -126,11 +126,11 @@ const uint8_t GxGDEW027C44::lut_24_black[] = {
 #define LUT_BLACK_C1_7 				0x0A
 #define LUT_BLACK_C2_7 				0x0A
 		
-#define LUT_BLACK_REPS_6 			0x03	//8*3*2 = 48
-#define LUT_BLACK_C1_6 				0x03
-#define LUT_BLACK_C2_6 				0x03
+#define LUT_BLACK_REPS_6 			0x04 //0x03	//8*3*2 = 48
+#define LUT_BLACK_C1_6 				0x03 //0x03
+#define LUT_BLACK_C2_6 				0x03 //0x03
 		
-#define LUT_BLACK_REPS_5 			0x03	//4*3*2 = 24
+#define LUT_BLACK_REPS_5 			0x03 //0x03	//4*3*2 = 24
 #define LUT_BLACK_C1_5 				0x02
 #define LUT_BLACK_C2_5				0x02
 		
@@ -138,18 +138,94 @@ const uint8_t GxGDEW027C44::lut_24_black[] = {
 #define LUT_BLACK_C1_4 				0x01
 #define LUT_BLACK_C2_4 				0x01
 		
-#define LUT_BLACK_REPS_3 			0x03	//1*3*2 = 6
+#define LUT_BLACK_REPS_3 			0x02	//1*3*2 = 6
 #define LUT_BLACK_C1_3 				0x01
 #define LUT_BLACK_C2_3 				0x01
 		
-#define LUT_BLACK_REPS_2 			0x03	//1*2*2 = 4
+#define LUT_BLACK_REPS_2 			0x02	//1*2*2 = 4
 #define LUT_BLACK_C1_2 				0x01
 #define LUT_BLACK_C2_2 				0x01
 		
-#define LUT_BLACK_REPS_1 			0x03	//1*1*2 = 2
+#define LUT_BLACK_REPS_1 			0x02	//1*1*2 = 2
 #define LUT_BLACK_C1_1 				0x01
 #define LUT_BLACK_C2_1 				0x01
 									// 48+24+12+6+4+2 = 96
+////////////////////////////////////
+///// composite (no invert/clear) 7 shades + white (3bpp)
+////RED
+//#define LUT_VCOM_DC_RED_COUNT1 		33
+//#define LUT_VCOM_DC_RED_COUNT2 		34
+//#define LUT_VCOM_DC_RED_REPCOUNT 	37
+//
+//#define LUT_RED_COUNT1 				31
+//#define LUT_RED_COUNT2 				32
+//#define LUT_RED_REPCOUNT 			35
+//
+//#define LUT_RED_REPS_7 				0x0F	
+//#define LUT_RED_C1_7 				0x03
+//#define LUT_RED_C2_7 				0x0E
+//		
+//#define LUT_RED_REPS_6 				0x01	
+//#define LUT_RED_C1_6 				0x01
+//#define LUT_RED_C2_6 				0x0C
+//		
+//#define LUT_RED_REPS_5 				0x01	
+//#define LUT_RED_C1_5 				0x01
+//#define LUT_RED_C2_5 				0x0C
+//		
+//#define LUT_RED_REPS_4 				0x01	
+//#define LUT_RED_C1_4 				0x01
+//#define LUT_RED_C2_4 				0x0C
+//		
+//#define LUT_RED_REPS_3 				0x01	
+//#define LUT_RED_C1_3 				0x01
+//#define LUT_RED_C2_3 				0x0C
+//		
+//#define LUT_RED_REPS_2 				0x01	
+//#define LUT_RED_C1_2 				0x01
+//#define LUT_RED_C2_2 				0x0C
+//		
+//#define LUT_RED_REPS_1 				0x01	
+//#define LUT_RED_C1_1 				0x01
+//#define LUT_RED_C2_1 				0x0C
+//
+////BLACK
+//#define LUT_VCOM_DC_BLACK_COUNT1 	9
+//#define LUT_VCOM_DC_BLACK_COUNT2 	10
+//#define LUT_VCOM_DC_BLACK_REPCOUNT 	13
+//
+//#define LUT_BLACK_COUNT1 			7
+//#define LUT_BLACK_COUNT2 			8
+//#define LUT_BLACK_REPCOUNT 			11
+//
+//#define LUT_BLACK_REPS_7 			0x08	//8*10*2 = 160
+//#define LUT_BLACK_C1_7 				0x0A
+//#define LUT_BLACK_C2_7 				0x0A
+//
+//#define LUT_BLACK_REPS_6 			0x03	//8*3*2 = 48
+//#define LUT_BLACK_C1_6 				0x02
+//#define LUT_BLACK_C2_6 				0x02
+//		
+//#define LUT_BLACK_REPS_5 			0x02	//4*3*2 = 24
+//#define LUT_BLACK_C1_5 				0x03
+//#define LUT_BLACK_C2_5				0x03
+//		
+//#define LUT_BLACK_REPS_4 			0x03	//2*3*2 = 12
+//#define LUT_BLACK_C1_4 				0x01
+//#define LUT_BLACK_C2_4 				0x01
+//		
+//#define LUT_BLACK_REPS_3 			0x03	//1*3*2 = 6
+//#define LUT_BLACK_C1_3 				0x01
+//#define LUT_BLACK_C2_3 				0x01
+//		
+//#define LUT_BLACK_REPS_2 			0x03	//1*2*2 = 4
+//#define LUT_BLACK_C1_2 				0x01
+//#define LUT_BLACK_C2_2 				0x01
+//		
+//#define LUT_BLACK_REPS_1 			0x03	//1*1*2 = 2
+//#define LUT_BLACK_C1_1 				0x01
+//#define LUT_BLACK_C2_1 				0x01
+//									// 48+24+12+6+4+2 = 96
 
 									
 
@@ -944,7 +1020,7 @@ void GxGDEW027C44::_sleep(void)
 
 void GxGDEW027C44::_writeLUT_Normal(void)
 {
-  Serial.println("_writeLUT_Normal()");
+  //Serial.println("_writeLUT_Normal()");
   unsigned int count;
   {
     _writeCommand(0x20);							//vcom
@@ -981,7 +1057,7 @@ void GxGDEW027C44::_writeLUT_Normal(void)
 
 void GxGDEW027C44::_writeLUT_Composite(void)
 {
-  Serial.println("_writeLUT_Composite()");
+  //Serial.println("_writeLUT_Composite()");
   unsigned int count;
   {
     _writeCommand(0x20);							//vcom
@@ -1020,7 +1096,7 @@ void GxGDEW027C44::_writeLUT(void)
 {
 	switch(_lut_mode) {
 		case LUT_MODE_3BPP:
-			Serial.printf("_writeLUT() 3BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 3BPP: _refreshnumber=%d\n", _refreshnumber);
 			switch(_refreshnumber) 
 			{
 				case 7:
@@ -1341,7 +1417,7 @@ void GxGDEW027C44::_writeLUT(void)
 			break;
 
 		case LUT_MODE_2BPP:
-			Serial.printf("_writeLUT() 2BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 2BPP: _refreshnumber=%d\n", _refreshnumber);
 			switch(_refreshnumber) 
 			{
 				case 3:
@@ -1443,12 +1519,12 @@ void GxGDEW027C44::_writeLUT(void)
 			break;
 
 		case LUT_MODE_1BPP:
-			Serial.printf("_writeLUT() 1BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() 1BPP: _refreshnumber=%d\n", _refreshnumber);
 			_writeLUT_Normal();
 			break;
 			
 		default:
-			Serial.printf("_writeLUT() unknown BPP: _refreshnumber=%d\n", _refreshnumber);
+			//Serial.printf("_writeLUT() unknown BPP: _refreshnumber=%d\n", _refreshnumber);
 			_writeLUT_Normal();
 			break;
 	}

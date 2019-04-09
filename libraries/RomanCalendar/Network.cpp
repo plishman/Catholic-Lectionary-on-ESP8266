@@ -38,7 +38,7 @@ bool Network::connect() {
 	
 	//WiFi.setOutputPower(0);
 	WiFi.begin(storedSSID.c_str(), storedPSK.c_str()); // reading data from EEPROM, last saved credentials
-	int timeout = 120;
+	int timeout = 50;
 	while (WiFi.status() != WL_CONNECTED && timeout != 0) {
 		delay(500);
 		DEBUG_PRT.print(".");

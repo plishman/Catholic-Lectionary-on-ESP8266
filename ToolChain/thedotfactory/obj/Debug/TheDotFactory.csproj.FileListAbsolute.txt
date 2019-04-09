@@ -14,7 +14,6 @@ C:\Users\phill\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\The
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\TheDotFactory.exe.config
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\TheDotFactory.exe
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\TheDotFactory.pdb
-C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.csprojResolveAssemblyReference.cache
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.AboutForm.resources
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.InputBoxDialog.resources
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.MainForm.resources
@@ -24,3 +23,10 @@ C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\De
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.csproj.CoreCompileInputs.cache
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.exe
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.pdb
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\FontDialog.exe
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\FontDialog.pdb
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\FontDialog.exe.config
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\TheDotFactoryWPFControls.dll
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\bin\Debug\TheDotFactoryWPFControls.pdb
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.csprojAssemblyReference.cache
+C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\thedotfactory\obj\Debug\TheDotFactory.csproj.CopyComplete

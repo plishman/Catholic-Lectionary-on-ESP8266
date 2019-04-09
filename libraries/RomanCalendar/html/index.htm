@@ -155,7 +155,7 @@
 							lectionaryselect[configstate.lectionary_config_number].selected = 1;
 						}
 						
-						if (configstate.contrast && configstate.contrast > 0 && configstate.contrast < 8) {
+						if (configstate.contrast && configstate.contrast >= 0 && configstate.contrast < 8) {
 							document.getElementById("contrast").value = configstate.contrast.toString();
 						}
 						else {
