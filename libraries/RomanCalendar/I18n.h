@@ -11,7 +11,7 @@
 	#include <SD.h>
 	#include <pins_arduino.h>
 	#include <TimeLib.h>
-	#include "I2CSerialPort.h"
+	#include "DebugPort.h"
 #else
 	#include "WString.h"
 #endif

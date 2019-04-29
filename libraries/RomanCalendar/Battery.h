@@ -4,7 +4,7 @@
 #include "RCGlobals.h"
 
 #include "arduino.h"
-#include "I2CSerialPort.h"
+#include "DebugPort.h"
 
 #define ADC_RESISTOR 470.0
 //#define ADC_RESISTOR 200.0 + 220.0

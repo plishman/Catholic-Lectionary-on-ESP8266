@@ -9,7 +9,7 @@
 	#include "WString.h"
 #else
 	#include "Arduino.h"
-	#include "I2CSerialPort.h"
+	#include "DebugPort.h"
 #endif
 
 #include <utf8string.h>

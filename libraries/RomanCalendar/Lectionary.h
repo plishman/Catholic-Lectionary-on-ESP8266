@@ -10,7 +10,7 @@
 #endif
 
 #include <I18n.h>
-#include "I2CSerialPort.h"
+#include "DebugPort.h"
 
 enum ReadingsFromEnum {
 	READINGS_OT = 0,

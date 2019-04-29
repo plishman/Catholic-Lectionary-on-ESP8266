@@ -482,11 +482,13 @@ bool Bible::parse_verse(String refs, int* startpos, int* chapter, int* verse, St
 
 	if (*verse == 0) return false;
 
-	String letters = "abcdefghijklmnopqrstuvwxyz";
+	String letters = "abcdefghijklmnopqrstuvwxyz[]";
 	
 	char letter = refs.charAt(*startpos);
 	while (letter != '\0' && letters.indexOf(letter) != -1) {
-		(*sentence_range) += letter;
+		if (letter != '[' && letter != ']') {			// PLL-13-04-2019 this will discard brackets [ and ], which indicate optional sentences.
+			(*sentence_range) += letter;
+		}
 		(*startpos)++;
 		letter = refs.charAt(*startpos);
 	}

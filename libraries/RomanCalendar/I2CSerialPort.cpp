@@ -2,17 +2,7 @@
 #include "RCConfig.h"
 
 I2CSerialPort::I2CSerialPort() {
-	config_t c = {0};
-	
-//	Config conf;
-	
-	
-	if (Config::GetConfig(c)) {
-		_b_enable = c.data.debug_on;
-	} 
-	else {
-		_b_enable = false; //turn off - was true Need to manage debug output on a module basis now! // turn on debug output if the EEPROM settings are corrupt or invalid.
-	}
+	_b_enable = false; // debugging PLL-27-04-2019
 }
 
 I2CSerialPort::~I2CSerialPort() {
@@ -40,6 +30,15 @@ void I2CSerialPort::begin(uint8_t sda, uint8_t scl, uint8_t address) {
 		}
 		i++;
 	} while ((error != 0) && (i <= MAX_RETRIES));
+	
+	config_t c = {0};
+	
+	if (Config::GetConfig(c)) {
+		_b_enable = (c.data.debug_flags & DEBUG_FLAGS_I2CPORT) != 0;
+	} 
+	else {
+		_b_enable = false; //turn off - was true Need to manage debug output on a module basis now! // turn on debug output if the EEPROM settings are corrupt or invalid.
+	}
 }
 
 size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your class*/
@@ -62,6 +61,7 @@ size_t I2CSerialPort::write(uint8_t character) { /*blahblah is the name of your 
 		bcode = brzo_i2c_end_transaction();
 	} while (--retry > 0 && bcode != 0);
 
+	return 1;
 	
 //	if (bcode != 0) {
 //		soft_reset();
@@ -90,7 +90,7 @@ size_t I2CSerialPort::write(char *str) { /*blahblah is the name of your class*/
 		bcode = brzo_i2c_end_transaction();
 	} while (--retry > 0 && bcode != 0);
 
-	
+	return strlen(str);
 //	if (bcode != 0) {
 //		soft_reset();
 //		printf("\nI2CSerial: bcode=%d\n", bcode);
@@ -120,6 +120,8 @@ size_t I2CSerialPort::write(uint8_t *buffer, size_t size) { /*blahblah is the na
 			brzo_i2c_write(buffer, size, false);
 		bcode = brzo_i2c_end_transaction();
 	} while (--retry > 0 && bcode != 0);
+
+	return size;
 		
 //	if (bcode != 0) {
 //		soft_reset();

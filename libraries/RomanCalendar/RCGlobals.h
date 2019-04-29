@@ -1,9 +1,21 @@
 #ifndef _RCGLOBALS42_H
-#define _RCGLOBALS42_H
+#define _RCGLOBALS42_H	
 	#define LECT_VER "0.7"
     #define MAX_DEEPSLEEP_SECONDS 4294
-	#define DEBUG_PRT I2CSerial	//Serial
+
+// select debug port (comment out next line to default to Serial)
+	#define DEBUG_PRT Debug_Prt
 	
+	#ifndef DEBUG_PRT
+		#define DEBUG_PRT Serial
+		#define DEBUGPRT_BEGIN Serial.begin(115200);
+		#define DEBUGPRT_END
+	#else
+		#define DEBUGPRT_BEGIN Debug_Prt.begin("/debuglog.txt", 1, 3, 8);
+		#define DEBUGPRT_END Debug_Prt.end();
+	#endif
+
+// select e-paper display:	
 	#define EPAPER_GxGDEW042Z15
 //	#define EPAPER_GxGDEW027C44
 	

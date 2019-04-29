@@ -1,5 +1,5 @@
 #include "RCConfig.h"
-#include "I2CSerialPort.h"
+#include "DebugPort.h"
 #include "SD.h"
 
 extern "C" {
@@ -266,7 +266,7 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String ep
   float timezone_offset = 0.0;
   int lectionary_config_number = 0;
   uint16_t lectionary_epd_contrast = 0;
-  bool debug_on = false;
+  uint8_t debug_flags = 0;
   bool debug_not_set = true;
   
   float dst_offset = 0.0;
@@ -301,13 +301,22 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String ep
 	  }
   }  
   
-  if (debug_mode == "1" || debug_mode == "true") {
-	  debug_on = true;
+  if (debug_mode == "1" || debug_mode == "true") { // flags are bitwise: 1=I2C debug, 2=file debug, 3=both, true=I2C debug
 	  debug_not_set = false;
+	  debug_flags |= DEBUG_FLAGS_I2CPORT;
   } 
-  else if (debug_mode == "0" || debug_mode == "false") {
-	  debug_on = false;
+  else if (debug_mode == "2") {
 	  debug_not_set = false;
+	  debug_flags |= DEBUG_FLAGS_FILEPORT;	  
+  }
+  else if (debug_mode == "3") {
+	  debug_not_set = false;
+	  debug_flags |= DEBUG_FLAGS_I2CPORT;	  
+	  debug_flags |= DEBUG_FLAGS_FILEPORT;	  
+  }
+  else if (debug_mode == "0" || debug_mode == "false") {
+	  debug_not_set = false;
+	  debug_flags = 0;
   }
   
   if (epdcontrast != "") {
@@ -354,7 +363,7 @@ bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String ep
   GetConfig(c); // load config as it is and update, so when it is written back it doesn't destroy other members which have not changed
 
   if (!debug_not_set) {
-	c.data.debug_on = debug_on;
+	c.data.debug_flags = debug_flags;
   }
   
   if (bGotTz && bGotLectNum) {
@@ -394,7 +403,8 @@ uint16_t Config::GetEPDContrast() {
 void Config::dump_config(config_t& c) {
 	DEBUG_PRT.print(F("c.data.timezone_offset:\t")); 			DEBUG_PRT.println(String(c.data.timezone_offset));
 	DEBUG_PRT.print(F("c.data.lectionary_config_number:\t")); 	DEBUG_PRT.println(String(c.data.lectionary_config_number));
-	DEBUG_PRT.print(F("c.data.debug_on:\t")); 					DEBUG_PRT.println(String(c.data.debug_on));
+//	DEBUG_PRT.print(F("c.data.debug_on:\t")); 					DEBUG_PRT.println(String(c.data.debug_on));
+	DEBUG_PRT.print(F("c.data.debug_flags:\t")); 				DEBUG_PRT.println(String(c.data.debug_flags));
 	DEBUG_PRT.print(F("c.data.dst_offset:\t")); 				DEBUG_PRT.println(String(c.data.dst_offset));
 	DEBUG_PRT.print(F("c.data.dst_start_month:\t")); 			DEBUG_PRT.println(String(c.data.dst_start_month));
 	DEBUG_PRT.print(F("c.data.dst_start_day:\t")); 				DEBUG_PRT.println(String(c.data.dst_start_day));

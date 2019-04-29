@@ -16,7 +16,8 @@
 
 //----------
 #include <pins_arduino.h>
-#include <I2CSerialPort.h>
+//#include <I2CSerialPort.h>
+#include <DebugPort.h>
 #include <utf8string.h>
 #include <TimeLib.h>
 #include <Enums.h>
@@ -61,7 +62,7 @@ extern "C" {
 
 #define SLEEP_HOUR 60*60e6
 
-I2CSerialPort I2CSerial;
+DebugPort Debug_Prt;
 
 GxIO_Class io(SPI, /*CS=D16*/ D8, /*DC=D4*/ -1, /*RST=D5*/ D2);  // dc=-1 -> not used (using 3-wire SPI)
 GxEPD_Class ePaper(io, D2, D3 /*RST=D5*/ /*BUSY=D12*/);
@@ -365,6 +366,15 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
                  //The address of the last crash is printed, which is used to debug garbled output.
 
       resetreason += String(reset_info_buf);
+
+      time64_t date = 0;
+      Config::getLocalDateTime(&date);
+      tmElements_t ts;
+      breakTime(date, ts);
+      os_sprintf(reset_info_buf,"\nat %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+
+      resetreason += String(reset_info_buf);
+      
       return true;
   }
 
@@ -374,15 +384,22 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
 
 void setup() { 
   pinMode(D1, OUTPUT);
-  digitalWrite(D1, HIGH);
+  digitalWrite(D1, HIGH); // set sd card to not selected
+
+  pinMode(D8, OUTPUT); 
+  digitalWrite(D8, HIGH); // set epaper display to not selected
+
   SD.begin(D1, SPI_HALF_SPEED);
     
   SPIFFS.begin();
-  //Serial.begin(9600);
-  DEBUG_PRT.begin(1,3,8);
+  //DEBUG_PRT.begin(1,3,8);
+  DEBUGPRT_BEGIN
   delay(100);
-
+  Serial.println("-");
+  
   DEBUG_PRT.print(F("free memory = "));
+  Serial.println("=");
+  
   DEBUG_PRT.println(String(system_get_free_heap_size()));
 
   String resetreason = "";
@@ -393,6 +410,7 @@ void setup() {
 
   if (bCrashed) {
     display_image(crash_bug, resetreason, false);
+    DEBUGPRT_END
     Config::PowerOff(0); // power off until USB5V is (re)connected
     ESP.deepSleep(0); 
   }
@@ -423,8 +441,10 @@ void setup() {
   if (!bEEPROM_checksum_good && !Battery::power_connected()) {
     DEBUG_PRT.println(F("On battery power and EEPROM checksum invalid: Sleeping until USB power is attached and web interface is used to configure EEPROM"));
     display_image(connect_power);
+    DEBUGPRT_END
     if (!Config::PowerOff(0)) {
       DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+      DEBUGPRT_END
       ESP.deepSleep(0); //sleep until USB power is reconnected // sleep for an hour (71minutes is the maximum!), or until power is connected (SLEEP_HOUR)
     }
   }
@@ -494,8 +514,10 @@ void setup() {
           /////
             DEBUG_PRT.println(F("EEPROM checksum is bad and no network configured, sleeping until power is disconnected and reconnected, to restart WPS configuration"));
             display_image(connect_power);
+            DEBUGPRT_END
             if (!Config::PowerOff(0)) {
               DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+              DEBUGPRT_END
               ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
             }
           }
@@ -503,6 +525,7 @@ void setup() {
         else {
           //ESP.deepSleep(1e6); // reset esp, network is configured
           //ESP.reset();
+          DEBUGPRT_END
           ESP.restart();
         }
       }
@@ -573,9 +596,10 @@ void battery_test() {
       //  wdt_reset();
       //  delay(2000); // testing - when finished, will be sleep (indefinite, wakes when charger is connected through reset pulse)
       //}
-
+      DEBUGPRT_END
       if (!Config::PowerOff(0)) { // **24-11-2018 use RTC power switch to turn off all peripherals rather than just place esp8266 in deepSleep mode
         DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+        DEBUGPRT_END
         ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
       }
       
@@ -649,7 +673,7 @@ bool connect_wps(){
   return true;
 }
 
-void loop(void) { 
+void loop(void) {  
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   config_server();  // config server will run if battery power is connected
@@ -669,8 +693,10 @@ void loop(void) {
       DEBUG_PRT.println(F("Error: Failed to get config: config.csv is missing or bad or no SD card inserted"));
       display_image(sd_card_not_inserted);
       //ESP.deepSleep(SLEEP_HOUR);    
+      DEBUGPRT_END
       if (!Config::PowerOff(0)) {
         DEBUG_PRT.println(F("Attempt to power off via DS3231 failed, using deepsleep mode"));
+        DEBUGPRT_END
         ESP.deepSleep(0); // sleep indefinitely, reset pulse will wake the ESP when USB power is unplugged and plugged in again. //sleep for an hour (71minutes is the maximum!), or until power is connected SLEEP_HOUR
       }
 
@@ -958,6 +984,7 @@ void config_server()
 
       if (Config::bSettingsUpdated) {
         DEBUG_PRT.println(F("Settings updated, resetting lectionary..."));
+        DEBUGPRT_END
         ESP.deepSleep(1e6); //reboot after 1 second
       }
       else if (bTimeUp) {
@@ -1000,7 +1027,8 @@ void SleepFor(int hours, int minutes, int seconds) {
 
     time64_t waketime = makeTime(ts);
     waketime += ((hours * 3600) + (minutes * 60) + seconds);
-
+    
+    DEBUGPRT_END
     Config::PowerOff(waketime);
     
     delay(250);
@@ -1020,6 +1048,7 @@ void SleepFor(int hours, int minutes, int seconds) {
       DEBUG_PRT.println(F(" seconds"));
     }
     
+    DEBUGPRT_END
     ESP.deepSleep(deepSleepDurationSeconds * 1e6); // maximum sleep duration using deepSleep is 4294 seconds, or ((1<<32)-1) / 1e6) seconds, or 
                                                    // 1 hr 11 mins and 34 sec (deepSleep timing is in uSeconds).
 }
@@ -1039,7 +1068,8 @@ void SleepForHours(int num_hours) {
     time64_t waketime = makeTime(ts);
 
     waketime += (num_hours * 3600);
-
+    
+    DEBUGPRT_END
     Config::PowerOff(waketime);
     
     delay(250);
@@ -1062,6 +1092,7 @@ void SleepUntilStartOfHour() {
     }
     
     DEBUG_PRT.printf("Sleeping %d minutes: Will wake at around %02d:00\n", sleepduration_minutes, (ts.Hour + 1 + hourskip)%24);
+    DEBUGPRT_END
     ESP.deepSleep(sleepduration_minutes * 60e6);
     return; // should never return because ESP should be asleep!
 }

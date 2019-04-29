@@ -79,7 +79,7 @@ typedef struct {
   float timezone_offset;
   uint32_t lectionary_config_number;
   uint32_t century;
-  bool debug_on;
+  uint8_t debug_flags;
   float dst_offset;
   uint32_t dst_start_month;
   uint32_t dst_start_day;
@@ -89,6 +89,9 @@ typedef struct {
   uint32_t dst_end_hour;
   uint16_t epd_contrast;
 } config_data_t;
+
+#define DEBUG_FLAGS_I2CPORT  1
+#define DEBUG_FLAGS_FILEPORT 2
 
 typedef struct {
   config_data_t data;
