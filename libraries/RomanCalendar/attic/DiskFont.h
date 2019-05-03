@@ -6,7 +6,7 @@
 #include "Arduino.h"
 #include <epd2in7b.h>
 #include <epdpaint.h>
-#include "I2CSerialPort.h"
+#include "DebugPort.h"
 //#include "I18n.h"
 
 const unsigned long FONT_HEADER_OFFSET_START = 8;

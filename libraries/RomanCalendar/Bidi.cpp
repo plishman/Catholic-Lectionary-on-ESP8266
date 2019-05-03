@@ -6,7 +6,38 @@
 //Bidi::Bidi() {
 //}
 
+int Bidi::FindFirstSpacelikeCharacter(String s, int startpos) {
+	uint32_t spacechars[14] = {0x0020, 0x1680, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x3000};
+	
+	int firstspacetypecharpos = s.length() - startpos;
+	bool bFoundSpacetypeChar = false;
+	
+	for (int i = 0; i < 14; i++) {
+		String space_ch = utf8fromCodepoint(spacechars[i]);
+		int pos = s.indexOf(space_ch, startpos);
+		
+		if (pos != -1 && pos < firstspacetypecharpos) {
+			firstspacetypecharpos = pos;
+			bFoundSpacetypeChar = true;
+		}
+	}
+	
+	if (bFoundSpacetypeChar) {
+		return firstspacetypecharpos;
+	}
+	
+	return -1;
+}
+
+
 bool Bidi::IsSpace(String ch) {
+	String spacechar = "";
+	return IsSpace(ch, spacechar);
+}
+
+bool Bidi::IsSpace(String ch, String& foundspacechar) {
+	foundspacechar = "";
+	
 	uint32_t code = codepointUtf8(ch);
 	
 	switch(code)
@@ -25,6 +56,7 @@ bool Bidi::IsSpace(String ch) {
 		case 0x2009:
 		case 0x200A:
 		case 0x3000:
+			foundspacechar = ch;
 			return true;
 		
 		default:
@@ -34,6 +66,15 @@ bool Bidi::IsSpace(String ch) {
 	return false;
 }
 
+bool Bidi::ExpectSpace(String s, int* pos) {
+	String ch = utf8CharAt(s, *pos);
+	
+	if (IsSpace(ch)) {
+		*pos += ch.length();
+		return true;
+	}
+	return false;
+}
 	
 bool Bidi::ExpectRTL(String s, int* pos) {
 	String ch = utf8CharAt(s, *pos);
@@ -172,7 +213,7 @@ void Bidi::GetString(String s,
 					 bool bForceLineBreakAfterString, 
 					 int fbwidth, 
 					 int xpos, 
-					 bool wrap_text) 
+					 bool wrap_text ) 
 {
 	DEBUG_PRT.printf("GetString() xpos=%d, s.length=%d, startstrpos=%d, endstrpos=%d, textwidth=%d\n", xpos, s.length(), *startstrpos, *endstrpos, *textwidth);
 
@@ -236,7 +277,7 @@ void Bidi::GetString(String s,
 	
 	int wordcount = 0;
 	
-//	DEBUG_PRT.printf("GetString() bOneWordOnly = %s\n", bOneWordOnly ? "true" : "false");
+//	DEBUG_PRT.printf("() bOneWordOnly = %s\n", bOneWordOnly ? "true" : "false");
 //	
 //	DEBUG_PRT.printf("GetString() pos < s.length = %s\n", pos < s.length() ? "true" : "false");
 //	DEBUG_PRT.printf("GetString() dcurrwidth < dmaxwidth || !wrap_text = %s\n", (dcurrwidth < dmaxwidth || !wrap_text) ? "true" : "false");
@@ -257,7 +298,7 @@ void Bidi::GetString(String s,
 		  /*&& (!*bLineBreak)*/ 									// and an linebreak tag has not been fount
 		  && !bLineBreakTagFound
 		  && (bCurrCharRightToLeft == bLookingForRightToLeft)	// and the reading direction hasn't changed
-		  && (!(bOneWordOnly && wordcount == 1))  )				    // and fewer than 1 word has been processed if the bOneWordOnly flag is set			
+		  && (!(bOneWordOnly && wordcount == 1)) )  // and fewer than 1 word has been processed if the bOneWordOnly flag is set
 	{				
 		
 		int curpos = pos;
@@ -277,7 +318,7 @@ void Bidi::GetString(String s,
 		last_ch = ch;
 		ch = utf8CharAt(s, pos); // get next character
 
-		if (ch != "." && ch != " ") {
+		if (ch != "." && ch != " ") { // . and " " inherit the reading direction of the text around them, so don't check if reading direction is changed for these
 			bCurrCharRightToLeft = IsRightToLeftChar(ch);
 		}
 		
@@ -297,17 +338,44 @@ void Bidi::GetString(String s,
 			continue;
 		}
 		else {
-			if (ch == " " || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text				
+			if (IsSpace(ch)/*ch == " "*/ || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text				
+			
+				//DEBUG_PRT.print("[sp/.]");
+			
 				pos += ch.length();
 				dcurrwidth += diskfont.GetTextWidthA(ch);
+
+				// in Chinese text, a Chinese space character (the size of the other Chinese glyphs) appears to the left and
+				// right of their comma and to the left of their full stop characters. These characters cannot begin a line in 
+				// Chinese typography, so need to handle that case.
+				
+				String ch_punctuation = utf8CharAt(s, pos);
+				
+				if ((ch_punctuation == "、") || (ch_punctuation == "。") || (ch_punctuation == "．")) { // these are Chinese comma and full stop characters, and they are usually surrounded by Chinese space characters (before and after)			
+					double d_ch_p_width = diskfont.GetTextWidthA(ch_punctuation);
+					
+					DEBUG_PRT.print("[、。．]");
+
+					// if the comma or dot overflows the line, print it and the preceding ideogram on the next line
+					if (dcurrwidth + d_ch_p_width > dmaxwidth) {	// if this line (including the punctuation) overflows
+						//DEBUG_PRT.println("Punctuation (Chinese) overflows line - wrapping previous word so that punctuation is not at start of line.");
+						*bNewLine = true;	// tell caller to insert a newline after the line to be printed
+						break;				// and exit the loop
+					}
+					
+					pos += ch_punctuation.length(); // punctuation character didn't overflow, so add it to dcurrwidth and bump string position pos
+					dcurrwidth += d_ch_p_width;
+				}
 				
 				lastwordendstrpos = pos; // save this position as it is a word boundary
 				lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 
 				wordcount++;
 				
+				//DEBUG_PRT.printf("[wc=%d, lwepos=%d, lwewid=%d]\n", wordcount, lastwordendstrpos, lastwordendxwidth);
+				
 				continue;
-			} 			
+			}							
 		}
 
 		dcurrwidth += diskfont.GetTextWidthA(ch);
@@ -315,11 +383,11 @@ void Bidi::GetString(String s,
 		DEBUG_PRT.printf("%s", ch.c_str());
 	}
 
-	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between
+	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between *startstrpos and *endstrpos).
 		if (!ExpectLineBreakTag(s, &pos)) {
 			DEBUG_PRT.print("GetString() Newline: dcurrwidth=%d dmaxwidth=%d\n"); 
 			DEBUG_PRT.println("dcurrwidth=" + String((int)dcurrwidth) + " dmaxwidth=" + String((int)dmaxwidth));
-			*bNewLine = true;		 // *startstrpos and *endstrpos).
+			*bNewLine = true;		 
 		}
 		else {
 			DEBUG_PRT.print("GetString() Newline at end of line being suppressed, as it is followed immediately by a linebreak tag: ");
@@ -410,11 +478,14 @@ bool Bidi::FixNextWordWiderThanDisplay(String &s,
 {
 	if (ExpectEmphasisTag(s, startstrpos)) return false;	// return if it's an html tag
 	
-	while (ExpectStr(s, &startstrpos, " ")); // skip over any leading spaces
+	//while (ExpectStr(s, &startstrpos, " ")); // skip over any leading spaces (adding spaces to create a break in earlier calls to this function will lengthen the string, so the first char on the next call may be the inserted space, perhaps followed by others which were already in the text).
+	
+	while (ExpectSpace(s, &startstrpos)); // skip over any leading unicode spaces (all types, not just 0x20)
 	
 	if (startstrpos == s.length()) return false; // return if got to the end of the string without finding the beginning of a new word
 	
-	int endstrpos = s.indexOf(" ", startstrpos + 1); // find the first space character following the start of the word just found
+	//int endstrpos = s.indexOf(" ", startstrpos + 1); // find the first space character following the start of the word just found
+	int endstrpos = FindFirstSpacelikeCharacter(s, startstrpos + utf8CharAt(s, startstrpos).length()); // start scanning at next character after character which starts the word
 	
 	if (endstrpos == -1) endstrpos = s.length();
 
@@ -665,11 +736,11 @@ bool Bidi::RenderText(String s,
 		}
 		
 		//DEBUG_PRT.printf("bOverflowWordWrapped=%s bIsLastFragment=%s bMakeLineBreakBefore=%s\n", bOverflowWordWrapped?"true":"false", bIsLastFragment?"true":"false", bMakeLineBreakBefore?"true":"false");
-		
+				
 		GetString(s, &startstrpos, &endstrpos, &textwidth, diskfont, 
 				  &bLineBreak, &bRTL, &bDirectionChanged, 
 				  &bNewLine, false, /*bIsLastFragment,*/ false,/*(bOverflowWordWrapped && !bIsLastFragment && !bMakeLineBreakBefore),*/  // (bOverflowWordWrapped && !bIsLastFragment): want to force a newline only when it is not processing the last fragment of an extralong string, which will be narrower than the display width, so won't need a newline
-				  currfbwidth, *xpos, wrap_text); // bIsLastFragment if true will tell GetString to return after the first word has been processed.
+				  currfbwidth, *xpos, wrap_text ); // bIsLastFragment if true will tell GetString to return after the first word has been processed.
 		  
 		DEBUG_PRT.printf("bRTL = %s\n", bRTL ? "<-" : "->");
 		DEBUG_PRT.printf("xpos=%d, s.length=%d, startstrpos=%d, endstrpos=%d, textwidth=%d\n", *xpos, s.length(), startstrpos, endstrpos, textwidth);

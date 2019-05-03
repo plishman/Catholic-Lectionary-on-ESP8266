@@ -18,7 +18,12 @@
 class Bidi {
 public:
 	//Bidi();
+	static int FindFirstSpacelikeCharacter(String s, int startpos);
+
 	static bool IsSpace(String ch);
+	static bool IsSpace(String ch, String& foundspacechar);
+	static bool ExpectSpace(String s, int* pos);
+		
 	static bool ExpectRTL(String s, int* pos);
 	static bool ExpectStr(String s, int* pos, String strtoexpect);
 
@@ -36,7 +41,7 @@ public:
 	static bool FixNextWordWiderThanDisplay(String &s, String& colormap, int& charsprocessed, int& numcharslefttoprocess, bool& bIsLastFragment, bool& bMakeLineBreakBefore, int startstrpos, int fbwidth, int xpos, bool render_right_to_left, DiskFont& diskfont);
 	static void getColorMap(String word, bool& bEmphasisOn, String& colormap); // used for overflow words, to pre-calculate the colourmap (before text is repositioned)
 	
-	static void GetString(String s, int* startstrpos, int* endstrpos, int* textwidth, DiskFont& diskfont, bool* bLineBreak, bool* bRTL, bool* bDirectionChanged, bool* bNewLine, bool bOneWordOnly, bool bForceLineBreakAfterString, int fbwidth, int xpos, bool wrap_text);
+	static void GetString(String s, int* startstrpos, int* endstrpos, int* textwidth, DiskFont& diskfont, bool* bLineBreak, bool* bRTL, bool* bDirectionChanged, bool* bNewLine, bool bOneWordOnly, bool bForceLineBreakAfterString, int fbwidth, int xpos, bool wrap_text );
 	static bool RenderText(String s, int* xpos, int* ypos, TextBuffer& tb, DiskFont& diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text);
 	static bool RenderText(String s, int* xpos, int* ypos, TextBuffer& tb, DiskFont& diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text, bool bMoreText);
 };
