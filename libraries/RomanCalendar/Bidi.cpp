@@ -745,13 +745,15 @@ bool Bidi::RenderText(String s,
 		DEBUG_PRT.printf("bRTL = %s\n", bRTL ? "<-" : "->");
 		DEBUG_PRT.printf("xpos=%d, s.length=%d, startstrpos=%d, endstrpos=%d, textwidth=%d\n", *xpos, s.length(), startstrpos, endstrpos, textwidth);
 		
-		if (textwidth > 0 && bLastLine && bNewLine && diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos // ellipsiswidth is limit to GetTextWidthA, so it stops processing when the calculated string width is greater than ellipsiswidth
-	     || textwidth > 0 && bLastLine && bMoreText && endstrpos == s.length()) { 
+		if ((textwidth > 0 && bLastLine && bNewLine && bMoreText && diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos) // ellipsiswidth is limit to GetTextWidthA, so it stops processing when the calculated string width is greater than ellipsiswidth
+	     || (textwidth > 0 && bLastLine && bMoreText && endstrpos == s.length())) { 
 			//if *some text was processed (ie, not html tags) and;
 			//	 *this is the last line and;
 			//	 *the line overflowed the width of the screen minus the width of the ellipsis and;
 			//   *and *the text remaining to be printed would overflow the width of the screen were the ellipsis not printed*
 			//		then need to insert the ellipsis.
+			DEBUG_PRT.printf("InsertEllipsis:\ntextwidth>0=%d\n, bLastLine=%d\n, bNewLine=%d\n, diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos = %d\nbMoreText=%d\n, endstrpos == s.length()=%d\n", (textwidth > 0), bLastLine, bNewLine, (diskfont.GetTextWidthA(s, ellipsiswidth) > fbwidth - *xpos), bMoreText, (endstrpos == s.length()));
+			
 			bInsertEllipsis = true;
 		}
 		
@@ -786,7 +788,7 @@ bool Bidi::RenderText(String s,
 					*ypos += diskfont._FontHeader.charheight; // * 2;
 					*xpos = 0;
 				}
-				else if (!bInsertEllipsis && Bidi::strEllipsis.length() > 0){ // if bInsertEllipsis is true, then have already inserted the ellipsis, no need to to it twice
+				else if (!bInsertEllipsis && Bidi::strEllipsis.length() > 0 && bMoreText){ // if bInsertEllipsis is true, then have already inserted the ellipsis, no need to to it twice
 					tb.add(*xpos, *ypos, Bidi::strEllipsis, GxEPD_BLACK, render_right_to_left, bRTLrender, diskfont);		
 					*ypos += diskfont._FontHeader.charheight; // * 2;		// this will ensure that the next line overflows the display, so ending output
 					*xpos = 0;
