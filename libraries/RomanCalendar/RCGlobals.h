@@ -15,6 +15,8 @@
 		#define DEBUGPRT_END Debug_Prt.end();
 	#endif
 
+	#define CRASHFILEPATH "/CRASHDMP.TXT"
+
 // select e-paper display:	
 	#define EPAPER_GxGDEW042Z15
 //	#define EPAPER_GxGDEW027C44

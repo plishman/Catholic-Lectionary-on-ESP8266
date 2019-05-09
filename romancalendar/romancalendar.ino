@@ -11,8 +11,9 @@
 //ESP8266---
 #include "ESP8266WiFi.h"
 #include <ESP8266WebServer.h>
-//#define FS_NO_GLOBALS
-//#include "FS.h"
+#include <SD.h>
+#define FS_NO_GLOBALS
+#include <FS.h>
 
 //----------
 #include <pins_arduino.h>
@@ -344,6 +345,8 @@ bool bRetryWPSConnect = true;
 bool bDisplayWifiConnectedScreen = true;      
 
 bool CrashCheck(String& resetreason) { // returns true if crash is detected
+  checkSpiffsDump();
+  
   char reset_info_buf[200];
   
   struct rst_info *rtc_info = system_get_rst_info();
@@ -381,7 +384,103 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
   return false;
 }
 
+void checkSpiffsDump() {
+  // copy crashdump file from spiffs to sd card (should happen after rebooting)
+  
+  fs::File f_spiffs = SPIFFS.open(F(CRASHFILEPATH), "r");
+  if(!f_spiffs) return;
 
+  File f_sd = SD.open(F(CRASHFILEPATH), O_RDWR | O_APPEND);
+  if(!f_sd) f_sd = SD.open(F(CRASHFILEPATH), O_RDWR | O_CREAT);
+  if(f_sd) {
+    time64_t date = 0;
+    Config::getLocalDateTime(&date);
+    tmElements_t ts;
+    breakTime(date, ts);
+    char buf[100];
+    os_sprintf(buf,"\nat %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+    f_sd.write((const uint8_t*)buf, strlen(buf));  // write out the current date/time
+
+    size_t st = 0;
+    while (f_spiffs.available()) {    // then copy the crashdump file to the sd card
+      st = f_spiffs.readBytes(buf, 100);
+      f_sd.write((const uint8_t*)buf, st);
+    }
+    
+    f_spiffs.close();
+    f_sd.close();
+
+    SPIFFS.remove(F(CRASHFILEPATH));
+    DEBUG_PRT.println("Crashdump file in SPIFFS was copied to the SD card");
+  } 
+  else {
+    DEBUG_PRT.println("Crashdump file exists in SPIFFS, but it could not be copied to the SD card");
+  }
+}
+
+void savetoSpiffs(struct rst_info * rst_info, uint32_t stack, uint32_t stack_end,Print& outputDev ){
+
+  uint32_t crashTime = millis();
+  outputDev.printf("Crash # at %ld ms\n",crashTime);
+
+  outputDev.printf("Reason of restart: %d\n", rst_info->reason);
+  outputDev.printf("Exception cause: %d\n", rst_info->exccause);
+  outputDev.printf("epc1=0x%08x epc2=0x%08x epc3=0x%08x excvaddr=0x%08x depc=0x%08x\n", rst_info->epc1, rst_info->epc2, rst_info->epc3, rst_info->excvaddr, rst_info->depc);
+  outputDev.println(">>>stack>>>");
+  int16_t stackLength = stack_end - stack;
+  uint32_t stackTrace;
+  // write stack trace to EEPROM
+  for (int16_t i = 0; i < stackLength; i += 0x10)
+  {
+    outputDev.printf("%08x: ", stack + i);
+    for (byte j = 0; j < 4; j++)
+    {
+      uint32_t* byteptr = (uint32_t*) (stack + i+j*4);
+      stackTrace=*byteptr;
+      outputDev.printf("%08x ", stackTrace);
+    }
+    outputDev.println();
+
+  }
+  outputDev.println("<<<stack<<<\n");
+}
+
+/**
+ * This function is called automatically if ESP8266 suffers an exception
+ * It should be kept quick / consise to be able to execute before hardware wdt may kick in
+ */
+extern "C" void custom_crash_callback(struct rst_info * rst_info, uint32_t stack, uint32_t stack_end )
+{
+//  Serial.println("Custom save crash");
+  //savetoSpiffs(rst_info, stack, stack_end,fileprinter);
+  //fileprinter.close();
+  class StringPrinter2 : public Print {
+  public:
+    String str="";
+    StringPrinter2(){};
+    virtual size_t write(const uint8_t character){str+=character;};
+    virtual size_t write(const uint8_t *buffer, size_t size){
+      String str2=String((const char *)buffer);
+      str2.remove(size);
+        str+=str2;
+      };
+  } strprinter2;
+  savetoSpiffs(rst_info, stack, stack_end,strprinter2);
+
+  SPIFFS.begin();
+  fs::File f = SPIFFS.open(F(CRASHFILEPATH), "a");
+  if(!f) f= SPIFFS.open(F(CRASHFILEPATH), "w");
+  if(f) {
+    unsigned int w=f.write((uint8_t*)strprinter2.str.c_str(), strprinter2.str.length());
+    f.close();
+  }
+}
+
+
+
+/**
+ * setup
+ **/
 void setup() { 
   pinMode(D1, OUTPUT);
   digitalWrite(D1, HIGH); // set sd card to not selected
@@ -673,6 +772,12 @@ bool connect_wps(){
   return true;
 }
 
+
+
+
+/**
+ * loop
+ **/
 void loop(void) {  
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
