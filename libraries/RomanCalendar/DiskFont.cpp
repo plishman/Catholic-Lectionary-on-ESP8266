@@ -7,24 +7,28 @@ extern "C" {
 //#define DEBUG_PRT Serial
 
 bool DiskFont::OpenFontFile() {
+	DEBUG_PRT.print(F("Diskfont::OpenFontFile() Font filename is ["));
+	DEBUG_PRT.print(_fontfilename);
+	DEBUG_PRT.println(F("]"));
+	
 	_file_sd = SD.open(_fontfilename.c_str(), FILE_READ);
 
 	if (!_file_sd.available()) {
-		DEBUG_PRT.printf("unable to open diskfont from SD card, trying spiffs%s\n", _fontfilename.c_str());
+		DEBUG_PRT.print(F("unable to open diskfont from SD card, trying spiffs..."));
 	}
 	else {
-		DEBUG_PRT.printf("Opened font file from SD Card\n");
+		DEBUG_PRT.println(F("Opened font file from SD Card"));
 		return true;
 	}
 
 	_file_spiffs = SPIFFS.open(_fontfilename.c_str(), "r");
 
 	if (!_file_spiffs.available()) {
-		DEBUG_PRT.printf("diskfont file not found%s\n", _fontfilename.c_str());
+		DEBUG_PRT.print(F("diskfont file not found."));
 		return false;
 	}
 	else {
-		DEBUG_PRT.printf("Opened font file from SPIFFS\n");
+		DEBUG_PRT.println(F("Opened font file from SPIFFS"));
 		return true;
 	}
 	
@@ -155,7 +159,8 @@ bool DiskFont::Read(void* array, uint32_t bytecount) { // no way of checking bou
 
 
 
-DiskFont::DiskFont() {
+DiskFont::DiskFont(FB_EPAPER ePaper) {
+	_p_ePaper = &ePaper;
 	setDisplayPage(0);
 	available = false; // must have called SD.begin() and SPIFFS.begin() somewhere first
 }
@@ -289,13 +294,26 @@ bool DiskFont::begin(String fontfilename) {
 		return false;
 	}
 	
-	DEBUG_PRT.printf("FontHeader\ncharheight=%d\nstartchar=%d\nendchar=%d\nnumlookupblocks=%d\nspacecharwidth=%d\n\n", _FontHeader.charheight, _FontHeader.startchar, _FontHeader.endchar, _FontHeader.numlookupblocks, _FontHeader.spacecharwidth);
-	
-	
+//	DEBUG_PRT.printf("FontHeader\ncharheight=%d\nstartchar=%d\nendchar=%d\nnumlookupblocks=%d\nspacecharwidth=%d\n\n", _FontHeader.charheight, _FontHeader.startchar, _FontHeader.endchar, _FontHeader.numlookupblocks, _FontHeader.spacecharwidth);
+
+	DEBUG_PRT.print(F("FontHeader\ncharheight="));
+	DEBUG_PRT.print(_FontHeader.charheight);
+	DEBUG_PRT.print(F("\nstartchar="));
+	DEBUG_PRT.print(_FontHeader.startchar);
+	DEBUG_PRT.print(F("\nendchar="));
+	DEBUG_PRT.print(_FontHeader.endchar);
+	DEBUG_PRT.print(F("\nnumlookupblocks="));
+	DEBUG_PRT.print(_FontHeader.numlookupblocks);
+	DEBUG_PRT.print(F("\nspacecharwidth="));
+	DEBUG_PRT.println(_FontHeader.spacecharwidth);
+		
 	// need to read blocktable (1024/3*4 = 85 blocktable entries/kB)
 	uint32_t font_blocktablesize = _FontHeader.numlookupblocks * sizeof(DiskFont_BlocktableEntry);
 	
-	DEBUG_PRT.printf("Diskfont blocktable count = %d, size = %d\n", _FontHeader.numlookupblocks, font_blocktablesize);
+	DEBUG_PRT.print(F("Diskfont blocktable count = "));
+	DEBUG_PRT.print(_FontHeader.numlookupblocks);
+	DEBUG_PRT.print(F(", size = "));
+	DEBUG_PRT.println(font_blocktablesize);
 	
 	if (font_blocktablesize > (system_get_free_heap_size() - 10240)) {
 		//_I18n.closeFile(_file); // not enough memory for blocktable (leaves a minimum of 10k free)
@@ -340,15 +358,15 @@ void DiskFont::clear() {
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
 // No Pre-populated FontCharInfo structure (in), and no advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
 	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
+int DiskFont::DrawCharAt(int x, int y, String ch,          FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
 	return DrawCharAt(x, y, codepointUtf8(ch), ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
 	double advwidth = 0.0;
 	return DrawCharAt(x, y, codepoint, advwidth, ePaper, color, blockToCheckFirst);
 }
@@ -356,15 +374,15 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, GxEPD_Class& ePaper, 
 
 
 // No Pre-populated FontCharInfo structure (in), but advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {
 	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
+int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
 	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, ePaper, color, blockToCheckFirst);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, GxEPD_Class& ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FB_EPAPER ePaper, uint16_t color, uint16_t* blockToCheckFirst) {	
 	DiskFont_FontCharInfo* pfci;
 	if (!getCharInfo(codepoint, blockToCheckFirst, pfci)) {
 		DEBUG_PRT.println(F("DrawCharAt() getCharInfo returned false"));
@@ -377,15 +395,15 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 
 
 // Pre-populated FontCharInfo structure (in), no advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	return DrawCharAt(x, y, codepointUtf8(ch),                 fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {
 	double advanceWidth = 0.0;
 	return DrawCharAt(x, y, codepoint, advanceWidth, fci, ePaper, color);
 }
@@ -393,15 +411,15 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo
 
  
 // Pre-populated FontCharInfo structure (in), and advanceWidth (out)
-int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, char ascii_char,    double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	return DrawCharAt(x, y, codepointUtf8(String(ascii_char)), advanceWidth, fci, ePaper, color);
 }
 
-int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, String ch,          double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	return DrawCharAt(x, y, codepointUtf8(ch),                 advanceWidth, fci, ePaper, color);
 } 
  
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	// allows pre-populated FontCharInfo structure to be passed in, for use where it would otherwise have to read from the disk more than once for each character
 
 	//DEBUG_PRT.printf("DrawCharAt() codepoint=%d\n", codepoint); 
@@ -645,7 +663,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 /**
  *  @brief: this draws a character on the frame buffer but not refresh [uses the dot factory proportional font]
  */
-int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	return DrawCharAt(x, y, (uint32_t)codepointUtf8(String(ascii_char)), advanceWidth, font, fci, ePaper, color);
 }
  
@@ -664,7 +682,7 @@ int DiskFont::DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FO
   (byte & 0x01 ? '1' : '0')  
  
  
-int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t color) {	
+int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t color) {	
 	uint16_t char_width = fci.widthbits;
 	//DEBUG_PRT.printf("%s w:%d\n", utf8fromCodepoint(codepoint).c_str(), char_width);
 
@@ -711,22 +729,22 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 					/*
 					switch(pxvalue){
 						case 1:
-							DEBUG_PRT.printf("*");
+							DEBUG_PRT.print("*");
 							break;
 							
 						case 2:
-							DEBUG_PRT.printf("#");
+							DEBUG_PRT.print("#");
 							break;
 							
 						case 3:
-							DEBUG_PRT.printf("@");
+							DEBUG_PRT.print("@");
 							break;
 						
 					}
 					*/
-					//DEBUG_PRT.printf("#");
+					//DEBUG_PRT.print("#");
 				} else {
-					//DEBUG_PRT.printf(".");
+					//DEBUG_PRT.print(".");
 				}
 				
 				if (((i % 4) * 2) == 6) {
@@ -827,20 +845,20 @@ void DiskFont::StripTags(String& text) {
 /**
 *  @brief: this displays a string on the frame buffer but not refresh [uses the dot factory proportional font]
 */
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left, bool reverse_string){
+void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, bool right_to_left, bool reverse_string){
 	DrawStringAt(x, y, text, ePaper, color, "", right_to_left, reverse_string);		
 }
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left){
+void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, bool right_to_left){
 	DrawStringAt(x, y, text, ePaper, color, right_to_left, false);	
 }
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left, bool reverse_string){
+void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, String colormap, bool right_to_left, bool reverse_string){
 	DrawStringAt(x, y, text, ePaper, GxEPD_BLACK, colormap, right_to_left, reverse_string);		
 }
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left){
+void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, String colormap, bool right_to_left){
 	DrawStringAt(x, y, text, ePaper, GxEPD_BLACK, colormap, right_to_left, false);			
 }
 
-void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, String colormap, bool right_to_left, bool reverse_string) {
+void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, String colormap, bool right_to_left, bool reverse_string) {
 	//DEBUG_PRT.printf("DrawStringAt: String is %s\n", text.c_str());
 
 	//if (!available) {
@@ -1004,14 +1022,14 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				dnsmcolumn = (dcharwidth - doverlaycharwidth) / 2.0;
 				
 				if (pfci != NULL) {
-					DrawCharAt(PANEL_SIZE_X - (int)(finalcharx - dnsmcolumn), y, ch, *pfci, ePaper, color);
+					DrawCharAt(_p_ePaper->width() - (int)(finalcharx - dnsmcolumn), y, ch, *pfci, ePaper, color);
 				}
 				else {
 					//DEBUG_PRT.println("	pfci is NULL for NSM char [" + ch + "]");
 				}
 
 //				dnsmcolumn = dnsmcolumn + (dcharwidth - doverlaycharwidth) / 2.0;
-//				DrawCharAt(PANEL_SIZE_X - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
+//				DrawCharAt(_p_ePaper->width() - ((int)(dnsmcolumn + doverlaycharwidth)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 
 
 				
@@ -1026,7 +1044,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				finalcharx = drefcolumn + (dcharwidth - charoffset);
 				
 				if (pfci != NULL) {
-					char_bmwidth = DrawCharAt(PANEL_SIZE_X - (int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
+					char_bmwidth = DrawCharAt(_p_ePaper->width() - (int)finalcharx, y, ch, dcharwidth, *pfci, ePaper, color);
 					//refcolumn += charwidth;
 					drefcolumn += dcharwidth;
 				}
@@ -1044,7 +1062,7 @@ void DiskFont::DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint
 				*/
 			}
 			
-			//refcolumn += DrawCharAt(PANEL_SIZE_X - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
+			//refcolumn += DrawCharAt(_p_ePaper->width() - (refcolumn + GetTextWidth(ch)), y, codepointUtf8(ch), ePaper, color, &blockToCheckFirst);
 			/* Point on the next character */
 			charIndex += ch.length(); //charIndex++; //+= ch.length();
 			utf8charnum++;
@@ -1221,9 +1239,14 @@ void DiskFont::GetTextWidth(String text, int& width, double& advanceWidth, int l
 		bresult = getCharInfo(codepoint, &blockToCheckFirst, pfci);
 
 		if (!bresult) {
-			DEBUG_PRT.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());		
+			//DEBUG_PRT.printf("GetTextWidth: bresult is false, char=%x, ch=%s\n", codepointUtf8(ch), ch.c_str());		
+			DEBUG_PRT.print(F("GetTextWidth: bresult is false, char="));
+			DEBUG_PRT.print(codepointUtf8(ch));
+			DEBUG_PRT.print(F(", ch="));
+			DEBUG_PRT.println(ch);
 			DEBUG_PRT.print(F("free memory = "));
-			DEBUG_PRT.println(String(system_get_free_heap_size()));
+			uint32_t free = system_get_free_heap_size();
+			DEBUG_PRT.println(free);
 		}
 		
 		if (bresult){
@@ -1480,7 +1503,7 @@ const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToChec
 					
 					//DEBUG_PRT.printf("\nDiskFont::getCharInfo() codepoint=%x font->blockCount = %d", codepoint, font->blockCount);
 					while (!bFound && blockIndex < font->blockCount) {
-						DEBUG_PRT.printf("+");
+						//DEBUG_PRT.printf("+");
 						if ((font->fontcharinfoBlockLookup[blockIndex].startChar <= codepoint) && (font->fontcharinfoBlockLookup[blockIndex].endChar >= codepoint)) {
 							bFound = true;
 						} else {
@@ -1491,7 +1514,9 @@ const FONT_CHAR_INFO* DiskFont::getCharInfo(int codepoint, uint16_t* blockToChec
 					//DEBUG_PRT.println();
 					
 					if (!bFound) {
-						DEBUG_PRT.printf("DiskFont::getCharInfo() codepoint=%x : failed to find fontcharinfoBlock: returning NULL\n", codepoint);
+						DEBUG_PRT.print(F("DiskFont::getCharInfo() codepoint="));
+						DEBUG_PRT.print(codepoint);
+						DEBUG_PRT.println(F(": failed to find fontcharinfoBlock: returning NULL\n"));
 						return NULL;
 					}
 					
@@ -1515,21 +1540,29 @@ void DiskFont::setDisplayPage(int displayPageNumber) {
 
 
 bool DiskFont::IsInPage(int displayPageNumber, DiskFont_FontCharInfo& fci, int codepoint, int x0, int y0, int x1, int y1) {
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+	return true;	// if using SPI ram framebuffer, whole page gets done at once, once.
+#else
+	#if EPD_ROTATION == 2 || EPD_ROTATION == 3
+		displayPageNumber = PAGE_COUNT - displayPageNumber - 1;
+	#endif
+
 	int page_x0 = 0;
 	int page_y0 = displayPageNumber * PAGE_HEIGHT;
 	int page_x1 = PAGE_WIDTH;
 	int page_y1 = (page_y0 + PAGE_HEIGHT) - 1;
 	
-	if(DISPLAY_PORTRAIT) {
+	#if EPD_ROTATION == 1 || EPD_ROTATION == 3
 		swap(page_x0, page_y0);
 		swap(page_x1, page_y1);
-	}
+	#endif
 	
 	bool bresult = ((x1 >= page_x0) && (y1 >= page_y0) && (x0 <= page_x1) && (y0 <= page_y1));
 	
 	//DEBUG_PRT.print(bresult?"+":"-");
 
 	return bresult;
+#endif
 }
 
 void DiskFont::swap(int& a, int& b) {

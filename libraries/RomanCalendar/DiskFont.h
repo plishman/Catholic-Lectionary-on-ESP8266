@@ -27,6 +27,7 @@
 #include "DebugPort.h"
 #include "I18n.h"
 #include "FCICache.h"
+#include "FrameBuffer.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -111,7 +112,9 @@ public:
 	#define CHARBUFF_SIZE 512	// was 32
 	uint8_t _char_buffer[CHARBUFF_SIZE];
 	
-	DiskFont();
+	DiskFont(FB_EPAPER ePaper);	
+	FB_EPAPER_PTR _p_ePaper = NULL;
+
 	~DiskFont();
 	bool begin();
 	bool begin(String fontfilename);
@@ -133,35 +136,35 @@ public:
 	
 	
 	// for diskfont characters (will fail over to romfont rendering if diskfont is not available)
-	int DrawCharAt(int x, int y, char ascii_char,    GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, String ch,          GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, uint32_t codepoint, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, char ascii_char,    FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, String ch,          FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
 	
-	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);	
-	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, GxEPD_Class& ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);	
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FB_EPAPER ePaper, uint16_t colored, uint16_t* blockToCheckFirst);
 
-	int DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
-	int DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, char ascii_char,    DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, String ch,          DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
 
-	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
-	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, char ascii_char, 	 double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, String ch, 		 double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
 
 	// for romfont characters
-	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
-	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, GxEPD_Class& ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
+	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
 
 	void StripTags(String& text);
 	
-	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left, bool reverse_string);
-	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, bool right_to_left);
+	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, bool right_to_left, bool reverse_string);
+	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, bool right_to_left);
 
-	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left, bool reverse_string);
-	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, String colormap, bool right_to_left);
+	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, String colormap, bool right_to_left, bool reverse_string);
+	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, String colormap, bool right_to_left);
 
-	void DrawStringAt(int x, int y, String text, GxEPD_Class& ePaper, uint16_t color, String colormap, bool right_to_left, bool reverse_string);
+	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, String colormap, bool right_to_left, bool reverse_string);
 		
 	void GetTextWidth(String text, int& width, double& advanceWidth, int limit);
 	void GetTextWidth(String text, int& width, double& advanceWidth);

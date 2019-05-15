@@ -108,7 +108,14 @@ bool Lectionary::get(String liturgical_year, String liturgical_cycle, ReadingsFr
 	if(liturgical_cycle == "I") liturgical_cycle = "1";
 	if(liturgical_cycle == "II") liturgical_cycle = "2"; // just to be sure, so that information is not returned if the value is neither I nor II
 	
-	DEBUG_PRT.printf("\nLectionary::get() ly = %s, lc = %s, filename = %s\n", liturgical_year.c_str(), liturgical_cycle.c_str(), filename.c_str());
+	//DEBUG_PRT.printf("\nLectionary::get() ly = %s, lc = %s, filename = %s\n", liturgical_year.c_str(), liturgical_cycle.c_str(), filename.c_str());
+
+	DEBUG_PRT.print(F("\nLectionary::get() ly = "));
+	DEBUG_PRT.print(liturgical_year);
+	DEBUG_PRT.print(F(", lc = "));
+	DEBUG_PRT.print(liturgical_cycle);
+	DEBUG_PRT.print(F(", filename = "));
+	DEBUG_PRT.println(filename);
 	
 	// don't know if the requested lectionary number will be for a liturgical cycle or a liturgical year
 	// so will try liturgical year first, then liturgical cycle. Both should never be present in the same directory in Lectionary directory Lect/

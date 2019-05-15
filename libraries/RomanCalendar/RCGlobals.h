@@ -1,5 +1,5 @@
 #ifndef _RCGLOBALS42_H
-#define _RCGLOBALS42_H	
+#define _RCGLOBALS42_H
 	#define LECT_VER "0.7"
     #define MAX_DEEPSLEEP_SECONDS 4294
 
@@ -17,53 +17,43 @@
 
 	#define CRASHFILEPATH "/CRASHDMP.TXT"
 
+	#define USE_SPI_RAM_FRAMEBUFFER
+
+	#ifdef USE_SPI_RAM_FRAMEBUFFER
+		#define FB_EPAPER FrameBuffer&  // use SPI ram frame buffer for faster rendering if present
+		#define FB_EPAPER_PTR FrameBuffer*  // use SPI ram frame buffer for faster rendering if present
+	#else
+		#define FB_EPAPER GxEPD_Class&	// render direct to ePaper display
+		#define FB_EPAPER_PTR GxEPD_Class*	// render direct to ePaper display
+	#endif
+
 // select e-paper display:	
 	#define EPAPER_GxGDEW042Z15
 //	#define EPAPER_GxGDEW027C44
 	
-	#ifdef EPAPER_GxGDEW027C44
+	#ifdef EPAPER_GxGDEW027C44	// portrait orientation framebuffer
 		#define EPD_ROTATION 1
 
 		#define PAGE_HEIGHT GxGDEW027C44_PAGE_HEIGHT
 		#define PAGE_WIDTH GxGDEW027C44_WIDTH
 		#define PAGE_COUNT GxGDEW027C44_PAGES
 
-		#define DISPLAY_PORTRAIT true
-
-		#define _PSIZE_X GxGDEW027C44_WIDTH
-		#define _PSIZE_Y GxGDEW027C44_HEIGHT
-
-		#if DISPLAY_PORTRAIT == true
-			#define PANEL_SIZE_Y _PSIZE_X
-			#define PANEL_SIZE_X _PSIZE_Y
-		#else
-			#define PANEL_SIZE_X _PSIZE_X
-			#define PANEL_SIZE_Y _PSIZE_Y
-		#endif
+		#define PANEL_SIZE_X GxGDEW027C44_WIDTH
+		#define PANEL_SIZE_Y GxGDEW027C44_HEIGHT
 
 		//#include <GxEPD.h>
 		//#include <GxGDEW027C44/GxGDEW027C44.h>      // 2.7" b/w/r 176x264 GxGDEW027C44/GxGDEW027C44.cpp
 	#endif
 	
-	#ifdef EPAPER_GxGDEW042Z15
+	#ifdef EPAPER_GxGDEW042Z15	// landscape orientation framebuffer
 		#define EPD_ROTATION 0
-	
+
 		#define PAGE_HEIGHT GxGDEW042Z15_PAGE_HEIGHT
 		#define PAGE_WIDTH GxGDEW042Z15_WIDTH
 		#define PAGE_COUNT GxGDEW042Z15_PAGES
 
-		#define DISPLAY_PORTRAIT false
-
-		#define _PSIZE_X GxGDEW042Z15_WIDTH
-		#define _PSIZE_Y GxGDEW042Z15_HEIGHT
-
-		#if DISPLAY_PORTRAIT == true
-			#define PANEL_SIZE_Y _PSIZE_X
-			#define PANEL_SIZE_X _PSIZE_Y
-		#else
-			#define PANEL_SIZE_X _PSIZE_X
-			#define PANEL_SIZE_Y _PSIZE_Y
-		#endif
+		#define PANEL_SIZE_X GxGDEW042Z15_WIDTH
+		#define PANEL_SIZE_Y GxGDEW042Z15_HEIGHT
 
 		//#include <GxEPD.h>
 		//#include <GxGDEW042Z15/GxGDEW042Z15.h>      // 4.2" b/w/r

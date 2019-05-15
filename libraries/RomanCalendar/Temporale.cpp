@@ -1039,7 +1039,7 @@ bool Temporale::get(time64_t date) {
 		break;
 
 	default:
-		DEBUG_PRT.printf("Colours:Season not set!\n");
+		DEBUG_PRT.println(F("Colours:Season not set!"));
 		_colour_e = Enums::COLOURS_GREEN;
 	}
 

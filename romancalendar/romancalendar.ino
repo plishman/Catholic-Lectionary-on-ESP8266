@@ -2,12 +2,6 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2019 Philip Lishman, Licensed under GPL3, see LICENSE
 
-//extern const int COLORED    = 1;
-//extern const int UNCOLORED  = 0;
-
-//extern const int PANEL_SIZE_X = 264;
-//extern const int PANEL_SIZE_Y = 176;
-
 //ESP8266---
 #include "ESP8266WiFi.h"
 #include <ESP8266WebServer.h>
@@ -41,6 +35,7 @@
 #include <rcimages.h>
 #include <DiskFont.h>
 #include <Bidi.h>
+#include <FrameBuffer.h>
 
 #include <GxEPD.h>
 
@@ -68,6 +63,16 @@ DebugPort Debug_Prt;
 GxIO_Class io(SPI, /*CS=D16*/ D8, /*DC=D4*/ -1, /*RST=D5*/ D2);  // dc=-1 -> not used (using 3-wire SPI)
 GxEPD_Class ePaper(io, D2, D3 /*RST=D5*/ /*BUSY=D12*/);
 
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+FrameBuffer fb(SPI, D4, 0, PANEL_SIZE_X, PANEL_SIZE_Y);
+TextBuffer tb(fb);
+DiskFont diskfont(fb);
+#else
+TextBuffer tb(ePaper);
+DiskFont diskfont(ePaper);
+#endif
+
+
 enum DISPLAY_UPDATE_TYPE {
   display_reading, 
   battery_recharge, 
@@ -87,9 +92,6 @@ enum DISPLAY_UPDATE_TYPE {
 //void epaperDisplayImage();
 ////void display_image(DISPLAY_UPDATE_TYPE i);
 ////void display_image(DISPLAY_UPDATE_TYPE d, String messagetext, bool bMessageRed);
-
-TextBuffer tb;
-DiskFont diskfont;
 
 void display_image(DISPLAY_UPDATE_TYPE i) {
 	display_image(i, "", false);
@@ -229,12 +231,17 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 void epaperUpdate() {
 	wdt_reset();
 	ePaper.eraseDisplay();
-	ePaper.setRotation(EPD_ROTATION); //90 degrees 
 
-	tb.render(ePaper, diskfont, displayPage);
-
-	int charheight = diskfont._FontHeader.charheight;
-	ePaper.drawFastHLine(0, charheight, PANEL_SIZE_X, GxEPD_BLACK);
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  //ePaper.setRotation(0); //90 degrees
+  fb.setDisplayPage(displayPage); 
+  fb.render(ePaper);
+#else
+  ePaper.setRotation(EPD_ROTATION);
+  tb.render(ePaper, diskfont, displayPage);
+  int charheight = diskfont._FontHeader.charheight;
+  ePaper.drawFastHLine(0, charheight, ePaper.width(), GxEPD_BLACK);
+#endif
 
 	displayPage++;
 	if (displayPage >= PAGE_COUNT) displayPage = 0;
@@ -245,29 +252,58 @@ void epaperUpdate() {
 void epaperDisplayImage() {
 	if (epd_image == NULL) return;
 
-	int image_size_x = 264;
-	int image_size_y = 176;
-
-	int image_offset_x = (PANEL_SIZE_X - image_size_x) / 2;
-	int image_offset_y = (PANEL_SIZE_Y - image_size_y) / 2;
-
+	int image_size_x = 176;
+	int image_size_y = 264;
+ 
 	wdt_reset();
-	ePaper.setRotation(EPD_ROTATION == 1 ? 0 : 3); //These pictures are pre-rotated 90 degrees, for use on the 2.7 in display, byte order of which is portrait mode
+  uint8_t rot = 0;
+  
+  switch (EPD_ROTATION) {
+    case 0:
+    rot = 3;
+    break; 
+
+    case 1:
+    rot = 0;
+    break; 
+
+    case 2:
+    rot = 1;
+    break; 
+
+    case 3:
+    rot = 2;
+    break; 
+
+    default:
+    rot = 0;
+    break; 
+  }
+  //(EPD_ROTATION == 1 ? 0 : 3);  // may render picture upside-down if EPD_ROTATION is not 1 or 0 (ie. if it is 2 or 3)
+	ePaper.setRotation(rot); //These pictures are pre-rotated 90 degrees, for use on the 2.7 in display, byte order of which is portrait mode
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER  
+  int image_offset_x = (fb.width() - image_size_x) / 2;
+  int image_offset_y = (fb.height() - image_size_y) / 2;
+#else
+  int image_offset_x = (ePaper.width() - image_size_x) / 2;
+  int image_offset_y = (ePaper.height() - image_size_y) / 2;
+#endif
+
 	ePaper.eraseDisplay();
-	if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_BLACK, GxEPD::bm_transparent);
-	if (epd_image->bitmap_red != NULL) ePaper.drawBitmap(epd_image->bitmap_red, image_offset_y, image_offset_x, image_size_y, image_size_x, GxEPD_RED, GxEPD::bm_transparent);
+	if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, image_offset_x, image_offset_y, image_size_x, image_size_y, GxEPD_BLACK, GxEPD::bm_transparent);
+	if (epd_image->bitmap_red != NULL) ePaper.drawBitmap(epd_image->bitmap_red, image_offset_x, image_offset_y, image_size_x, image_size_y, GxEPD_RED, GxEPD::bm_transparent);
 
 	if (epaper_messagetext != "") {
 		//int strwidth = diskfont.GetTextWidth(epaper_messagetext);
-		ePaper.setRotation(EPD_ROTATION); //90 degrees       
-		//diskfont.DrawStringAt(PANEL_SIZE_X - strwidth, 0, epaper_messagetext, ePaper, epaper_messagetext_color, false);
-
+		ePaper.setRotation(EPD_ROTATION);        
 		ePaper.setFont(&FreeMonoBold9pt7b);
 
 		int strend = 0;
 		int strstart = 0;
-		int cursor_x = image_offset_x + 0;
-		int cursor_y = image_offset_y + 12;
+		int cursor_y = (image_offset_x + 12) < 0 ? 12 : image_offset_x + 12;
+		int cursor_x = (image_offset_y + 0) < 0 ? 0 : image_offset_y + 0;
+
 		String substr = "";
 
 		String charheightstr = "Ag";
@@ -315,17 +351,6 @@ void epaperDisplayImage() {
 	DEBUG_PRT.print(F("."));
 }
 
-//#ifdef DISPLAY_SPI_3WIRE
-//Epd epd(SPI_3WIRE);
-//#else
-//Epd epd();
-//#endif
-
-//DiskFont diskfont;
-
-//unsigned char image[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
-//unsigned char image_red[PANEL_SIZE_X*(PANEL_SIZE_Y/8)];
-
 //-- for EDB
 File dbFile;
 EDB db(&writer, &reader);
@@ -352,6 +377,9 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
   struct rst_info *rtc_info = system_get_rst_info();
   
   os_sprintf(reset_info_buf, "reset reason: %x\n",  rtc_info->reason);
+  resetreason += String(reset_info_buf);
+
+  os_sprintf(reset_info_buf, "exception cause: %x\n",  rtc_info->exccause);
   resetreason += String(reset_info_buf);
 
   os_sprintf(reset_info_buf, "Lectionary " LECT_VER "\n");
@@ -485,6 +513,9 @@ void setup() {
   pinMode(D1, OUTPUT);
   digitalWrite(D1, HIGH); // set sd card to not selected
 
+  pinMode(D4, OUTPUT); 
+  digitalWrite(D4, HIGH); // set SPI ram chip to not selected (if attached)
+
   pinMode(D8, OUTPUT); 
   digitalWrite(D8, HIGH); // set epaper display to not selected
 
@@ -494,10 +525,10 @@ void setup() {
   //DEBUG_PRT.begin(1,3,8);
   DEBUGPRT_BEGIN
   delay(100);
-  Serial.println("-");
+  //Serial.println("-");
   
   DEBUG_PRT.print(F("free memory = "));
-  Serial.println("=");
+  //Serial.println("=");
   
   DEBUG_PRT.println(String(system_get_free_heap_size()));
 
@@ -781,8 +812,9 @@ bool connect_wps(){
 void loop(void) {  
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+  DEBUG_PRT.println(F("*0*\n"));
   config_server();  // config server will run if battery power is connected
-  
+
   /************************************************/ 
   // *1* Create calendar object and load config.csv
   wdt_reset();
@@ -873,7 +905,6 @@ void loop(void) {
     bool b_G = false;
   
     l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
-
     DEBUG_PRT.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
     
     ReadingsFromEnum r;
@@ -895,6 +926,7 @@ void loop(void) {
             
       /************************************************/ 
       // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
+      DEBUG_PRT.println(F("*6*\n"));
       if (!display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
         DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
         r=READINGS_G;
@@ -946,92 +978,12 @@ void loop(void) {
 
     Config::writeRtcMemoryData(rtcData);        
 
-    next_wake_hours_count = rtcData.data.wake_hour_counter; // for setting wake alarm
-  
-    DEBUG_PRT.println(F("*6*\n"));
+    next_wake_hours_count = rtcData.data.wake_hour_counter; // for setting wake alarm  
   } // if(bEEPROM_checksum_good)
-  
-  
-  /************************************************/ 
-  // *7* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
-/*
-  DEBUG_PRT.println(F("*7*\n"));
-  //timeserver.gps_sleep();
-
-  if (!bEEPROM_checksum_good) {
-    if (Battery::power_connected() && bNetworkAvailable) {
-      display_image(clock_not_set, Network::getDHCPAddressAsString(), true);
-    } else {
-      display_image(connect_power);
-    }
-  }
-
-  bool bSettingsUpdated = false;
-
-  if (!bNetworkAvailable && Battery::power_connected()) {
-    DEBUG_PRT.println(F("On USB power, but Network is not available - disconnect and reconnect power to use WPS setup"));
-  }
-
-  if (Battery::power_connected() && bNetworkAvailable) {
-    DEBUG_PRT.println(F("Power is connected, starting config web server"));
-    DEBUG_PRT.print(F("USB voltage is "));
-    DEBUG_PRT.println(String(Battery::battery_voltage()));
-
-    // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
-    //if (!network.connect()) {
-    //  DEBUG_PRT.println("Network is not configured, starting WPS setup");
-    //  connect_wps();
-    //  ESP.reset();
-    //}
-    
-    DEBUG_PRT.print(F("free memory = "));
-    DEBUG_PRT.println(String(system_get_free_heap_size()));
-
-    unsigned long server_start_time = millis();
-    bool bTimeUp = false;
    
-    if (Config::StartServer()) {
-      DEBUG_PRT.println(F("Config web server started, listening for requests..."));
-      while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
-        server.handleClient();
-        wdt_reset();
-        delay(1000);
-        //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
-        if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
-      }
-
-      Config::StopServer();
-
-      if (Config::bSettingsUpdated) {
-        DEBUG_PRT.println(F("Settings updated, resetting lectionary..."));
-        ESP.deepSleep(1e6); //reboot after 1 second
-        //ESP.reset();
-      }
-      else if (bTimeUp) {
-        DEBUG_PRT.println(F("Server timed out, stopping web server and going to sleep"));
-        //ESP.deepSleep(SLEEP_HOUR - (1000*8*60));
-        SleepForHours(next_wake_hours_count);
-        //SleepUntilStartOfHour();
-      }
-      else {
-        DEBUG_PRT.println(F("Power disconnected, stopping web server and going to sleep"));
-      }
-  
-      //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
-      
-      DEBUG_PRT.print(F("free memory = "));
-      DEBUG_PRT.println(String(system_get_free_heap_size()));
-    }
-  }
-  else {
-    DEBUG_PRT.print(F("Battery voltage is "));
-    DEBUG_PRT.println(String(Battery::battery_voltage()));
-  }
-*/
   /************************************************/ 
-  // *8* completed all tasks, go to sleep
-  DEBUG_PRT.println(F("*8*\n"));
-  
+  // *7* completed all tasks, go to sleep
+  DEBUG_PRT.println(F("*7*\n"));  
   DEBUG_PRT.println(F("Going to sleep"));
   SleepForHours(next_wake_hours_count);
 }
@@ -1039,8 +991,6 @@ void loop(void) {
 void config_server()
 {
   // Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
-  DEBUG_PRT.println(F("*0*\n"));
-
   if (!bDisplayWifiConnectedScreen) return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
 
   if (!bEEPROM_checksum_good) {
@@ -1433,27 +1383,8 @@ bool getLectionaryReading(time64_t date, ReadingsFromEnum* r, bool bReturnReadin
 
 
 //---------------------------------------------------------------------------calendar
-/*
-bool epd_init(void) {
-  if (epd.Init() != 0) {
-    DEBUG_PRT.printf("e-Paper init failed\n");
-    return false;
-  }
-  return true;
-}
 
-void init_panel() {
-  DEBUG_PRT.printf("Initializing panel...");
-  if (epd_init()) {
-    epd.ClearFrame();
-    DEBUG_PRT.printf("done\n");
-  }
-}
-*/
-
-bool display_calendar(String date, Calendar* c, String refs, bool right_to_left, bool verse_per_line, bool show_verse_numbers) {  
-  //DiskFont diskfont;
-  
+bool display_calendar(String date, Calendar* c, String refs, bool right_to_left, bool verse_per_line, bool show_verse_numbers) {   
   DEBUG_PRT.print(F("Selected font is "));
   DEBUG_PRT.println(c->_I18n->configparams.font_filename);
   
@@ -1464,21 +1395,36 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
     display_image(font_missing, c->_I18n->configparams.font_filename, false);
     DEBUG_PRT.println(F("Font not found, using internal font"));    
   }
-  
-  //FONT_INFO* font = &calibri_10pt;
-  
-  //FONT_INFO* font_bold = &calibri_8ptBold;
-  //Paint paint(image, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
-  //paint.SetRotate(ROTATE_90);
-  //paint.Clear(UNCOLORED);
-
-  //Paint paint_red(image_red, PANEL_SIZE_Y, PANEL_SIZE_X); //5808 bytes used (full frame) //792bytes used    //width should be the multiple of 8 
-  //paint_red.SetRotate(ROTATE_90);
-  //paint_red.Clear(UNCOLORED);
-  
+    
   bool bRed = (c->temporale->getColour() == Enums::COLOURS_RED) ? true : false;
   
   DEBUG_PRT.println(F("Displaying calendar"));
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  fb.cls();   // clear framebuffer ready for text to be drawn
+  fb.setRotation(EPD_ROTATION); //90 degrees
+  int charheight = diskfont._FontHeader.charheight;
+  fb.drawFastHLine(0, charheight, fb.width(), GxEPD_BLACK);
+
+/*
+  //fb.drawLine(0,0, fb.width(), fb.height(), GxEPD_BLACK);
+  // test pattern
+  for(int16_t i=5; i<6; i++){
+    int16_t x=10 + (i * 16);
+    int16_t y=10;
+    uint16_t color_bw = fb.makeColor(i, false);
+    //uint16_t color_red = fb.makeColor(i, true);
+    
+    fb.fillRect(x, y, 16, 16, color_bw);
+    //fb.fillRect(x, y + 20, 16, 16, color_red);
+  }
+*/ 
+//  updateDisplay(display_reading);
+//  return true;
+#else
+    ePaper.setRotation(EPD_ROTATION);
+#endif
+  
   DEBUG_PRT.println(F("Displaying verses"));
 //  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
 //  //refs="1 Chr 29:9-10bc";              //debugging
@@ -1517,18 +1463,9 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
 ////  //refs="1 Chr 29:9-10bc";              //debugging
 ////  refs="John 3:16"; // debugging
 ////  refs="2 John 1:1"; // debugging
-//  display_verses(c, refs, &paint, &paint_red, font, &diskfont);
-  
-  //diskfont.end();
   
   updateDisplay(display_reading);
-  
-  //init_panel();
-  //epd.TransmitPartialBlack(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
-  //epd.TransmitPartialRed(paint_red.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());  
-  //epd.DisplayFrame();
-  //epd.Sleep();
-  
+    
   uint32_t free = system_get_free_heap_size();
   DEBUG_PRT.print(F("free memory = "));
   DEBUG_PRT.println(String(free));
@@ -1540,15 +1477,20 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
 void display_day(String d, bool bRed, bool right_to_left) {
   DEBUG_PRT.print(F("display_day() d="));
   DEBUG_PRT.println(String(d));
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int fbwidth = fb.width();
+  int fbheight = fb.height();
+#else
+  int fbwidth = ePaper.width();
+  int fbheight = ePaper.height();
+#endif
   
-  int text_xpos = (PANEL_SIZE_X / 2) - (int)((diskfont.GetTextWidthA(d, true))/2); // true => shape text before calculating width
+  int text_xpos = (fbwidth / 2) - (int)((diskfont.GetTextWidthA(d, true))/2); // true => shape text before calculating width
   //DEBUG_PRT.println("display_day() text_xpos = " + String(text_xpos));
   
   int text_ypos = 0;
   
-  int fbwidth = PANEL_SIZE_X;
-  int fbheight = PANEL_SIZE_Y;
-
   Bidi::RenderText(d, &text_xpos, &text_ypos, tb, diskfont, &bRed, fbwidth, fbheight, right_to_left, false);
 
   //int charheight = diskfont->_FontHeader.charheight;  
@@ -1561,22 +1503,24 @@ void display_date(String date, String day, bool right_to_left) {
 
   bool bEmphasisOn = false;
 
-  int fbwidth = PANEL_SIZE_X;
-  int fbheight = PANEL_SIZE_Y;
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int fbwidth = fb.width();
+  int fbheight = fb.height();
+#else
+  int fbwidth = ePaper.width();
+  int fbheight = ePaper.height();
+#endif
 
   int text_xpos = 0;
   int text_ypos = 0;
 
-  text_xpos = PANEL_SIZE_X - (int)(diskfont.GetTextWidthA(date, true)); // right justified, shape text before calculating width
-  text_ypos = PANEL_SIZE_Y - diskfont._FontHeader.charheight;
+  text_xpos = fbwidth - (int)(diskfont.GetTextWidthA(date, true)); // right justified, shape text before calculating width
+  text_ypos = fbheight - diskfont._FontHeader.charheight;
   Bidi::RenderText(date, &text_xpos, &text_ypos, tb, diskfont, &bEmphasisOn, fbwidth, fbheight, right_to_left, false);
 
   text_xpos = 0;
-  text_ypos = PANEL_SIZE_Y - diskfont._FontHeader.charheight;
+  text_ypos = fbheight - diskfont._FontHeader.charheight;
   Bidi::RenderText(day, &text_xpos, &text_ypos, tb, diskfont, &bEmphasisOn, fbwidth, fbheight, right_to_left, false);
-   
-  //diskfont->DrawStringAt(text_xpos, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, date, paint, COLORED, false);
-  //diskfont->DrawStringAt(0, PANEL_SIZE_Y - diskfont->_FontHeader.charheight, day, paint, COLORED, false);
 }
 
 
@@ -1728,12 +1672,17 @@ bool epd_verse(String verse, int* xpos, int* ypos, bool* bEmphasis_On, bool righ
   DEBUG_PRT.print(F("epd_verse() verse="));
   DEBUG_PRT.println(verse);
 
-  int fbwidth = PANEL_SIZE_X;
-  int fbheight = PANEL_SIZE_Y;
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int fbwidth = fb.width();
+  int fbheight = fb.height();
+#else
+  int fbwidth = ePaper.width();
+  int fbheight = ePaper.height();
+#endif
   
 //  Bidi bidi;
 
-  fbheight = PANEL_SIZE_Y - diskfont._FontHeader.charheight;
+  fbheight = fbheight - diskfont._FontHeader.charheight;
   return Bidi::RenderText(verse, xpos, ypos, tb, diskfont, bEmphasis_On, fbwidth, fbheight, right_to_left, true, bMoreText);    
 
   return true;

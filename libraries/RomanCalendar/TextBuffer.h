@@ -8,7 +8,8 @@
 #include "DebugPort.h"
 #include "LinkedList.h"
 
-#include <Diskfont.h>
+#include "Diskfont.h"
+#include "FrameBuffer.h"
 
 #ifdef EPAPER_GxGDEW027C44
 	#include <GxEPD.h>
@@ -71,8 +72,10 @@ class TextBuffer
 public:
 	LinkedList<DisplayString*> displayStringsList = LinkedList<DisplayString*>();
 	
-	TextBuffer();	
+	TextBuffer(FB_EPAPER ePaper);	
 	~TextBuffer();
+	
+	FB_EPAPER_PTR _p_ePaper = NULL;
 	
 	void add(DisplayString* d);
 	void add(int x, int y, String text, uint16_t color, bool right_to_left, bool reverse_string, DiskFont& diskfont);
@@ -84,7 +87,7 @@ public:
 	void sort_on_y();
 */
 
-	bool render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage);
+	bool render(FB_EPAPER ePaper, DiskFont& diskfont, int displayPage);
 
 	void dump();
 };

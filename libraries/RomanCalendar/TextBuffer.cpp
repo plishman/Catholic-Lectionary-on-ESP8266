@@ -66,11 +66,11 @@ void DisplayString::set(String t, String cmap, int px, int py, uint16_t pcolor, 
 	right_to_left = rtl;
 	reverse_string = reverse_str;
 	
-	double advanceWidth = 0;
+	double advanceWidth = 0.0;
 	int text_width = 0;
 	diskfont.GetTextWidth(text, text_width, advanceWidth);
 	
-	w = text_width < (PANEL_SIZE_X - x) ? text_width : PANEL_SIZE_X - x;		
+	w = text_width; //< (PANEL_SIZE_X - x) ? text_width : PANEL_SIZE_X - x;		
 	h = diskfont._FontHeader.charheight;
 	
 	dump();
@@ -93,10 +93,31 @@ DisplayString::DisplayString(const DisplayString& d2) { // copy constructor
 }
 
 void DisplayString::dump() {
-	DEBUG_PRT.println("Text: " + text);
-	DEBUG_PRT.println("Colormap: " + colormap);
-	DEBUG_PRT.printf("x:%d, y:%d, w:%d, h:%d, color:%d, right_to_left:%d, reverse_string:%d\n\n", x, y, w, h, color, right_to_left, reverse_string);
-	DEBUG_PRT.printf("IsEmpty: %s\n", IsEmpty() ? "true" : "false");
+	DEBUG_PRT.print(F("Text: "));
+	DEBUG_PRT.println(text);
+	DEBUG_PRT.print(F("Colormap: "));
+	DEBUG_PRT.println(colormap);
+	
+	//DEBUG_PRT.printf("x:%d, y:%d, w:%d, h:%d, color:%d, right_to_left:%d, reverse_string:%d\n\n", x, y, w, h, color, right_to_left, reverse_string);
+	DEBUG_PRT.print(F("x:"));
+	DEBUG_PRT.print(x);
+	DEBUG_PRT.print(F(", y:"));
+	DEBUG_PRT.print(y);
+	DEBUG_PRT.print(F(", w:"));
+	DEBUG_PRT.print(w);
+	DEBUG_PRT.print(F(", h:"));
+	DEBUG_PRT.print(h);
+	DEBUG_PRT.print(F(", color:"));
+	DEBUG_PRT.print(color);
+	DEBUG_PRT.print(F(", right_to_left:"));
+	DEBUG_PRT.print(right_to_left);
+	DEBUG_PRT.print(F(", reverse_string:"));
+	DEBUG_PRT.println(reverse_string);
+	
+	//DEBUG_PRT.printf("IsEmpty: %s\n", IsEmpty() ? "true" : "false");
+	DEBUG_PRT.print(F("IsEmpty: "));
+	DEBUG_PRT.println(IsEmpty() ? F("true") : F("false"));
+
 }
 
 /*
@@ -105,7 +126,8 @@ return a->y - b->y;
 }
 */
 
-TextBuffer::TextBuffer() {
+TextBuffer::TextBuffer(FB_EPAPER ePaper) {
+	_p_ePaper = &ePaper;
 	displayStringsList.clear();
 }
 
@@ -126,13 +148,23 @@ void TextBuffer::add(DisplayString* d) {
 }
 
 void TextBuffer::add(int x, int y, String text, uint16_t color, bool right_to_left, bool reverse_string, DiskFont& diskfont) {
+#ifndef USE_SPI_RAM_FRAMEBUFFER
 	DisplayString* d = new DisplayString(text, x, y, color, right_to_left, reverse_string, diskfont);
 	displayStringsList.add(d);
+#else
+	String colormap = "";
+	diskfont.DrawStringAt(x, y, text, *_p_ePaper, color, colormap, right_to_left, reverse_string);
+#endif
 }
 
 void TextBuffer::add(int x, int y, String text, String colormap, bool right_to_left, bool reverse_string, DiskFont& diskfont) {
+#ifndef USE_SPI_RAM_FRAMEBUFFER
 	DisplayString* d = new DisplayString(text, colormap, x, y, right_to_left, reverse_string, diskfont);
 	displayStringsList.add(d);
+#else
+	uint16_t color = GxEPD_BLACK;
+	diskfont.DrawStringAt(x, y, text, *_p_ePaper, color, colormap, right_to_left, reverse_string);
+#endif
 }
 
 bool TextBuffer::get(int displayListEntryNumber, DisplayString* displayString) {
@@ -149,7 +181,7 @@ void sort_on_y() {
 }
 */
 
-bool TextBuffer::render(GxEPD_Class& ePaper, DiskFont& diskfont, int displayPage) {	
+bool TextBuffer::render(FB_EPAPER ePaper, DiskFont& diskfont, int displayPage) {	
 	diskfont.setDisplayPage(displayPage);
 	
 	//DEBUG_PRT.println(F("render()..."));

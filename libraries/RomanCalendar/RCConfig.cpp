@@ -787,7 +787,8 @@ bool Config::setDateTime(time64_t t) {
 
   if (bcode != 0) {
     I2CSerial.soft_reset();
-	DEBUG_PRT.printf("\nsetDateTime(): bcode=%d\n", bcode);
+	DEBUG_PRT.print(F("\nsetDateTime(): bcode="));
+	DEBUG_PRT.println(bcode);
     return false;
   }
 

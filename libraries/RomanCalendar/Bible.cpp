@@ -180,29 +180,49 @@ void Bible::dump_refs() {
 
 	while (r != NULL) {
 
-		DEBUG_PRT.printf("%s", r->refs.c_str());
+		DEBUG_PRT.print(r->refs);
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
-			DEBUG_PRT.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
+			//DEBUG_PRT.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
+			DEBUG_PRT.print(F("\t"));
+			DEBUG_PRT.print(books[r->book_index]);
+			DEBUG_PRT.print(F(", "));
+			DEBUG_PRT.print(r->start_chapter);
+			DEBUG_PRT.print(F(":"));
+			DEBUG_PRT.print(r->start_verse);
+			DEBUG_PRT.print(r->start_verse_sentence_range);
 		}
 		else {
 			if (r->start_chapter == r->end_chapter) {
-				DEBUG_PRT.printf("\t%s, %d:%d%s-%d%s\n", books[r->book_index],
-					r->start_chapter,
-					r->start_verse,
-					r->start_verse_sentence_range.c_str(),
-					r->end_verse,
-					r->end_verse_sentence_range.c_str());
+				//DEBUG_PRT.printf("\t%s, %d:%d%s-%d%s\n", 
+
+				DEBUG_PRT.print(F("\t"));
+				DEBUG_PRT.print(books[r->book_index]);
+				DEBUG_PRT.print(F(", "));
+				DEBUG_PRT.print(r->start_chapter);
+				DEBUG_PRT.print(F(":"));
+				DEBUG_PRT.print(r->start_verse);
+				DEBUG_PRT.print(r->start_verse_sentence_range);
+				DEBUG_PRT.print(F("-"));
+				DEBUG_PRT.print(r->end_verse);
+				DEBUG_PRT.print(r->end_verse_sentence_range);
 			}
 			else {
-				DEBUG_PRT.printf("\t%s, %d:%d%s-%d:%d%s\n", books[r->book_index],
-					r->start_chapter,
-					r->start_verse,
-					r->start_verse_sentence_range.c_str(),
-					r->end_chapter,
-					r->end_verse,
-					r->end_verse_sentence_range.c_str());
+				//DEBUG_PRT.printf("\t%s, %d:%d%s-%d:%d%s\n", 
+				DEBUG_PRT.print(F("\t"));
+				DEBUG_PRT.print(books[r->book_index]);
+				DEBUG_PRT.print(r->start_chapter);
+				DEBUG_PRT.print(F(":"));
+				DEBUG_PRT.print(r->start_verse);
+				DEBUG_PRT.print(r->start_verse_sentence_range);
+				DEBUG_PRT.print(F("-"));
+				DEBUG_PRT.print(r->end_chapter);
+				DEBUG_PRT.print(F(":"));
+				DEBUG_PRT.print(r->end_verse);
+				DEBUG_PRT.print(r->end_verse_sentence_range);
 			}
 		}
+
+		DEBUG_PRT.println();
 
 		i++;
 		r = refsList.get(i);
@@ -312,7 +332,19 @@ void Bible::add_reference(String refs, int book_index,
 	int start_verse, int end_verse,
 	String start_verse_sentence_range, String end_verse_sentence_range) {
 
-	DEBUG_PRT.printf("Bible::add_reference(): refs=%s [%d %d:%d - %d:%d]\n", refs.c_str(), book_index, start_chapter, start_verse, end_chapter, end_verse);
+	DEBUG_PRT.print(F("Bible::add_reference(): refs="));
+	//%s [%d %d:%d - %d:%d]\n", 
+	DEBUG_PRT.print(refs);
+	DEBUG_PRT.print(F(" ["));
+	DEBUG_PRT.print(book_index);
+	DEBUG_PRT.print(F(" "));
+	DEBUG_PRT.print(start_chapter);
+	DEBUG_PRT.print(F(":"));
+	DEBUG_PRT.print(start_verse);
+	DEBUG_PRT.print(F(" - "));
+	DEBUG_PRT.print(end_chapter);
+	DEBUG_PRT.print(end_verse);
+	DEBUG_PRT.print(F("]\n"));
 
 	Ref* r = new Ref();
 	r->book_index = book_index;
