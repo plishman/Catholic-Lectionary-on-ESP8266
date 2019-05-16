@@ -282,13 +282,8 @@ void epaperDisplayImage() {
   //(EPD_ROTATION == 1 ? 0 : 3);  // may render picture upside-down if EPD_ROTATION is not 1 or 0 (ie. if it is 2 or 3)
 	ePaper.setRotation(rot); //These pictures are pre-rotated 90 degrees, for use on the 2.7 in display, byte order of which is portrait mode
 
-#ifdef USE_SPI_RAM_FRAMEBUFFER  
-  int image_offset_x = (fb.width() - image_size_x) / 2;
-  int image_offset_y = (fb.height() - image_size_y) / 2;
-#else
   int image_offset_x = (ePaper.width() - image_size_x) / 2;
   int image_offset_y = (ePaper.height() - image_size_y) / 2;
-#endif
 
 	ePaper.eraseDisplay();
 	if (epd_image->bitmap_black != NULL) ePaper.drawBitmap(epd_image->bitmap_black, image_offset_x, image_offset_y, image_size_x, image_size_y, GxEPD_BLACK, GxEPD::bm_transparent);

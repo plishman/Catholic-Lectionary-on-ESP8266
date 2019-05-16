@@ -339,6 +339,9 @@ void Bidi::GetString(String& s,
 	double prevwordendxwidth = (int)dcurrwidth;
 	int prevwordcount = wordcount;
 	
+	int currxpos = xpos;
+	int lastxpos = xpos;
+	
 	// now determine the length of the right to left or left to right string from the start character ch found at position pos
 	while (  (pos < s.length()) 	 			 				// keep doing the following while: not at end of string
 		  && (dcurrwidth < dmaxwidth || !wrap_text)  		    // and the width of the string in pixels doesn't exceed the remaining space, (or if text is not being wrapped)
@@ -414,30 +417,10 @@ void Bidi::GetString(String& s,
 				dcurrwidth += d_ch_p_width;
 			}
 			
-			int currxpos = ((int)dcurrwidth) + xpos;
-			int lastxpos = lastwordendxwidth + xpos;
-
-			//prevwordendstrpos = lastwordendstrpos;
-			//prevwordendxwidth = (int)dcurrwidth;
+			currxpos = ((int)dcurrwidth) + xpos;
+			lastxpos = lastwordendxwidth + xpos;
 			
-			if (bLastLine) {
-				if (lastxpos > (fbwidth - ellipsiswidth) && (currxpos > fbwidth)) { // don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
-					lastwordendstrpos = prevwordendstrpos;
-					lastwordendxwidth = prevwordendxwidth;
-					wordcount = prevwordcount;
-					bLineBreakTagFound = true;
-					*bDisplayEllipsisNow = true;
-					DEBUG_PRT.println(F("Ellipsis case 1"));
-					continue;
-				}
-
-				if (lastxpos <= (fbwidth - ellipsiswidth) && (currxpos > fbwidth)) { // don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
-					bLineBreakTagFound = true;
-					*bDisplayEllipsisNow = true;
-					DEBUG_PRT.println(F("Ellipsis case 2"));
-					continue;
-				}
-				
+			if (bLastLine) {		
 				if (lastxpos > (fbwidth - ellipsiswidth) && (currxpos <= fbwidth) && (pos < s.length() || bMoreText) ) { // don't print last two words if so (both words encroach on the ellipsis area (though the last one is within the screen width), but there is more text to display, so need to leave room for the ellipsis)
 					//DEBUG_PRT.printf("lastxpos=%d, fbwidth=%d, ellipsiswidth=%d, currxpos=%d, pos=%d, bMoreText=%d\n", lastxpos, fbwidth, ellipsiswidth, currxpos, pos, bMoreText);
 					
@@ -460,7 +443,7 @@ void Bidi::GetString(String& s,
 					wordcount = prevwordcount;
 					bLineBreakTagFound = true;
 					*bDisplayEllipsisNow = true;
-					DEBUG_PRT.println(F("Ellipsis case 3"));
+					DEBUG_PRT.println(F(" - Ellipsis case 1"));
 					continue;
 				}
 
@@ -483,11 +466,9 @@ void Bidi::GetString(String& s,
 					//lastxpos=0, fbwidth=389, ellipsiswidth=11, currxpos=31, pos=160, bMoreText=1
 					bLineBreakTagFound = true;
 					*bDisplayEllipsisNow = true;
-					DEBUG_PRT.println(F("Ellipsis case 4"));
+					DEBUG_PRT.println(F(" - Ellipsis case 2"));
 					continue;
 				}
-
-				DEBUG_PRT.println(F("Ellipsis case 0"));
 			}
 			
 			lastwordendstrpos = pos; // save this position as it is a word boundary
@@ -502,6 +483,25 @@ void Bidi::GetString(String& s,
 		dcurrwidth += diskfont.GetTextWidthA(ch);
 		pos += ch.length();
 		DEBUG_PRT.print(ch);
+
+		if (bLastLine) {
+			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth > fbwidth)) { // don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
+				lastwordendstrpos = prevwordendstrpos;
+				lastwordendxwidth = prevwordendxwidth;
+				wordcount = prevwordcount;
+				bLineBreakTagFound = true;
+				*bDisplayEllipsisNow = true;
+				DEBUG_PRT.println(F(" - Ellipsis case 3"));
+				continue;
+			}
+
+			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth > fbwidth)) { // don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
+				bLineBreakTagFound = true;
+				*bDisplayEllipsisNow = true;
+				DEBUG_PRT.println(F(" - Ellipsis case 4"));
+				continue;
+			}
+		}
 	}
 
 	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between *startstrpos and *endstrpos).
