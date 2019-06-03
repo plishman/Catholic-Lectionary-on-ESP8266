@@ -420,7 +420,7 @@ void Bidi::GetString(String& s,
 			currxpos = ((int)dcurrwidth) + xpos;
 			lastxpos = lastwordendxwidth + xpos;
 			
-			if (bLastLine) {		
+			if (bLastLine) {				
 				if (lastxpos > (fbwidth - ellipsiswidth) && (currxpos <= fbwidth) && (pos < s.length() || bMoreText) ) { // don't print last two words if so (both words encroach on the ellipsis area (though the last one is within the screen width), but there is more text to display, so need to leave room for the ellipsis)
 					//DEBUG_PRT.printf("lastxpos=%d, fbwidth=%d, ellipsiswidth=%d, currxpos=%d, pos=%d, bMoreText=%d\n", lastxpos, fbwidth, ellipsiswidth, currxpos, pos, bMoreText);
 					
@@ -819,7 +819,6 @@ bool Bidi::RenderText(String& s,
 	int font_ascent = (int)diskfont._FontHeader.ascent; //**** BUG - will not work with new diskfonts PLL 03-02-2019
 	
 	bool bLastLine = false;
-	int currfbwidth = fbwidth;
 	int ellipsiswidth = (int)diskfont.GetTextWidthA(Bidi::strEllipsis);
 	bool bInsertEllipsis = false;
 	bool bOverflowWordWrapped = false;
@@ -861,11 +860,9 @@ bool Bidi::RenderText(String& s,
 		bLastLine = (wrap_text && (*ypos + font_ascent < fbheight && *ypos + (font_ascent * 2) >= fbheight)); //only worry about last line if wrapping text
 		if (bLastLine) {
 			DEBUG_PRT.println(F("bLastLine is true"));
-			currfbwidth = fbwidth - ellipsiswidth;
 		} 
 		else {
 			DEBUG_PRT.println(F("bLastLine is false"));
-			currfbwidth = fbwidth;
 		}
 	
 		bLineBreak = false;
@@ -916,7 +913,7 @@ bool Bidi::RenderText(String& s,
 				  false,	// bOneWordOnly - may be deprecated?
 				  false,	// bForceLineBreakAfterString - may be deprecated?
 				  forcedBreakPos,	// index of character where forced break must occur, or -1 if not needed (needed for words wider than the display)
-				  currfbwidth, 
+				  fbwidth, 
 				  *xpos, 
 				  wrap_text,
 				  bLastLine,
