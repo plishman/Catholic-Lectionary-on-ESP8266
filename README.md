@@ -9,7 +9,7 @@ It is based on the Ruby program calendarium-romanum (https://github.com/igneus/c
 
 ![Preview1](./lectionary5.jpg)
 ![Preview2](./lectionary3.jpg)
-![Preview3](./4.2epd.jpg)
+![Preview3](./lectionary7.png)
 
 <h3>Localization</h3>
 <p>
