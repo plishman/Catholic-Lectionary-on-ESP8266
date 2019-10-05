@@ -420,7 +420,22 @@ void Bidi::GetString(String& s,
 			currxpos = ((int)dcurrwidth) + xpos;
 			lastxpos = lastwordendxwidth + xpos;
 			
-			if (bLastLine) {				
+			if (bLastLine) {
+				//debugging
+				DEBUG_PRT.print(F("lastxpos="));
+				DEBUG_PRT.print(lastxpos);
+				DEBUG_PRT.print(F(", fbwidth="));
+				DEBUG_PRT.print(fbwidth);
+				DEBUG_PRT.print(F(", ellipsiswidth="));
+				DEBUG_PRT.print(ellipsiswidth);
+				DEBUG_PRT.print(F(", currxpos="));
+				DEBUG_PRT.print(currxpos);
+				DEBUG_PRT.print(F(", pos="));
+				DEBUG_PRT.print(pos);
+				DEBUG_PRT.print(F(", bMoreText="));
+				DEBUG_PRT.println(bMoreText);		
+				//debugging
+				
 				if (lastxpos > (fbwidth - ellipsiswidth) && (currxpos <= fbwidth) && (pos < s.length() || bMoreText) ) { // don't print last two words if so (both words encroach on the ellipsis area (though the last one is within the screen width), but there is more text to display, so need to leave room for the ellipsis)
 					//DEBUG_PRT.printf("lastxpos=%d, fbwidth=%d, ellipsiswidth=%d, currxpos=%d, pos=%d, bMoreText=%d\n", lastxpos, fbwidth, ellipsiswidth, currxpos, pos, bMoreText);
 					
@@ -485,7 +500,7 @@ void Bidi::GetString(String& s,
 		DEBUG_PRT.print(ch);
 
 		if (bLastLine) {
-			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth > fbwidth)) { // don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
+			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { // don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
 				lastwordendstrpos = prevwordendstrpos;
 				lastwordendxwidth = prevwordendxwidth;
 				wordcount = prevwordcount;
@@ -495,7 +510,7 @@ void Bidi::GetString(String& s,
 				continue;
 			}
 
-			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth > fbwidth)) { // don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
+			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { // don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
 				bLineBreakTagFound = true;
 				*bDisplayEllipsisNow = true;
 				DEBUG_PRT.println(F(" - Ellipsis case 4"));
