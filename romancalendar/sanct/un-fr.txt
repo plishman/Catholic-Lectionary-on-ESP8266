@@ -224,7 +224,7 @@ locale: fr
 4 : Saint Jean Damascène, prêtre et docteur de l'Église
 6 : Saint Nicolas, évêque
 7 m : Saint Ambroise, évêque et docteur de l'Église
-8 s L689 o : Immaculée Conception de la Bienheureuse Vierge Marie
+# 8 s L689 o : Immaculée Conception de la Bienheureuse Vierge Marie
 9 : Saint Juan Diego
 11 : Saint Damase, pape
 12 : Notre-Dame de Guadalupe

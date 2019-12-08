@@ -19,11 +19,12 @@ const char* const RomanCalendar::SOLEMNITIES[17] = {
 	"The Most Holy Body and Blood of Christ",			//corpus_christi
 	"The Most Sacred Heart of Jesus",					//sacred_heart
 	"Immaculate Heart of Mary",							//immaculate_heart
-	"Our Lord Jesus Christ, King of the Universe"		//christ_king
+	"Our Lord Jesus Christ, King of the Universe",		//christ_king
+	"" // immaculate_conception
 };
 */
 
-const Enums::Ranks Temporale::SOLEMNITIES_RANKS[18] = {		// the ranks of the solemnities, in the same order as in solemnities[17]
+const Enums::Ranks Temporale::SOLEMNITIES_RANKS[19] = {		// the ranks of the solemnities, in the same order as in solemnities[17]
 	Enums::RANKS_PRIMARY,										//nativity
 	Enums::RANKS_FEAST_LORD_GENERAL,							//holy_family
 	Enums::RANKS_SOLEMNITY_GENERAL,							//mother_of_god
@@ -37,14 +38,15 @@ const Enums::Ranks Temporale::SOLEMNITIES_RANKS[18] = {		// the ranks of the sol
 	Enums::RANKS_PRIMARY,										//ascension
 	Enums::RANKS_PRIMARY,										//pentecost
 	Enums::RANKS_FEAST_PROPER,									//Christ the Priest (optional in some areas)
-	Enums::RANKS_SOLEMNITY_GENERAL,							//holy_trinity
-	Enums::RANKS_SOLEMNITY_GENERAL,							//corpus_christi
-	Enums::RANKS_SOLEMNITY_GENERAL,							//sacred_heart
+	Enums::RANKS_SOLEMNITY_GENERAL,								//holy_trinity
+	Enums::RANKS_SOLEMNITY_GENERAL,								//corpus_christi
+	Enums::RANKS_SOLEMNITY_GENERAL,								//sacred_heart
 	Enums::RANKS_MEMORIAL_GENERAL,								//immaculate_heart
-	Enums::RANKS_SOLEMNITY_GENERAL								//christ_king
+	Enums::RANKS_SOLEMNITY_GENERAL,								//christ_king
+	Enums::RANKS_SOLEMNITY_GENERAL								//immaculate_conception
 };
 
-const Enums::Colours Temporale::SOLEMNITIES_COLOURS[18] = {	// the colours of the solemnities, in the same order as in solemnities[17]
+const Enums::Colours Temporale::SOLEMNITIES_COLOURS[19] = {	// the colours of the solemnities, in the same order as in solemnities[17]
 	Enums::COLOURS_WHITE,										//nativity
 	Enums::COLOURS_WHITE,										//holy_family
 	Enums::COLOURS_WHITE,										//mother_of_god
@@ -62,7 +64,8 @@ const Enums::Colours Temporale::SOLEMNITIES_COLOURS[18] = {	// the colours of th
 	Enums::COLOURS_WHITE,										//corpus_christi
 	Enums::COLOURS_WHITE,										//sacred_heart
 	Enums::COLOURS_WHITE,										//immaculate_heart
-	Enums::COLOURS_WHITE										//christ_king
+	Enums::COLOURS_WHITE,										//christ_king
+	Enums::COLOURS_WHITE										//immaculate_conception
 };
 
 Temporale::Temporale(bool transfer_to_sunday, I18n* i ) {
@@ -339,6 +342,16 @@ time64_t Temporale::end_date(int year) {
 
 time64_t Temporale::first_advent_sunday(int year) {
 	return sunday_before(nativity(year)) - (3 * WEEK * DAY);
+}
+
+time64_t Temporale::immaculate_conception(int year) {
+	time64_t ic_date = date(8,12, year);
+
+	if (sunday(ic_date)) {
+		ic_date += DAY; // transfer to the Monday after
+	}
+
+	return ic_date;
 }
 
 time64_t Temporale::nativity(int year) {
@@ -941,7 +954,8 @@ bool Temporale::do_solemnities(time64_t date) {
 	
 	//printf("lit_year=%d\t", lit_year);
 
-	if (issameday(date, nativity(lit_year)))        { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; bIsHDO = true; christmas_lectionary(date);}
+	if (issameday(date, immaculate_conception(lit_year))) { s = Enums::SOLEMNITIES_IMMACULATE_CONCEPTION; bIsSolemnity = true; _Lectionary = 689; }
+	if (issameday(date, nativity(lit_year)))        { s = Enums::SOLEMNITIES_NATIVITY; bIsSolemnity = true; bIsHDO = true; christmas_lectionary(date); }
 	if (issameday(date, holy_family(lit_year)))     { s = Enums::SOLEMNITIES_HOLY_FAMILY; bIsSolemnity = true; _Lectionary = 17; }
 	if (issameday(date, mother_of_god(lit_year)))   { s = Enums::SOLEMNITIES_MOTHER_OF_GOD;  bIsSolemnity = true; bIsHDO = true; _Lectionary = 18; }
 	if (issameday(date, epiphany(lit_year)))        { s = Enums::SOLEMNITIES_EPIPHANY;  bIsSolemnity = true; bIsHDO = true; _Lectionary = 20; }

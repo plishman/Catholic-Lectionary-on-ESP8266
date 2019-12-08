@@ -65,8 +65,8 @@ public:
 	static const char* const RANK_PRIORITY[14];
 	static const char* const SUNDAY_TRANSFERABLE_SOLEMNITIES[3];
 	//static const Enums::Ranks SOLEMNITIES[17];
-	static const Enums::Colours SOLEMNITIES_COLOURS[18];
-	static const Enums::Ranks SOLEMNITIES_RANKS[18];
+	static const Enums::Colours SOLEMNITIES_COLOURS[19];
+	static const Enums::Ranks SOLEMNITIES_RANKS[19];
 
 	bool _transfer_to_sunday; // flag determines whether epiphany, ascension and corpus Christi should be transferred to sunday (us, uk etc)
 
@@ -117,6 +117,7 @@ public:
 	time64_t start_date(int year);
 	time64_t end_date(int year);
 	time64_t first_advent_sunday(int year);
+	time64_t immaculate_conception(int year);
 	time64_t nativity(int year);
 	time64_t holy_family(int year);
 	time64_t mother_of_god(int year);

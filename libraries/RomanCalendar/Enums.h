@@ -41,7 +41,8 @@ public:
 		SOLEMNITIES_CORPUS_CHRISTI,
 		SOLEMNITIES_SACRED_HEART,
 		SOLEMNITIES_IMMACULATE_HEART,
-		SOLEMNITIES_CHRIST_KING
+		SOLEMNITIES_CHRIST_KING,
+		SOLEMNITIES_IMMACULATE_CONCEPTION
 	};
 
 	enum Ranks { // the ordinal number is used as an index into the array of ranks (the description), *and also for comparing seniority*

@@ -86,11 +86,12 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 	do {
 		#ifndef _WIN32
 			readLine = _I18n->readLine(file);
-			if (readLine == "") continue;
+			if (readLine == "" || readLine.indexOf("#") == 0) continue; // lines which start with a # are comments, and are ignored
 		#else
 			filestr = fgets(buf, 1024, fpi);
 			if (filestr == NULL) continue; // EOF: if at end, drop out of loop and check if anything was found
 			readLine = String(buf);
+			if (readLine == "" || readLine.indexOf("#") == 0) continue; // lines which start with a # are comments, and are ignored
 		#endif
 
 		if (readLine.indexOf(daynumber) == 0) {

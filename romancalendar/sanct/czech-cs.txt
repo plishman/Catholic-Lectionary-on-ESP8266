@@ -249,7 +249,7 @@ country: cz
 4 : Sv. Jana Damašského, kněze a učitele církve
 6 : Sv. Mikuláše, biskupa
 7 m : Sv. Ambrože, biskupa a učitele církve
-8 s L689 o : Panny Marie, počaté bez poskvrny prvotního hříchu
+# 8 s L689 o : Panny Marie, počaté bez poskvrny prvotního hříchu
 9 : Sv. Jana Didaka Cuauhtlatoatzina
 11 : Sv. Damasa I. papeže
 12 : Panny Marie Guadalupské

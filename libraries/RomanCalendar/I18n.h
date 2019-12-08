@@ -65,7 +65,7 @@ public:
 	static const char* const I18n_SEASONS[5];
 	static const char* const I18n_COLOURS[4];
 	static const char* const I18n_RANK_NAMES[14];
-	static const char* const I18n_SOLEMNITIES[18];
+	static const char* const I18n_SOLEMNITIES[19];
 	
 	int _callcount = 0;
 	int _lectionary_config_number = 1;

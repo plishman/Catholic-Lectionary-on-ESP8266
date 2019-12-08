@@ -225,7 +225,7 @@ locale: en
 4 : Saint John Damascene, priest and doctor
 6 : Saint Nicholas, bishop
 7 m : Saint Ambrose, bishop and doctor
-8 s L689 o : Immaculate Conception of the Blessed Virgin Mary
+# 8 s L689 o : Immaculate Conception of the Blessed Virgin Mary
 9 : Saint Juan Diego
 11 : Saint Damasus I, pope
 12 : Our Lady of Guadalupe

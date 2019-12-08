@@ -17,7 +17,7 @@
 
 	#define CRASHFILEPATH "/CRASHDMP.TXT"
 
-	#define USE_SPI_RAM_FRAMEBUFFER
+	//#define USE_SPI_RAM_FRAMEBUFFER
 
 	#ifdef USE_SPI_RAM_FRAMEBUFFER
 		#define FB_EPAPER FrameBuffer&  // use SPI ram frame buffer for faster rendering if present
@@ -28,8 +28,8 @@
 	#endif
 
 // select e-paper display:	
-	#define EPAPER_GxGDEW042Z15
-//	#define EPAPER_GxGDEW027C44
+//	#define EPAPER_GxGDEW042Z15
+	#define EPAPER_GxGDEW027C44
 	
 	#ifdef EPAPER_GxGDEW027C44	// portrait orientation framebuffer
 		#define EPD_ROTATION 1

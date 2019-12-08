@@ -136,7 +136,7 @@ const char* const I18n::I18n_RANK_NAMES[14] = {
 	"rank.1_1"
 };
 
-const char* const I18n::I18n_SOLEMNITIES[18] = {
+const char* const I18n::I18n_SOLEMNITIES[19] = {
 	"temporale.solemnity.nativity",						//nativity
 	"temporale.solemnity.holy_family",					//holy_family
 	"temporale.solemnity.mother_of_god",				//mother_of_god
@@ -154,7 +154,8 @@ const char* const I18n::I18n_SOLEMNITIES[18] = {
 	"temporale.solemnity.corpus_christi",				//corpus_christi
 	"temporale.solemnity.sacred_heart",					//sacred_heart
 	"temporale.solemnity.immaculate_heart",				//immaculate_heart
-	"temporale.solemnity.christ_king"					//christ_king
+	"temporale.solemnity.christ_king",					//christ_king
+	"temporale.solemnity.immaculate_conception"			//immaculate_conception
 };
 
 #ifndef _WIN32

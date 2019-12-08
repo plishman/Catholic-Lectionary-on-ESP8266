@@ -2,6 +2,13 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2019 Philip Lishman, Licensed under GPL3, see LICENSE
 
+// Built with NodeMCU1.0(ESP12E module) config (Tools->Board)
+// Upload speed 921600
+// CPU Freq 80MHz
+// Debug Port: Disabled/Debug Level: None
+// Flash Size 4M (3M SPIFFS)
+// IWIP Variant: v1.4 Prebuilt
+
 //ESP8266---
 #include "ESP8266WiFi.h"
 #include <ESP8266WebServer.h>
@@ -658,7 +665,7 @@ void setup() {
     else {
       bNetworkAvailable = true;
       if (bDisplayWifiConnectedScreen) {
-        display_image(wireless_network_connected, Network::getDHCPAddressAsString(), true);
+        display_image(wireless_network_connected, "http://" + Network::getDHCPAddressAsString(), true);
         rtcData.data.wake_flags = WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE;
         Config::writeRtcMemoryData(rtcData); // set the wake flag to say don't redisplay the wifi connected image on next boot, if still charging by 
                                              // that time.
@@ -684,7 +691,8 @@ void setup() {
         Config::writeRtcMemoryData(rtcData);
   
         if (rtcData.data.wake_hour_counter > 0) {
-          DEBUG_PRT.printf("No reading this hour, and on battery, so going back to sleep immediately.\nNumber of hours to next reading is %d\n", rtcData.data.wake_hour_counter);
+          DEBUG_PRT.print(F("No reading this hour, and on battery, so going back to sleep immediately.\nNumber of hours to next reading is "));
+          DEBUG_PRT.println(rtcData.data.wake_hour_counter);
           //SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
           SleepForHours(rtcData.data.wake_hour_counter);
         }
@@ -990,7 +998,7 @@ void config_server()
 
   if (!bEEPROM_checksum_good) {
     if (Battery::power_connected() && bNetworkAvailable) {
-      display_image(clock_not_set, Network::getDHCPAddressAsString(), true);
+      display_image(clock_not_set, "http://" + Network::getDHCPAddressAsString(), true);
     } else {
       display_image(connect_power);
     }

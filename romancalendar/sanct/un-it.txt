@@ -224,7 +224,7 @@ locale: it
 4 : San Giovanni Damasceno, sacerdote e dottore della Chiesa
 6 : San Nicola, vescovo
 7 m : Sant'Ambrogio, vescovo e dottore della Chiesa
-8 s L689 o : Immacolata Concezione della Beata Vergine Maria
+# 8 s L689 o : Immacolata Concezione della Beata Vergine Maria
 9 : San Juan Diego Cuauhtlatoatzin
 11 : San Damaso I, papa
 12 : Nostra Signora di Guadalupe
