@@ -852,7 +852,7 @@ String Temporale::ferial_temporale(time64_t date) {
 
 void Temporale::christmas_vigil(time64_t date) {
 	if (month(date) == 12 && dayofmonth(date) == 24) { // Christmas eve
-		if (hour_of_day(date) >= 18) { // after 6pm
+		if ((sunday(date) && hour_of_day(date) >= 18) || !sunday(date)) { // after 6pm if 4th Sunday of Advent is also Christmas Eve, or whole day if a weekday
 			_Lectionary = 13; // Christmas eve, vigil mass
 			_day = _I18n->get("temporale.advent.vigil");
 		}
