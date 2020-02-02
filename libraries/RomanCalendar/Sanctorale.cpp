@@ -124,7 +124,7 @@ bool Sanctorale::get(time64_t date) { // in lent and advent, solemnities falling
 
 	bool bIsSanctorale = false;
 	
-	if (monthdayandflags.indexOf("o") != -1) {	// solemnity
+	if (monthdayandflags.indexOf("o") != -1 || Temporale::sunday(date)) {	// solemnity
 		_hdo = true;
 		_holy_day_of_obligation = _I18n->get(I18n_HOLY_DAY_OF_OBLIGATION);
 	}
