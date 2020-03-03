@@ -1235,18 +1235,24 @@ wake_reasons Config::Wake_Reason() {
 	bool ok1 = false;
 	bool triggered_a1 = false;
   
-	while (!ok1 && --retries != 0) {
+	DEBUG_PRT.println("Checking if triggered by Alarm 1");
+	while (!ok1 && --retries > 0) {
 		triggered_a1 = Config::DS3231_triggered_a1(ok1);
 		delay(50);
 	}
+	DEBUG_PRT.print("Finished checking if triggered by Alarm 1, retries = ");
+	DEBUG_PRT.println(retries);
 
 	bool ok2 = false;
 	bool triggered_a2 = false;
 
-	while (!ok2 && --retries != 0) {
+	DEBUG_PRT.println("Checking if triggered by Alarm 2");
+	while (!ok2 && --retries > 0) {
 		triggered_a2 = Config::DS3231_triggered_a2(ok2);
 		delay(50);
 	}
+	DEBUG_PRT.print("Finished checking if triggered by Alarm 2, retries = ");
+	DEBUG_PRT.println(retries);
 
 	if (triggered_a1) {
 		DEBUG_PRT.println(F("Woken by Alarm 1"));
@@ -1301,7 +1307,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
 	int retries = 50;
   
 	DEBUG_PRT.println("Clearing A1F");
-	while(!okCleared_a1 && --retries != 0) {
+	while(!okCleared_a1 && --retries > 0) {
 		okCleared_a1 = Config::DS3231_clear_a1f();
 		delay(50);
 	}
@@ -1309,7 +1315,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
 	//might not get here if A1F was just cleared, since clearing it removes power from ESP8266
   
 	DEBUG_PRT.println(F("Clearing A2F"));
-	while(!okCleared_a2 && --retries != 0) {
+	while(!okCleared_a2 && --retries > 0) {
 		okCleared_a2 = Config::DS3231_clear_a2f();
 		delay(50);
 	}

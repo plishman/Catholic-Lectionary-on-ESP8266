@@ -547,7 +547,9 @@ void setup() {
     ESP.deepSleep(0); 
   }
 
+  DEBUG_PRT.println("Checking wake reason...");
   wake_reason = Config::Wake_Reason();
+  DEBUG_PRT.println("Finished checking wake reason.");
 
   if (wake_reason != WAKE_ALARM_1) Config::SetPowerOn(); //attempt to hold up alarm 1 flag A1F - not writable in the DS3231 spec, but useful to keep the power on if the wake reason was not an alarm
 
