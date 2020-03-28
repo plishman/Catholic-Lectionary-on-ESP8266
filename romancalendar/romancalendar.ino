@@ -1,6 +1,6 @@
 #include <RCGlobals.h>
 // Catholic Lectionary on ESP
-// Copyright (c) 2017-2019 Philip Lishman, Licensed under GPL3, see LICENSE
+// Copyright (c) 2017-2020 Philip Lishman, Licensed under GPL3, see LICENSE
 
 // Built with NodeMCU1.0(ESP12E module) config (Tools->Board)
 // Upload speed 921600

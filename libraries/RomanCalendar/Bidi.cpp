@@ -268,20 +268,25 @@ void Bidi::GetString(String& s,
 	int utf8CharCount = 0;
 	double dcurrwidth = 0.0;
 	double dmaxwidth = (double)(fbwidth - xpos);
-
-	*bNewLine = false;
 	
 	// check if an emphasis tag is present in the string starting at pos 
 	if (ExpectLineBreakTag(s, startstrpos)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
-		DEBUG_PRT.println(F("found linebreak tag"));
+		if (*bNewLine == false) {
+			DEBUG_PRT.println(F("found linebreak tag"));
 
-		*bLineBreak = true;		   // signal a linebreak
-		*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
-		*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
-		
-		return;
+			*bLineBreak = true;		   // signal a linebreak
+			*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
+			*textwidth = 0;			   // the textwidth of the scanned text must be 0, since no more text has been scanned, and the tag is skipped.
+			
+			return;
+		}
+		else {
+			// on entry here, *bNewLine should be still set to the value it was left at after the last call to this function by GetString()
+			DEBUG_PRT.println(F("found linebreak tag immediately following generated newline, suppressing (to prevent blank line)"));
+		}
 	}
 	
+	*bNewLine = false; // now *bNewLine is reset
 	*bLineBreak = false;
 	
 	// scan string s up to the point where either 
@@ -520,20 +525,12 @@ void Bidi::GetString(String& s,
 	}
 
 	if (dcurrwidth >= dmaxwidth || bForceLineBreakAfterString) { // if the next word after lastwordendstrpos overflowed the line, tell the caller to generate a cr/newline (after rendering the text between *startstrpos and *endstrpos).
-		if (!ExpectLineBreakTag(s, &pos)) {
-			DEBUG_PRT.print(F("GetString() Newline: dcurrwidth="));
-			DEBUG_PRT.print((int)dcurrwidth);
-			DEBUG_PRT.print(F(" dmaxwidth=")); 
-			DEBUG_PRT.println((int)dmaxwidth);
-			
-			*bNewLine = true;		 
-		}
-		else {
-			DEBUG_PRT.print(F("GetString() Newline at end of line being suppressed, as it is followed immediately by a linebreak tag:  dcurrwidth="));
-			DEBUG_PRT.print((int)dcurrwidth);
-			DEBUG_PRT.print(F(" dmaxwidth=")); 
-			DEBUG_PRT.println((int)dmaxwidth);
-		}
+		DEBUG_PRT.print(F("GetString() Newline: dcurrwidth="));
+		DEBUG_PRT.print((int)dcurrwidth);
+		DEBUG_PRT.print(F(" dmaxwidth=")); 
+		DEBUG_PRT.println((int)dmaxwidth);
+		
+		*bNewLine = true;
 	}
 	
 	//DEBUG_PRT.printf("GetString() *startstrpos = %d, *endstrpos = %d, lastwordendstrpos = %d\n", *startstrpos, *endstrpos, lastwordendstrpos);
