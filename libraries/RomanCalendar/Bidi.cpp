@@ -283,6 +283,12 @@ void Bidi::GetString(String& s,
 		else {
 			// on entry here, *bNewLine should be still set to the value it was left at after the last call to this function by GetString()
 			DEBUG_PRT.println(F("found linebreak tag immediately following generated newline, suppressing (to prevent blank line)"));
+
+			*endstrpos = *startstrpos; // skip over the <br> tag
+			*bNewLine = false;		   // reset NewLine flag
+			*bLineBreak = false;	   // clear LineBreak tag (is usually set when a <br> is scanned in input string, but not if directly after a generated newline)
+			*textwidth = 0;			   // set textwidth to 0, since a newline has already occurred if we're in here
+			return;
 		}
 	}
 	
