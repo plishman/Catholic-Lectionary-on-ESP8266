@@ -1,4 +1,8 @@
 //#include "stdafx.h"
+extern "C" {
+#include "user_interface.h"
+}
+
 #include <string.h>
 #include "Bible.h"
 #include "BibleVerse.h"
@@ -104,6 +108,10 @@ bool Bible::get(String refs) {
 		DEBUG_PRT.println(F("Bible::get() refs is null"));
 		return false;
 	}
+
+	uint32_t startfreemem = system_get_free_heap_size();
+	DEBUG_PRT.print("Bible::get(): on entry, free mem is:");
+	DEBUG_PRT.println(startfreemem);
 	
 	int book_index = -1;
 	int start_chapter;
@@ -144,7 +152,10 @@ bool Bible::get(String refs) {
 		return false;
 	}
 	else {
-		add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range);
+		if ((startfreemem - add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range)) > MAX_MEM_BIBLE_REFS) {
+			DEBUG_PRT.println("Add Bible refs: below memory floor");
+			return true;
+		}
 	}
 
 	//DEBUG_PRT.printf("Bible::get(): remaining refs=[%s]\n", refs.substring(startpos).c_str());
@@ -166,7 +177,10 @@ bool Bible::get(String refs) {
 
 		bResult = parse_verse_range(refs, &startpos, &start_chapter, &end_chapter, &start_verse, &end_verse, &start_verse_sentence_range, &end_verse_sentence_range);
 		if (bResult) {
-			add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range);
+			if ((startfreemem - add_reference(refs, book_index, start_chapter, end_chapter, start_verse, end_verse, start_verse_sentence_range, end_verse_sentence_range)) > MAX_MEM_BIBLE_REFS) {
+				DEBUG_PRT.println("Add Bible refs: below memory floor");
+				return true;
+			}
 		}
 	}
 
@@ -327,7 +341,7 @@ String Bible::sentence_ref(int from, int to) {
 	return r;
 }
 
-void Bible::add_reference(String refs, int book_index, 
+uint32_t Bible::add_reference(String refs, int book_index, 
 	int start_chapter, int end_chapter,
 	int start_verse, int end_verse,
 	String start_verse_sentence_range, String end_verse_sentence_range) {
@@ -343,8 +357,9 @@ void Bible::add_reference(String refs, int book_index,
 	DEBUG_PRT.print(start_verse);
 	DEBUG_PRT.print(F(" - "));
 	DEBUG_PRT.print(end_chapter);
+	DEBUG_PRT.print(F(":")); //pll 11-04-2020 corrected missing : in debug output
 	DEBUG_PRT.print(end_verse);
-	DEBUG_PRT.print(F("]\n"));
+	DEBUG_PRT.print(F("] "));
 
 	Ref* r = new Ref();
 	r->book_index = book_index;
@@ -357,6 +372,11 @@ void Bible::add_reference(String refs, int book_index,
 	r->refs = refs;
 	r->book_count = _book_count;
 	refsList.add(r);
+	DEBUG_PRT.print(F("freemem = "));
+    DEBUG_PRT.println(String(system_get_free_heap_size()));
+	DEBUG_PRT.print(F("\n"));
+
+	return system_get_free_heap_size(); //pll 11-04-2020 return available memory so that max usage can be constrained (problem in Easter with very large Bible refs)
 }
 
 bool Bible::is_book(String refs, int startpos) {

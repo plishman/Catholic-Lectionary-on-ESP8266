@@ -59,7 +59,7 @@ public:
 	
 	String sentence_ref(int from, int to);
 
-	void add_reference(String refs, int book_index, 
+	uint32_t add_reference(String refs, int book_index, 
 		int start_chapter, int end_chapter,
 		int start_verse, int end_verse,
 		String start_verse_sentence_range, String end_verse_sentence_range);

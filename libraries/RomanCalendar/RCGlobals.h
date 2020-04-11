@@ -2,6 +2,7 @@
 #define _RCGLOBALS42_H
 	#define LECT_VER "0.7"
     #define MAX_DEEPSLEEP_SECONDS 4294
+	#define MAX_MEM_BIBLE_REFS 4096
 
 // select debug port (comment out next line to default to Serial)
 	#define DEBUG_PRT Debug_Prt
