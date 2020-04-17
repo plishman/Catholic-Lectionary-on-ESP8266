@@ -340,6 +340,7 @@ void Bidi::GetString(String& s,
 	
 	bool bAttachSpaceOrDotToNextRTLWord = false;
 	String last_ch = "";
+	String next_ch = "";
 
 	int pos_start_spaceordot_start = -1;	// saves start and end pos of runs of dots and/or spaces, which attach to the word ahead or behind, depending on the reading order
 	int pos_start_spaceordot_end = -1;
@@ -377,6 +378,15 @@ void Bidi::GetString(String& s,
 
 		last_ch = ch;
 		ch = utf8CharAt(s, pos); // get next character
+		int cl = ch.length();
+		
+		if ((pos + cl) > s.length()) {
+			next_ch = "";
+		}
+		else {
+			next_ch = utf8CharAt(s, pos + cl);
+		}
+
 
 		if (ch != "." && ch != " ") { // . and " " inherit the reading direction of the text around them, so don't check if reading direction is changed for these
 			bCurrCharRightToLeft = IsRightToLeftChar(ch);
@@ -395,7 +405,7 @@ void Bidi::GetString(String& s,
 
 		//DEBUG_PRT.printf("last_ch=%s\n", last_ch.c_str());
 		
-		if (IsSpace(ch) || ch == ".") { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text				
+		if (IsSpace(ch) || (ch == "." && (next_ch != "'" && next_ch != "\"")) || (last_ch == "." && (ch == "'" || ch == "\""))) { // space char is special case, inherits the reading direction of the character preceding it. Also period (.), which sometimes (it appears) is used in RTL text				
 		
 			//DEBUG_PRT.print("[sp/.]");
 
@@ -433,7 +443,7 @@ void Bidi::GetString(String& s,
 			
 			if (bLastLine) {
 				//debugging
-				DEBUG_PRT.print(F("lastxpos="));
+				DEBUG_PRT.print(F("Ellipsis cases 1 & 2: lastxpos="));
 				DEBUG_PRT.print(lastxpos);
 				DEBUG_PRT.print(F(", fbwidth="));
 				DEBUG_PRT.print(fbwidth);
@@ -473,7 +483,8 @@ void Bidi::GetString(String& s,
 					continue;
 				}
 
-				if (lastxpos <= (fbwidth - ellipsiswidth) && currxpos > (fbwidth - ellipsiswidth) && (pos < s.length() || bMoreText) ) { // don't print the last word if so (the previous word does not overflow the ellipsis area, but this word does (but is within the display), but there is more text to display (which will not be as there is no room, so need to leave room for the ellipsis)
+				if (lastxpos <= (fbwidth - ellipsiswidth) && currxpos > (fbwidth - ellipsiswidth) && (pos < s.length() || bMoreText) ) { 
+					// don't print the last word if so (the previous word does not overflow the ellipsis area, but this word does (but is within the display), but there is more text to display (which will not be as there is no room, so need to leave room for the ellipsis)
 					//DEBUG_PRT.printf("lastxpos=%d, fbwidth=%d, ellipsiswidth=%d, currxpos=%d, pos=%d, bMoreText=%d\n", lastxpos, fbwidth, ellipsiswidth, currxpos, pos, bMoreText);
 
 					DEBUG_PRT.print(F("lastxpos="));
@@ -511,7 +522,25 @@ void Bidi::GetString(String& s,
 		DEBUG_PRT.print(ch);
 
 		if (bLastLine) {
-			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { // don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
+			//debugging
+			DEBUG_PRT.print(F("Ellipsis cases 3 - 6: lastxpos="));
+			DEBUG_PRT.print(lastxpos);
+			DEBUG_PRT.print(F(", fbwidth="));
+			DEBUG_PRT.print(fbwidth);
+			DEBUG_PRT.print(F(", dcurrwidth="));
+			DEBUG_PRT.print((int)dcurrwidth);
+			DEBUG_PRT.print(F(", ellipsiswidth="));
+			DEBUG_PRT.print(ellipsiswidth);
+			DEBUG_PRT.print(F(", currxpos="));
+			DEBUG_PRT.print(currxpos);
+			DEBUG_PRT.print(F(", pos="));
+			DEBUG_PRT.print(pos);
+			DEBUG_PRT.print(F(", bMoreText="));
+			DEBUG_PRT.println(bMoreText);		
+			//debugging
+
+			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { 
+				// don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
 				lastwordendstrpos = prevwordendstrpos;
 				lastwordendxwidth = prevwordendxwidth;
 				wordcount = prevwordcount;
@@ -521,10 +550,32 @@ void Bidi::GetString(String& s,
 				continue;
 			}
 
-			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { // don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
+			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= fbwidth)) { 
+				// don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
 				bLineBreakTagFound = true;
 				*bDisplayEllipsisNow = true;
 				DEBUG_PRT.println(F(" - Ellipsis case 4"));
+				continue;
+			}
+
+			// ellipsis cases 3 and 4 may be bugged (fbwidth instead of dmaxwidth - dcurrwidth and dmaxwidth are relative to the line space remaining since the last call, not the entire line width)
+
+			if (lastxpos > (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= dmaxwidth)) { 
+				// don't print last two words if so (this word overflows the display and the previous word overflows the ellipsis area, and this is the last line)
+				lastwordendstrpos = prevwordendstrpos;
+				lastwordendxwidth = prevwordendxwidth;
+				wordcount = prevwordcount;
+				bLineBreakTagFound = true;
+				*bDisplayEllipsisNow = true;
+				DEBUG_PRT.println(F(" - Ellipsis case 5"));
+				continue;
+			}
+
+			if (lastxpos <= (fbwidth - ellipsiswidth) && ((int)dcurrwidth >= dmaxwidth)) { 
+				// don't print the last word if so (this word overflows the display, but the previous word does not overflow the ellipsis area)
+				bLineBreakTagFound = true;
+				*bDisplayEllipsisNow = true;
+				DEBUG_PRT.println(F(" - Ellipsis case 6"));
 				continue;
 			}
 		}
@@ -1041,7 +1092,7 @@ bool Bidi::RenderText(String& s,
 	
 	*bEmphasisOn = bEmphasisOnAtEnd;
 	
-	if (*ypos >= fbheight || (bLastLine && bMoreText)) return true; // will return true if the text overflows the screen
+	if ((*ypos >= fbheight) || (bLastLine && bMoreText && *xpos >= fbwidth)) return true; // will return true if the text overflows the screen
 	
 	return false;						// otherwise will return false if there is more space
 

@@ -23,9 +23,11 @@
 	#ifdef USE_SPI_RAM_FRAMEBUFFER
 		#define FB_EPAPER FrameBuffer&  // use SPI ram frame buffer for faster rendering if present
 		#define FB_EPAPER_PTR FrameBuffer*  // use SPI ram frame buffer for faster rendering if present
+		#define MAX_MEM_BIBLE_REFS 4096
 	#else
 		#define FB_EPAPER GxEPD_Class&	// render direct to ePaper display
 		#define FB_EPAPER_PTR GxEPD_Class*	// render direct to ePaper display
+		#define MAX_MEM_BIBLE_REFS 1536
 	#endif
 
 // select e-paper display:	

@@ -1649,7 +1649,12 @@ bool display_verses(Calendar* calendar, String refs, bool right_to_left, bool bV
 
           if (bVersePerLine) {
             verse_text = verse_text + "<br>";
-          }        
+          }
+          else {
+            if (!(verse_text.endsWith(" "))) {
+              verse_text = verse_text + " ";
+            }
+          }
 
           bEndOfScreen = epd_verse(verse_text, &xpos, &ypos, &bEmphasis_On, right_to_left, (v != end_verse)); // returns false if at end of screen
           DEBUG_PRT.println("epd_verse returned " + String(bEndOfScreen ? "true":"false"));
