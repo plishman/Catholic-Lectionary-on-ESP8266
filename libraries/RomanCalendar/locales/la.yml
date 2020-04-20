@@ -7,6 +7,7 @@ la:
       easter: Tempus Paschale
       ordinary: Tempus per annum
     solemnity:
+      immaculate_conception: IN CONCEPTIONE IMMACULATA BEATAE MARIAE VIRGINIS
       nativity: In Nativitate Domini
       holy_family: Sanctae Familiae Iesu, Mariae et Ioseph
       mother_of_god: In Octava Nativitatis Domini, Sanctae Dei Genitricis Mariae
@@ -17,6 +18,7 @@ la:
       good_friday: Feria VI in Passione Domini
       holy_saturday: Sabbato sancto
       easter_sunday: Dominica Paschae in Resurrectione Domini
+      low_sunday: Dominica Divinae Misericordiae
       ascension: In Ascensione Domini
       pentecost: Dominica Pentecostes
       holy_trinity: Sanctissimae Trinitatis
@@ -105,3 +107,4 @@ la:
     red: rubeus
   holy_day_of_obligation: <b>+</b>
   or: aut
+  ellipsis: [..]

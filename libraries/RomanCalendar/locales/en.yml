@@ -7,6 +7,7 @@ en:
       easter: Easter Season
       ordinary: Ordinary Time
     solemnity:
+      immaculate_conception: Immaculate Conception of the Blessed Virgin Mary
       nativity: The Nativity of the Lord
       holy_family: The Holy Family of Jesus, Mary and Joseph
       mother_of_god: Octave Day of Christmas, of Mary, Mother of God
@@ -17,6 +18,7 @@ en:
       good_friday: Friday of the Passion of the Lord
       holy_saturday: Easter Vigil
       easter_sunday: Easter Sunday of the Resurrection of the Lord
+      low_sunday: Sunday of Divine Mercy
       ascension: Ascension of the Lord
       pentecost: Pentecost Sunday
       holy_trinity: The Most Holy Trinity
@@ -105,3 +107,4 @@ en:
     red: red
   holy_day_of_obligation: <b>+</b>
   or: or
+  ellipsis: [..]

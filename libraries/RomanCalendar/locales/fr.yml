@@ -7,6 +7,7 @@ fr:
       easter: Temps de Pâques
       ordinary: Temps ordinaire
     solemnity:
+      immaculate_conception: Immaculée Conception de la Bienheureuse Vierge Marie
       nativity: La Nativité du Seigneur
       holy_family: La Sainte Famille de Jésus, Marie et Joseph
       mother_of_god: Octave de Noël, de Marie, Mère de Dieu
@@ -17,6 +18,7 @@ fr:
       good_friday: Vendredi de la Passion du Seigneur
       holy_saturday: Samedi Saint
       easter_sunday: Dimanche de Pâques de la Résurrection du Seigneur
+      low_sunday: Dimanche de la divine Miséricorde
       ascension: Ascension du Seigneur
       pentecost: Dimanche de Pentecôte
       holy_trinity: La Très Sainte Trinité
@@ -105,3 +107,4 @@ fr:
     red: rouge
   holy_day_of_obligation: <b>+</b>
   or: ou
+  ellipsis: [..]

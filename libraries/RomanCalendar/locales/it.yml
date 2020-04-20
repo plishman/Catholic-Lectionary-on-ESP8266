@@ -7,6 +7,7 @@ it:
       easter: Tempo pasquale
       ordinary: Tempo ordinario
     solemnity:
+      immaculate_conception: Immacolata Concezione della Beata Vergine Maria
       nativity: Natale del Signore
       holy_family: Santa Famiglia di Gesù, Maria e Giuseppe
       mother_of_god: Ottava di Natale. Maria Santissima Madre di Dio
@@ -17,6 +18,7 @@ it:
       good_friday: Venerdì santo
       holy_saturday: Sabato santo
       easter_sunday: Domenica di Resurrezione
+      low_sunday: Domenica della Divina Misericordia
       ascension: Ascensione di Gesù
       pentecost: Domenica Pentecoste
       holy_trinity: Santissima Trinità
@@ -105,3 +107,4 @@ it:
     red: rosso
   holy_day_of_obligation: <b>+</b>
   or: o
+  ellipsis: [..]

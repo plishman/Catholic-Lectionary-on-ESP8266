@@ -7,6 +7,7 @@ cs:
       easter: Doba velikonoční
       ordinary: Liturgické mezidobí
     solemnity:
+      immaculate_conception: Panny Marie, počaté bez poskvrny prvotního hříchu
       nativity: Narození Páně
       holy_family: Svaté rodiny Ježíše, Marie a Josefa
       mother_of_god: Oktáv Narození Páně. Matky Boží, Panny Marie
@@ -17,6 +18,7 @@ cs:
       good_friday: Velký pátek
       holy_saturday: Bílá sobota
       easter_sunday: Zmrtvýchvstání Páně
+      low_sunday: Svátek Božího milosrdenství
       ascension: Nanebevstoupení Páně
       pentecost: Seslání Ducha svatého
       holy_trinity: Nejsvětější Trojice
@@ -107,3 +109,4 @@ cs:
     red: červená
   holy_day_of_obligation: <b>+</b>
   or: nebo
+  ellipsis: [..]

@@ -969,6 +969,10 @@ bool Bidi::RenderText(String& s,
 		//}
 
 		//DEBUG_PRT.printf("bMakeLineBreakBefore=%s\n", bMakeLineBreakBefore?"true":"false");
+		// BUG 20-04-2020: 
+		//      If the last verse output ends on the end of the last line of text that *can* be printed, and there is another verse to display, bMakeLineBreakBefore
+		//      will be set by the call (above) to FixNextWordWiderThanDisplay, but no check is made when the following four lines of code implement a CR/LF. So the
+		//      text of the following verse will be wrongly displayed in the very bottom line, which is reserved for the date and feast day.
 		if (bMakeLineBreakBefore) {
 			*ypos += diskfont._FontHeader.charheight;
 			*xpos = 0;

@@ -686,16 +686,13 @@ String Temporale::sunday_temporale(time64_t date) {
 	if (seas == Enums::SEASON_ADVENT || seas == Enums::SEASON_LENT || seas == Enums::SEASON_EASTER) {
 		rank = Enums::RANKS_PRIMARY;
 	}
-
-	int week = season_week(seas, date);
-	_ordinalizer->ordinalize(week);
-
-	_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".sunday");
-	_day.replace("%{week}", _ordinalizer->ordinalize(week));
-	_rank_e = rank;
 	
 	int lit_year = liturgical_year(date) % 3; // 0 == A, 1 == B, 2 == C
 	//printf("Lit_year=%d", lit_year);
+
+	int week = season_week(seas, date);
+
+	bool bIsLowSunday = false;
 
 	switch (seas)
 	{
@@ -714,6 +711,10 @@ String Temporale::sunday_temporale(time64_t date) {
 
 	case Enums::SEASON_EASTER:
 		if (week > 1 && week < 7) { // weeks 2-6
+			if (week == 2) { // Divine Mercy Sunday / Low Sunday PLL 20-04-2020
+				bIsLowSunday = true;
+			}
+
 			_Lectionary = (3 * (week - 2)) + lit_year + 43; // was week - 1
 		}
 		if (week == 7) {
@@ -726,6 +727,17 @@ String Temporale::sunday_temporale(time64_t date) {
 		break;
 
 	}
+
+	_ordinalizer->ordinalize(week);
+
+	if (!bIsLowSunday) {
+		_day = _I18n->get("temporale." + String(_I18n->I18n_SEASONS[seas]) + ".sunday");
+	}
+	else {
+		_day = _I18n->get("temporale.solemnity.low_sunday");
+	}
+	_day.replace("%{week}", _ordinalizer->ordinalize(week));
+	_rank_e = rank;
 
 	return _day;
 }
