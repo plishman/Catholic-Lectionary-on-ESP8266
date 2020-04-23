@@ -25,9 +25,18 @@ Several Toolchain projects are provided, written in C# and C++, one of which - T
 <p>
 
 <h3>Debug Output</h3>
+<h4>Output to file DEBUGLOG.TXT on SD card</h4>
 <p>
-In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX to SDA and RX to SCL. Debug output can then be enabled using ?debug=1 as one of the parameters to the setconf webpage served by the lectionary, eg. http://lectionary.local/setconf.htm?debug=1.
+The backchannel debug output can also be captured unattended to the SD card, so that if a crashdump occurs it will be recoverable from the SD card for later debugging. To enable this, connect USB power to the Lectionary and wait until the Lectionary connects to the configured wireless network (press the WPS button on the router when prompted if no wireless network is configured). On a web browser on a computer on the same network, navigate to lectionary.local or the IP address displayed on the Lectionary's screen, appending setconf.htm?debug=2 to enable debug output to the SD card.
 </p>
+<h4>Output via I2C to serial backchannel</h4>
+<p>
+In order to maximize available pins on the ESP8266, the TX and RX pins are used as an I2C bus to control the DS3231 clock chip. So, to retain the ability to output backchannel debug text therefore an additional program is provided which can be compiled and uploaded to a separate 3.3v Arduino Leonardo, which can then be attached to the ESP8266 by connecting TX (on the Lectionary's ESP8266) to SDA (on the Leonardo) and RX to SCL. Debug output can then be enabled using ?debug=1 as one of the parameters to the setconf webpage served by the lectionary, eg. http://lectionary.local/setconf.htm?debug=1. (Use the IP address displayed on the Lectionary's screen if the mDNS "lectionary.local" url does not work with your browser).
+</p>
+<h4>To enable both I2C Serial and SD card debug output</h4>
+<p>To enable both I2C Serial and SD card debug output, repeat the step above, but with ?debug=3</o>
+<h4>To disable all debugging</h4>
+<p>To disable all debug output, repeat the above step with ?debug=0</p>
 
 <h3>Hardware</h3>
 The current printed circuit board schematic and design can be found at https://easyeda.com/plishman/lectionary_2-3
