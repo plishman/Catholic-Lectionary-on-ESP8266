@@ -974,8 +974,10 @@ bool Bidi::RenderText(String& s,
 		//      will be set by the call (above) to FixNextWordWiderThanDisplay, but no check is made when the following four lines of code implement a CR/LF. So the
 		//      text of the following verse will be wrongly displayed in the very bottom line, which is reserved for the date and feast day.
 		if (bMakeLineBreakBefore) {
-			*ypos += diskfont._FontHeader.charheight;
-			*xpos = 0;
+			if (!bLastLine) {
+				*ypos += diskfont._FontHeader.charheight;
+				*xpos = 0;
+			}
 		}
 		
 		//DEBUG_PRT.printf("bOverflowWordWrapped=%s bIsLastFragment=%s bMakeLineBreakBefore=%s\n", bOverflowWordWrapped?"true":"false", bIsLastFragment?"true":"false", bMakeLineBreakBefore?"true":"false");
@@ -1096,7 +1098,8 @@ bool Bidi::RenderText(String& s,
 	
 	*bEmphasisOn = bEmphasisOnAtEnd;
 	
-	if ((*ypos >= fbheight) || (bLastLine && bMoreText && *xpos >= fbwidth)) return true; // will return true if the text overflows the screen
+	//if ((*ypos >= fbheight) || (bLastLine && bMoreText && *xpos >= fbwidth)) return true; // will return true if the text overflows the screen
+	if ((*ypos >= fbheight) || (bLastLine && bMoreText && (bInsertEllipsis || *xpos >= fbwidth))) return true; // will return true if the text overflows the screen
 	
 	return false;						// otherwise will return false if there is more space
 
