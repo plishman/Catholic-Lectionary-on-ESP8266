@@ -6,11 +6,16 @@
 // Upload speed 921600
 // CPU Freq 80MHz
 // Debug Port: Disabled/Debug Level: None
-// Flash Size 4M (3M SPIFFS)
+// Flash Size 4M (1M SPIFFS) (1M spiffs allows space for OTA update)
 // IWIP Variant: v1.4 Prebuilt
 
 //ESP8266---
-#include "ESP8266WiFi.h"
+#include <ESP8266WiFi.h>
+
+#include <ESP8266mDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
+
 #include <ESP8266WebServer.h>
 #include <SD.h>
 #define FS_NO_GLOBALS
@@ -132,12 +137,12 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d) {
 void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor) {
 	displayPage = 0;
 
-	DEBUG_PRT.println("Updating Display");
+	DEBUG_PRT.println(F("Updating Display"));
 	ePaper.init(); // disable diagnostic output on Serial (use 115200 as parameter to enable diagnostic output on Serial)
-	DEBUG_PRT.println("Init Display");
+	DEBUG_PRT.println(F("Init Display"));
 
 	if (d == display_reading) {
-		DEBUG_PRT.println("display_reading");
+		DEBUG_PRT.println(F("display_reading"));
 
 		//ePaper.setMode(LUT_MODE_CLEAR);
 		//ePaper.eraseDisplay(true);
@@ -186,50 +191,49 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 
 	switch (d) {
 	case battery_recharge:
-		DEBUG_PRT.println("display battery_recharge image");
+		DEBUG_PRT.println(F("display battery_recharge image"));
 		epd_image = &battery_recharge_image;
 		break;
 
 	case connect_power:
-		DEBUG_PRT.println("display connect_power image");
+		DEBUG_PRT.println(F("display connect_power image"));
 		epd_image = &connect_power_image;
 		break;
 
 	case wps_connect:
-		DEBUG_PRT.println("display wps_connect image");
+		DEBUG_PRT.println(F("display wps_connect image"));
 		epd_image = &wps_connect_image;
 		break;
 
 	case clock_not_set:
-		DEBUG_PRT.println("display clock_not_set image");
+		DEBUG_PRT.println(F("display clock_not_set image"));
 		epd_image = &clock_not_set_image;
 		break;
 
 	case sd_card_not_inserted:
-		DEBUG_PRT.println("display sd_card_not_inserted image");
+		DEBUG_PRT.println(F("display sd_card_not_inserted image"));
 		epd_image = &sd_card_not_inserted_image;
 		break;
 
 	case wireless_network_connected:
-		DEBUG_PRT.println("display wireless_network_connected image");
+		DEBUG_PRT.println(F("display wireless_network_connected image"));
 		epd_image = &wireless_network_connected_image;
 		break;
 
 	case wps_setup_failed:
-		DEBUG_PRT.println("display wps_setup_failed image");
+		DEBUG_PRT.println(F("display wps_setup_failed image"));
 		epd_image = &wps_setup_failed_no_network_image;
 		break;
 
 	case font_missing:
-		DEBUG_PRT.println("display font_missing image");
+		DEBUG_PRT.println(F("display font_missing image"));
 		epd_image = &font_missing_image;
 		break;
 
 	case crash_bug:
-		DEBUG_PRT.println("display crash_bug image");
+		DEBUG_PRT.println(F("display crash_bug image"));
 		epd_image = &crash_bug_image;
 		break;
-
 	}
 
 	ePaper.drawPaged(epaperDisplayImage);
@@ -547,19 +551,19 @@ void setup() {
     ESP.deepSleep(0); 
   }
 
-  DEBUG_PRT.println("Checking wake reason...");
+  DEBUG_PRT.println(F("Checking wake reason..."));
   wake_reason = Config::Wake_Reason();
-  DEBUG_PRT.println("Finished checking wake reason.");
+  DEBUG_PRT.println(F("Finished checking wake reason."));
 
   if (wake_reason != WAKE_ALARM_1) Config::SetPowerOn(); //attempt to hold up alarm 1 flag A1F - not writable in the DS3231 spec, but useful to keep the power on if the wake reason was not an alarm
 
-  DEBUG_PRT.println("--------------------------");
-  DEBUG_PRT.println("abcdefghijklmnopqrstuvwxyz");
-  DEBUG_PRT.println("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  DEBUG_PRT.println("0123456789");
-  DEBUG_PRT.println("--------------------------");
+  DEBUG_PRT.println(F("--------------------------"));
+  DEBUG_PRT.println(F("abcdefghijklmnopqrstuvwxyz"));
+  DEBUG_PRT.println(F("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+  DEBUG_PRT.println(F("0123456789"));
+  DEBUG_PRT.println(F("--------------------------"));
   
-  DEBUG_PRT.println("Running");
+  DEBUG_PRT.println(F("Running"));
 
   //WiFi.disconnect(); // testing - so have to connect to a network each reboot
 
@@ -994,7 +998,7 @@ void loop(void) {
 }
 
 void config_server()
-{
+{  
   // Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   if (!bDisplayWifiConnectedScreen) return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
 
@@ -1013,10 +1017,36 @@ void config_server()
   }
 
   if (Battery::power_connected() && bNetworkAvailable) {
-    DEBUG_PRT.println(F("Power is connected, starting config web server"));
+    DEBUG_PRT.println(F("Power is connected, starting config web server and OTA update server"));
     DEBUG_PRT.print(F("USB voltage is "));
     DEBUG_PRT.println(String(Battery::battery_voltage()));
 
+    // PLL-27-04-2020 OTA Update code (https://randomnerdtutorials.com/esp8266-ota-updates-with-arduino-ide-over-the-air/)   
+    ArduinoOTA.onStart([]() {
+      DEBUG_PRT.println(F("OTA Start"));
+    });
+    ArduinoOTA.onEnd([]() {
+      DEBUG_PRT.println(F("\nOTA End"));
+      updateDisplay(crash_bug, "Flash update SUCCESS!", GxEPD_RED);
+    });
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+      DEBUG_PRT.printf("OTA Progress: %u%%\r", (progress / (total / 100)));
+    });
+    ArduinoOTA.onError([](ota_error_t error) {
+      DEBUG_PRT.printf("OTA Error[%u]: ", error);
+      if (error == OTA_AUTH_ERROR) DEBUG_PRT.println(F("Auth Failed"));
+      else if (error == OTA_BEGIN_ERROR) DEBUG_PRT.println(F("Begin Failed"));
+      else if (error == OTA_CONNECT_ERROR) DEBUG_PRT.println(F("Connect Failed"));
+      else if (error == OTA_RECEIVE_ERROR) DEBUG_PRT.println(F("Receive Failed"));
+      else if (error == OTA_END_ERROR) DEBUG_PRT.println(F("End Failed"));
+      updateDisplay(crash_bug, "Flash update FAIL", GxEPD_RED);
+    });
+    ArduinoOTA.begin();
+    DEBUG_PRT.println(F("Ready"));
+    DEBUG_PRT.print(F("IP address: "));
+    DEBUG_PRT.println(WiFi.localIP());
+    //
+   
     // Network should already be connected if we got in here, since when on usb power network connects at start, or prompts to configure if not already done
     //if (!network.connect()) {
     //  DEBUG_PRT.println("Network is not configured, starting WPS setup");
@@ -1033,7 +1063,8 @@ void config_server()
     if (Config::StartServer()) {
       DEBUG_PRT.println(F("Config web server started, listening for requests..."));
       while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
-        server.handleClient();
+        server.handleClient();  // Web server
+        ArduinoOTA.handle(); // PLL-27-04-2020 OTA Update server
         wdt_reset();
         delay(1000);
         //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
