@@ -38,6 +38,20 @@ In order to maximize available pins on the ESP8266, the TX and RX pins are used 
 <h4>To disable all debugging</h4>
 <p>To disable all debug output, repeat the above step with ?debug=0</p>
 
+<h3>OTA Updates using Wifi and the Arduino IDE</h3>
+<p>Support has been added for over-the-air flash updates to the Lectionary's ESP8266 using the feature in the Arduino development environment.</p>
+<p>Note that for this to work the project must be built with 1M (not 3M) of SPIFFS, to allow space in the flash memory for the update (which is nearing 1M in size now).</p>
+<h3>Build Settings</h3>
+<p>The Build settings for the project using the Arduino development environment are as follows:</p>
+<ul>
+<li>Build with NodeMCU1.0(ESP12E module) config (Tools->Board)</li>
+<li>CPU Freq 80MHz</li>
+<li>Debug Port: Disabled/Debug Level: None</li>
+<li>Flash Size 4M (1M SPIFFS) (1M spiffs allows space for OTA update)</li>
+<li>IWIP Variant: v1.4 Prebuilt</li>
+</ul>
+<p>These settings have been tested and found to be working. Others are not guaranteed or likely to work without changes to the code.</p>
+
 <h3>Hardware</h3>
 The current printed circuit board schematic and design can be found at https://easyeda.com/plishman/lectionary_2-3
 
