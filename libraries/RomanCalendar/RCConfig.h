@@ -127,9 +127,12 @@ bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
 
 class Config {
 public:
+	static String _lang;
+
 //	I18n* _I18n;
 //	ESP8266WebServer server;
-	static bool bSettingsUpdated;	
+	static bool bSettingsUpdated;
+		
 	//Config();
 	//~Config();
 //	bool loadFromSdCard(String path);
@@ -137,7 +140,7 @@ public:
 //	void handleSettingsJson();
 //	void handleSetConf();
 //	String getQueryStringParam(String param_name, String default_value);
-	static bool StartServer( /* I18n* i */ );
+	static bool StartServer(String lang);
 	static void StopServer( void );
 	//bool ServeClient( bool* bSettingsUpdated );
 	//String getQueryStringParam(String param, String querystring, String default_value);

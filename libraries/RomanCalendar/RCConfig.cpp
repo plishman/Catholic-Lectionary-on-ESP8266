@@ -6,8 +6,10 @@ extern "C" {
 #include "user_interface.h"
 }
 
+String Config::_lang = "default";
+
 //Config::Config() {}
-bool Config::bSettingsUpdated;
+bool Config::bSettingsUpdated = false;
 
 bool loadFromSdCard(String path) {
   String dataType = "text/plain";
@@ -23,7 +25,7 @@ bool loadFromSdCard(String path) {
   }
   
   DEBUG_PRT.print(F("path="));
-  DEBUG_PRT.println(path);
+  DEBUG_PRT.print(path);
   
   if(path.endsWith(".src")) path = path.substring(0, path.lastIndexOf("."));
   else if(path.endsWith(".htm")) dataType = "text/html";
@@ -36,16 +38,22 @@ bool loadFromSdCard(String path) {
   else if(path.endsWith(".xml")) dataType = "text/xml";
   else if(path.endsWith(".pdf")) dataType = "application/pdf";
   else if(path.endsWith(".zip")) dataType = "application/zip";
+  else if(path.endsWith(".jsn")) dataType = "application/json";
 
   File dataFile = SD.open(path.c_str());
   if(dataFile.isDirectory()){
+	dataFile.close();
     path += "/index.htm";
     dataType = "text/html";
     dataFile = SD.open(path.c_str());
+	DEBUG_PRT.print(F(" - isDirectory=true: modified path="));
+  	DEBUG_PRT.print(path);
   }
 
-  if (!dataFile)
+  if (!dataFile) {
+	DEBUG_PRT.println(F("...Couldn't open file."));
     return false;
+  }
 
   if (server.hasArg("download")) dataType = "application/octet-stream";
 
@@ -54,6 +62,7 @@ bool loadFromSdCard(String path) {
   }
 
   dataFile.close();
+  DEBUG_PRT.println(F("...got file"));
   return true;
 }
 
@@ -89,6 +98,7 @@ void handleSettingsJson() {
     String line = "{\"tz_offset\":\"" + String(c.data.timezone_offset) + 
 				   "\", \"lectionary_config_number\":\"" + String(c.data.lectionary_config_number) + 
 				   "\", \"contrast\":\"" + String(c.data.epd_contrast) + 
+				   "\", \"lang\":\"" + Config::_lang + 
 				   "\"}"; // output in JSON format
 				   
     server.send(200, "application/json", line);
@@ -204,7 +214,7 @@ String getQueryStringParam(String param_name, String default_value) {
 
 
 
-bool Config::StartServer() {
+bool Config::StartServer(String lang) {
 	bSettingsUpdated = false;
 	
 	wl_status_t status = WiFi.status();
@@ -239,6 +249,10 @@ bool Config::StartServer() {
 	server.on ( "/setconf.htm", handleSetConf );
 	server.onNotFound ( handleNotFound );
 
+	if (lang != "") {
+		Config::_lang = lang;
+	}
+
 	server.begin();
 	DEBUG_PRT.println ( "HTTP server started" );
   
@@ -247,6 +261,7 @@ bool Config::StartServer() {
 
 void Config::StopServer( void ) {
 	server.close();
+	Config::bSettingsUpdated = false;
 }
 
 //Config::~Config() {

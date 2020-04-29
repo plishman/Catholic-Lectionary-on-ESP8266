@@ -46,9 +46,9 @@ public:
 	float _timezone_offset = 0.0;
 	int _lectionary_config_number = 1;
 	
-	Temporale* temporale;
-	Sanctorale* sanctorale;
-	Transfers* transfers;
+	Temporale* temporale = NULL;
+	Sanctorale* sanctorale = NULL;
+	Transfers* transfers = NULL;
 
 	static const char* const LITURGICAL_CYCLES[2];
 	static const char* const LITURGICAL_YEARS[3];

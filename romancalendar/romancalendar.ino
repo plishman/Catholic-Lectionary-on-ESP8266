@@ -821,8 +821,14 @@ bool connect_wps(){
 void loop(void) {  
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
+  Calendar c(D1); // PLL 29-04-2020 now create calendar object before running config server, so that the language setting can be determined and sent to the config webpage
+
+  String config_server_lang = "default";
+  if (c._I18n->configparams.have_config) {
+    config_server_lang = c._I18n->configparams.lang;
+  }
   DEBUG_PRT.println(F("*0*\n"));
-  config_server();  // config server will run if battery power is connected
+  config_server(config_server_lang);  // config server will run if battery power is connected
 
   /************************************************/ 
   // *1* Create calendar object and load config.csv
@@ -832,7 +838,7 @@ void loop(void) {
   
   DEBUG_PRT.println(F("*1*\n"));
   //timeserver.gps_wake();
-  Calendar c(D1);
+  //Calendar c(D1); // PLL 29-04-2020 now calendar object only reads the config in its constructor, temporale and sanctorale objects (which use memory) are created only when c.get() is called
 
   if (bEEPROM_checksum_good) {  
     if (!c._I18n->configparams.have_config) {
@@ -997,7 +1003,7 @@ void loop(void) {
   SleepForHours(next_wake_hours_count);
 }
 
-void config_server()
+void config_server(String lang)
 {  
   // Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   if (!bDisplayWifiConnectedScreen) return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
@@ -1060,15 +1066,23 @@ void config_server()
     unsigned long server_start_time = millis();
     bool bTimeUp = false;
    
-    if (Config::StartServer()) {
+    if (Config::StartServer(lang)) {
       DEBUG_PRT.println(F("Config web server started, listening for requests..."));
-      while(Battery::power_connected() && !Config::bSettingsUpdated && !bTimeUp) {
+      int finaldelay = 70; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
+      while(Battery::power_connected() && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp) {
         server.handleClient();  // Web server
         ArduinoOTA.handle(); // PLL-27-04-2020 OTA Update server
         wdt_reset();
-        delay(1000);
+        delay(100);
         //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
-        if (millis() > (server_start_time + 1000*8*60)) bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
+
+        if (Config::bSettingsUpdated) {
+          finaldelay--;
+        }
+
+        if (millis() > (server_start_time + 1000*8*60)) {
+          bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
+        }
       }
 
       Config::StopServer();

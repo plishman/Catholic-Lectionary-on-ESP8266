@@ -91,6 +91,9 @@
 			}
 		</script>
 		<script type="text/javascript">
+			var bControlsUpdated = false;
+			var bUILangUpdated = false;
+
 			Date.prototype.stdTimezoneOffset = function () {
 				var jan = new Date(this.getFullYear(), 0, 1);
 				var jul = new Date(this.getFullYear(), 6, 1);
@@ -149,6 +152,8 @@
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
 						configstate = JSON.parse(xhttp.responseText);
+						SetUILang(configstate.lang.toString());
+
 						var lectionaryselect = document.getElementById('SelectConfig');
 
 						if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
@@ -162,22 +167,60 @@
 							configstate.contrast = "7";
 						}
 						
-						document.getElementById("spinner_container").style.visibility = "hidden";
+						bControlsUpdated = true;
+						
+						//document.getElementById("spinner_container").style.visibility = "hidden";
 					}
 				};
 				xhttp.open("GET", "settings.json", true);
 				xhttp.send();
 			}
-								
-			function InitOpts() {
-				document.getElementById("spinner_container").style.visibility = "visible";
-				LoadConfigOpt();
-			}
-			
+
 			function g(el, val) {
 				document.getElementById(el).value = val;
 			}
 
+			function SetUILang(lang) {
+				g('lang', lang);
+
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						langstrings = JSON.parse(xhttp.responseText);
+						
+						for (var i = 0; i < langstrings.length; i++){
+							var obj = langstrings[i];
+							for (var key in obj){
+								var attrName = key;
+								var attrValue = obj[key];
+
+								if (document.getElementById(attrName)) document.getElementById(attrName).innerHTML = attrValue;
+							}
+						}
+						bUILangUpdated = true;
+						//document.getElementById("spinner_container").style.visibility = "hidden";
+					}
+				};
+				xhttp.open("GET", "lang/"+ lang + ".jsn", true);
+				xhttp.send();
+			}
+
+			function ClearSpinner() {
+				if (bControlsUpdated && bUILangUpdated) {
+					document.getElementById("spinner_container").style.visibility = "hidden";	
+				}
+				else {
+					window.setTimeout(ClearSpinner, 250);					
+				}	
+			}
+
+			function InitOpts() {
+				document.getElementById("spinner_container").style.visibility = "visible";
+				window.setTimeout(ClearSpinner, 250);
+				
+				LoadConfigOpt();
+			}
+			
 			function doDate() {
 				var d = new Date();
 				g('hh',d.getUTCHours());    
@@ -230,7 +273,7 @@
 			}
 
 			#inner_div {
-				position: absolute:
+				position: absolute;
 				z-index: 1000;
 				margin: 30px;
 			}
@@ -247,8 +290,8 @@
 				background: rgba(0,0,0,0.1);
 			}​
 			
-			#content {
-			}
+			/*#content {
+			}*/
 			
 			#spinner_container {
 				position: fixed;
@@ -261,7 +304,7 @@
 				left: 0;
 				bottom: 0;
 				right: 0;
-				background: rgba(0,0,0,0.4)
+				background: rgba(0, 0, 0, 0.75)
 			}
 			
 			#inner_spinner_container {
@@ -403,7 +446,7 @@
 		<div id="container_div">
 			<div id="inner_div">
 				<div id="content">
-					<div>Configure Catholic Lectionary</div>
+					<div id="configure_catholic_lectionary_text"></div>
 					<form action="/setconf.htm" method="GET" id="config_form" onsubmit="doDate();">
 						<div id="config"></div>
 						<input type="hidden" id="hh" name="hh"/>
@@ -420,7 +463,8 @@
 						<input type="hidden" id="dstendmonth" name="dstendmonth"/>
 						<input type="hidden" id="dstendday" name="dstendday"/>
 						<input type="hidden" id="dstendhour" name="dstendhour"/>
-						<div><span>Contrast: </span><input type="range" min="1" max="7" value="6" class="slider" id="contrast" name="contrast" step="1"></div>
+						<input type="hidden" id="lang" name="lang"/>
+						<div><span id="contrast_level_text"></span><input type="range" min="1" max="7" value="6" class="slider" id="contrast" name="contrast" step="1"></div>
 						<input id="update" type="submit" value=" Update Settings " />
 					</form>
 				</div>

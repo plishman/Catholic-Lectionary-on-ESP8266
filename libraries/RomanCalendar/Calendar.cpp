@@ -68,11 +68,11 @@ Calendar::Calendar() {
 #endif
 	_date = (time64_t)-1;
 	_transfer_to_sunday = _I18n->configparams.transfer_to_sunday;
-
-	transfers = new Transfers(_transfer_to_sunday, _I18n);
+/*
+	transfers = new Transfers(_transfer_to_sunday, _I18n);		// PLL 29-04-2020 (commented out 3 lines, these objects now created when get() is called)
 	temporale = new Temporale(_transfer_to_sunday, _I18n);
 	sanctorale = new Sanctorale(_transfer_to_sunday, _I18n);
-	
+*/	
 	DEBUG_PRT.println(F("Created new calendar object"));
 }
 
@@ -107,6 +107,10 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	DEBUG_PRT.print(" ");
 	temporale->print_time(date);
 	DEBUG_PRT.println();
+
+	transfers = new Transfers(_transfer_to_sunday, _I18n);		//PLL 29-04-2020 moved these lines from the constructor to here, so that the calendar object can be created
+	temporale = new Temporale(_transfer_to_sunday, _I18n);		//earlier in the program, without using the memory these three objects take up when they're initialized
+	sanctorale = new Sanctorale(_transfer_to_sunday, _I18n);	//The _I18n object is however still created in the constructor, so that it can be used by the main program to get the language setting.
 
 	//bool bTransfersSuccess = transfers->get(date);
 	
