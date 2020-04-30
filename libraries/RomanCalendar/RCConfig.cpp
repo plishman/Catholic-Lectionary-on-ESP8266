@@ -249,8 +249,11 @@ bool Config::StartServer(String lang) {
 	server.on ( "/setconf.htm", handleSetConf );
 	server.onNotFound ( handleNotFound );
 
-	if (lang != "") {
+	if (lang != "" and SD.exists("/html/lang/" + lang + ".jsn")) {
 		Config::_lang = lang;
+	}
+	else {
+		Config::_lang = "default";
 	}
 
 	server.begin();
