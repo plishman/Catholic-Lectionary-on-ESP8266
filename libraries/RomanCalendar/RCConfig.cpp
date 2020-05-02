@@ -264,7 +264,6 @@ bool Config::StartServer(String lang) {
 
 void Config::StopServer( void ) {
 	server.close();
-	Config::bSettingsUpdated = false;
 }
 
 //Config::~Config() {
