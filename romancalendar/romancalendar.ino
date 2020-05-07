@@ -995,6 +995,10 @@ void loop(void) {
 
     next_wake_hours_count = rtcData.data.wake_hour_counter; // for setting wake alarm  
   } // if(bEEPROM_checksum_good)
+  else {
+    DEBUGPRT_END 
+    ESP.deepSleep(1e6); //reboot after 1 second. After reset, the "connect power" screen should be shown.
+  }
    
   /************************************************/ 
   // *7* completed all tasks, go to sleep
@@ -1068,7 +1072,9 @@ void config_server(String lang)
    
     if (Config::StartServer(lang)) {
       DEBUG_PRT.println(F("Config web server started, listening for requests..."));
-      int finaldelay = 70; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
+
+      #define FINALDELAY 70
+      int finaldelay = FINALDELAY; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
       while(Battery::power_connected() && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp) {
         server.handleClient();  // Web server
         ArduinoOTA.handle(); // PLL-27-04-2020 OTA Update server
@@ -1077,6 +1083,9 @@ void config_server(String lang)
         //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
 
         if (Config::bSettingsUpdated) {
+          if (finaldelay == FINALDELAY) { // first time entering this, clock will just have been set, so power line enable from clock chip will be off, but still held up by USB 5V input
+            Config::SetPowerOn();         // hold up the power enable line. If this is not done, then if USB power is disconnected before reset (but after settings updated), ESP8266 will not restart
+          }                               // if USB power is disconnected after update but before reset, then the alarm should trigger in 3 seconds and switch on the ESP8266 rather than immediately
           finaldelay--;
         }
 
@@ -1098,7 +1107,8 @@ void config_server(String lang)
         //SleepForHours(next_wake_hours_count);
         //SleepUntilStartOfHour();
       }
-      else {
+      else // battery power was disconnected
+      {
         DEBUG_PRT.println(F("Power disconnected, stopping web server and displaying reading"));
       }
     }
