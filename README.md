@@ -10,14 +10,14 @@ It is based on the Ruby program calendarium-romanum (https://github.com/igneus/c
 ![Preview1](./lectionary5.jpg)
 ![Preview2](./lectionary3.jpg)
 ![Preview3](./lectionary7.png)
-
+![Preview4](./lectionary-mjf-case-grey.jpg)
 <h3>Localization</h3>
 <p>
 The project is localized for English, French, Czech and Latin, and other languages, Bible translations, Sanctorale days and Liturgical days can be added over time as all configuration data resides on the SD card.
 Arabic ligaturization is supported, and in the SD card archive an Arabic Bible is available (which I was using to test Arabic ligaturization). However, the Sanctorale and Liturgical days are still shown in English with this Bible (but this can be modified if anyone would like to translate the underlying files into Arabic).
 </p>
 
-![Preview4](./lectionary6.jpg)
+![Preview5](./lectionary6.jpg)
 
 <h3>ToolChain</h3>
 <p>
