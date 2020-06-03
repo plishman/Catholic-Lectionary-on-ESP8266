@@ -758,53 +758,10 @@ void GxGDEW042Z15::_wakeUp(void)
   IO.writeCommandTransaction(0x00);
   IO.writeDataTransaction(0x0f); // LUT from OTP Pixel with B/W/R.
 
-//3a 00 2b 2b 11
-/*
-    _writeCommand(POWER_SETTING);
-    _writeData(0x3a);                  // VDS_EN, VDG_EN
-    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
-    _writeData(0x2b);                  // VDH
-    _writeData(0x2b);                  // VDL
-    _writeData(0x11);                  // VDHR
-
-    //_writeData(0x1e);                
-*/						// 11v   10v    9v    8v   7v     6v    5v
-	uint8_t voltages[8] = {0x2b, 0x26, 0x21, 0x1c, 0x17, 0x12, 0x0d};
-	
-	uint8_t v = voltages[_refreshnumber];
-	
-	
-	_writeCommand(POWER_SETTING);
-    _writeData(0x03);                  // VDS_EN, VDG_EN
-    _writeData(0x00);                  // VCOM_HV, VGHL_LV[1], VGHL_LV[0]
-    _writeData(0x2b);                  // VDH 0x2b = +11V 0x20 = +8.8V 0x08 = +4.0V
-    _writeData(0x2b);                  // VDL 0x2b = -11V 0x20 = -8.8V 0x08 = -4.0V
-    _writeData(0x2b);                  // VDHR 0x2b = +11V (red pixel)
-
-    _writeCommand(BOOSTER_SOFT_START);
-    _writeData(0x17);
-    _writeData(0x17);
-    _writeData(0x17);                  //07 0f 17 1f 27 2F 37 2f
-    _writeCommand(POWER_ON);
-	_waitWhileBusy("Power On");
-//    _writeCommand(PANEL_SETTING);
-   // _writeData(0xbf);    // KW-BF   KWR-AF  BWROTP 0f
-  //  _writeData(0x0b);
-//	_writeData(0x0F);  //300x400 Red mode, LUT from OTP
-//	_writeData(0x1F);  //300x400 B/W mode, LUT from OTP
-//	_writeData(0x3F); //300x400 B/W mode, LUT set by register
-//	_writeData(0x2F); //300x400 Red mode, LUT set by register
-
     _writeCommand(PLL_CONTROL);
     _writeData(0x3A);        // 3A 100Hz   29 150Hz   39 200Hz    31 171Hz       3C 50Hz (default)    0B 10Hz
-	//_writeData(0x0B);   //0B is 10Hz
-    /* EPD hardware init end */
-
-
   
-  //_writeLUT_Normal();	//PLL 06-01-2019
-  _writeLUT();	//PLL 06-01-2019
-  
+	_writeLUT();	//PLL 06-01-2019
 }
 
 //void GxGDEW042Z15::_wakeUp(void)

@@ -1466,19 +1466,20 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
   int charheight = diskfont._FontHeader.charheight;
   fb.drawFastHLine(0, charheight, fb.width(), GxEPD_BLACK);
 
-/*
+
   //fb.drawLine(0,0, fb.width(), fb.height(), GxEPD_BLACK);
   // test pattern
-  for(int16_t i=5; i<6; i++){
+/*  
+  for(int16_t i=0; i<8; i++){
     int16_t x=10 + (i * 16);
-    int16_t y=10;
+    int16_t y=150;
     uint16_t color_bw = fb.makeColor(i, false);
-    //uint16_t color_red = fb.makeColor(i, true);
+    uint16_t color_red = fb.makeColor(i, true);
     
     fb.fillRect(x, y, 16, 16, color_bw);
-    //fb.fillRect(x, y + 20, 16, 16, color_red);
+    fb.fillRect(x, y + 20, 16, 16, color_red);
   }
-*/ 
+*/
 //  updateDisplay(display_reading);
 //  return true;
 #else
