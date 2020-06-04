@@ -743,6 +743,7 @@ String Temporale::sunday_temporale(time64_t date) {
 }
 
 String Temporale::ferial_temporale(time64_t date) {
+	DEBUG_PRT.print(F("Temporale::ferial_temporale()"));
 	String weekday = getLocaleWeekday(dayofweek(date));
 
 	Enums::Season seas = season(date);
@@ -851,6 +852,8 @@ String Temporale::ferial_temporale(time64_t date) {
 
 	}
 
+	//DEBUG_PRT.print(F("_Lectionary = "));
+	//DEBUG_PRT.println(_Lectionary);
 	_rank_e = rank;
 
 	if (bIsSet) return _day;
@@ -1034,6 +1037,8 @@ bool Temporale::get(time64_t date) {
 	_holy_day_of_obligation = "";
 
 	Enums::Season seas = season(date);
+	DEBUG_PRT.print(F("Season is "));
+	DEBUG_PRT.println(String(_I18n->I18n_SEASONS[seas]));
 	_season = _I18n->get("temporale.season." + String(_I18n->I18n_SEASONS[seas]));
 
 	switch (seas) {
@@ -1072,14 +1077,19 @@ bool Temporale::get(time64_t date) {
 	do_ferials(date);
 	do_sundays(date);
 	_bIsSolemnity = do_solemnities(date);
-
+	DEBUG_PRT.println(F("Getting colour"));
 	_colour = _I18n->get(_I18n->I18n_COLOURS[_colour_e]);
+	DEBUG_PRT.println(F("Getting rank"));
 	_rank = _I18n->get(_I18n->I18n_RANK_NAMES[_rank_e]);
 
 	if (_hdo) {
+		DEBUG_PRT.println(F("Getting hdo symbol"));
 		_holy_day_of_obligation = _I18n->get(I18n_HOLY_DAY_OF_OBLIGATION);
 	}
 	
+	DEBUG_PRT.print(F("_Lectionary = "));
+	DEBUG_PRT.println(_Lectionary);
+
 	return (_day != "");
 }
 

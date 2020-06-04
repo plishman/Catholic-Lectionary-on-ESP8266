@@ -12,11 +12,11 @@
 		#define DEBUGPRT_BEGIN Serial.begin(115200);
 		#define DEBUGPRT_END
 	#else
-		#define DEBUGPRT_BEGIN Debug_Prt.begin("/debuglog.txt", 1, 3, 8);
+		#define DEBUGPRT_BEGIN Debug_Prt.begin("/html/DEBUGLOG.TXT", 1, 3, 8);
 		#define DEBUGPRT_END Debug_Prt.end();
 	#endif
 
-	#define CRASHFILEPATH "/CRASHDMP.TXT"
+	#define CRASHFILEPATH "/html/CRASHDMP.TXT"
 
 	#define USE_SPI_RAM_FRAMEBUFFER
 

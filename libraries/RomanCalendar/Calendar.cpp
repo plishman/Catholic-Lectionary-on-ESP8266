@@ -108,9 +108,14 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	temporale->print_time(date);
 	DEBUG_PRT.println();
 
+	DEBUG_PRT.println(F("Creating Transfers, Temporale and Sanctorale objects..."));
 	transfers = new Transfers(_transfer_to_sunday, _I18n);		//PLL 29-04-2020 moved these lines from the constructor to here, so that the calendar object can be created
+	DEBUG_PRT.print(F("Transfers.."));
 	temporale = new Temporale(_transfer_to_sunday, _I18n);		//earlier in the program, without using the memory these three objects take up when they're initialized
+	DEBUG_PRT.print(F("Temporale.."));
 	sanctorale = new Sanctorale(_transfer_to_sunday, _I18n);	//The _I18n object is however still created in the constructor, so that it can be used by the main program to get the language setting.
+	DEBUG_PRT.print(F("Sanctorale.."));
+	DEBUG_PRT.println(F("Done."));
 
 	//bool bTransfersSuccess = transfers->get(date);
 	
@@ -118,11 +123,18 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 	
 	//bool bTransfersSuccess = transfers->get(date);
 	bool bTemporaleSuccess = temporale->get(date);
-	if (!bTemporaleSuccess) return false;
+	if (!bTemporaleSuccess) {
+		DEBUG_PRT.println(F("get temporale failed!"));
+		return false;
+	}
+
 	DEBUG_PRT.println(F("got temporale"));
 
 	time64_t transferred_from;
 	bool bWasTransferred = transfers->transferred_to(date, &transferred_from);
+
+	DEBUG_PRT.print(F("bWasTransferred = "));
+	DEBUG_PRT.println(bWasTransferred);
 
 	bool bIsSanctorale = false;
 
@@ -134,6 +146,9 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 		bIsSanctorale = sanctorale->get(transferred_from);
 		DEBUG_PRT.println(F("got sanctorale (transferred)"));
 	}
+
+	DEBUG_PRT.print(F("bIsSanctorale = "));
+	DEBUG_PRT.println(bIsSanctorale);
 
 	int lit_year = temporale->liturgical_year(date);
 

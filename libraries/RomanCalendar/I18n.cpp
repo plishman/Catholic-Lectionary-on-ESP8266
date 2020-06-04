@@ -379,9 +379,16 @@ String I18n::get(String I18nPath) {
 		DEBUG_PRT.println(F("I18n::get(): No config"));
 		return "";
 	}
+
+	DEBUG_PRT.print(F("I18n::get(): "));
+	DEBUG_PRT.println(I18nPath);
 	
-	if (_suppress_output == true) return "";
-	
+	if (_suppress_output == true) 
+	{
+		DEBUG_PRT.println(F("_suppress_output == true"));
+		return "";	
+	}
+
 #ifndef _WIN32
 //	if (!initializeSD()) return String("");
 #else
