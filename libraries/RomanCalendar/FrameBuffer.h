@@ -26,6 +26,10 @@ public:
 	SPIClass& IOSPI;
 	int _displayPage = 0;
 
+	int cached_address = -1;
+	uint8_t cached_byte = 0;
+	bool cache_flushed = true;
+
 	#define PXBUF_SIZE 1024
 	uint8_t pxbuf[PXBUF_SIZE];
 	
@@ -37,7 +41,7 @@ public:
 	uint8_t get_spiram_mode();
 	
 	uint8_t peek(uint32_t address);
-	void poke(uint32_t address, uint8_t val);
+	void poke(uint32_t address, uint8_t val, bool flush);
 
 	void cls();
 	void drawPixel(int16_t x, int16_t y, uint16_t color);

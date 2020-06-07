@@ -74,47 +74,78 @@ uint8_t FrameBuffer::get_spiram_mode() {
 }
 
 uint8_t FrameBuffer::peek(uint32_t address) {
-	uint8_t val = 0;
-	uint8_t buf[4];
-	
-	buf[0] = (uint8_t)SPIRAM_READ;					// read command
-	buf[1] = (uint8_t)((address & 0xFFFFFF) >> 16);	// 24 bit address
-	buf[2] = (uint8_t)((address & 0xFFFF) >> 8);
-	buf[3] = (uint8_t)(address & 0xFF);
-	
-	digitalWrite(_cs_pin, 0); // active low
-	IOSPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
-	for (uint8_t i = 0; i < 4; i++) {	// send read command and address
-		IOSPI.transfer(buf[i]);	
+	if (address == cached_address) { // one byte at one address holds 2 pixels (4bits each), so this should halve the number of reads
+		return cached_byte;
 	}
-	val = IOSPI.transfer(0);			// read byte from memory at selected address
-	IOSPI.endTransaction();					
-	digitalWrite(_cs_pin, 1); // active low
+	else {
+		if (!cache_flushed)
+		{
+			poke(cached_address, cached_byte, true); // flush the existing cached byte to the existing cached address
+		}
 
-	return val;
+		uint8_t val = 0;
+		uint8_t buf[4];
+		
+		buf[0] = (uint8_t)SPIRAM_READ;					// read command
+		buf[1] = (uint8_t)((address & 0xFFFFFF) >> 16);	// 24 bit address
+		buf[2] = (uint8_t)((address & 0xFFFF) >> 8);
+		buf[3] = (uint8_t)(address & 0xFF);
+		
+		digitalWrite(_cs_pin, 0); // active low
+		IOSPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
+		for (uint8_t i = 0; i < 4; i++) {	// send read command and address
+			IOSPI.transfer(buf[i]);	
+		}
+		val = IOSPI.transfer(0);			// read byte from memory at selected address
+		IOSPI.endTransaction();					
+		digitalWrite(_cs_pin, 1); // active low
+
+		cached_address = address;
+		cached_byte = val;
+		cache_flushed = true;
+		return val;
+	}
 }
 
-void FrameBuffer::poke(uint32_t address, uint8_t val) {
-	uint8_t buf[5];
-	
-	buf[0] = (uint8_t)SPIRAM_WRITE;					// write command
-	buf[1] = (uint8_t)((address & 0xFFFFFF) >> 16);	// 24 bit address
-	buf[2] = (uint8_t)((address & 0xFFFF) >> 8);
-	buf[3] = (uint8_t)(address & 0xFF);
-	buf[4] = val;							// byte to write
-	
-	digitalWrite(_cs_pin, 0); // active low
-	IOSPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
-	for (uint8_t i = 0; i < 5; i++) {
-		IOSPI.transfer(buf[i]);	
+void FrameBuffer::poke(uint32_t address, uint8_t val, bool flush = false) {
+	if (address == cached_address && !flush) { // one byte at one address holds 2 pixels (4bits each), so this should halve the number of writes
+		if (cached_byte != val) {
+			cached_byte = val;
+			cache_flushed = false;
+		}
 	}
-	IOSPI.endTransaction();
-	digitalWrite(_cs_pin, 1); // active low
+	else {
+		if (!cache_flushed){		
+			uint8_t buf[5];
+			
+			buf[0] = (uint8_t)SPIRAM_WRITE;					// write command
+			buf[1] = (uint8_t)((cached_address & 0xFFFFFF) >> 16);	// 24 bit address
+			buf[2] = (uint8_t)((cached_address & 0xFFFF) >> 8);
+			buf[3] = (uint8_t)(cached_address & 0xFF);
+			buf[4] = cached_byte; //val;							// byte to write
+			
+			digitalWrite(_cs_pin, 0); // active low
+			IOSPI.beginTransaction(SPISettings(20000000, MSBFIRST, SPI_MODE0));
+			for (uint8_t i = 0; i < 5; i++) {
+				IOSPI.transfer(buf[i]);	
+			}
+			IOSPI.endTransaction();
+			digitalWrite(_cs_pin, 1); // active low
+		}
+
+		cached_byte = val;
+		cached_address = address;
+		cache_flushed = false;
+	}
 }
 
 void FrameBuffer::cls() {
 	DEBUG_PRT.print("Cls()..");
 	
+	cached_address = -1;
+	cached_byte = 0;
+	cache_flushed = true; // set 2 pixel (byte) cache to reset state
+
 	if (!_fb_is_initialized) return;
 	
 	uint8_t spiram_mode = get_spiram_mode();
@@ -276,6 +307,12 @@ uint8_t FrameBuffer::readPixel(int16_t x, int16_t y, bool bUseRotation) {
 }
 
 void FrameBuffer::render(GxEPD_Class& ePaper) {
+	// flush the single byte 2 pixel cache
+	poke(cached_address, cached_byte, true); // write out last byte if write is pending (will write if the cache_flushed flag is false)
+	cached_address = -1;
+	cached_byte = 0;
+	cache_flushed = true; // set 2 pixel (byte) cache to reset state
+
 	int16_t page_x0 = 0; 
 	int16_t page_y0 = _displayPage * PAGE_HEIGHT;	
 	int16_t page_x1 = PAGE_WIDTH;
