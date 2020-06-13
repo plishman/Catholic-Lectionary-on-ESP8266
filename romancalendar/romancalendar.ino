@@ -676,6 +676,29 @@ void setup() {
         Config::writeRtcMemoryData(rtcData); // set the wake flag to say don't redisplay the wifi connected image on next boot, if still charging by 
                                              // that time.
       }
+      //PLL-13-06-2020 on usb power for some time, and woke from deep sleep (rather than powered off by clearing A1F in the DS3231)
+      else {
+        if (wake_reason == WAKE_DEEPSLEEP) { // ESP woke from deep sleep - so was still powered, hence RTC memory (in the ESP8266) may be set. This is a backup/legacy code, the DS3231 clock chip will apply power when its alarm asserts
+          if (Config::readRtcMemoryData(rtcData)) { // if CRC fails for values, this is probably a cold boot (power up), so will always update the reading in this case
+            if (rtcData.data.wake_hour_counter > 8) { // sanity check - should never be more than 8 hours between readings.
+              rtcData.data.wake_hour_counter = 1; // this will mean that, after being decremented to 0, a reading should be displayed immediately
+            }
+          
+            rtcData.data.wake_hour_counter--;
+            Config::writeRtcMemoryData(rtcData);
+    
+            if (rtcData.data.wake_hour_counter > 0) {
+              DEBUG_PRT.print(F("No reading this hour, still on USB5V, going back to sleep immediately.\nNumber of hours to next reading is "));
+              DEBUG_PRT.println(rtcData.data.wake_hour_counter);
+              //SleepUntilStartOfHour(); // no reading this hour, go back to sleep immediately
+              SleepForHours(rtcData.data.wake_hour_counter);
+            }
+          }
+          else {
+            DEBUG_PRT.println(F("Updating now - Woken from deepsleep while still charging but RTC memory (which should contain time of next reading update) contains no valid data"));
+          }
+        }
+      } // PLL-13-06-2020
     }
   }
   else {
