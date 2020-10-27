@@ -1,6 +1,12 @@
 #ifndef _RCGLOBALS42_H
 #define _RCGLOBALS42_H
-	#define LECT_VER "0.7"
+	#ifdef _WIN32
+		const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
+	#else
+		const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
+	#endif
+
+	#define LECT_VER "0.8"
     #define MAX_DEEPSLEEP_SECONDS 4294
 	#define MAX_MEM_BIBLE_REFS 4096
 

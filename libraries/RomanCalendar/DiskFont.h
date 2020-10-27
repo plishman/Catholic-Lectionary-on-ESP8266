@@ -174,6 +174,11 @@ public:
 	int GetTextWidth(const char* text);
 	int GetTextWidth(String text);
 
+	double _space_char_custom_width = 0.0;
+	bool _b_use_space_char_custom_width = false;
+	void SetSpaceCharCustomWidth(double space_char_width);
+	void ClearSpaceCharCustomWidth();
+
 	double GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width);
 //	double GetAdvanceWidth(int bitmapwidth, double advanceWidth);
 	

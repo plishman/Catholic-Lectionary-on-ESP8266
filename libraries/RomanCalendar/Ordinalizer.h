@@ -13,7 +13,9 @@ public:
 	static const String types[8];
 	byte _ordinal_type = 0;
 	
+	Ordinalizer();
 	Ordinalizer(String type);
+	void SetType(String type);
 	String ordinalize(int number);
 	String ord_french(int number);
 	String ord_english(int number);

@@ -38,10 +38,10 @@ bool FileDebugPort::open_debug_file() {
     if (_debugFile) return true;
 	
 	// Try and append
-    _debugFile = SD.open(_filename, O_RDWR | O_APPEND);
+    _debugFile = SD.open(_filename, sdfat::O_RDWR | sdfat::O_APPEND);
     if (!_debugFile) {
       // It failed, so try and make a new file.
-      _debugFile = SD.open(_filename, O_RDWR | O_CREAT);
+      _debugFile = SD.open(_filename, sdfat::O_RDWR | sdfat::O_CREAT);
 	  
 	  if (!_debugFile) {
         // It failed too, so give up.

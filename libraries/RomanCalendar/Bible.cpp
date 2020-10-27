@@ -8,36 +8,201 @@ extern "C" {
 #include "BibleVerse.h"
 #include "LinkedList.h"
 
-const char* const Bible::books[73] = {
-	"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
-	"1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", /*"Tobit", "Judith",*/ "Esther", /*"1 Maccabees", "2 Maccabees" */ "Job", "Psalm", "Proverbs", 
-	"Ecclesiastes", "Song of Solomon", /*"Wisdom", "Sirach",*/ "Isaiah", "Jeremiah", "Lamentations", /*"Baruch",*/ "Ezekiel", "Daniel", "Hosea", "Joel", 
-	"Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", 
-	"Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", 
-	"Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon", 
-	"Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation",
-	"Judith", "Wisdom", "Tobit", "Sirach", "Baruch", "1 Maccabees", "2 Maccabees"
-};
+//const char* const Bible::books[73] = {
+//	"Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
+//	"1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", /*"Tobit", "Judith",*/ "Esther", /*"1 Maccabees", "2 Maccabees" */ "Job", "Psalm", "Proverbs", 
+//	"Ecclesiastes", "Song of Solomon", /*"Wisdom", "Sirach",*/ "Isaiah", "Jeremiah", "Lamentations", /*"Baruch",*/ "Ezekiel", "Daniel", "Hosea", "Joel", 
+//	"Amos", "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi", 
+//	"Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", 
+//	"Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon", 
+//	"Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation",
+//	"Judith", "Wisdom", "Tobit", "Sirach", "Baruch", "1 Maccabees", "2 Maccabees"
+//};
+//
+////"Tob", "Judith"|"1 Macc", "2 Macc", | "Wis", "Sir", | "Bar",
+//
+//const char* const Bible::books_shortnames[73] = {
+//	"Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1 Sam", "2 Sam",
+//	"1 Kgs", "2 Kgs", "1 Chr", "2 Chr", "Ezra", "Neh", "Esth", "Job", "Ps", "Prov", 
+//	"Eccl", "Cant"/*Song of Songs (canticles)*/, "Isa", "Jer", "Lam", "Ezek", "Dan", "Hos", "Joel", 
+//	"Amos", "Obad", "Jon", "Mic", "Nah", "Hab",	"Zeph", "Hag", "Zech", "Mal", 
+//	"Matt", "Mark", "Luke", "John", "Acts", "Rom", "1 Cor", "2 Cor", "Gal", "Eph", 
+//	"Phil", "Col", "1 Thess", "2 Thess", "1 Tim", "2 Tim", "Titus", "Phlm", 
+//	"Heb", "Jas", "1 Pet", "2 Pet", "1 John", "2 John", "3 John", "Jude", "Rev",
+//	"Judith", "Wis", "Tob", "Sir", "Bar", "1 Macc", "2 Macc"
+//};
 
-//"Tob", "Judith"|"1 Macc", "2 Macc", | "Wis", "Sir", | "Bar",
-
-const char* const Bible::books_shortnames[73] = {
-	"Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1 Sam", "2 Sam",
-	"1 Kgs", "2 Kgs", "1 Chr", "2 Chr", "Ezra", "Neh", "Esth", "Job", "Ps", "Prov", 
-	"Eccl", "Cant"/*Song of Songs (canticles)*/, "Isa", "Jer", "Lam", "Ezek", "Dan", "Hos", "Joel", 
-	"Amos", "Obad", "Jon", "Mic", "Nah", "Hab",	"Zeph", "Hag", "Zech", "Mal", 
-	"Matt", "Mark", "Luke", "John", "Acts", "Rom", "1 Cor", "2 Cor", "Gal", "Eph", 
-	"Phil", "Col", "1 Thess", "2 Thess", "1 Tim", "2 Tim", "Titus", "Phlm", 
-	"Heb", "Jas", "1 Pet", "2 Pet", "1 John", "2 John", "3 John", "Jude", "Rev",
-	"Judith", "Wis", "Tob", "Sir", "Bar", "1 Macc", "2 Macc"
-};
-
-const int Bible::books_chaptercounts[73] = {
+const int Bible::books_chaptercounts[73] PROGMEM = {
 	50, 40, 27, 36, 34, 24, 21, 4, 31, 24, 22, 25, 29, 36, 10, 13, 10, 42, 150, 
 	31, 12, 8, 66, 52, 5, 48, 12, 14, 3, 9, 1, 4, 7, 3, 3, 3, 2, 14, 4, 28, 16, 24,
 	21, 28, 16, 16, 13, 6, 6, 4, 4, 5, 3, 6, 4, 3, 1, 13, 5, 5, 3, 5, 1, 1, 1, 22,
 	16, 19, 14, 51, 6, 16, 15
 };
+
+
+	const char Bible::s_00[] PROGMEM = "Genesis";
+	const char Bible::s_01[] PROGMEM = "Exodus";
+	const char Bible::s_02[] PROGMEM = "Leviticus";
+	const char Bible::s_03[] PROGMEM = "Numbers";
+	const char Bible::s_04[] PROGMEM = "Deuteronomy";
+	const char Bible::s_05[] PROGMEM = "Joshua";
+	const char Bible::s_06[] PROGMEM = "Judges";
+	const char Bible::s_07[] PROGMEM = "Ruth";
+	const char Bible::s_08[] PROGMEM = "1 Samuel";
+	const char Bible::s_09[] PROGMEM = "2 Samuel";
+	const char Bible::s_10[] PROGMEM = "1 Kings";
+	const char Bible::s_11[] PROGMEM = "2 Kings";
+	const char Bible::s_12[] PROGMEM = "1 Chronicles";
+	const char Bible::s_13[] PROGMEM = "2 Chronicles";
+	const char Bible::s_14[] PROGMEM = "Ezra";
+	const char Bible::s_15[] PROGMEM = "Nehemiah";/*"Tobit"; "Judith";*/ 
+	const char Bible::s_16[] PROGMEM = "Esther";/*"1 Maccabees"; "2 Maccabees" */ 
+	const char Bible::s_17[] PROGMEM = "Job";
+	const char Bible::s_18[] PROGMEM = "Psalm";
+	const char Bible::s_19[] PROGMEM = "Proverbs";
+	const char Bible::s_20[] PROGMEM = "Ecclesiastes";
+	const char Bible::s_21[] PROGMEM = "Song of Solomon";/*"Wisdom"; "Sirach";*/ 
+	const char Bible::s_22[] PROGMEM = "Isaiah";
+	const char Bible::s_23[] PROGMEM = "Jeremiah";
+	const char Bible::s_24[] PROGMEM = "Lamentations";/*"Baruch";*/ 
+	const char Bible::s_25[] PROGMEM = "Ezekiel";
+	const char Bible::s_26[] PROGMEM = "Daniel";
+	const char Bible::s_27[] PROGMEM = "Hosea";
+	const char Bible::s_28[] PROGMEM = "Joel";
+	const char Bible::s_29[] PROGMEM = "Amos";
+	const char Bible::s_30[] PROGMEM = "Obadiah";
+	const char Bible::s_31[] PROGMEM = "Jonah";
+	const char Bible::s_32[] PROGMEM = "Micah";
+	const char Bible::s_33[] PROGMEM = "Nahum";
+	const char Bible::s_34[] PROGMEM = "Habakkuk";
+	const char Bible::s_35[] PROGMEM = "Zephaniah";
+	const char Bible::s_36[] PROGMEM = "Haggai";
+	const char Bible::s_37[] PROGMEM = "Zechariah";
+	const char Bible::s_38[] PROGMEM = "Malachi";
+	const char Bible::s_39[] PROGMEM = "Matthew";
+	const char Bible::s_40[] PROGMEM = "Mark";
+	const char Bible::s_41[] PROGMEM = "Luke";
+	const char Bible::s_42[] PROGMEM = "John";
+	const char Bible::s_43[] PROGMEM = "Acts";
+	const char Bible::s_44[] PROGMEM = "Romans";
+	const char Bible::s_45[] PROGMEM = "1 Corinthians";
+	const char Bible::s_46[] PROGMEM = "2 Corinthians";
+	const char Bible::s_47[] PROGMEM = "Galatians";
+	const char Bible::s_48[] PROGMEM = "Ephesians";
+	const char Bible::s_49[] PROGMEM = "Philippians";
+	const char Bible::s_50[] PROGMEM = "Colossians";
+	const char Bible::s_51[] PROGMEM = "1 Thessalonians";
+	const char Bible::s_52[] PROGMEM = "2 Thessalonians";
+	const char Bible::s_53[] PROGMEM = "1 Timothy";
+	const char Bible::s_54[] PROGMEM = "2 Timothy";
+	const char Bible::s_55[] PROGMEM = "Titus";
+	const char Bible::s_56[] PROGMEM = "Philemon";
+	const char Bible::s_57[] PROGMEM = "Hebrews";
+	const char Bible::s_58[] PROGMEM = "James";
+	const char Bible::s_59[] PROGMEM = "1 Peter";
+	const char Bible::s_60[] PROGMEM = "2 Peter";
+	const char Bible::s_61[] PROGMEM = "1 John";
+	const char Bible::s_62[] PROGMEM = "2 John";
+	const char Bible::s_63[] PROGMEM = "3 John";
+	const char Bible::s_64[] PROGMEM = "Jude";
+	const char Bible::s_65[] PROGMEM = "Revelation";
+	const char Bible::s_66[] PROGMEM = "Judith";
+	const char Bible::s_67[] PROGMEM = "Wisdom";
+	const char Bible::s_68[] PROGMEM = "Tobit";
+	const char Bible::s_69[] PROGMEM = "Sirach";
+	const char Bible::s_70[] PROGMEM = "Baruch";
+	const char Bible::s_71[] PROGMEM = "1 Maccabees";
+	const char Bible::s_72[] PROGMEM = "2 Maccabees";
+
+	const char* const Bible::books[73] PROGMEM = {
+		s_00, s_01, s_02, s_03, s_04, s_05, s_06, s_07, s_08, s_09, s_10, s_11, s_12, s_13, s_14, s_15,
+		s_16, s_17, s_18, s_19, s_20, s_21, s_22, s_23, s_24, s_25, s_26, s_27, s_28, s_29, s_30, s_31, 
+		s_32, s_33, s_34, s_35, s_36, s_37, s_38, s_39, s_40, s_41, s_42, s_43, s_44, s_45, s_46, s_47, 
+		s_48, s_49, s_50, s_51, s_52, s_53, s_54, s_55, s_56, s_57, s_58, s_59, s_60, s_61, s_62, s_63, 
+		s_64, s_65, s_66, s_67, s_68, s_69, s_70, s_71, s_72
+	};
+
+	const char Bible::s2_00[] PROGMEM = "Gen";
+	const char Bible::s2_01[] PROGMEM = "Exod";
+	const char Bible::s2_02[] PROGMEM = "Lev";
+	const char Bible::s2_03[] PROGMEM = "Num";
+	const char Bible::s2_04[] PROGMEM = "Deut";
+	const char Bible::s2_05[] PROGMEM = "Josh";
+	const char Bible::s2_06[] PROGMEM = "Judg";
+	const char Bible::s2_07[] PROGMEM = "Ruth";
+	const char Bible::s2_08[] PROGMEM = "1 Sam";
+	const char Bible::s2_09[] PROGMEM = "2 Sam";
+	const char Bible::s2_10[] PROGMEM = "1 Kgs";
+	const char Bible::s2_11[] PROGMEM = "2 Kgs";
+	const char Bible::s2_12[] PROGMEM = "1 Chr";
+	const char Bible::s2_13[] PROGMEM = "2 Chr";
+	const char Bible::s2_14[] PROGMEM = "Ezra";
+	const char Bible::s2_15[] PROGMEM = "Neh";
+	const char Bible::s2_16[] PROGMEM = "Esth";
+	const char Bible::s2_17[] PROGMEM = "Job";
+	const char Bible::s2_18[] PROGMEM = "Ps";
+	const char Bible::s2_19[] PROGMEM = "Prov";
+	const char Bible::s2_20[] PROGMEM = "Eccl";
+	const char Bible::s2_21[] PROGMEM = "Cant"; /*Song of Songs (canticles)*/
+	const char Bible::s2_22[] PROGMEM = "Isa";
+	const char Bible::s2_23[] PROGMEM = "Jer";
+	const char Bible::s2_24[] PROGMEM = "Lam";
+	const char Bible::s2_25[] PROGMEM = "Ezek";
+	const char Bible::s2_26[] PROGMEM = "Dan";
+	const char Bible::s2_27[] PROGMEM = "Hos";
+	const char Bible::s2_28[] PROGMEM = "Joel";
+	const char Bible::s2_29[] PROGMEM = "Amos";
+	const char Bible::s2_30[] PROGMEM = "Obad";
+	const char Bible::s2_31[] PROGMEM = "Jon";
+	const char Bible::s2_32[] PROGMEM = "Mic";
+	const char Bible::s2_33[] PROGMEM = "Nah";
+	const char Bible::s2_34[] PROGMEM = "Hab";
+	const char Bible::s2_35[] PROGMEM = "Zeph";
+	const char Bible::s2_36[] PROGMEM = "Hag";
+	const char Bible::s2_37[] PROGMEM = "Zech";
+	const char Bible::s2_38[] PROGMEM = "Mal";
+	const char Bible::s2_39[] PROGMEM = "Matt";
+	const char Bible::s2_40[] PROGMEM = "Mark";
+	const char Bible::s2_41[] PROGMEM = "Luke";
+	const char Bible::s2_42[] PROGMEM = "John";
+	const char Bible::s2_43[] PROGMEM = "Acts";
+	const char Bible::s2_44[] PROGMEM = "Rom";
+	const char Bible::s2_45[] PROGMEM = "1 Cor";
+	const char Bible::s2_46[] PROGMEM = "2 Cor";
+	const char Bible::s2_47[] PROGMEM = "Gal";
+	const char Bible::s2_48[] PROGMEM = "Eph";
+	const char Bible::s2_49[] PROGMEM = "Phil";
+	const char Bible::s2_50[] PROGMEM = "Col";
+	const char Bible::s2_51[] PROGMEM = "1 Thess";
+	const char Bible::s2_52[] PROGMEM = "2 Thess";
+	const char Bible::s2_53[] PROGMEM = "1 Tim";
+	const char Bible::s2_54[] PROGMEM = "2 Tim";
+	const char Bible::s2_55[] PROGMEM = "Titus";
+	const char Bible::s2_56[] PROGMEM = "Phlm";
+	const char Bible::s2_57[] PROGMEM = "Heb";
+	const char Bible::s2_58[] PROGMEM = "Jas";
+	const char Bible::s2_59[] PROGMEM = "1 Pet";
+	const char Bible::s2_60[] PROGMEM = "2 Pet";
+	const char Bible::s2_61[] PROGMEM = "1 John";
+	const char Bible::s2_62[] PROGMEM = "2 John";
+	const char Bible::s2_63[] PROGMEM = "3 John";
+	const char Bible::s2_64[] PROGMEM = "Jude";
+	const char Bible::s2_65[] PROGMEM = "Rev";
+	const char Bible::s2_66[] PROGMEM = "Judith";
+	const char Bible::s2_67[] PROGMEM = "Wis";
+	const char Bible::s2_68[] PROGMEM = "Tob";
+	const char Bible::s2_69[] PROGMEM = "Sir";
+	const char Bible::s2_70[] PROGMEM = "Bar";
+	const char Bible::s2_71[] PROGMEM = "1 Macc";
+	const char Bible::s2_72[] PROGMEM = "2 Macc";
+
+	const char* const Bible::books_shortnames[73] PROGMEM = {
+		s2_00, s2_01, s2_02, s2_03, s2_04, s2_05, s2_06, s2_07, s2_08, s2_09, s2_10, s2_11, s2_12, s2_13, s2_14, s2_15, 
+		s2_16, s2_17, s2_18, s2_19, s2_20, s2_21, s2_22, s2_23, s2_24, s2_25, s2_26, s2_27, s2_28, s2_29, s2_30, s2_31, 
+		s2_32, s2_33, s2_34, s2_35, s2_36, s2_37, s2_38, s2_39, s2_40, s2_41, s2_42, s2_43, s2_44, s2_45, s2_46, s2_47, 
+		s2_48, s2_49, s2_50, s2_51, s2_52, s2_53, s2_54, s2_55, s2_56, s2_57, s2_58, s2_59, s2_60, s2_61, s2_62, s2_63, 
+		s2_64, s2_65, s2_66, s2_67, s2_68, s2_69, s2_70, s2_71, s2_72 
+	};
 
 /*
 const char* const Bible::books_with_apocrypha[73] = {
@@ -198,7 +363,7 @@ void Bible::dump_refs() {
 		if (r->start_verse == r->end_verse && r->start_chapter == r->end_chapter) {
 			//DEBUG_PRT.printf("\t%s, %d:%d%s\n", books[r->book_index], r->start_chapter, r->start_verse, r->start_verse_sentence_range.c_str());
 			DEBUG_PRT.print(F("\t"));
-			DEBUG_PRT.print(books[r->book_index]);
+			DEBUG_PRT.print(FPSTR(books[r->book_index]));
 			DEBUG_PRT.print(F(", "));
 			DEBUG_PRT.print(r->start_chapter);
 			DEBUG_PRT.print(F(":"));
@@ -210,7 +375,7 @@ void Bible::dump_refs() {
 				//DEBUG_PRT.printf("\t%s, %d:%d%s-%d%s\n", 
 
 				DEBUG_PRT.print(F("\t"));
-				DEBUG_PRT.print(books[r->book_index]);
+				DEBUG_PRT.print(FPSTR(books[r->book_index]));
 				DEBUG_PRT.print(F(", "));
 				DEBUG_PRT.print(r->start_chapter);
 				DEBUG_PRT.print(F(":"));
@@ -223,7 +388,7 @@ void Bible::dump_refs() {
 			else {
 				//DEBUG_PRT.printf("\t%s, %d:%d%s-%d:%d%s\n", 
 				DEBUG_PRT.print(F("\t"));
-				DEBUG_PRT.print(books[r->book_index]);
+				DEBUG_PRT.print(FPSTR(books[r->book_index]));
 				DEBUG_PRT.print(r->start_chapter);
 				DEBUG_PRT.print(F(":"));
 				DEBUG_PRT.print(r->start_verse);
@@ -247,7 +412,7 @@ void Bible::dump_refs() {
 
 String Bible::getBookShortName(int booknum) {
 	if (booknum >= 0 && booknum < _book_count) {
-		return books_shortnames[booknum];
+		return FPSTR(books_shortnames[booknum]);
 	}
 	return "";
 }
@@ -393,13 +558,13 @@ bool Bible::expect_book(String refs, int* startpos, int* book_index) {
 	int bi = 0;
 
 	while (!bFound && bi < _book_count) {
-		book = books[bi];	// try the long name
+		book = FPSTR(books[bi]);	// try the long name
 		len = book.length();
 
 		refs_start = refs.indexOf(book, *startpos);
 		
 		if (refs_start == -1) {
-			book = books_shortnames[bi];// try the short name - important to try the long name first, since the short name will generally match first
+			book = FPSTR(books_shortnames[bi]);// try the short name - important to try the long name first, since the short name will generally match first
 			len = book.length();		// even if the long name is used, since the short name is usually a substring of the long name
 			refs_start = refs.indexOf(book, *startpos);
 		}

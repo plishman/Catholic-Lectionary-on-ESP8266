@@ -745,7 +745,7 @@ void GxGDEW042Z15::_wakeUp(void)
   if (_rst >= 0)
   {
     digitalWrite(_rst, 0);
-    delay(500);
+    delay(750);
     digitalWrite(_rst, 1);
     delay(500);
   }

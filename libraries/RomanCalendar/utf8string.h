@@ -79,7 +79,7 @@ typedef uint8_t byte;
 int charLenBytesUTF8(char s);
 String utf8fromCodepoint(uint32_t c);
 uint32_t codepointUtf8(String c);
-String utf8CharAt(String s, unsigned int pos);
+String utf8CharAt(String& s, unsigned int pos);
 void SetUtf8CharByIndex(String& s, int index, String ch);
 String GetUtf8CharByIndex(String s, unsigned int index);
 int Utf8CharCount(String s);

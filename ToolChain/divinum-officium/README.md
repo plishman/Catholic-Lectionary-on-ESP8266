@@ -1,0 +1,6 @@
+#Divinum Officium Latin Mass Propers Database Generator
+This toolchain program is an adaptation of the Divinum Officium code https://github.com/DivinumOfficium/divinum-officium with web output removed. Instead the program dumps out each part of the Latin Mass propers to small flat files for calendar feast days and seasonal days in a directory called "output". These small files are then concatenated and indexed by another perl program, consolidatefiles.pl, so that they don't take up too much space on the SD card (as they would otherwise when minimum disk blocksize is taken into account).
+
+To use, firstly run the batch file make_propers.bat in the missa directory (which runs the adapted missa.pl), then the consolidatefiles.pl program in the same directory.
+
+Note that on Windows 10 I experienced silent crashes every few hundred thousand files, so the missa.pl program has been adapted to resume after crashes, and the supplied batch file detects the error code the crash produces and restarts the program if it finds it.

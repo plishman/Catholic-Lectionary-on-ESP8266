@@ -1,0 +1,172 @@
+en:
+  tridentine:
+    config:
+      celebrate_christ_priest: false
+      celebrate_sacred_heart: false
+      celebrate_immaculate_heart: false
+      celebrate_immaculate_heart_in_eastertide: true
+      celebrate_sat_of_our_lady: true
+      celebrate_mass_for_the_dead: true
+      celebrate_rorate_coeli_in_advent_on_day: '1'
+    votive:
+      christ_priest: Votive Mass of Our Lord Jesus Christ, Supreme and Eternal Priest
+      sacred_heart:  Votive Mass of the Most Sacred Heart of Jesus
+      immaculate_heart: Votive Mass of the Immaculate Heart of the Blessed Virgin Mary
+      immaculate_heart_in_eastertide: Votive Mass of the Immaculate Heart of the Blessed Virgin Mary (in Eastertide)
+      sat_of_our_lady: Saturday of Our Lady
+      mass_for_the_dead: Daily Mass for the Dead - For All the Faithful Departed
+      rorate_coeli_in_advent: Mass Roráte cœli désuper
+    solemnity:
+      gaudete_sunday: Gaudete Sunday
+      advent_embertide1: Ember Wednesday of Advent
+      advent_embertide2: Ember Friday of Avent
+      advent_embertide3: Ember Saturday of Advent
+      sunday_in_xmas_octave: Sunday within the Octave of Christmas
+      holy_name: Feast of the Holy Name of Jesus
+      holy_family: Feast of the Holy Family
+      plough_monday: Plough Monday
+      ash_wednesday: Ash Wednesday
+      lenten_embertide1: Ember Wednesday in Lent
+      lenten_embertide2: Ember Friday in Lent
+      lenten_embertide3: Ember Saturday in Lent
+      quinquagesima: Quinquagesima Sunday
+      fat_thursday: Fat Thursday
+      shrove_monday: Shrove Monday
+      mardigras: Mardigras
+      sexagesima: Sexagesima Sunday
+      septuagesima: Septuagesima Sunday
+      st_matthias: 'St. Matthias Apostle, II class.'
+      st_gabriel_of_our_lady_of_sorrows: 'St. Gabriel of Our Lady of Sorrows, III class'
+      laetare_sunday: Laetare Sunday
+      passion_sunday: Passion Sunday
+      seven_sorrows: Feast of the Seven Sorrows of Mary
+      ladyday: 'Annunciation of the Blessed Virgin Mary, I class.'
+      stjoseph: 'St. Joseph, Spouse of the Blessed Virgin Mary, Confessor, and Patron of the Universal Church, I class.'
+      palm_sunday: Palm Sunday of the Passion of the Lord
+      monday_of_holyweek: Monday of Holy Week
+      tuesday_of_holyweek: Tuesday of Holy Week
+      spy_wednesday: Spy Wednesday
+      maundy_thursday: Maundy Thursday
+      good_friday: Friday of the Passion of the Lord
+      holy_saturday:  Holy Saturday
+      easter: Easter Sunday of the Resurrection of the Lord
+      easter_monday: Easter Monday
+      easter_tuesday: Easter Tuesday
+      easter_wednesday: Easter Wednesday
+      easter_thursday: Easter Thursday
+      easter_friday: Easter Friday
+      easter_saturday: Easter Saturday
+      quasimodo_sunday: Low Sunday
+      misericordia_sunday: Misericordia Sunday
+      jubilate_sunday: Jubilate Sunday
+      cantate_sunday: Cantate Sunday
+      major_rogation: The Greater Litanies
+      ascension_vigil: Vigil of the Ascension
+      ascension: Ascension of the Lord
+      sunday_after_ascension: Sunday after the Ascension of the Lord
+      minor_rogation1: Minor Rogation
+      minor_rogation2: Minor Rogation
+      minor_rogation3: Minor Rogation
+      pentecost_vigil: Vigil Mass of Pentecost
+      pentecost: Pentecost Sunday
+      pentecost_monday: Pentecost Monday
+      pentecost_tuesday: Pentecost Tuesday
+      whit_embertide1: Ember Wednesday of Pentecost
+      whit_embertide2: Ember Friday of Pentecost
+      whit_embertide3: Ember Saturday of Pentecost
+      thursday_in_pentecost_week: Thursday in Pentecost Week
+      trinity_sunday: Trinity Sunday
+      corpus_christi: Corpus Christi
+      sacred_heart: The Most Sacred Heart of Jesus
+      peters_pence: Alms of St Peter
+      michaelmas_embertide1: Ember Wednesday
+      michaelmas_embertide2: Ember Friday
+      michaelmas_embertide3: Ember Saturday
+      all_souls: Commemoration of all the Faithful Departed
+      christ_king: Feast of Christ the King
+    season:
+      advent:
+        sunday: '%{week} Sunday of Advent'
+        ferial: 'Feria of Advent'
+        ember_day: 'Ember %{weekday} of Advent'
+        greater_ferial: 'Greater Feria of Advent'
+      christmas:
+        nativity_octave:
+          ferial: 'Day within the Octave of Christmas'
+          sunday: 'Sunday in the Octave of Christmas'
+        sunday: '%{week} Sunday after the Nativity of the Lord'
+        ferial: 'Feria in Christmastide'
+      epiphany:
+        sunday: '%{week} Sunday after Epiphany'
+        ferial: 'Feria'
+        resumed:
+          sunday: 'Resumed %{week} Sunday after Epiphany'
+          ferial: 'Feria'
+      septuagesima:
+        ferial: 'Feria'
+      lent:
+        after_ashes:
+          ferial: '%{weekday} after Ash Wednesday'
+        sunday: '%{week} Sunday of Lent'
+        ferial: 'Feria of Lent'
+        ember_day: 'Ember %{weekday} in Lent'
+        passion_week:
+          ferial: '%{weekday} of Passion Week'
+        holy_week:
+          ferial: '%{weekday} of Holy Week'
+          thursday: 'Maundy Thursday'
+      easter:
+        octave:
+          ferial: 'Easter %{weekday}'
+        sunday: '%{week} Sunday after Easter'
+        ferial: 'Feria of Paschaltide'
+      ascension:
+        ferial: 'Feria of Ascension'
+      pentecost:
+        ferial: '%{weekday} in the Octave of Pentecost'
+        ember_day: 'Ember %{weekday} of Pentecost'
+      after_pentecost:
+        sunday: '%{week} Sunday After Pentecost'
+        ferial: 'Feria'
+        last:
+          sunday: '24th and Last Sunday after Pentecost'
+          ferial: 'Feria'
+  class:
+    '1': I
+    '2': II
+    '3': III
+    '4': IV
+  weekday:
+    '0': Sunday
+    '1': Monday
+    '2': Tuesday
+    '3': Wednesday
+    '4': Thursday
+    '5': Friday
+    '6': Saturday
+  month:
+    '1': Jan
+    '2': Feb
+    '3': Mar
+    '4': Apr
+    '5': May
+    '6': Jun
+    '7': Jul
+    '8': Aug
+    '9': Sep
+    '10': Oct
+    '11': Nov
+    '12': Dec
+  date: %{d} %{mmm} %{yyyy}
+  ordinals: english
+  colour:
+    '0': unset
+    '1': white
+    '2': green
+    '3': red
+    '4': violet
+    '5': rose
+    '6': black
+    '7': gold
+  holy_day_of_obligation: <FONT COLOR="red">+</FONT>
+  or: or

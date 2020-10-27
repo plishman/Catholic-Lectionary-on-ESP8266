@@ -135,7 +135,7 @@ uint32_t codepointUtf8(String c) {
 	return 0;
 }
 
-String utf8CharAt(String s, unsigned int pos) {
+String utf8CharAt(String& s, unsigned int pos) {
 	//DEBUG_PRT.println("String=" + s);
 
 	if (pos >= s.length()) {

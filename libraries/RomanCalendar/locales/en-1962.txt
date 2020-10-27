@@ -1,0 +1,359 @@
+= 1
+1 1 h f : Octave of the Nativity of the Lord, I class.
+5 c : Commemoration of St. Telesphorus Pope and Martyr, Comm.
+6 1 o f : On the Epiphany of the Lord, I class.
+11 c : Commemoration of St. Hyginus Pope and Martyr, Comm.
+13 2 f : On the Commemoration of the Baptism of our Lord Jesus Christ, II class.
+14 3 : St. Hilary Bishop, Confessor, and Doctor of the Church, III class
+14 c : Com. of St. Felix Priest and Martyr.
+15 3 : St. Paul the First Hermit, Confessor, III class 
+15 c : Com. of St. Maurus Abbot.
+16 3 R : St. Marcellus I Pope and Martyr, III class.
+17 3 : St. Anthony Abbot, III class.
+18 c : Commemoration of St. Prisca Virgin and Martyr, Comm.
+19 c : Commemoration of Ss. Marius, Martha, Audifax, and Abachum Martyrs, Comm., Com. of St. Canute, Martyr.
+20 3 : Ss. Fabian Pope and Sebastian Martyrs, III class.
+21 3 : St. Agnes, Virgin and Martyr, III class
+22 3 R : Ss. Vincent and Anastasius Martyrs, III class.
+23 3 : St. Raymund of Peñafort Confessor, III class
+23 c : Com. of St. Emerentiana Virgin and Martyr.
+24 3 R : St. Timothy Bishop and Martyr, III class.
+25 3 : On the Conversion of St. Paul Apostle, III class
+25 c : Com. of St. Peter Apostle.
+26 3 R : St. Polycarp Bishop and Martyr, III class.
+27 3 : St. John Chrysostom Bishop, Confessor, and Doctor of the Church, III class.
+28 3 : St. Peter Nolasco Confessor, III class
+28 c : Com. of St. Agnes, Virgin and Martyr second.
+29 3 : St. Francis de Sales Bishop, Confessor, and Doctor of the Church, III class.
+30 3 R : St. Martina Virgin and Martyr, III class.
+31 3 : St. John Bosco Confessor, III class.
+
+= 2
+1 3 R : St. Ignatius Bishop and Martyr, III class.
+2 2 f : On the Purification of the Blessed Virgin Mary, II class.
+3 R : Commemoration of St. Blase Bishop and Martyr, Comm.
+4 3 : St. Andrew Corsini Bishop and Confessor, III class.
+5 3 : St. Agatha Virgin and Martyr, III class.
+6 3 : St. Titus Bishop and Confessor, III class
+6 c : Com. of St. Dorothy Virgin and Martyr.
+7 3 : St. Romuald Abbot, III class.
+8 3 : St. John of Matha Confessor, III class.
+9 3 : St. Cyril Bishop of Alexandria, Confessor, and Doctor of the Church, III class
+9 c : Com. of St. Apollonia Virgin and Martyr.
+10 3 : St. Scholastica Virgin, III class.
+11 3 : On the Apparition of the Blessed Virgin Mary Immaculate, III class.
+12 3 : The Seven Holy Founders of the Order of Servants of the Blessed Virgin Mary Confessors, III class.
+14 R c : Commemoration of St. Valentine Priest and Martyr, Comm.
+15 c : Commemoration of Ss.Faustinus and Jovita Martyrs, Comm.
+18 R c : Commemoration of St. Simeon Bishop and Martyr, Comm.
+22 2 : Chair of St. Peter, II class
+22 c : Com. of St. Paul.
+23 3 : St. Peter Damian Confessor, III class.
+24 2 : St. Matthias Apostle, II class.
+
+= 3
+4 3 : St. Casimir Confessor, III class
+4 c : Com. of St. Lucius I Pope and Martyr.
+6 3 : Ss. Perpetua and Felicity Martyrs, III class.
+7 3 : St. Thomas Aquinas Confessor and Doctor of the Church, III class.
+8 3 : St. John of God Confessor, III class.
+9 3 : St. Frances of Rome Widow, III class.
+10 3 : The Forty Holy Martyrs, III class.
+12 3 : St. Gregory I Pope, Confessor, and Doctor of the Church, III class.
+17 3 : St. Patrick Bishop and Confessor, III class.
+18 3 : St.Cyril Bishop of Jerusalem, Confessor, and Doctor of the Church, III class.
+21 3 : St. Benedict Abbot, III class.
+24 3 : St. Gabriel the Archangel, III class.
+27 3 : St. John Damascene Confessor and Doctor of the Church, III class
+28 3 : St. John Capistran Confessor, III class
+
+= 4
+2 3 : St. Francis of Paula Confessor, III class.
+4 3 : St. Isidore Bishop, Confessor, and Doctor of the Church, III class.
+5 3 : St. Vincent Ferrer Confessor, III class.
+11 3 : St. Leo I Pope, Confessor, and Doctor of the Church, III class.
+13 3 : St. Hermenegild Martyr, III class.
+14 3 : St. Justin, III class
+14 c : Com. of Saints Tiburtius, Valerian and Maximus Martyrs.
+17 c : Commemoration of St. Anicetus Pope and Martyr, Comm.
+21 3 : St. Anselm Bishop, Confessor, and Doctor of the Church, III class.
+22 3 : Ss. Soter and Cajus Popes and Martyrs, III class.
+23 c : Commemoration of St. George Martyr, Comm.
+24 3 : St. Fidelis of Sigmaringen Martyr, III class.
+25 2 R : St. Mark Evangelist, II class.
+26 3 : Ss. Cletus and Marcellinus Popes and Martyrs, III class.
+27 3 : St. Peter Canisius Confessor and Doctor of the Church, III class.
+28 3 : St. Paul of the Cross Confessor, III class.
+29 3 R : St. Peter Martyr, III class.
+30 3 : St. Catherine of Siena Virgin, III class.
+
+= 5
+1 1 : St. Joseph the Workman, Spouse of the Blessed Virgin Mary, Confessor, I class.
+2 3 : St. Athanasius, Bishop, Confessor, and Doctor of the Church, III class.
+3 c : Commemoration of Ss. Alexander, Eventius and Theodulus Martyrs, and Juvenal, Bishop and Confessor, Comm.
+4 3 : St. Monica Widow, III class.
+5 3 : St. Pius V Pope and Confessor, III class.
+6 R : St. John before the Latin Gate.
+7 3 : St. Stanislaus Bishop and Martyr, III class.
+9 3 : St. Gregory Nazianzen Bishop, Confessor, and Doctor of the Church, III class.
+10 3 : St. Antoninus Bishop and Confessor, III class
+10 c : Com. of Ss. Gordian and Epimachus.
+11 2 R : Ss. Philip and James Apostles, II class.
+12 3 : Ss. Nereus, Achilleus, Domitilla Virgin, and Pancras Martyrs, III class.
+13 3 : St. Robert Bellarmine Bishop, Confessor, and Doctor of the Church, III class.
+14 c : Commemoration of St. Boniface Martyr, Comm.
+15 3 : St. John Baptist de la Salle Confessor, III class.
+16 3 : St. Ubald Bishop and Confessor, III class.
+17 3 : St. Paschal Baylon Confessor, III class.
+18 3 R : St. Venantius Martyr, III class.
+19 3 : St. Peter Celestine Pope and Confessor, III class
+19 c : Com. of St. Pudentiana Virgin.
+20 3 : St. Bernardine of Siena Confessor, III class.
+25 3 : St. Gregory VII Pope and Confessor, III class
+25 c : Com. of St. Urban I Pope and Martyr.
+26 3 : St. Philip Neri Confessor, III class 
+26 c : Com. of St. Eleutherius Pope and Martyr.
+27 3 : St. Bede the Venerable Confessor and Doctor of the Church, III class
+27 c : Com. of St. John I Pope and Martyr.
+28 3 : St. Augustine Bishop and Confessor, III class.
+29 3 : St. Mary Magdalen de Pazzi Virgin, III class.
+30 c : Commemoration of St. Felix I Pope and Martyr, Comm.
+31 2 : Blessed Virgin Mary, Queen, II class
+31 c : Com. of St. Petronilla Virgin.
+
+= 6
+1 3 : St. Angela Merici Virgin, III class.
+2 c : Commemoration of Ss. Marcellinus, Peter, and Erasmus Bishop, Martyrs, Comm.
+4 3 : St. Francis Caracciolo Confessor, III class.
+5 3 R : St. Boniface Bishop and Martyr, III class.
+6 3 : St. Norbert Bishop and Confessor, III class.
+9 c : Commemoration of Ss. Primus and Felician Martyrs, Comm.
+10 3 : St. Margaret Queen, Widow, III class.
+11 3 R : St. Barnabas Apostle, III class.
+12 3 : St. John of San Facundo Confessor, III class
+12 c : Com. of Ss. Basilides, Cyrinus, Nabor and Nazarius Martyrs.
+13 3 : St. Anthony of Padua Confessor, III class.
+14 3 : St. Basil the Great Bishop, Confessor, and Doctor of the Church, III class.
+15 c : Commemoration of Ss. Vitus, Modestus, and Crescentia Martyrs, Comm.
+17 3 : St. Gregory Barbarigo Bishop and Confessor, III class.
+18 3 : St. Ephraem Syrus Deacon, Confessor, and Doctor of the Church, III class
+18 c : Com. of Ss. Mark and Marcellianus Martyrs.
+19 3 : St. Juliana Falconieri Virgin, III class
+19 c : Com. of Ss. Gervase and Protase Martyrs.
+20 c : Commemoration of St. Silverius Pope and Martyr, Comm.
+21 3 : St. Aloysius Gonzaga Confessor, III class.
+22 3 : St. Paulinus Bishop and Confessor, III class
+23 2 : Vigil, II class.
+24 1 : On the Nativity of St. John the Baptist, I class.
+25 3 : St. William Abbot, III class.
+26 3 R : Ss. John and Paul Martyrs, III class.
+28 2 R : Vigil, II class.
+29 1 R o : Ss. Peter and Paul Apostles, I class.
+30 c : On the Commemoration of St. Paul Apostle, III class
+30 c : Com. of St. Peter Apostle.
+
+= 7
+1 1 f : The Most Precious Blood of our Lord Jesus Christ, I class.
+2 2 : On the Visitation of the Blessed Virgin Mary, II class
+2 c : Com. of Ss. Processus and Martinian Martyrs.
+3 3 : St. Irenaeus Bishop and Martyr, III class.
+5 3 : St. Anthony Mary Zaccaria Confessor, III class.
+7 3 : Ss. Cyril and Methodius Bishops and Confessors, III class.
+8 3 : St. Elizabeth Queen, Widow, III class.
+10 3 R : The Seven Holy Brothers Martyrs, and Ss. Rufina and Secunda Virgins and Martyrs, III class.
+11 c : Commemoration of St. Pius I Pope and Martyr, Comm.
+12 3 : St. John Gualbert Abbot, III class
+12 c : Com. of Ss. Nabor and Felix Martyrs.
+14 3 : St. Bonaventure Bishop, Confessor, and Doctor of the Church, III class.
+15 3 : St. Henry II Emperor, Confessor, III class.
+16 R c : Commemoration of the Blessed Virgin Mary of Mt. Carmel, Comm.
+17 c : Commemoration of St. Alexius Confessor, Comm.
+18 3 : St. Camillus de Lellis Confessor, III class
+18 c : Com. of St. Symphorosa and her seven Sons Martyrs.
+19 3 : St. Vincent de Paul Confessor, III class.
+20 3 : St. Jerome Emiliani Confessor, III class
+20 c : Com. of St. Margaret Virgin Martyr.
+21 3 : St. Lawrence of Brindisi Confessor and Doctor of the Church, III class
+21 c : Com. of St. Praxedes Virgin.
+22 3 : St. Mary Magdalene Penitent, III class.
+23 3 R : St. Apollinaris Martyr, III class
+23 c : Com. of St. Liborius Bishop and Confessor.
+24 c : Commemoration of St. Christina Virgin and Martyr.
+25 2 R : St. James Apostle, II class
+25 c : Com. of St. Christopher Martyr.
+26 2 : St. Anne Mother of the Blessed Virgin Mary, II class.
+27 c : Commemoration of St. Pantaleon Martyr, Comm.
+28 3 R : Ss. Nazarius and Celsus Martyrs, Victor I Pope and Martyr, and St. Innocent I Pope and Confessor, III class.
+29 3 : St. Martha Virgin, III class
+29 c : Com. of Ss. Felix, Simplicius, Faustinus, and Beatrice Martyrs.
+30 R c : Commemoration of Ss. Abdon and Sennen Martyrs, Comm.
+31 3 : St. Ignatius Confessor, III class.
+
+= 8
+1 c : Commemoration of the Holy Machabees Martyrs, Comm.
+2 3 : St. Alphonsus Mary of Liguori Bishop, Confessor, and Doctor of the Church, III class 
+2 c : Com. of St. Stephen I Pope and Martyr.
+3 R : Finding of the body of St. Stephen the first Martyr.
+4 3 : St. Dominic Confessor, Greater III class.
+5 3 : On the Dedication of Our Lady of the Snows, III class.
+6 2 f : On the Transfiguration of our Lord Jesus Christ, II class
+6 c : Com. of Ss. Xystus II Pope, Felicissimus, and Agapitus Martyrs.
+7 3 : St. Cajetan Confessor, III class
+7 c : Com. of St. Donatus Bishop and Martyr.
+8 3 R : St. John Mary Vianney Confessor and Priest, III class
+8 c : Com. of Ss. Cyriacus, Largus, and Smaragdus Martyrs.
+9 3 : Vigil, III class 
+9 c : Com. of St. Romanus Martyr.
+10 2 R : St. Laurence Martyr, II class.
+11 c : Commemoration of Ss. Tiburtius and Susanna Virgin, Martyrs, Comm.
+12 3 : St. Clare Virgin, III class.
+13 c : Commemoration of Ss. Hippolytus and Cassian Martyrs, Comm.
+14 2 : Vigil, II class
+14 c : Com. of St. Eusebius Confessor.
+15 1 o : On the Assumption of the Blessed Virgin Mary, I class.
+16 2 : St. Joachim Father of the Blessed Virgin Mary, Confessor, II class.
+17 3 : St. Hyacinth of Poland Confessor, III class.
+18 c : Commemoration of St. Agapitus Martyr, Comm.
+19 3 : St. John Eudes Confessor, III class.
+20 3 : St. Bernard Abbot and Doctor of the Church, III class.
+21 3 : St. Jane Frances de Chantal Widow, III class.
+22 2 o : Immaculate Heart of the Blessed Virgin Mary, II class
+22 c : Com. of Ss. Timothy and Companions Martyrs.
+23 3 : St. Philip Benizi Confessor, III class.
+24 2 R : St. Bartholomew Apostle, II class.
+25 3 : St. Louis King, Confessor, III class.
+26 c : Commemoration of St. Zephyrinus Pope Martyr, Comm.
+27 3 : St. Joseph Calasanctius Confessor, III class.
+28 3 : St. Augustine Bishop, Confessor, and Doctor of the Church, III class
+28 c : Com. of St. Hermes Martyr.
+29 3 R : On the Beheading of St. John the Baptist, III class
+29 c : Com. of St. Sabina Martyr.
+30 3 : St. Rose of Lima Virgin, III class
+30 c : Com. of Ss. Felix and Adauctus Martyrs.
+31 3 : St. Raymond Nonnatus Confessor, III class.
+
+= 9
+1 c : Commemoration of St. Giles Abbot, Comm, 
+1 c : Com. of the Holy Twelve Brothers Martyrs.
+2 3 : St. Stephen King, Confessor, III class.
+3 3 : St. Pius X Pope and Confessor, III class.
+5 3 : St. Laurence Justinian Bishop and Confessor, III class.
+8 2 : On the Nativity of the Blessed Virgin Mary, II class
+8 c : Com. of St. Hadrian Martyr.
+9 c : Commemoration of St. Gorgonius Martyr, Comm.
+10 3 : St. Nicholas of Tolentino Confessor, III class.
+11 c : Commemoration of Ss. Protus and Hyacinth Martyrs, Comm.
+12 3 : The Most Holy Name of Mary, III class.
+14 2 R f : On the Exaltation of the Holy Cross, II class.
+15 2 : Seven Sorrows of the Blessed Virgin Mary, II class
+15 c : Com. of St. Nicomedes Martyr.
+16 3 R : St. Cornelius Pope and St. Cyprian Bishop, Martyrs, III class
+16 c : Com. of Ss. Euphemia Virgin, Lucy and Geminianus Martyrs.
+17 c : Commemoration of the Impression of the sacred Stigmata of St. Francis Confessor, Comm.
+18 3 : St. Joseph of Cupertino Confessor, III class.
+19 3 R : St. Januarius Bishop and Companions Martyrs, III class.
+20 c : Commemoration of St. Eustace and Companions Martyrs, Comm.
+21 2 R : St. Matthew Apostle and Evangelist, II class.
+22 3 : St. Thomas of Villanova Bishop and Confessor, III class
+22 c : Com. of Ss. Maurice and Companions Martyrs.
+23 3 R : St. Linus Pope and Martyr, III class
+23 c : Com. of St. Thecla Virgin and Martyr.
+24 c : Commemoration of Our Lady of Ransom, Comm.
+26 c : Commemoration of Ss. Cyprian and Justina Virgin, Martyrs, Comm.
+27 3 R : Ss. Cosmas and Damian Martyrs, III class.
+28 3 R : St. Wenceslaus Duke, Martyr, III class.
+29 1 : On the Dedication of St. Michael Archangel, I class.
+30 3 : St. Jerome Priest, Confessor, and Doctor of the Church, III class.
+
+= 10
+1 c : Commemoration of St. Remigius Bishop and Confessor, Comm.
+2 3 : The Holy Guardian Angels, Greater III class.
+3 3 : St. Teresa of the Child Jesus Virgin, III class.
+4 3 : St. Francis of Assisi Confessor, III class.
+5 c : Commemoration of St. Placid and companions Martyrs, Comm.
+6 3 : St. Bruno Confessor, III class.
+7 2 : Blessed Virgin Mary of the Rosary, II class
+7 c : Com. of St. Mark Pope and Confessor.
+8 3 : St. Bridget Widow, III class
+8 c : Com. of Ss. Sergius, Bacchus, Marcellus and Apuleius Martyrs.
+9 3 : St. John Leonard Confessor, III class
+9 c : Com. of St. Denis Bishop, Rusticus Priest, and Eleutherius Martyrs.
+10 3 : St. Francis Borgia Confessor, III class.
+11 2 : The Maternity of the Blessed Virgin Mary, II class.
+13 3 : St. Edward King, Confessor, III class.
+14 3 R : St. Callistus I Pope and Martyr, III class.
+15 3 : St. Teresa Virgin, III class.
+16 3 : St. Hedwig Widow, III class.
+17 3 : St. Margaret Mary Alacoque Virgin, III class.
+18 2 R : St. Luke Evangelist, II class.
+19 3 : St. Peter of Alcantara Confessor, III class.
+20 3 : St. John Cantius Confessor, III class.
+21 c : Commemoration of St. Hilarion Abbot, Comm.
+21 c : Com. of St. Ursula and Companions Virgins and Martyrs.
+23 3 : St. Anthony Mary Claret Bishop and Confessor, III class.
+24 3 : St. Raphael Archangel, III class.
+25 c : Commemoration of Ss. Chrysanthus and Daria Martyrs, Comm.
+26 c : Commemoration of St. Evaristus Pope and Martyr, Comm.
+28 2 R : Ss. Simon and Jude Apostles, II class.
+
+= 11
+1 1 o : All Saints, I class.
+4 3 : St. Charles Bishop and Confessor, III class
+4 c : Com. of Ss. Vitalis and Agricola Martyrs.
+8 c : Commemoration of the Holy Four Crowned Martyrs, Comm.
+9 2 f : On the Dedication of the Archbasilica of the most Holy Saviour, II class
+9 c : Com. of St. Theodore Martyr.
+10 3 : St. Andrew Avellino Confessor, III class
+10 c : Com. of Ss. Tryphon, Respicius, and Nympha Martyrs.
+11 3 : St. Martin Bishop and Confessor, III class
+11 c : Com. of St. Mennas Martyr.
+12 3 : St. Martin I Pope and Martyr, III class.
+13 3 : St. Didacus Confessor, III class.
+14 3 R : St. Josaphat Bishop and Martyr, III class.
+15 3 : St. Albert the Great Bishop, Confessor, and Doctor of the Church, III class.
+16 3 : St. Gertrude Virgin, III class.
+17 3 : St. Gregory Thaumaturgus Bishop and Confessor, III class.
+18 3 : On the Dedication of the Basilicas of Ss. Peter and Paul, III class.
+19 3 : St. Elizabeth Widow, III class
+19 c : Com. of St. Pontianus Pope and Martyr.
+20 3 : St. Felix of Valois Confessor, III class.
+21 3 : On the Presentation of the Blessed Virgin Mary, III class.
+22 3 R : St. Cecilia Virgin and Martyr, III class.
+23 3 R : St. Clement I Pope and Martyr, III class
+23 c : Com. of St. Felicitas Martyr.
+24 3 : St. John of the Cross Confessor and Doctor of the Church, III class
+24 c : Com. of St. Chrysogonus Martyr.
+25 3 : St. Catherine Virgin and Martyr, III class.
+26 3 : St. Sylvester Abbot, III class
+26 c : Com. of St. Peter of Alexandria Bishop and Martyr.
+29 c : Commemoration of St. Saturninus, Comm.
+30 2 R : St. Andrew Apostle, II class.
+
+= 12
+2 3 R : St. Bibiana Virgin and Martyr, III class.
+3 3 : St. Francis Xavier Confessor, III class.
+4 3 : St. Peter Chrysologus Bishop, Confessor, and Doctor of the Church, III class
+4 c : Com. of St. Barbara Virgin and Martyr.
+5 c : Commemoration of St. Sabbas Abbot, Comm.
+6 3 : St. Nicholas Bishop and Confessor, III class.
+7 3 : St. Ambrose Bishop, Confessor, and Doctor of the Church, III class.
+8 1 o i : On the Immaculate Conception of the Blessed Virgin Mary, I class.
+10 c : Commemoration of St. Melchiades Pope and Martyr, Comm.
+11 3 : St. Damasus I Pope and Confessor, III class.
+13 3 R : St. Lucy Virgin and Martyr, III class.
+16 3 R : St. Eusebius Bishop and Martyr, III class.
+21 2 : St. Thomas Apostle, II class.
+24 1 f : Vigil of the Nativity of Our Lord
+25_0 1 o f : The Nativity of Our Lord, First Mass at Midnight
+25_6 1 o f : The Nativity of Our Lord, Second Mass at Dawn
+25_6 c 1 : Commemoration of St. Anastasia Martyr.
+25_12 1 o f : The Nativity of Our Lord, Third Mass during the day
+25 1 o f : The Nativity of Our Lord
+26 2 R : II day within the octave of the Nativity of the Lord: St. Stephen Protomartyr, II class.
+27 2 : III day within the octave of the Nativity of the Lord: St. John Apostle and Evangelist, II class.
+28 2 R : IV day within the octave of the Nativity of the Lord: The Holy Innocents, II class.
+29 2 : Of the V day within the octave of the Nativity of the Lord, II class
+29 c : Commemoration of St. Thomas Bishop and Martyr.
+30 2 : Of the VI day within the Octave of the Nativity, II class.
+31 2 : Of the VII day within the Octave of the Nativity, II class
+31 c : Commemoration of St. Sylvester I Pope and Confessor.

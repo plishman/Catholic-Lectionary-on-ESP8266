@@ -235,15 +235,19 @@ bool Config::StartServer(String lang) {
 	//   the fully-qualified domain name is "esp8266.local"
 	// - second argument is the IP address to advertise
 	//   we send our IP address on the WiFi network
-	if (!MDNS.begin("lectionary")) {
-		DEBUG_PRT.println(F("Error setting up MDNS responder!"));
-		return false;
-	}
-
-	// Add service to MDNS-SD
-	MDNS.addService("http", "tcp", 80);
 	
-	DEBUG_PRT.println(F("mDNS responder started"));
+	////TODO: PLL-23-07-2020 Put this code back in when a working version of the mDNS library is made available
+	// PLL-23-07-2020 mDNS not working in latest version
+	//
+	//if (!MDNS.begin("lectionary", WiFi.localIP())) {
+	//	DEBUG_PRT.println(F("Error setting up MDNS responder!"));
+	//	return false;
+	//}
+	//
+	// Add service to MDNS-SD
+	//MDNS.addService("http", "tcp", 80);
+	//
+	//DEBUG_PRT.println(F("mDNS responder started"));
   
 	server.on ( "/settings.json", handleSettingsJson );
 	server.on ( "/setconf.htm", handleSetConf );

@@ -2,7 +2,7 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2020 Philip Lishman, Licensed under GPL3, see LICENSE
 
-// Built with NodeMCU1.0(ESP12E module) config (Tools->Board)
+// Built with NodeMCU1.0(ESP12E module) config (Tools->Board) Using ESP8266 Community version 2.4.0 (Tools->Board->Boards Manager)
 // Upload speed 921600
 // CPU Freq 80MHz
 // Debug Port: Disabled/Debug Level: None
@@ -34,6 +34,7 @@
 #include <Temporale.h>
 #include <Lectionary.h>
 #include <Bible.h>
+#include <Tridentine.h>
 #include <SPI.h>
 //#include <epd2in7b.h>
 //#include <epdpaint.h>
@@ -79,6 +80,14 @@ GxEPD_Class ePaper(io, D2, D3 /*RST=D5*/ /*BUSY=D12*/);
 FrameBuffer fb(SPI, D4, 0, PANEL_SIZE_X, PANEL_SIZE_Y);
 TextBuffer tb(fb);
 DiskFont diskfont(fb);
+
+// PLL-07-07-2020 fonts for Latin Mass Propers
+  DiskFont diskfont_normal(fb);
+  DiskFont diskfont_i(fb);
+  DiskFont diskfont_plus1_bi(fb); 
+  DiskFont diskfont_plus2_bi(fb);
+// PLL-07-07-2020 fonts for Latin Mass Propers
+
 #else
 TextBuffer tb(ePaper);
 DiskFont diskfont(ePaper);
@@ -97,6 +106,12 @@ enum DISPLAY_UPDATE_TYPE {
   font_missing, 
   crash_bug
 };
+
+
+// Although function prototypes are usually handled by the Arduino IDE for .ino sketches, these prototypes 
+// are necessary to allow default values to be set for the functions
+void updateDisplay(DISPLAY_UPDATE_TYPE d, int8_t lut_mode = LUT_MODE_1BPP);
+void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor, int8_t lut_mode = LUT_MODE_1BPP);
 
 //void updateDisplay(DISPLAY_UPDATE_TYPE d);
 //void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor);
@@ -130,11 +145,11 @@ String epaper_messagetext = "";
 uint16_t epaper_messagetext_color = GxEPD_BLACK;
 int displayPage = 0;
 
-void updateDisplay(DISPLAY_UPDATE_TYPE d) {
-	updateDisplay(d, "", GxEPD_BLACK);
+void updateDisplay(DISPLAY_UPDATE_TYPE d, int8_t lut_mode) {
+	updateDisplay(d, "", GxEPD_BLACK, lut_mode);
 }
 
-void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor) {
+void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor, int8_t lut_mode) {
 	displayPage = 0;
 
 	DEBUG_PRT.println(F("Updating Display"));
@@ -152,7 +167,8 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 
 		int epd_contrast = Config::GetEPDContrast();
 
-		switch (diskfont._FontHeader.antialias_level)
+		//switch (diskfont._FontHeader.antialias_level)
+    switch (lut_mode)
 		{
 		case 4:
 			ePaper.resetRefreshNumber(LUT_MODE_3BPP);
@@ -424,8 +440,8 @@ void checkSpiffsDump() {
   fs::File f_spiffs = SPIFFS.open(F(CRASHFILEPATH), "r");
   if(!f_spiffs) return;
 
-  File f_sd = SD.open(F(CRASHFILEPATH), O_RDWR | O_APPEND);
-  if(!f_sd) f_sd = SD.open(F(CRASHFILEPATH), O_RDWR | O_CREAT);
+  File f_sd = SD.open(F(CRASHFILEPATH), sdfat::O_RDWR | sdfat::O_APPEND);
+  if(!f_sd) f_sd = SD.open(F(CRASHFILEPATH), sdfat::O_RDWR | sdfat::O_CREAT);
   if(f_sd) {
     time64_t date = 0;
     Config::getLocalDateTime(&date);
@@ -906,81 +922,87 @@ void loop(void) {
     DEBUG_PRT.println(F("Got datetime."));
     //network.wifi_sleep(); // no longer needed, sleep wifi to save power
   
-  
-  
-    /************************************************/ 
-    // *3* get Bible reference for date (largest task)
-    wdt_reset();
-    DEBUG_PRT.println(F("*3*\n"));
-    c.get(date);
-  
-  
-  
-    /************************************************/ 
-    // *4* Make calendar entry text string for day
-    DEBUG_PRT.println(F("*4*\n"));
-    //String mth = c._I18n->get("month." + String(ts.Month));
-    ////String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
-    //String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
-    String datetime = c._I18n->getdate(date);
-    DEBUG_PRT.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
-    if (c.day.is_sanctorale) {
-      DEBUG_PRT.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
-    }
+    bool bLatinMass = c._I18n->configparams.lectionary_path.startsWith("Lect/EF"); //true;
+    int8_t latinmass_custom_waketime = -1;
     
-  
-    
-    /************************************************/ 
-    // *5* Get lectionary (readings) for this date
-    DEBUG_PRT.println(F("*5*\n"));
-    String refs = "";
-    wdt_reset();
-    Lectionary l(c._I18n);
-  
-    bool b_OT = false;
-    bool b_NT = false; 
-    bool b_PS = false; 
-    bool b_G = false;
-  
-    l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
-    DEBUG_PRT.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
-    
-    ReadingsFromEnum r;
-
-    bool getLectionaryReadingEveryHour = true; // was false. If we get here, must return a reading, since reading scheduling when using DeepSleep mode 
-                                               // (which wakes *every hour* to check if a reading is due) is now handled in the init() code
-    //if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V || Battery::power_connected()) getLectionaryReadingEveryHour = true;    
-        
-    if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true Battery::power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
-      l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
-  
-      if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
-        r=READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
-                                  // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
-                                  // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
-                                  // returned on Saints days (apart from those following Christmas day, which I did have).
-        l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
-      }
-            
+    if(!bLatinMass) {  
       /************************************************/ 
-      // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
-      DEBUG_PRT.println(F("*6*\n"));
-      if (!display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
-        DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
-        r=READINGS_G;
-        l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
-        display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers);
+      // *3* get Bible reference for date (largest task)
+      wdt_reset();
+      DEBUG_PRT.println(F("*3*\n"));
+      c.get(date);
+    
+    
+    
+      /************************************************/ 
+      // *4* Make calendar entry text string for day
+      DEBUG_PRT.println(F("*4*\n"));
+      //String mth = c._I18n->get("month." + String(ts.Month));
+      ////String datetime = String(ts.Day) + " " + String(m) + " " + String(ts.Year + 1970);
+      //String datetime = String(ts.Day) + " " + mth + " " + String(ts.Year + 1970);
+      String datetime = c._I18n->getdate(date);
+      DEBUG_PRT.println(datetime + "\t" + c.day.season + "\t" + c.day.day + "\t" + c.day.colour + "\t" + c.day.rank);
+      if (c.day.is_sanctorale) {
+        DEBUG_PRT.println("\t" + c.day.sanctorale + "\t" + c.day.sanctorale_colour + "\t" + c.day.sanctorale_rank);
       }
-    }
-    else {
-      if (wake_reason == WAKE_DEEPSLEEP) {
-        DEBUG_PRT.println(F("Lectionary was woken from ESP8266 DeepSleep mode (wake_reason == WAKE_DEEPSLEEP. ESP8266 DeepSleep mode must wake every hour, even if the reading does not need to be updated. Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));    
+      
+    
+      
+      /************************************************/ 
+      // *5* Get lectionary (readings) for this date
+      DEBUG_PRT.println(F("*5*\n"));
+      String refs = "";
+      wdt_reset();
+      Lectionary l(c._I18n);
+    
+      bool b_OT = false;
+      bool b_NT = false; 
+      bool b_PS = false; 
+      bool b_G = false;
+    
+      l.test(c.day.lectionary, c.day.liturgical_year, c.day.liturgical_cycle, &b_OT, &b_NT, &b_PS, &b_G);    
+      DEBUG_PRT.printf("OT:%s NT:%s PS:%s G:%s\n", String(b_OT).c_str(), String(b_NT).c_str(), String(b_PS).c_str(), String(b_G).c_str());
+      
+      ReadingsFromEnum r;
+  
+      bool getLectionaryReadingEveryHour = true; // was false. If we get here, must return a reading, since reading scheduling when using DeepSleep mode 
+                                                 // (which wakes *every hour* to check if a reading is due) is now handled in the init() code
+      //if (wake_reason != WAKE_ALARM_1 || wake_reason == WAKE_USB_5V || Battery::power_connected()) getLectionaryReadingEveryHour = true;    
+          
+      if (getLectionaryReading(date, &r, getLectionaryReadingEveryHour/*true Battery::power_connected()*/, b_OT, b_NT, b_PS, b_G)) {      
+        l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+    
+        if (refs == "") { // 02-01-18 in case there is no reading, default to Gospel, since there will always be a Gospel reading
+          r=READINGS_G; // there may be a bug: during weekdays, when the Lectionary number comes from a Saints' day and not the Calendar (Temporale), during Advent, Christmas
+                                    // and Easter there may be a reading from NT (Christmas and Easter, when normally they're absent), or the NT (normally absent during Advent).
+                                    // Need to check this works properly, but I don't have the Lectionary numbers for all the Saints' days, so currently the Temporale Lectionary numbers are
+                                    // returned on Saints days (apart from those following Christmas day, which I did have).
+          l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);    
+        }
+              
+        /************************************************/ 
+        // *6* Update epaper display with reading, use disk font (from SD card) if selected in config
+        DEBUG_PRT.println(F("*6*\n"));
+        if (!display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers)) { // if there is no reading for the current part of the day, display the Gospel reading instead (rare)
+          DEBUG_PRT.println(F("No reading found (Apocrypha missing from this Bible?). Displaying Gospel reading instead\n"));
+          r=READINGS_G;
+          l.get(c.day.liturgical_year, c.day.liturgical_cycle, r, c.day.lectionary, &refs);
+          display_calendar(datetime, &c, refs, right_to_left, verse_per_line, show_verse_numbers);
+        }
       }
       else {
-        DEBUG_PRT.println(F("Lectionary was woken from unknown cause (wake_reason == WAKE_UNKNOWN). Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));            
+        if (wake_reason == WAKE_DEEPSLEEP) {
+          DEBUG_PRT.println(F("Lectionary was woken from ESP8266 DeepSleep mode (wake_reason == WAKE_DEEPSLEEP. ESP8266 DeepSleep mode must wake every hour, even if the reading does not need to be updated. Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));    
+        }
+        else {
+          DEBUG_PRT.println(F("Lectionary was woken from unknown cause (wake_reason == WAKE_UNKNOWN). Reading not scheduled to be updated for this hour (updates every 4 hours, at 8am, 12pm, 4pm, 8pm and midnight"));            
+        }
       }
     }
-
+    else { // if bLatinMass
+      String datestring = c._I18n->getdate(date);
+      DoLatinMassPropers(date, datestring, c._I18n->configparams.right_to_left, c._I18n->configparams.lectionary_path, c._I18n->configparams.lang, latinmass_custom_waketime);
+    }
     DEBUG_PRT.println(F("Calculating next wake time:"));
 
     rtcData_t rtcData = {0};
@@ -1003,15 +1025,45 @@ void loop(void) {
     uint8_t Hour = ts.Hour;
     int i = 1;
     
-    if (Hour != 23) { // if crossing a day boundary, the season and/or number of readings may change, so will always wake on a day boundary, so make the next wake time default to 1 hour
-      while (!getLectionaryReading(date + (SECS_PER_HOUR * i), &r, false, b_OT, b_NT, b_PS, b_G)) { // check if there will be a reading next hour
-        rtcData.data.wake_hour_counter++;
-        i++;
-        Hour = (Hour + 1 > 23) ? 0 : Hour + 1;
-        if (Hour == 0) break;
+    if(!bLatinMass) { 
+      ReadingsFromEnum r;
+    
+      bool b_OT = false;
+      bool b_NT = false; 
+      bool b_PS = false; 
+      bool b_G = false;
+
+      if (Hour != 23) { // if crossing a day boundary, the season and/or number of readings may change, so will always wake on a day boundary, so make the next wake time default to 1 hour
+        while (!getLectionaryReading(date + (SECS_PER_HOUR * i), &r, false, b_OT, b_NT, b_PS, b_G)) { // check if there will be a reading next hour
+          rtcData.data.wake_hour_counter++;
+          i++;
+          Hour = (Hour + 1 > 23) ? 0 : Hour + 1;
+          if (Hour == 0) break;
+        }
       }
     }
-
+    else { // if bLatinMass
+      if (latinmass_custom_waketime == -1) {
+        if (ts.Hour >= 0 && ts.Hour < 9) {
+          rtcData.data.wake_hour_counter = 9 - ts.Hour; // midnight to 8am Introit (Gloria at 9am)
+          Hour = 9;
+        }
+        else if (ts.Hour >= 19) {
+          rtcData.data.wake_hour_counter = 24 - ts.Hour;  // 7pm to midnight Postcommunio (followed by next day's Introit at midnight)
+          Hour = 0;
+        }
+        else if (ts.Hour > 8 && ts.Hour < 19) {         // remaining parts of Mass propers at 1 hour intervals between 9 am (Gloria) and 7pm (Postcommunio)
+          rtcData.data.wake_hour_counter = 1;
+          Hour = ts.Hour + 1;
+        }
+      }
+      else {
+          Hour = latinmass_custom_waketime;        
+          if (latinmass_custom_waketime == 0) latinmass_custom_waketime = 24; // handle wrap around
+          rtcData.data.wake_hour_counter = latinmass_custom_waketime - ts.Hour;
+      }
+    }
+    
     DEBUG_PRT.printf("Next reading is in %d hour(s)\n", rtcData.data.wake_hour_counter); 
 
     Config::writeRtcMemoryData(rtcData);        
@@ -1508,6 +1560,28 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
 #else
     ePaper.setRotation(EPD_ROTATION);
 #endif
+
+//// PLL 07-07-2020 Test for Latin Mass propers (comment out in production)
+//    #ifdef USE_SPI_RAM_FRAMEBUFFER
+//      int fbwidth = fb.width();
+//      int fbheight = fb.height();
+//    #else
+//      int fbwidth = ePaper.width();
+//      int fbheight = ePaper.height();
+//    #endif
+//    DEBUG_PRT.print(F("fbwidth x fbheight = "));
+//    DEBUG_PRT.print(fbwidth);
+//    DEBUG_PRT.print(F(" x "));
+//    DEBUG_PRT.println(fbheight);
+//
+//  //PLL-25-07-2020 test harness for Latin Mass Propers
+//    //Bidi::TestHarnessLa(tb, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+//    Bidi::TestHarnessLa2(tb, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+//    //DEBUG_PRT.print(F("Bidi::TestHarnessLa returned, updating display.."));
+//    updateDisplay(display_reading);
+//    DEBUG_PRT.println(F("OK"));
+//    return true;
+//  //PLL-25-07-2020 testharness for Latin Mass Propers
   
   DEBUG_PRT.println(F("Displaying verses"));
 //  //refs = "Ps 85:9ab+10, 11-12, 13-14"; //debugging
@@ -1548,7 +1622,7 @@ bool display_calendar(String date, Calendar* c, String refs, bool right_to_left,
 ////  refs="John 3:16"; // debugging
 ////  refs="2 John 1:1"; // debugging
   
-  updateDisplay(display_reading);
+  updateDisplay(display_reading, diskfont._FontHeader.antialias_level);
     
   uint32_t free = system_get_free_heap_size();
   DEBUG_PRT.print(F("free memory = "));
@@ -1919,4 +1993,536 @@ void printDbError(EDB_Status err)
             DEBUG_PRT.println(F("OK"));
             break;
     }
+}
+
+bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, String lectionary_path, String lang, int8_t& waketime) {
+  DEBUG_PRT.println(F("Displaying calendar"));
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  fb.cls();   // clear framebuffer ready for text to be drawn
+  fb.setRotation(EPD_ROTATION); //90 degrees
+#else
+  ePaper.setRotation(EPD_ROTATION);
+#endif
+
+  #ifdef USE_SPI_RAM_FRAMEBUFFER
+    int fbwidth = fb.width();
+    int fbheight = fb.height();
+  #else
+    int fbwidth = ePaper.width();
+    int fbheight = ePaper.height();
+  #endif
+  DEBUG_PRT.print(F("fbwidth x fbheight = "));
+  DEBUG_PRT.print(fbwidth);
+  DEBUG_PRT.print(F(" x "));
+  DEBUG_PRT.println(fbheight);
+
+  
+  //Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt"); //removed - using Tridentine::GetFileDir function instead - PLL 19-10-2020
+  Tr_Calendar_Day td;
+  //Tridentine::get(date, td, true);
+  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.HolyDayOfObligation);
+  
+  LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime);
+      
+  updateDisplay(display_reading, diskfont_normal._FontHeader.antialias_level);
+  DEBUG_PRT.println(F("OK"));
+  return true;
+}
+
+void LatinMassPropers(time64_t& date, 
+                      String datestring, 
+                      Tr_Calendar_Day& td, 
+                      TextBuffer& tb, 
+                      String lect, String lang, 
+                      int fbwidth, int fbheight, 
+                      DiskFont& diskfont_normal, 
+                      DiskFont& diskfont_i, 
+                      DiskFont& diskfont_plus1_bi, 
+                      DiskFont& diskfont_plus2_bi, 
+                      bool right_to_left,
+                      int8_t& waketime) {
+  
+  // setup fonts and variables for text output
+
+  waketime = -1; // tell caller to use default waketime
+
+  bool bBold = false;
+  bool bItalic = false;
+  bool bRed = false;
+  int8_t fontsize_rel = 0;
+
+  DEBUG_PRT.print(F("Done"));
+  DEBUG_PRT.print(F("Loading fonts.."));
+  diskfont_normal.begin("/Fonts/droid11.lft");
+  diskfont_i.begin("/Fonts/droid11i.lft");
+  diskfont_plus1_bi.begin("/Fonts/droi12bi.lft");
+  diskfont_plus2_bi.begin("/Fonts/droi13bi.lft");
+  DEBUG_PRT.println(F("Done"));
+  DiskFont* pDiskfont = &diskfont_normal;
+  DEBUG_PRT.println(F("Assigned font to diskfont"));
+
+  int xpos = 0;
+  int ypos = pDiskfont->_FontHeader.charheight;
+    fbheight = fbheight - pDiskfont->_FontHeader.charheight;
+
+  int8_t line_number = 0;
+  bool bRenderRtl = right_to_left;
+  bool bWrapText = true;
+  bool bMoreText = false;
+
+  Bidi::tageffect_init();
+  Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
+  DEBUG_PRT.println(F("Set default tag effects"));
+  pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+  DEBUG_PRT.print(F("Selected default diskfont"));
+
+  bool bLiturgical_Colour_Red = false;
+
+  // text output
+
+/*
+ * PLL-19-10-2020 test code removed
+  String mass_version = "1955";
+  //String lang = "en";
+  Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt");
+*/
+
+  tmElements_t ts;
+  breakTime(date, ts);
+
+  DEBUG_PRT.printf("Datetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+  //DEBUG_PRT.println(td.DayofWeek);
+  //DEBUG_PRT.println(td.Cls);
+  //DEBUG_PRT.println(td.Colour);
+  //DEBUG_PRT.println(td.Mass);
+  //DEBUG_PRT.println(td.Commemoration);
+  DEBUG_PRT.println(td.HolyDayOfObligation);
+  DEBUG_PRT.println(td.FileDir_Season);
+  DEBUG_PRT.println(td.FileDir_Saint);
+
+  int8_t filenumber = ts.Hour - 8;    // TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
+
+  if (ts.Hour >= 0 && ts.Hour < 9) {
+    filenumber = 0;
+  }
+
+  if (ts.Hour >= 19) {
+    filenumber = 11;
+  }
+
+  //String fileroot = "/Lect/EF/" + mass_version + "/" + lang; // test code removed
+  String fileroot = "/" + lect + "/" + lang;
+  String liturgical_day = "";
+  String sanctoral_day = "";
+
+  bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
+  bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
+
+  MissalReading season;
+  MissalReading feast;
+
+  if (bIsFeast) {
+    feast.open(fileroot + td.FileDir_Saint);
+  }
+  season.open(fileroot + td.FileDir_Season);
+
+  // need to exclude commemoration on Sundays and Feasts of the Lord
+  bIsFeast = (bFeastDayOnly || (!Tridentine::sunday(date) && Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls())));
+   
+  // Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
+
+    //if (Tridentine::getClassIndex(indexheader_saint.cls) > Tridentine::getClassIndex(indexheader_season.cls)) {
+      // Feast day takes precendence
+      /*
+        In this case:
+        0 Introitus   - Comes from the feast
+        1 Gloria    - Omit if season requires
+        2 Collect     - Seasonal day becomes commemoration (after the Collect text for the Feast day:
+                    "Commemoratio <indexheader_season.name> followed by the Collect text from the season.
+        3, 4, 5 Lesson, Gradual, Gospel - Comes from the Feast
+        6 Credo     - Omit if season requires
+        7 Offertorium   - Comes from the Feast
+        8 Secreta     - Like collect (both)
+        9 Prefatio    - From the Season
+        10 Communio   - From the Feast
+        11 Postcommunio - From both
+      */
+    //}
+
+  bool bFeastIsCommemoration = false;
+  bool bFileOk = false;
+  String s = "";
+  bool bOverflowedScreen = true;
+  int8_t subpart = 0;
+  
+  if (bIsFeast) { // there is a feast on this day
+    if (bFeastDayOnly) { // is a saint's feast only
+      DEBUG_PRT.println(F("Feast day only"));
+      ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
+        
+      bOverflowedScreen = false;
+      subpart = 0;
+      while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText)) {
+        bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                          pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                          bBold, bItalic, bRed, fontsize_rel, 
+                          line_number, fbwidth, fbheight, 
+                          bRenderRtl, bWrapText, bMoreText);
+      }
+    }
+    else { // there is both a feast and a seasonal day
+      DEBUG_PRT.println(F("Feast day and seasonal day"));
+      MissalReading* p_mr_Day = &feast;
+      MissalReading* p_mr_Comm = &season;
+
+      bool bSaintsDayTakesPrecedence = (!(Tridentine::getClassIndex(feast.cls()) == Tridentine::getClassIndex(season.cls()))); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
+      /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class?
+      // need to exclude commemoration on Sundays and Feasts of the Lord
+      bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
+      
+      if (Tridentine::sunday(date)) { // TODO: may need to make allowance for feasts that move, such as feast of St Matthias, and for feasts of the Lord which override Sundays
+        bSaintsDayTakesPrecedence = false;
+      }
+      */
+            
+      if (!bSaintsDayTakesPrecedence) {
+        p_mr_Day = &season;
+        p_mr_Comm = &feast;
+      }
+            
+      sanctoral_day = p_mr_Comm->name();
+      ypos = display_day_ex(date, p_mr_Day->name(), p_mr_Day->colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
+      
+      // Feast day takes precedence, seasonal day is commemoration
+      switch(filenumber) {
+        case 0: // Introitus (from the feast)
+        case 3: // Lesson
+        case 4: // Gradual
+        case 5: // Gospel
+        case 7: // Offertorium
+        case 10: // Communio
+          bOverflowedScreen = false;
+          subpart = 0;
+          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+            bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                              pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                              bBold, bItalic, bRed, fontsize_rel, 
+                              line_number, fbwidth, fbheight, 
+                              bRenderRtl, bWrapText, bMoreText);
+          }
+        break;
+
+        case 1: // Gloria PLL-03-08-2020 From the day which has precedence (feast or seasonal day)     //(from the season, omit if required)
+        case 6: // Credo
+        case 9: // Prefatio
+          bOverflowedScreen = false;
+          subpart = 0;
+
+          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+            bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                              pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                              bBold, bItalic, bRed, fontsize_rel, 
+                              line_number, fbwidth, fbheight, 
+                              bRenderRtl, bWrapText, bMoreText);
+          }
+        break;
+
+        case 2: // Collect
+        case 8: // Secreta
+        case 11: // Postcommunio
+          {
+            bOverflowedScreen = false;
+            subpart = 0;
+            while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+              bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                bBold, bItalic, bRed, fontsize_rel, 
+                                line_number, fbwidth, fbheight, 
+                                bRenderRtl, bWrapText, bMoreText);
+            }
+            //// TODO: PLL-25-07-2020 Find out how this works!
+            if (!bSaintsDayTakesPrecedence) {
+              //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
+              if (!bOverflowedScreen && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
+                String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
+                
+                bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb, 
+                                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                bBold, bItalic, bRed, fontsize_rel, 
+                                line_number, fbwidth, fbheight, 
+                                bRenderRtl, bWrapText, true);
+              }          
+              
+              int8_t linecount = 0;
+              subpart = 0;
+              p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
+              while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
+                if ((linecount == 0 && filenumber == 8) ||                       // commemorio line is first line in this case
+                    (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemorio line comes after <br>"Let us pray"<br> line
+                  String commtext = "<BR><FONT COLOR=\"red\"><I>Commemorio " + p_mr_Comm->name() + "</I></FONT><BR>";
+                  if (!bOverflowedScreen) {
+                    bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
+                                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                        bBold, bItalic, bRed, fontsize_rel, 
+                                        line_number, fbwidth, fbheight, 
+                                        bRenderRtl, bWrapText, true);
+                  }          
+                }
+                
+                if (!bOverflowedScreen) {
+                  bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi,  diskfont_plus2_bi, 
+                                  bBold, bItalic, bRed, fontsize_rel, 
+                                  line_number, fbwidth, fbheight, 
+                                  bRenderRtl, bWrapText, bMoreText);
+                }
+                if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
+                linecount++;
+              }
+            }
+            //// PLL-25-07-2020
+            break;
+          }
+          
+        default:
+        break;
+      }
+    }
+  }
+  else { // is a seasonal day only
+    DEBUG_PRT.println(F("Seasonal day only"));
+    ypos = display_day_ex(date, season.name(), season.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
+
+    subpart = 0;
+
+    if (season.filecount != 12) {
+      if (Tridentine::IsGoodFriday(date)) {      
+        if (ts.Hour == 0) {
+          filenumber = 0; // Descriptive heading
+          subpart = 0;
+          waketime = 1;
+        }
+
+        if (ts.Hour >= 1 && ts.Hour <= 2) {
+          filenumber = 1; // Readings from Scripture, Passion
+          subpart = ts.Hour - 1;
+          waketime = ts.Hour + 1;
+        }
+
+        if (ts.Hour >= 3 && ts.Hour <= 5) {
+          filenumber = 2; // Passion
+          subpart = 0;
+          if (ts.Hour == 3) waketime = 6;
+        }
+        
+        if (ts.Hour >= 6 && ts.Hour <= 14) {
+          filenumber = 3; // II. The Great Intercessions
+          subpart = ts.Hour - 6; // 0..8
+          waketime = ts.Hour + 1;
+        }
+        
+        if (ts.Hour >= 15 && ts.Hour <= 18) {
+          filenumber = 4; // Adoration of the Cross
+          subpart = ts.Hour - 15; // 0..3
+          waketime = ts.Hour + 1;
+        }
+
+        if (ts.Hour >= 19 && ts.Hour <= 20) {
+          filenumber = 5; // Communion
+          subpart = ts.Hour - 19; // 0 or 1
+          if (ts.Hour == 19) {
+            waketime = 20;
+          }
+          else {
+            waketime = 0;
+          }
+        }
+      }
+      else if (Tridentine::IsHolySaturday(date)) {
+        if (ts.Hour <= 21) { // 22 file parts
+          filenumber = ts.Hour;
+          subpart = 0;
+          waketime = ts.Hour < 21 ? ts.Hour + 1 : 0;
+        }
+      }
+    }
+    
+    bOverflowedScreen = false;
+    while (!bOverflowedScreen && season.get(filenumber, subpart, s, bMoreText)) {
+      bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                        bBold, bItalic, bRed, fontsize_rel, 
+                        line_number, fbwidth, fbheight, 
+                        bRenderRtl, bWrapText, bMoreText);
+    }
+  }
+
+  season.close();
+  feast.close();
+
+  DEBUG_PRT.println(F("Done. Now flushing remaining text from textbuffer.."));
+  tb.flush();
+
+  DEBUG_PRT.println(F("Displaying date.."));
+  display_date_ex(date, datestring, sanctoral_day, right_to_left, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);  // shown at the top of the screen. If it is a feast day, the liturgical day is displayed at the                                                               // bottom left. Otherwise the bottom left is left blank.
+  tb.flush();
+
+  DEBUG_PRT.println(F("Completed displaying reading - Leaving LatinMassPropers()"));
+}
+
+int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_obligation, bool right_to_left, bool bRed, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi) { // uses Bidi::RenderTextEx and more advanced tag handling
+  DEBUG_PRT.print(F("display_day_ex() d="));
+  DEBUG_PRT.println(String(d));
+
+  d = replacefields(d, date);
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int fbwidth = fb.width();
+  int fbheight = fb.height();
+#else
+  int fbwidth = ePaper.width();
+  int fbheight = ePaper.height();
+#endif
+  
+  if (lit_colour == "red") {
+    d = "<FONT COLOR=\"red\">" + d + "</FONT>";
+  }
+
+  if (holy_day_of_obligation) {
+    d = d + " " + Yml::get("holy_day_of_obligation");
+  }
+  
+  //int text_xpos = (fbwidth / 2) - (int)((diskfont.GetTextWidthA(d, true))/2); // true => shape text before calculating width
+  //DEBUG_PRT.println("display_day() text_xpos = " + String(text_xpos));
+  
+  int text_xpos = 0;
+  int text_ypos = 0;
+
+  DiskFont* pDiskfont = &diskfont_normal;
+  bool bBold = false;
+  bool bItalic = false;
+  bRed = false;
+  int8_t fontsize_rel = 0;
+  int8_t line_number = 0;
+  int16_t line_height = 0;
+  
+  Bidi::RenderTextEx(d, &text_xpos, &text_ypos, tb, 
+                     pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                     bBold, bItalic, bRed, fontsize_rel, 
+                     line_number, fbwidth, fbheight, 
+                     right_to_left, true, false,
+                     line_height, 
+                     TB_FORMAT_CENTRE);
+
+  //fb.drawFastHLine(0, (int)line_height, fb.width(), GxEPD_BLACK);
+  fb.drawFastHLine(0, text_ypos + line_height, fb.width(), GxEPD_BLACK);
+
+  return text_ypos + line_height;
+}
+
+void display_date_ex(time64_t date, String datestr, String day, bool right_to_left, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi) {
+  DEBUG_PRT.print(F("\ndisplay_date: s="));
+  DEBUG_PRT.println(datestr);
+
+  day = replacefields(day, date);
+
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int fbwidth = fb.width();
+  int fbheight = fb.height();
+#else
+  int fbwidth = ePaper.width();
+  int fbheight = ePaper.height();
+#endif
+
+  int text_xpos = 0;
+  int text_ypos = 0;
+
+  DiskFont* pDiskfont = &diskfont_normal;
+  bool bBold = false;
+  bool bItalic = false;
+  bool bRed = false;
+  
+  int8_t fontsize_rel = 0;
+  int8_t line_number = 0;
+
+  text_xpos = 0; // will set text to be right justified in RenderTextEx call
+  text_ypos = fbheight - diskfont_normal._FontHeader.charheight - 1;  // TODO: calculate maximum height of text before rendering rather than relying on the smallest 
+
+  DEBUG_PRT.print(F("display_date_ex() text_xpos = "));
+  DEBUG_PRT.print(text_xpos);
+  DEBUG_PRT.print(F(", text_ypos = "));
+  DEBUG_PRT.println(text_ypos);
+  
+  Bidi::RenderTextEx(datestr, &text_xpos, &text_ypos, tb,            //       (default) font height for the offset
+                     pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                     bBold, bItalic, bRed, fontsize_rel, 
+                     line_number, fbwidth, fbheight, 
+                     right_to_left, false, false,
+                     TB_FORMAT_RJUSTIFY);
+
+  text_xpos = 0;
+  text_ypos = fbheight - diskfont_normal._FontHeader.charheight - 1;  // TODO: calculate maximum height of text before rendering rather than relying on the smallest 
+  bRed = false; //       (default) font height for the offset
+
+  day.replace("Hebdomadam", "Hebd."); // bid of a bodge to make it fit in the bottom right Sanctoral field on the display - should have a measure text function 
+  day.replace("Octavam", "Oct.");  // to check if the text fits first, then do the replacement if it does not.
+                                      
+  Bidi::RenderTextEx(day, &text_xpos, &text_ypos, tb,             
+                     pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                     bBold, bItalic, bRed, fontsize_rel, 
+                     line_number, fbwidth, fbheight, 
+                     right_to_left, false, false,
+                     TB_FORMAT_LJUSTIFY);
+}
+
+String replacefields(String s, time64_t date) {
+  s.replace("%{monthweek}", "");  // don't yet understand the calculation for the week number, plus including this tends to overflow the line, so omitting for now.
+  s.replace("%{month}", ""); 
+  return s;
+
+  /*  
+  const char* const months[5] = {"Augusti", "Septembris", "Octobris", "Novembris", "Decembris"};
+  const char* const weeks[5] = {"I.", "II.", "III.", "IV.", "V."};
+
+  tmElements_t ts;
+  breakTime(date, ts);
+
+  //DEBUG_PRT.printf("Datetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+
+  if (ts.Month > 7 && ts.Month < 13) {
+    time64_t week_start = date;
+    
+    if (ts.Wday != 1) {
+      week_start = Tridentine::sunday_before(date);
+    }
+
+    breakTime(week_start, ts);
+    int8_t week_number = 1;
+    int8_t dy = ts.Day;
+    
+    while (dy - 7 > 1) {
+      dy -= 7;
+      week_number += 1;
+    }
+
+    if (week_number > 5) {
+      DEBUG_PRT.println("replacefields() week_number > 5!");
+      week_number = 5;
+    }
+
+    if (week_number < 1) {
+      DEBUG_PRT.println("replacefields() week_number < 1!");
+      week_number = 1;
+    }
+   
+    String m = months[ts.Month - 8];
+    String mw = weeks[week_number - 1];
+  
+    s.replace("%{monthweek}", mw);
+    s.replace("%{month}", m); 
+  }
+
+  return s;
+  */
 }

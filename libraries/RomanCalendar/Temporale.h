@@ -14,15 +14,16 @@
 	#include "Arduino.h"
 	#include "../Time/TimeLib.h"
 	#include "DebugPort.h"
+	#include "RCGlobals.h"
 #else
 	#include <time.h>
 #endif
 
-#ifdef _WIN32
-	const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
-#else
-	const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
-#endif
+//#ifdef _WIN32
+//	const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
+//#else
+//	const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
+//#endif
 
 const int WEEK = 7;
 const int DAY = 24 * 3600;

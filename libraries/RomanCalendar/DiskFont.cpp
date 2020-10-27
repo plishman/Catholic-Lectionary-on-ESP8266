@@ -87,7 +87,7 @@ size_t DiskFont::Size() {
 
 bool DiskFont::Read(uint32_t* var) {
 	if (_file_sd) {
-		_file_sd.read(var, sizeof(*var)); // should be 4 bytes
+		_file_sd.read((uint8_t*)var, sizeof(*var)); // should be 4 bytes
 		return true;
 	} 
 		
@@ -102,7 +102,7 @@ bool DiskFont::Read(uint32_t* var) {
 
 bool DiskFont::Read(uint16_t* var) {
 	if (_file_sd) {
-		_file_sd.read(var, sizeof(*var)); // should be 2 bytes
+		_file_sd.read((uint8_t*)var, sizeof(*var)); // should be 2 bytes
 		return true;
 	} 
 		
@@ -130,7 +130,7 @@ bool DiskFont::Read(uint8_t* var) {
 
 bool DiskFont::Read(double* var) {
 	if (_file_sd) {
-		_file_sd.read(var, sizeof(*var)); // should be 8 bytes
+		_file_sd.read((uint8_t*)var, sizeof(*var)); // should be 8 bytes
 		return true;
 	} 
 		
@@ -144,7 +144,7 @@ bool DiskFont::Read(double* var) {
 
 bool DiskFont::Read(void* array, uint32_t bytecount) { // no way of checking bounds, so careful with this function
 	if (_file_sd) {
-		_file_sd.read(array, bytecount);
+		_file_sd.read((uint8_t*)array, bytecount);
 		return true;
 	} 
 		
@@ -222,6 +222,9 @@ bool DiskFont::begin(String fontfilename, double font_tuning_percent) {
 
 bool DiskFont::begin(String fontfilename) {
 	setDisplayPage(0);
+
+	_space_char_custom_width 		= 0.0;
+	_b_use_space_char_custom_width 	= false;
 
 	_fontfilename = fontfilename;
 
@@ -826,6 +829,14 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 
 
 void DiskFont::StripTags(String& text) {
+	int pos = text.indexOf("<");
+	while (pos != -1) {
+		int endpos = text.indexOf(">", pos);
+		text.remove(pos, endpos - pos + 1);
+		pos = text.indexOf("<");
+	}
+
+/*
 	text.replace("<b>", "");
 	text.replace("</b>", "");
 	text.replace("<i>", "");
@@ -839,7 +850,7 @@ void DiskFont::StripTags(String& text) {
 	text.replace("</I>", "");
 	text.replace("<BR>", "");
 	text.replace("<BR/>", "");	
-
+*/
 }
 
 /**
@@ -1073,6 +1084,15 @@ void DiskFont::DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_
 }
 
 
+void DiskFont::SetSpaceCharCustomWidth(double space_char_width) {
+	_space_char_custom_width = space_char_width;
+	_b_use_space_char_custom_width = true;
+}
+
+void DiskFont::ClearSpaceCharCustomWidth() {
+	_b_use_space_char_custom_width = false;
+}
+
 double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint32_t codepoint, uint16_t& char_width) {
 	//DEBUG_PRT.printf("ch = %s\t", utf8fromCodepoint(codepoint).c_str());
 	
@@ -1089,8 +1109,14 @@ double DiskFont::GetAdvanceWidth(uint16_t bitmapwidth, double advanceWidth, uint
 			return (double)_font_fixed_spacecharwidth;
 		}
 		else {
-			char_width = (uint16_t)_FontHeader.spacecharwidth;
-			return advanceWidth;			
+			if (!_b_use_space_char_custom_width) {
+				char_width = (uint16_t)_FontHeader.spacecharwidth;
+				return advanceWidth;
+			}
+			else { // space char custom width is used for fully justified text
+				char_width = (uint16_t)_space_char_custom_width;
+				return _space_char_custom_width;
+			}
 		}
 	}
 	
@@ -1364,7 +1390,7 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			pfci->heightbits = (uint16_t)pgm_read_byte(&(f->heightBits));
 			pfci->bitmapfileoffset = pgm_read_dword(&(f->offset));
 
-
+/*
 			uint32_t* ptr = (uint32_t*)&(f->advanceWidth); // need to get a double out of flash, but there is no 'pgm_read_double'
 
 			uint32_t double_h = pgm_read_dword(ptr);
@@ -1378,6 +1404,27 @@ bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_
 			pfci->advanceWidth = d;
 
 			pfci->advanceHeight = 0; // not used in rom font
+*/
+
+			//PLL-30-07-2020 Use floats rather than doubles in romfont, to save flash (approx. 8 sf rather than 16)
+			uint32_t* ptr = (uint32_t*)&(f->advanceWidth); // need to get a double out of flash, but there is no 'pgm_read_double'
+			uint32_t dwfloat = pgm_read_dword(ptr);
+		  
+			uint32_t p[1] = {dwfloat};
+			  
+			float d = *(float*)p;	  
+			pfci->advanceWidth = (double)d;
+
+			//pfci->advanceHeight = 0; // not used in rom font* yes it is
+			ptr = (uint32_t*)&(f->advanceHeight); // need to get a double out of flash, but there is no 'pgm_read_double'
+			dwfloat = pgm_read_dword(ptr);
+		  
+			p[0] = {dwfloat}; // reuse 1 element array, element 0 is the dword value read from rom
+			  
+			d = *(float*)p;	  
+			pfci->advanceHeight = (double)d;
+
+
 
 			//DEBUG_PRT.printf("[%s] %s %d\n", utf8fromCodepoint(codepoint).c_str(), String(fci->advanceWidth, 3).c_str(), fci->widthbits);
 			

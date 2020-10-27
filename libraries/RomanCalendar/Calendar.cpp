@@ -103,9 +103,9 @@ bool Calendar::get(time64_t date) { // date passed in will now be local time, so
 //	date += tz_offset; // quick and dirty - if bug occurs, need to split the time64_t value into a TMelements_t struct, and perform the arithmetic.
 	
 	DEBUG_PRT.print(F("The local time is "));
-	temporale->print_date(date);
+	Temporale::print_date(date);
 	DEBUG_PRT.print(" ");
-	temporale->print_time(date);
+	Temporale::print_time(date);
 	DEBUG_PRT.println();
 
 	DEBUG_PRT.println(F("Creating Transfers, Temporale and Sanctorale objects..."));

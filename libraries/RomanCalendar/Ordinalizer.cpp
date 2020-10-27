@@ -2,20 +2,29 @@
 
 const String Ordinalizer::types[8] = {"none", "english", "french", "latin", "chinese", "e", "period", "ordinal"};
 
+Ordinalizer::Ordinalizer() {
+	SetType("english");
+}
+
 Ordinalizer::Ordinalizer(String type) {
+	SetType(type);
+}
+
+void Ordinalizer::SetType(String type) {
 	int i = 0;
 	type.toLowerCase();
-	
+
 	while (types[i] != type && i < ORDINAL_COUNT) {
 		i++;
 	}
-	
+
 	if (i < ORDINAL_COUNT) {
 		_ordinal_type = i;
 	}
-	
+
+#ifdef __AVR__
 	DEBUG_PRT.printf("\nOrdinal type is %d, %s\n", _ordinal_type, type.c_str());
-		
+#endif
 }
 
 String Ordinalizer::ordinalize(int number) {
