@@ -1,0 +1,1 @@
+sims40x4.lft filter=lfs diff=lfs merge=lfs -text
