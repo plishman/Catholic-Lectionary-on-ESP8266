@@ -531,7 +531,7 @@ String Yml::readLine(File file, bool& bOk, int endfilepos, int maxbytes) {
 							  (ch & 0xF0 == 0xE0) ? 2 :
 							  (ch & 0xE0 == 0xC0) ? 1 : 0;
 
-	if (file.position() == file.size() || (utf8_charbytesremaining == 0 && bytecount >= maxbytes && Bidi::IsSpace(utf8_lastchar))) {
+	if (file.position() == file.size() || (utf8_charbytesremaining == 0 && bytecount >= maxbytes && Bidi::IsSpace(utf8_lastchar, false))) { // tell Bidi::IsSpace not to match a < as a word boundary (false)
 		//DEBUG_PRT.println("EOF");
 		return received;
 	} 

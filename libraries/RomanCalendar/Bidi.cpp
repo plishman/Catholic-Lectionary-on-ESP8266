@@ -36,20 +36,26 @@ int Bidi::FindFirstSpacelikeCharacter(String s, int startpos) {
 }
 
 
-bool Bidi::IsSpace(String& ch) {
+bool Bidi::IsSpace(String& ch, bool bAlsoMatchTagOpeningBracket) {
 	String spacechar = "";
-	return IsSpace(ch, spacechar);
+	return IsSpace(ch, spacechar, bAlsoMatchTagOpeningBracket);
 }
 
-bool Bidi::IsSpace(String& ch, String& foundspacechar) {
+bool Bidi::IsSpace(String& ch, String& foundspacechar, bool bAlsoMatchTagOpeningBracket) {
 	foundspacechar = "";
 	
 	uint32_t code = codepointUtf8(ch);
-	
+	bool bFoundSpaceChar = false;
+
 	switch(code)
 	{
-		case 0x0020:
 		case 0x003C: // PLL 07-07-2020 this is '<', opening tag, which we'll treat as a word boundary
+			if (bAlsoMatchTagOpeningBracket) {
+				bFoundSpaceChar	= true;
+			}
+			break;
+
+		case 0x0020:
 		case 0x1680:
 		case 0x2000:
 		case 0x2001:
@@ -63,14 +69,17 @@ bool Bidi::IsSpace(String& ch, String& foundspacechar) {
 		case 0x2009:
 		case 0x200A:
 		case 0x3000:
-			foundspacechar = ch;
-			return true;
-		
+			bFoundSpaceChar = true;
+			break;
+
 		default:
 			return false;
 	}
-	
-	return false;
+
+	if (bFoundSpaceChar) {
+		foundspacechar = ch;
+	}
+	return bFoundSpaceChar;
 }
 
 bool Bidi::ExpectSpace(String& s, int* pos) {

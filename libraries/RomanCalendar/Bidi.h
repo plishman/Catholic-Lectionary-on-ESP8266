@@ -20,8 +20,8 @@ public:
 	//Bidi();
 	static int FindFirstSpacelikeCharacter(String s, int startpos);
 
-	static bool IsSpace(String& ch);
-	static bool IsSpace(String& ch, String& foundspacechar);
+	static bool IsSpace(String& ch, bool bAlsoMatchTagOpeningBracket = true);
+	static bool IsSpace(String& ch, String& foundspacechar, bool bAlsoMatchTagOpeningBracket = true);
 	static bool ExpectSpace(String&	s, int* pos);
 		
 	static bool ExpectRTL(String& s, int* pos);
