@@ -8,6 +8,8 @@ The Roman Catholic Lectionary, Liturgical Calendar and Feast Days on ESP8266 wit
 This project implements a Calendar, Liturgical calendar, Lectionary and Feast Day (Sanctorale) calendar on the ESP8266. It also shows an indicator for Holy Days of Obligation.
 It is based on the Ruby program calendarium-romanum (https://github.com/igneus/calendarium-romanum) which implements just the Liturgical calendar and Sanctorale days. As a result, it uses the some of the same configuration files and file formats as this program, with some modifications to support month names etc.
 </p>
+<h2>Latin Mass</h2>
+The Latin Mass Propers (shown above) are now available in several languages and versions, based on output captured from a modified version of the Divinum Officium project (https://github.com/DivinumOfficium/divinum-officium). As programmed, Latin Mass Propers update twelve times daily. The Introitus for the day's Mass is shown from Midnight to 9am, then the Gloria, Collect, Lesson, Gradual, Gospel, Credo, Offertorium, Secreta, Prefatio, Communio are shown at hourly intervals thereafter, until 7pm, when the Postcommunio is shown (until midnight). On Good Friday and Holy Saturday a slightly different pattern occurs, due to the Propers for these days having more parts.
 
 ![Preview1](./lectionary5.jpg)
 ![Preview2](./lectionary3.jpg)
