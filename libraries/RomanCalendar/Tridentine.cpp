@@ -2319,9 +2319,10 @@ void Tridentine::GetFileDir(time64_t datetime, String& FileDir_Season, String& F
 
 
 
-void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, bool& HolyDayOfObligation) {
+void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation) {
 	DEBUG_PRT.print(F("Tridentine::GetFileDir2():"));
 
+	bool bSaturday = (weekday(datetime) == PY_SAT); // for Saturday of Our Lady Votive Masses
 	bool bSunday = sunday(datetime);
 	HolyDayOfObligation = bSunday;
 
@@ -2346,6 +2347,39 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	String dir_subsub = "";
 	String dir_day = "";
 
+	String votive_dir_season = "";
+	String votive_dir_sub = "";
+	String votive_dir_day = "";
+
+	if (bSaturday) {
+		votive_dir_season = "Votive";
+		votive_dir_sub = "OurLady";
+		votive_dir_day = "1";
+
+		if (season == SEASON_ADVENT) {
+			votive_dir_day = "a"; // Saturday of Our Lady in Advent
+		}
+		else if (monthofyear(datetime) == 1 || (monthofyear(datetime) == 2 && dayofmonth(datetime) == 1)) {
+			votive_dir_day = "b"; // between Holy Family up to 1st Feb inclusive
+		}
+		else if (datetime < (MaundyThursday(year))) {
+			votive_dir_day = "c"; // between 3rd Feb and Spy Wednesday
+		}
+		else if (season == SEASON_EASTER) {
+			votive_dir_day = "Pasc";
+		}
+		else if (datetime > TrinitySunday(year)) {
+			votive_dir_day = "t"; // between Trinity Sunday and Advent
+		}
+	}
+/*
+      $dir_day =
+          ($dayname[0] =~ /Adv/i) ? "a"
+        : ($month == 1 || ($month == 2 && $day == 1)) ? "b"
+        : ($dayname[0] =~ /(Epi|Quad)/i) ? "c"
+        : ($dayname[0] =~ /Pasc/i) ? "Pasc"
+        : "1";
+*/
 	DEBUG_PRT.print(F("0 "));
 
 	if (issameday(datetime, StJoseph(year))) { HolyDayOfObligation = true; }
@@ -2595,6 +2629,12 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		dir_subsub = "";
 		dir_day = String(day_of_month);
 	}
+
+	FileDir_Votive = "";
+	if (votive_dir_season != "") {
+		FileDir_Votive = String(F("/")) + votive_dir_season + String(F("/")) + votive_dir_sub + String(F("/")) + votive_dir_day;
+	}
+
 	DEBUG_PRT.print(F(" 3"));
 
 	FileDir_Season = String(F("/")) + dir_season + String(F("/")) + dir_sub + String(F("/")) + dir_subsub + String(F("/")) + dir_day + String(F("/"));
@@ -3297,6 +3337,7 @@ bool MissalReading::open(String& filedir) {
 	
 	filecount = -1;
 	partcount = -1;
+	curr_subpartlen = -1;
 
 	if (!filedir.endsWith("/")) {
 		filedir += "/";
@@ -3332,6 +3373,7 @@ bool MissalReading::open(String& filedir) {
 	else {
 		filecount = _ir.filecount;
 		partcount = _ir.partcount;
+		curr_subpartlen = _ir.fileoffset_end - _ir.fileoffset_start;
 	}
 
 	DEBUG_PRT.println(F("ok"));
@@ -3428,11 +3470,13 @@ bool MissalReading::getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetInd
 			DEBUG_PRT.println(F("MissalReading::getindex(): Found index record"));
 			filecount = _ir.filecount;
 			partcount = _ir.partcount;
+			curr_subpartlen = _ir.fileoffset_end - _ir.fileoffset_start;
 		}
 		else {
 			DEBUG_PRT.println(F("MissalReading::getindex(): Index record not found"));
 			filecount = -1;
 			partcount = -1;
+			curr_subpartlen = -1;			
 		}
 
 		return bFoundIndexRecord;
@@ -3448,6 +3492,7 @@ void MissalReading::close() {
 	_open = false;
 	filecount = -1;
 	partcount = -1;
+    curr_subpartlen = -1;
 
 	DEBUG_PRT.println(F("MissalReading::close()"));
 }

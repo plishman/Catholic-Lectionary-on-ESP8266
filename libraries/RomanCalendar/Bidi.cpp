@@ -345,7 +345,7 @@ void Bidi::GetString(String& s,
 	// check if an emphasis tag is present in the string starting at pos 
 	if (ExpectLineBreakTag(s, startstrpos)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
 		if (*bNewLine == false) {
-			DEBUG_PRT.println(F("found linebreak tag"));
+			DEBUG_PRT.println(F("found linebreak tag (0)"));
 
 			*bLineBreak = true;		   // signal a linebreak
 			*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
@@ -439,7 +439,7 @@ void Bidi::GetString(String& s,
 		if (ExpectLineBreakTag(s, &curpos) || pos == forcedBreakPos) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
 			//*bLineBreak = true;
 			bLineBreakTagFound = true;
-			DEBUG_PRT.println(F("found linebreak tag-"));			
+			DEBUG_PRT.println(F("found linebreak tag (1)"));			
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 
@@ -1195,7 +1195,8 @@ bool Bidi::RenderTextEx(String& s,
 					    bool& bRed, 
 					    int8_t& fontsize_rel,			// supported 0, +1 or +2
 					    int8_t& line_number, 
-					    int fbwidth, int fbheight, 
+					    int fbwidth, int fbheight,
+						bool& bRTL, 				// PLL-02-11-2020 preserve current reading direction from previous calls
 					    bool render_right_to_left,
 					    bool wrap_text,
 					    bool bMoreText, 				// PLL 26-12-2018 bMoreText set to true if this is not the last string in the block to be drawn
@@ -1206,7 +1207,7 @@ bool Bidi::RenderTextEx(String& s,
 
 	return RenderTextEx(s, xpos, ypos, tb, pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
 			 	        bBold, bItalic, bRed, fontsize_rel, line_number, fbwidth, fbheight, 
-			            render_right_to_left, wrap_text, bMoreText, last_line_height, format_action);
+			            bRTL, render_right_to_left, wrap_text, bMoreText, last_line_height, format_action);
 }
 
 // render bidi text using disk font
@@ -1224,7 +1225,8 @@ bool Bidi::RenderTextEx(String& s,
 					    int8_t& fontsize_rel,			// supported 0, +1 or +2
 					    int8_t& line_number, 
 					    int fbwidth, int fbheight, 
-					    bool render_right_to_left,
+					    bool& bRTL,					// PLL-02-11-2020 preserve current reading direction from previous calls
+						bool render_right_to_left,
 					    bool wrap_text,
 					    bool bMoreText, 				// PLL 26-12-2018 bMoreText set to true if this is not the last string in the block to be drawn
 					    int16_t& last_line_height, 			// will return the result from the last call to Textbuffer::typeset (the line height of the tallest line (in pixels))
@@ -1248,8 +1250,13 @@ bool Bidi::RenderTextEx(String& s,
 	int level = ArabicLigaturizer::ar_nothing; //ArabicLigaturizer::ar_composedtashkeel | ArabicLigaturizer::ar_lig | ArabicLigaturizer::DIGITS_EN2AN;
 	ArabicLigaturizer::Shape(s, alshapedtext, level);
 	s = alshapedtext;
-	DEBUG_PRT.print(F("2.."));	
-	bool bRTL = IsRightToLeftChar(utf8CharAt(s, 0)); // set initial state for RTL flag
+	DEBUG_PRT.print(F("2.."));
+
+	String c = utf8CharAt(s, 0);
+	bRTL = (c == " " || c == ".") ? bRTL : IsRightToLeftChar(c); // set initial state for RTL flag. If the first char in the string is space or fullstop, 
+																 // the default reading direction is used (from previous calls), since these characters inherit 
+																 // the reading direction of the characters before them (at the start of the string there are none)
+
 	bool bRTLrender = bRTL; // bRTL must persist since it is modified and used in GetString. Hence a copy is used for rendering, inverted in value if the rendering direction is RTL 
 							// (bRTLrender selects whether the text fragment being drawn is to be embedded reversed, eg. numbers in Arabic text).
 	bool bDirectionChanged = true; // at the start of the string, want to force GetString to check which direction the text is reading, otherwise inherit it from the preceding text
@@ -1998,7 +2005,7 @@ void Bidi::GetString2(String& s,
 	// check if an emphasis tag is present in the string starting at pos 
 	if (ExpectLineBreakTag(s, startstrpos)) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
 		if (*bNewLine == false) {
-			DEBUG_PRT.println(F("found linebreak tag"));
+			DEBUG_PRT.println(F("found linebreak tag (0)"));
 
 			*bLineBreak = true;		   // signal a linebreak
 			*endstrpos = *startstrpos; // the tag, and set the end pos of the scanned region to be the as the new start position (after the tag!).
@@ -2038,7 +2045,9 @@ void Bidi::GetString2(String& s,
 			*bRTL = bLookingForRightToLeft;
 		}
 		else {
-			*bRTL = !(*bRTL);
+			if (pos > 0) {	// PLL-02-11-2020 if the first char in the string is a space or a fullstop, then leave the RTL flag as it was from previous calls to the function
+				*bRTL = !(*bRTL);
+			}
 			bLookingForRightToLeft = *bRTL;
 		}
 		*bDirectionChanged = false;
@@ -2098,7 +2107,7 @@ void Bidi::GetString2(String& s,
 		if (ExpectLineBreakTag(s, &curpos) || pos == forcedBreakPos) { // if so, skip the tag by changing the _start_ pos of the string to the first character after 
 			//*bLineBreak = true;
 			bLineBreakTagFound = true;
-			DEBUG_PRT.println(F("found linebreak tag-"));			
+			DEBUG_PRT.println(F("found linebreak tag (1)"));			
 			lastwordendstrpos = pos; // save this position as it is a word boundary
 			lastwordendxwidth = (int)dcurrwidth; // and save the width in pixels of the string scanned up to position pos
 

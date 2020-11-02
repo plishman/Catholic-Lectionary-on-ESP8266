@@ -46,8 +46,8 @@ public:
 	static bool RenderText(String& s, int* xpos, int* ypos, TextBuffer& tb, DiskFont& diskfont, bool* bEmphasisOn, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text, bool bMoreText);
 	
 	// for Latin Mass
-	static bool RenderTextEx(String& s, int* xpos, int* ypos, TextBuffer& tb, DiskFont* pDiskfont, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi, bool& bBold, bool& bItalic, bool& bRed, int8_t& fontsize_rel, int8_t& line_number, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text, bool bMoreText, int16_t& last_line_height, uint8_t format_action = TB_FORMAT_NONE);
-	static bool RenderTextEx(String& s, int* xpos, int* ypos, TextBuffer& tb, DiskFont* pDiskfont, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi, bool& bBold, bool& bItalic, bool& bRed, int8_t& fontsize_rel, int8_t& line_number, int fbwidth, int fbheight, bool render_right_to_left, bool wrap_text, bool bMoreText, uint8_t format_action = TB_FORMAT_NONE);
+	static bool RenderTextEx(String& s, int* xpos, int* ypos, TextBuffer& tb, DiskFont* pDiskfont, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi, bool& bBold, bool& bItalic, bool& bRed, int8_t& fontsize_rel, int8_t& line_number, int fbwidth, int fbheight, bool& bRTL, bool render_right_to_left, bool wrap_text, bool bMoreText, int16_t& last_line_height, uint8_t format_action = TB_FORMAT_NONE);
+	static bool RenderTextEx(String& s, int* xpos, int* ypos, TextBuffer& tb, DiskFont* pDiskfont, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi, bool& bBold, bool& bItalic, bool& bRed, int8_t& fontsize_rel, int8_t& line_number, int fbwidth, int fbheight, bool& bRTL, bool render_right_to_left, bool wrap_text, bool bMoreText, uint8_t format_action = TB_FORMAT_NONE);
 
 	//static String tageffectstack;
 	

@@ -2021,7 +2021,7 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   //Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt"); //removed - using Tridentine::GetFileDir function instead - PLL 19-10-2020
   Tr_Calendar_Day td;
   //Tridentine::get(date, td, true);
-  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.HolyDayOfObligation);
+  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation);
   
   LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime);
       
@@ -2111,6 +2111,8 @@ void LatinMassPropers(time64_t& date,
     filenumber = 11;
   }
 
+  int8_t next_hour_filenumber = filenumber + 1;
+
   //String fileroot = "/Lect/EF/" + mass_version + "/" + lang; // test code removed
   String fileroot = "/" + lect + "/" + lang;
   String liturgical_day = "";
@@ -2118,18 +2120,38 @@ void LatinMassPropers(time64_t& date,
 
   bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
   bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
+  bool bIsVotive = SD.exists(fileroot + td.FileDir_Votive); // if there is no votive day on this day, the directory/propers for this day will not exist
 
   MissalReading season;
   MissalReading feast;
+  MissalReading votive;
 
   if (bIsFeast) {
     feast.open(fileroot + td.FileDir_Saint);
   }
+
+  if (bIsVotive) {
+    votive.open(fileroot + td.FileDir_Votive);
+  }
+  
   season.open(fileroot + td.FileDir_Season);
 
+  bool bSunday = Tridentine::sunday(date);
+  int8_t cls_season = Tridentine::getClassIndex(season.cls());
+  int8_t cls_feast = Tridentine::getClassIndex(feast.cls());
+
   // need to exclude commemoration on Sundays and Feasts of the Lord
-  bIsFeast = (bFeastDayOnly || (!Tridentine::sunday(date) && Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls())));
-   
+  bIsFeast = (bFeastDayOnly || !bSunday && cls_feast >= cls_season || cls_feast >= 6);
+  bFeastDayOnly = (cls_feast >= 6 && Tridentine::Season(date) != SEASON_ADVENT); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
+                                                                                 // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
+  // If it is a votive day and the feast is of the same or lower priority, 
+  // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
+  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls()) <= Tridentine::getClassIndex(votive.cls())) || (!bIsFeast && Tridentine::getClassIndex(season.cls()) <= Tridentine::getClassIndex(votive.cls()))));
+
+  if (bIsVotive) {
+    DEBUG_PRT.println(F("Votive Mass"));
+  }
+  
   // Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
 
     //if (Tridentine::getClassIndex(indexheader_saint.cls) > Tridentine::getClassIndex(indexheader_season.cls)) {
@@ -2155,6 +2177,7 @@ void LatinMassPropers(time64_t& date,
   String s = "";
   bool bOverflowedScreen = true;
   int8_t subpart = 0;
+  bool bRTL = right_to_left;
   
   if (bIsFeast) { // there is a feast on this day
     if (bFeastDayOnly) { // is a saint's feast only
@@ -2168,7 +2191,7 @@ void LatinMassPropers(time64_t& date,
                           pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                           bBold, bItalic, bRed, fontsize_rel, 
                           line_number, fbwidth, fbheight, 
-                          bRenderRtl, bWrapText, bMoreText);
+                          bRTL, bRenderRtl, bWrapText, bMoreText);
       }
     }
     else { // there is both a feast and a seasonal day
@@ -2176,7 +2199,7 @@ void LatinMassPropers(time64_t& date,
       MissalReading* p_mr_Day = &feast;
       MissalReading* p_mr_Comm = &season;
 
-      bool bSaintsDayTakesPrecedence = (!(Tridentine::getClassIndex(feast.cls()) == Tridentine::getClassIndex(season.cls()))); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
+      bool bSaintsDayTakesPrecedence = (!(cls_feast == cls_season)); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
       /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class?
       // need to exclude commemoration on Sundays and Feasts of the Lord
       bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
@@ -2190,6 +2213,11 @@ void LatinMassPropers(time64_t& date,
         p_mr_Day = &season;
         p_mr_Comm = &feast;
       }
+
+      if (bIsVotive) { // in this case, the feast is shown in the commemoration position (bottom left of the screen), and the votive is shown as the heading. The seasonal day is not shown
+        p_mr_Day = &votive;
+        p_mr_Comm = &feast; 
+      }
             
       sanctoral_day = p_mr_Comm->name();
       ypos = display_day_ex(date, p_mr_Day->name(), p_mr_Day->colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
@@ -2197,9 +2225,19 @@ void LatinMassPropers(time64_t& date,
       // Feast day takes precedence, seasonal day is commemoration
       switch(filenumber) {
         case 0: // Introitus (from the feast)
+        case 5: // Gospel
+            subpart = 0;
+            p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
+            if (p_mr_Day->curr_subpartlen < 200) { 
+              // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+              DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day and/or feastday)"));
+              waketime = ts.Hour + 2; // skip the next hour's reading
+            }
+            bMoreText = false;
+            s = "";
+        
         case 3: // Lesson
         case 4: // Gradual
-        case 5: // Gospel
         case 7: // Offertorium
         case 10: // Communio
           bOverflowedScreen = false;
@@ -2209,7 +2247,7 @@ void LatinMassPropers(time64_t& date,
                               pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                               bBold, bItalic, bRed, fontsize_rel, 
                               line_number, fbwidth, fbheight, 
-                              bRenderRtl, bWrapText, bMoreText);
+                              bRTL, bRenderRtl, bWrapText, bMoreText);
           }
         break;
 
@@ -2219,12 +2257,12 @@ void LatinMassPropers(time64_t& date,
           bOverflowedScreen = false;
           subpart = 0;
 
-          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {           
             bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
                               pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                               bBold, bItalic, bRed, fontsize_rel, 
                               line_number, fbwidth, fbheight, 
-                              bRenderRtl, bWrapText, bMoreText);
+                              bRTL, bRenderRtl, bWrapText, bMoreText);
           }
         break;
 
@@ -2239,7 +2277,7 @@ void LatinMassPropers(time64_t& date,
                                 pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                                 bBold, bItalic, bRed, fontsize_rel, 
                                 line_number, fbwidth, fbheight, 
-                                bRenderRtl, bWrapText, bMoreText);
+                                bRTL, bRenderRtl, bWrapText, bMoreText);
             }
             //// TODO: PLL-25-07-2020 Find out how this works!
             if (!bSaintsDayTakesPrecedence) {
@@ -2251,7 +2289,7 @@ void LatinMassPropers(time64_t& date,
                                 pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                                 bBold, bItalic, bRed, fontsize_rel, 
                                 line_number, fbwidth, fbheight, 
-                                bRenderRtl, bWrapText, true);
+                                bRTL, bRenderRtl, bWrapText, true);
               }          
               
               int8_t linecount = 0;
@@ -2266,7 +2304,7 @@ void LatinMassPropers(time64_t& date,
                                         pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                                         bBold, bItalic, bRed, fontsize_rel, 
                                         line_number, fbwidth, fbheight, 
-                                        bRenderRtl, bWrapText, true);
+                                        bRTL, bRenderRtl, bWrapText, true);
                   }          
                 }
                 
@@ -2275,7 +2313,7 @@ void LatinMassPropers(time64_t& date,
                                   pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi,  diskfont_plus2_bi, 
                                   bBold, bItalic, bRed, fontsize_rel, 
                                   line_number, fbwidth, fbheight, 
-                                  bRenderRtl, bWrapText, bMoreText);
+                                  bRTL, bRenderRtl, bWrapText, bMoreText);
                 }
                 if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
                 linecount++;
@@ -2347,17 +2385,35 @@ void LatinMassPropers(time64_t& date,
         }
       }
     }
+    else { // if is a 12-part Proper
+      if (next_hour_filenumber == 1 || next_hour_filenumber == 6) { // if the next reading will be Gloria or Credo
+        subpart = 0;
+        season.get(next_hour_filenumber, subpart, s, bMoreText);
+        if (season.curr_subpartlen < 200) { 
+          // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+          DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day only)"));
+          waketime = ts.Hour + 2; // skip the next hour's reading
+        }
+        bMoreText = false;
+        s = "";
+      }
+    }
     
+    subpart = 0;
     bOverflowedScreen = false;
-    while (!bOverflowedScreen && season.get(filenumber, subpart, s, bMoreText)) {
+
+    MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
+    
+    while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
       bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
                         pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                         bBold, bItalic, bRed, fontsize_rel, 
                         line_number, fbwidth, fbheight, 
-                        bRenderRtl, bWrapText, bMoreText);
+                        bRTL, bRenderRtl, bWrapText, bMoreText);
     }
   }
 
+  votive.close();
   season.close();
   feast.close();
 
@@ -2372,6 +2428,8 @@ void LatinMassPropers(time64_t& date,
 }
 
 int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_obligation, bool right_to_left, bool bRed, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi) { // uses Bidi::RenderTextEx and more advanced tag handling
+  bool bRTL = right_to_left;
+  
   DEBUG_PRT.print(F("display_day_ex() d="));
   DEBUG_PRT.println(String(d));
 
@@ -2411,7 +2469,7 @@ int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_
                      pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                      bBold, bItalic, bRed, fontsize_rel, 
                      line_number, fbwidth, fbheight, 
-                     right_to_left, true, false,
+                     bRTL, right_to_left, true, false,
                      line_height, 
                      TB_FORMAT_CENTRE);
 
@@ -2422,6 +2480,8 @@ int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_
 }
 
 void display_date_ex(time64_t date, String datestr, String day, bool right_to_left, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi) {
+  bool bRTL = right_to_left;
+  
   DEBUG_PRT.print(F("\ndisplay_date: s="));
   DEBUG_PRT.println(datestr);
 
@@ -2458,7 +2518,7 @@ void display_date_ex(time64_t date, String datestr, String day, bool right_to_le
                      pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                      bBold, bItalic, bRed, fontsize_rel, 
                      line_number, fbwidth, fbheight, 
-                     right_to_left, false, false,
+                     bRTL, right_to_left, false, false,
                      TB_FORMAT_RJUSTIFY);
 
   text_xpos = 0;
@@ -2472,7 +2532,7 @@ void display_date_ex(time64_t date, String datestr, String day, bool right_to_le
                      pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                      bBold, bItalic, bRed, fontsize_rel, 
                      line_number, fbwidth, fbheight, 
-                     right_to_left, false, false,
+                     bRTL, right_to_left, false, false,
                      TB_FORMAT_LJUSTIFY);
 }
 
