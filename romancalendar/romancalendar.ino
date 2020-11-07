@@ -2231,7 +2231,12 @@ void LatinMassPropers(time64_t& date,
             if (p_mr_Day->curr_subpartlen < 200) { 
               // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
               DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day and/or feastday)"));
-              waketime = ts.Hour + 2; // skip the next hour's reading
+              if (next_hour_filenumber == 6) {
+                waketime = ts.Hour + 2; // skip the next hour's reading            
+              }
+              else {
+                waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
+              }
             }
             bMoreText = false;
             s = "";
