@@ -2120,7 +2120,7 @@ void LatinMassPropers(time64_t& date,
 
   bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
   bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
-  bool bIsVotive = SD.exists(fileroot + td.FileDir_Votive); // if there is no votive day on this day, the directory/propers for this day will not exist
+  bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
 
   MissalReading season;
   MissalReading feast;
