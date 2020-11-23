@@ -2598,16 +2598,23 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		}
 		else {
 			uint8_t after_pentecost_numweeks = Season_Week(first_advent_sunday(year) - SECS_PER_WEEK, season);
-			if (season_week > 23) {	// Epiphany resumed
-				int epiphany_resumed_week = season_week + 7 - after_pentecost_numweeks;
-				dir_season = F("Epiphany");
-				dir_sub = F("Resumed");
-				dir_subsub = String(epiphany_resumed_week);
-				dir_day = (FPSTR(WeekDays[day]));
+			if ((first_advent_sunday(year) - datetime) < SECS_PER_WEEK) {	// 24th and Last week of Pentecost
+				dir_sub = F("Last");		// Last Sunday of Pentecost
+				dir_day = FPSTR(WeekDays[day]);
 			}
-			else {
-				dir_sub = String(season_week);
-				dir_day = (FPSTR(WeekDays[day]));
+			else 
+			{
+				if (season_week > 23) {	// Epiphany resumed
+					int epiphany_resumed_week = season_week + 7 - after_pentecost_numweeks;
+					dir_season = F("Epiphany");
+					dir_sub = F("Resumed");
+					dir_subsub = String(epiphany_resumed_week);
+					dir_day = (FPSTR(WeekDays[day]));
+				}
+				else {
+					dir_sub = String(season_week);
+					dir_day = (FPSTR(WeekDays[day]));
+				}
 			}
 		}
 		break;
