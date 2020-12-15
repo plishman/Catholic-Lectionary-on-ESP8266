@@ -91,6 +91,14 @@ DiskFont diskfont(fb);
 #else
 TextBuffer tb(ePaper);
 DiskFont diskfont(ePaper);
+
+// PLL-15-12-2020 fonts for Latin Mass Propers
+  DiskFont diskfont_normal(ePaper);
+  DiskFont diskfont_i(ePaper);
+  DiskFont diskfont_plus1_bi(ePaper); 
+  DiskFont diskfont_plus2_bi(ePaper);
+// PLL-15-12-2020 fonts for Latin Mass Propers
+
 #endif
 
 
@@ -185,6 +193,27 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 			epd_contrast = 1;
 			break;
 		}
+
+// testing
+/*
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int16_t x=10;
+  int16_t y=150;
+  for (int16_t j = y; j < y+16; j++) {
+    for (int16_t i = x; i < x+16; i++) {
+      for(int16_t k=0; k<8; k++) {
+        int16_t xp = i + (16*k);
+        fb.drawPixel(xp, j, GxEPD_BLACK, k*2, false);
+        fb.drawPixel(xp, j+16, GxEPD_BLACK, k*2, true);
+        fb.drawPixel(xp, j+32, GxEPD_RED, k*2, false);
+        fb.drawPixel(xp, j+48, GxEPD_RED, k*2, true);
+      }
+    }
+  }
+
+#endif
+*/
+// testing
 
 		do {
 			//Serial.printf("refresh number = %d\n", ePaper.getRefreshNumber());
@@ -1150,7 +1179,7 @@ void config_server(String lang)
 
       #define FINALDELAY 70
       int finaldelay = FINALDELAY; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
-      while(Battery::power_connected() && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp) {
+      while(Battery::power_connected() && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp && !Config::bComplete) {
         server.handleClient();  // Web server
         ArduinoOTA.handle(); // PLL-27-04-2020 OTA Update server
         wdt_reset();
@@ -2021,7 +2050,7 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   //Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt"); //removed - using Tridentine::GetFileDir function instead - PLL 19-10-2020
   Tr_Calendar_Day td;
   //Tridentine::get(date, td, true);
-  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation);
+  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation, td.ImageFilename, td.VotiveImageFilename);
   
   LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime);
       
@@ -2100,8 +2129,9 @@ void LatinMassPropers(time64_t& date,
   DEBUG_PRT.println(td.HolyDayOfObligation);
   DEBUG_PRT.println(td.FileDir_Season);
   DEBUG_PRT.println(td.FileDir_Saint);
+  DEBUG_PRT.println(td.ImageFilename);
 
-  int8_t filenumber = ts.Hour - 8;    // TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
+  int8_t filenumber = ts.Hour - 8;    // (Done) - TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
 
   if (ts.Hour >= 0 && ts.Hour < 9) {
     filenumber = 0;
@@ -2115,13 +2145,27 @@ void LatinMassPropers(time64_t& date,
 
   //String fileroot = "/Lect/EF/" + mass_version + "/" + lang; // test code removed
   String fileroot = "/" + lect + "/" + lang;
+  String fileroot_img = "/" + lect + "/images";
   String liturgical_day = "";
   String sanctoral_day = "";
+  String imagefilename = td.ImageFilename != "" ? fileroot_img + td.ImageFilename + ".bwr" : "";
+  String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
 
   bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
   bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
   bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
-
+  bool bHasImage = (td.ImageFilename != "" && SD.exists(imagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
+  bool bHasVotiveImage = (td.VotiveImageFilename != "" && SD.exists(votiveimagefilename)); // if the Mass for the day is a Votive Mass, an image will be displayed if available
+  
+  DEBUG_PRT.print(F("imagefilename is ["));
+  DEBUG_PRT.print(imagefilename);
+  DEBUG_PRT.print(F("]\nvotiveimagefilename is ["));
+  DEBUG_PRT.print(votiveimagefilename);
+  DEBUG_PRT.print(F("]\nbHasImage is "));
+  DEBUG_PRT.println(bHasImage);
+  DEBUG_PRT.print(F("bHasVotiveImage is "));
+  DEBUG_PRT.println(bHasVotiveImage);
+  
   MissalReading season;
   MissalReading feast;
   MissalReading votive;
@@ -2183,15 +2227,21 @@ void LatinMassPropers(time64_t& date,
     if (bFeastDayOnly) { // is a saint's feast only
       DEBUG_PRT.println(F("Feast day only"));
       ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
-        
-      bOverflowedScreen = false;
-      subpart = 0;
-      while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText)) {
-        bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
-                          pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                          bBold, bItalic, bRed, fontsize_rel, 
-                          line_number, fbwidth, fbheight, 
-                          bRTL, bRenderRtl, bWrapText, bMoreText);
+
+      if (bHasImage && ts.Hour == 19) {
+        waketime = ts.Hour + 1;
+      }
+      
+      if (!(bHasImage && ts.Hour > 19 && DisplayImage(fileroot_img + td.ImageFilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
+        bOverflowedScreen = false;
+        subpart = 0;
+        while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText)) {
+          bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                            pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                            bBold, bItalic, bRed, fontsize_rel, 
+                            line_number, fbwidth, fbheight, 
+                            bRTL, bRenderRtl, bWrapText, bMoreText);
+        }
       }
     }
     else { // there is both a feast and a seasonal day
@@ -2200,6 +2250,7 @@ void LatinMassPropers(time64_t& date,
       MissalReading* p_mr_Comm = &season;
 
       bool bSaintsDayTakesPrecedence = (!(cls_feast == cls_season)); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
+      bool bDisplayComm = (cls_feast >= cls_season && cls_season >= 2); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
       /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class?
       // need to exclude commemoration on Sundays and Feasts of the Lord
       bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
@@ -2221,6 +2272,9 @@ void LatinMassPropers(time64_t& date,
             
       sanctoral_day = p_mr_Comm->name();
       ypos = display_day_ex(date, p_mr_Day->name(), p_mr_Day->colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
+
+      DEBUG_PRT.print(F("filenumber is "));
+      DEBUG_PRT.println(filenumber);
       
       // Feast day takes precedence, seasonal day is commemoration
       switch(filenumber) {
@@ -2274,54 +2328,61 @@ void LatinMassPropers(time64_t& date,
         case 2: // Collect
         case 8: // Secreta
         case 11: // Postcommunio
-          {
-            bOverflowedScreen = false;
-            subpart = 0;
-            while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
-              bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
-                                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                                bBold, bItalic, bRed, fontsize_rel, 
-                                line_number, fbwidth, fbheight, 
-                                bRTL, bRenderRtl, bWrapText, bMoreText);
+          {            
+            if (bHasImage && ts.Hour == 19) {
+              waketime = ts.Hour + 1;
             }
-            //// TODO: PLL-25-07-2020 Find out how this works!
-            if (!bSaintsDayTakesPrecedence) {
-              //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
-              if (!bOverflowedScreen && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
-                String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
-                
-                bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb, 
-                                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                                bBold, bItalic, bRed, fontsize_rel, 
-                                line_number, fbwidth, fbheight, 
-                                bRTL, bRenderRtl, bWrapText, true);
-              }          
-              
-              int8_t linecount = 0;
+            
+            if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
+              bOverflowedScreen = false;
               subpart = 0;
-              p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
-              while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
-                if ((linecount == 0 && filenumber == 8) ||                       // commemorio line is first line in this case
-                    (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemorio line comes after <br>"Let us pray"<br> line
-                  String commtext = "<BR><FONT COLOR=\"red\"><I>Commemorio " + p_mr_Comm->name() + "</I></FONT><BR>";
-                  if (!bOverflowedScreen) {
-                    bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
-                                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                                        bBold, bItalic, bRed, fontsize_rel, 
-                                        line_number, fbwidth, fbheight, 
-                                        bRTL, bRenderRtl, bWrapText, true);
-                  }          
-                }
-                
-                if (!bOverflowedScreen) {
-                  bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
-                                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi,  diskfont_plus2_bi, 
+              while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+                bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
                                   bBold, bItalic, bRed, fontsize_rel, 
                                   line_number, fbwidth, fbheight, 
                                   bRTL, bRenderRtl, bWrapText, bMoreText);
+              }
+              //// TODO: PLL-25-07-2020 Find out how this works! 
+              //         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
+              if (!bSaintsDayTakesPrecedence || bDisplayComm) {
+                //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
+                if (!bOverflowedScreen && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
+                  String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
+                  
+                  bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb, 
+                                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                  bBold, bItalic, bRed, fontsize_rel, 
+                                  line_number, fbwidth, fbheight, 
+                                  bRTL, bRenderRtl, bWrapText, true);
+                }          
+                
+                int8_t linecount = 0;
+                subpart = 0;
+                p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
+                while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
+                  if ((linecount == 0 && filenumber == 8) ||                       // commemorio line is first line in this case
+                      (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemorio line comes after <br>"Let us pray"<br> line
+                    String commtext = "<BR><FONT COLOR=\"red\"><I>Commemorio " + p_mr_Comm->name() + "</I></FONT><BR>";
+                    if (!bOverflowedScreen) {
+                      bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
+                                          pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                          bBold, bItalic, bRed, fontsize_rel, 
+                                          line_number, fbwidth, fbheight, 
+                                          bRTL, bRenderRtl, bWrapText, true);
+                    }          
+                  }
+                  
+                  if (!bOverflowedScreen) {
+                    bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                                    pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi,  diskfont_plus2_bi, 
+                                    bBold, bItalic, bRed, fontsize_rel, 
+                                    line_number, fbwidth, fbheight, 
+                                    bRTL, bRenderRtl, bWrapText, bMoreText);
+                  }
+                  if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
+                  linecount++;
                 }
-                if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
-                linecount++;
               }
             }
             //// PLL-25-07-2020
@@ -2338,9 +2399,13 @@ void LatinMassPropers(time64_t& date,
     ypos = display_day_ex(date, season.name(), season.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
 
     subpart = 0;
+    bool bImageIsDisplayed = false;
 
     if (season.filecount != 12) {
       if (Tridentine::IsGoodFriday(date)) {      
+        DEBUG_PRT.print(F("Good Friday: ts.Hour="));
+        DEBUG_PRT.println(ts.Hour);
+
         if (ts.Hour == 0) {
           filenumber = 0; // Descriptive heading
           subpart = 0;
@@ -2364,21 +2429,45 @@ void LatinMassPropers(time64_t& date,
           subpart = ts.Hour - 6; // 0..8
           waketime = ts.Hour + 1;
         }
-        
+
+        /*
         if (ts.Hour >= 15 && ts.Hour <= 18) {
           filenumber = 4; // Adoration of the Cross
           subpart = ts.Hour - 15; // 0..3
           waketime = ts.Hour + 1;
         }
-
-        if (ts.Hour >= 19 && ts.Hour <= 20) {
-          filenumber = 5; // Communion
-          subpart = ts.Hour - 19; // 0 or 1
-          if (ts.Hour == 19) {
-            waketime = 20;
+        */
+        
+        uint8_t hour_offset_for_image_display = bHasImage ? 1 : 0; // everything will be shifted an hour later from 3pm, to give an hour for the image of the Cross to be displayed
+        if (ts.Hour >= 15 && ts.Hour <= 18 + hour_offset_for_image_display) {
+          if (bHasImage) {
+            if (ts.Hour == 15 && DisplayImage(imagefilename, 0, ypos)) {
+              //filenumber = 4; // Adoration of the Cross, display image of Christ crucified for one hour, then readings at 4 and 5pm
+              //subpart = ts.Hour - 15; // 0..3
+              bImageIsDisplayed = true;
+              waketime = ts.Hour + 1;
+            }
+            else if (ts.Hour >= 16) {
+              filenumber = 4; // Adoration of the Cross
+              subpart = ts.Hour - 16; // 0..3
+              waketime = ts.Hour + 1;
+            }
           }
           else {
-            waketime = 0;
+            filenumber = 4; // Adoration of the Cross, display readings in three parts from 3pm (time of Christ's death)
+            subpart = ts.Hour - 15; // 0..3
+            waketime = ts.Hour + 1;            
+          }
+        }
+
+        if (ts.Hour >= 19 + hour_offset_for_image_display && ts.Hour <= 20 + hour_offset_for_image_display) {
+          filenumber = 5; // Communion
+          subpart = ts.Hour - 19 + hour_offset_for_image_display; // 0 or 1
+          if (ts.Hour == 19 + hour_offset_for_image_display) {
+            waketime = 20 + hour_offset_for_image_display;
+          }
+          else {
+            //waketime = 0; //Allow to default (will be midnight)
           }
         }
       }
@@ -2409,17 +2498,39 @@ void LatinMassPropers(time64_t& date,
       }
     }
     
+    // image will be displayed (if available) in this case between midnight and 8am, and 8pm and midnight
+    if (bIsVotive && bHasVotiveImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image for votive Mass if so
+      bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
+    }
+    else {
+      if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+        bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+      }
+    }
+
+    MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
+
     subpart = 0;
     bOverflowedScreen = false;
 
-    MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
-    
-    while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
-      bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
-                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                        bBold, bItalic, bRed, fontsize_rel, 
-                        line_number, fbwidth, fbheight, 
-                        bRTL, bRenderRtl, bWrapText, bMoreText);
+    if (!bImageIsDisplayed) {
+      while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+        bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                          pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                          bBold, bItalic, bRed, fontsize_rel, 
+                          line_number, fbwidth, fbheight, 
+                          bRTL, bRenderRtl, bWrapText, bMoreText);
+      }
+    }
+    else {
+      if ((!bIsVotive && bHasImage) || (bIsVotive && bHasVotiveImage)) {
+        if (ts.Hour == 19) {
+          waketime = 20; // at 7pm the Postcommunio is displayed until midnight. If there is an image to display, wake up at 8pm to display the image between 8pm and midnight if so
+        }
+        else if (ts.Hour >= 0 && waketime < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
+          waketime = 8;
+        }
+      }
     }
   }
 
@@ -2484,7 +2595,11 @@ int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_
                      TB_FORMAT_CENTRE);
 
   //fb.drawFastHLine(0, (int)line_height, fb.width(), GxEPD_BLACK);
+#ifdef USE_SPI_RAM_FRAMEBUFFER
   fb.drawFastHLine(0, text_ypos + line_height, fb.width(), GxEPD_BLACK);
+#else
+  ePaper.drawFastHLine(0, text_ypos + line_height, ePaper.width(), GxEPD_BLACK);
+#endif
 
   return text_ypos + line_height;
 }
@@ -2595,4 +2710,58 @@ String replacefields(String s, time64_t date) {
 
   return s;
   */
+}
+
+bool DisplayImage(String filename, int16_t xpos, int16_t ypos) {
+  // Display 8 greyscale image from SD card in native format for display (4bpp, b3=red/black)
+  if (!SD.exists(filename)) {
+    DEBUG_PRT.print(F("DisplayImage() Image ["));
+    DEBUG_PRT.print(filename);
+    DEBUG_PRT.println(F("] not found"));
+    return false;
+  }
+
+  DEBUG_PRT.print(F("DisplayImage() Displaying image ["));
+  DEBUG_PRT.print(filename);
+  DEBUG_PRT.println(F("]"));
+  
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+  int16_t fbwidth = fb.width();
+  int16_t fbheight = fb.height();
+#else
+  int16_t fbwidth = ePaper.width();
+  int16_t fbheight = ePaper.height();
+#endif
+  
+  File fileImg = SD.open(filename, sdfat::O_READ);
+  int x = xpos;
+  int y = ypos;
+  int pxNum = 0;
+  uint8_t px2 = 0;
+  
+  while(fileImg.available() && x < fbwidth && y < fbheight) {
+    
+    if (!(pxNum & 0x1)) px2 = fileImg.read();
+    
+    uint8_t px = !(pxNum & 0x1) ? px2 >> 4 : px2 & 0x0F; // even pixel is high 4 bits, odd pixel is low 4 bits
+    uint16_t colour = px & 0x08 ? GxEPD_RED : GxEPD_BLACK; //check bit 4, colour is GxEPD_RED if set
+
+    if (x < fbwidth && y < fbheight) { // clip unless. Optimisation (TODO): don't draw white pixels to save time, since the background is cleared before drawing begins anyway
+#ifdef USE_SPI_RAM_FRAMEBUFFER
+      fb.drawPixel(x, y, colour, (px & 0x7) << 1); // drawPixel takes a 4 bit value for saturation, but throws away the lsbit for 8 grey/red shades (rather than 16)
+#else
+      ePaper.drawPixel(x, y, colour, (px & 0x7) << 1); // drawPixel takes a 4 bit value for saturation, but throws away the lsbit for 8 grey/red shades (rather than 16)
+#endif
+    }
+    
+    x++;
+    if (x == fbwidth) {
+      y++;
+      x = xpos;
+    }
+    pxNum++;
+  }
+
+  fileImg.close();
+  return true;
 }

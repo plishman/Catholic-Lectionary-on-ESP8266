@@ -10,6 +10,7 @@ String Config::_lang = "default";
 
 //Config::Config() {}
 bool Config::bSettingsUpdated = false;
+bool Config::bComplete = false;
 
 bool loadFromSdCard(String path) {
   String dataType = "text/plain";
@@ -63,6 +64,9 @@ bool loadFromSdCard(String path) {
 
   dataFile.close();
   DEBUG_PRT.println(F("...got file"));
+
+  Config::bComplete = (Config::bSettingsUpdated && path == "/html/lang/" + Config::_lang + ".jsn"); // PLL-15-12-2020 can check Config::bComplete reduce delay to reboot after settings updated
+
   return true;
 }
 
@@ -216,7 +220,8 @@ String getQueryStringParam(String param_name, String default_value) {
 
 bool Config::StartServer(String lang) {
 	bSettingsUpdated = false;
-	
+	bComplete = false;
+
 	wl_status_t status = WiFi.status();
 	if(status == WL_CONNECTED) {
 		DEBUG_PRT.print(F("Config: Network '"));

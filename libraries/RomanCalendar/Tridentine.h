@@ -41,6 +41,8 @@ struct Tr_Calendar_Day {
 	String FileDir_Season;
 	String FileDir_Saint;
 	String FileDir_Votive;
+	String ImageFilename;
+	String VotiveImageFilename;
 };
 
 struct IndexHeader {
@@ -271,7 +273,7 @@ public:
 	static void GetVotiveMass(time64_t datetime, bool& is_votive, uint8_t& cls, uint8_t& col, String& Mass, String& Commemoration);
 	static void GetDay(time64_t datetime, String& Mass);
 	static void GetFileDir(time64_t datetime, String& FileDir_Season, String& FileDir_Saint);
-	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation); // used for getting filedirs for DivinumOfficium-based calendar database
+	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& ImageFilename, String& VotiveImageFilename); // used for getting filedirs for DivinumOfficium-based calendar database
 	static bool FileExists(String filename);
 
 	///////////////////////////////////

@@ -132,6 +132,7 @@ public:
 //	I18n* _I18n;
 //	ESP8266WebServer server;
 	static bool bSettingsUpdated;
+	static bool bComplete;
 		
 	//Config();
 	//~Config();

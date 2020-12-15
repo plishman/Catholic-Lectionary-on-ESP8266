@@ -2319,7 +2319,7 @@ void Tridentine::GetFileDir(time64_t datetime, String& FileDir_Season, String& F
 
 
 
-void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation) {
+void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& ImageFilename, String& VotiveImageFilename) {
 	DEBUG_PRT.print(F("Tridentine::GetFileDir2():"));
 
 	bool bSaturday = (weekday(datetime) == PY_SAT); // for Saturday of Our Lady Votive Masses
@@ -2334,6 +2334,8 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 
 	FileDir_Season = "";
 	FileDir_Saint = "";
+	ImageFilename = "";
+	VotiveImageFilename = "";
 
 	uint8_t season = Season(datetime);
 	uint8_t season_week = Season_Week(datetime, season);
@@ -2352,25 +2354,28 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	String votive_dir_day = "";
 
 	if (bSaturday) {
-		votive_dir_season = "Votive";
-		votive_dir_sub = "OurLady";
-		votive_dir_day = "1";
+		votive_dir_season = F("Votive");
+		votive_dir_sub = F("OurLady");
+		votive_dir_day = F("1");
+		VotiveImageFilename = F("OurLady");
 
 		if (season == SEASON_ADVENT) {
-			votive_dir_day = "a"; // Saturday of Our Lady in Advent
+			votive_dir_day = F("a"); // Saturday of Our Lady in Advent
 		}
 		else if (monthofyear(datetime) == 1 || (monthofyear(datetime) == 2 && dayofmonth(datetime) == 1)) {
-			votive_dir_day = "b"; // between Holy Family up to 1st Feb inclusive
+			votive_dir_day = F("b"); // between Holy Family up to 1st Feb inclusive
 		}
 		else if (datetime < (MaundyThursday(year))) {
-			votive_dir_day = "c"; // between 3rd Feb and Spy Wednesday
+			votive_dir_day = F("c"); // between 3rd Feb and Spy Wednesday
 		}
 		else if (season == SEASON_EASTER) {
-			votive_dir_day = "Pasc";
+			votive_dir_day = F("Pasc");
 		}
 		else if (datetime > TrinitySunday(year)) {
-			votive_dir_day = "t"; // between Trinity Sunday and Advent
+			votive_dir_day = F("t"); // between Trinity Sunday and Advent
 		}
+		
+		VotiveImageFilename = VotiveImageFilename + String(F("-")) + votive_dir_day;
 	}
 /*
       $dir_day =
@@ -2478,8 +2483,11 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		break;
 
 	case SEASON_LENT:
-		if (issameday(datetime, AshWednesday(year))) { HolyDayOfObligation = true; }
-		if (issameday(datetime, GoodFriday(year))) { HolyDayOfObligation = true; }
+		// PLL-14-12-2020
+		if (issameday(datetime, AshWednesday(year))) { HolyDayOfObligation = true; ImageFilename = F("AshWednesday"); }
+		if (issameday(datetime, GoodFriday(year))) { HolyDayOfObligation = true; ImageFilename = F("GoodFriday"); }
+		if (issameday(datetime, MaundyThursday(year))) { ImageFilename = F("MaundyThursday"); }
+		// PLL-14-12-2020
 
 		if (datetime >= (AshWednesday(year) + SECS_PER_DAY) && datetime < sunday_after(AshWednesday(year))) {
 			// Lent begins on Ash Wednesday, but Ash Wednesday and days after ashes occur in the week of Quinquagesima, so are stored in that folder
@@ -2498,6 +2506,11 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	case SEASON_EASTER:
 		dir_season = F("Easter");
 		
+		// PLL-14-12-2020
+		if (issameday(datetime, Easter(year))) { ImageFilename = F("EasterSunday"); }
+		if (issameday(datetime, Ascension(year))) { ImageFilename = F("AscensionThursday"); }
+		// PLL-14-12-2020
+
 		if (season_week < 7) {
 			dir_sub = String(season_week);
 			dir_day = (FPSTR(WeekDays[day]));
@@ -2506,6 +2519,10 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 
 	case SEASON_PENTECOST: 
 		dir_season = F("Pentecost");
+
+		// PLL-14-12-2020
+		if (issameday(datetime, Pentecost(year))) { ImageFilename = F("PentecostSunday"); }
+		// PLL-14-12-2020
 
 		if (datetime >= Pentecost(year) && datetime < TrinitySunday(year)) {
 			if (bSunday) {
@@ -2524,17 +2541,26 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		dir_season = F("Pentecost");
 
 		if (issameday(datetime, TrinitySunday(year))) {
+			// PLL-14-12-2020
+			ImageFilename = F("TrinitySunday");
+			// PLL-14-12-2020
 			dir_day = F("TrinitySunday");
 			break;
 		}
 
 		if (issameday(datetime, CorpusChristi(year))) {
+			// PLL-14-12-2020
+			ImageFilename = F("CorpusChristi");
+			// PLL-14-12-2020
 			dir_day = F("CorpusChristi");
 			HolyDayOfObligation = true;
 			break;
 		}
 
 		if (issameday(datetime, SacredHeart(year))) {
+			// PLL-14-12-2020
+			ImageFilename = F("SacredHeart");
+			// PLL-14-12-2020
 			dir_day = F("SacredHeartofJesus");
 			HolyDayOfObligation = true;
 			break;
@@ -2547,6 +2573,9 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		}
 
 		if (issameday(datetime, ChristTheKing(year))) {
+			// PLL-14-12-2020
+			ImageFilename = F("ChristusRex");
+			// PLL-14-12-2020
 			dir_day = F("ChristusRex");
 			break;
 		}
@@ -2626,7 +2655,26 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
     //String filename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/title_en.txt"));
 	DEBUG_PRT.print(F(" 1"));
 	if (!bSuppressFeast) {
-    	FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
+		FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
+
+		if (ImageFilename == "") {	// PLL-14-12-2020
+			ImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+
+			if (isleap(year)) {
+				if (month_of_year == 2 && day_of_month == 24) {
+					FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th
+					ImageFilename = "";
+				}
+
+				if (month_of_year == 2 && day_of_month == 25) {
+					FileDir_Saint = String(F("/2/24/")); // Handle St Matthias day in leap years, which falls on 25th Feb instead of 24th Feb, so get Propers for 25th from 2/24 in this case
+					ImageFilename = String(F("/2/24-2"));
+				}
+			}
+		}
+		else { // PLL-14-12-2020
+			ImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.
+		} // PLL-14-12-2020
 	}
 	DEBUG_PRT.print(F(" 2"));
 
@@ -2634,12 +2682,16 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		dir_season = String(month_of_year);
 		dir_sub = "";
 		dir_subsub = "";
-		dir_day = String(day_of_month);
+		dir_day = String(day_of_month); // wonder what might happen on St Matthias' day in a leap year if bOverrideIfFeast gets set. I don't think it can happen though
+		if (ImageFilename == "") {
+			ImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+		}
 	}
 
 	FileDir_Votive = "";
 	if (votive_dir_season != "") {
 		FileDir_Votive = String(F("/")) + votive_dir_season + String(F("/")) + votive_dir_sub + String(F("/")) + votive_dir_day;
+		VotiveImageFilename = String(F("/Votive/")) + VotiveImageFilename;
 	}
 
 	DEBUG_PRT.print(F(" 3"));
