@@ -2232,7 +2232,7 @@ void LatinMassPropers(time64_t& date,
         waketime = ts.Hour + 1;
       }
       
-      if (!(bHasImage && ts.Hour > 19 && DisplayImage(fileroot_img + td.ImageFilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
+      if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
         bOverflowedScreen = false;
         subpart = 0;
         while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText)) {
@@ -2278,7 +2278,7 @@ void LatinMassPropers(time64_t& date,
       
       // Feast day takes precedence, seasonal day is commemoration
       switch(filenumber) {
-        case 0: // Introitus (from the feast)
+        case 0: // Introitus (from the feast)  
         case 5: // Gospel
             subpart = 0;
             p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
@@ -2294,19 +2294,26 @@ void LatinMassPropers(time64_t& date,
             }
             bMoreText = false;
             s = "";
-        
+                    
         case 3: // Lesson
         case 4: // Gradual
         case 7: // Offertorium
         case 10: // Communio
-          bOverflowedScreen = false;
-          subpart = 0;
-          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
-            bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
-                              pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                              bBold, bItalic, bRed, fontsize_rel, 
-                              line_number, fbwidth, fbheight, 
-                              bRTL, bRenderRtl, bWrapText, bMoreText);
+        
+          if (bHasImage && ts.Hour >= 0 && ts.Hour <= 7) {
+            waketime = 8;
+          }
+      
+          if (!(bHasImage && ts.Hour >= 0 && ts.Hour <= 7 && DisplayImage(imagefilename, 0, ypos))) { // from midnight until 8am, display the Saint's image (if available)
+            bOverflowedScreen = false;
+            subpart = 0;
+            while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText)) {
+              bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 
+                                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                bBold, bItalic, bRed, fontsize_rel, 
+                                line_number, fbwidth, fbheight, 
+                                bRTL, bRenderRtl, bWrapText, bMoreText);
+            }
           }
         break;
 
