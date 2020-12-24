@@ -2156,6 +2156,12 @@ void LatinMassPropers(time64_t& date,
   bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
   bool bHasImage = (td.ImageFilename != "" && SD.exists(imagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
   bool bHasVotiveImage = (td.VotiveImageFilename != "" && SD.exists(votiveimagefilename)); // if the Mass for the day is a Votive Mass, an image will be displayed if available
+  int8_t imagecount = -1;
+  int8_t votiveimagecount = -1;
+
+  // image filenames are of the form 10-11.bwr, and 10-11-2.bwr, 10-11-3.bwr etc if there is more than one image
+  if (bHasImage) imagecount = GetImageCount(fileroot_img + td.ImageFilename); // get count of images to be displayed this day
+  if (bHasVotiveImage) votiveimagecount = GetImageCount(fileroot_img + td.VotiveImageFilename); // get count of votive images to be displayed this day (if applicable)
   
   DEBUG_PRT.print(F("imagefilename is ["));
   DEBUG_PRT.print(imagefilename);
@@ -2165,6 +2171,10 @@ void LatinMassPropers(time64_t& date,
   DEBUG_PRT.println(bHasImage);
   DEBUG_PRT.print(F("bHasVotiveImage is "));
   DEBUG_PRT.println(bHasVotiveImage);
+  DEBUG_PRT.print(F("imagecount="));
+  DEBUG_PRT.println(imagecount);
+  DEBUG_PRT.print(F("votiveimagecount="));
+  DEBUG_PRT.println(votiveimagecount);
   
   MissalReading season;
   MissalReading feast;
@@ -2186,7 +2196,7 @@ void LatinMassPropers(time64_t& date,
 
   // need to exclude commemoration on Sundays and Feasts of the Lord
   bIsFeast = (bFeastDayOnly || !bSunday && cls_feast >= cls_season || cls_feast >= 6);
-  bFeastDayOnly = (cls_feast >= 6 && Tridentine::Season(date) != SEASON_ADVENT); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
+  bFeastDayOnly = (cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
                                                                                  // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
   // If it is a votive day and the feast is of the same or lower priority, 
   // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
@@ -2228,8 +2238,12 @@ void LatinMassPropers(time64_t& date,
       DEBUG_PRT.println(F("Feast day only"));
       ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
 
-      if (bHasImage && ts.Hour == 19) {
+      if (bHasImage && ts.Hour == 19) { // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
         waketime = ts.Hour + 1;
+      }
+
+      if (bHasImage) { // between 8pm and midnight
+        GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
       }
       
       if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
@@ -2249,8 +2263,9 @@ void LatinMassPropers(time64_t& date,
       MissalReading* p_mr_Day = &feast;
       MissalReading* p_mr_Comm = &season;
 
+      // PLL-24-12-2020 This needs understanding and fixing!
       bool bSaintsDayTakesPrecedence = (!(cls_feast == cls_season)); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
-      bool bDisplayComm = (cls_feast >= cls_season && cls_season >= 2); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
+      bool bDisplayComm = (cls_feast >= cls_season && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
       /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class?
       // need to exclude commemoration on Sundays and Feasts of the Lord
       bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
@@ -2338,6 +2353,10 @@ void LatinMassPropers(time64_t& date,
           {            
             if (bHasImage && ts.Hour == 19) {
               waketime = ts.Hour + 1;
+            }
+
+            if (bHasImage) { // between 8pm and midnight
+              GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
             }
             
             if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
@@ -2507,10 +2526,12 @@ void LatinMassPropers(time64_t& date,
     
     // image will be displayed (if available) in this case between midnight and 8am, and 8pm and midnight
     if (bIsVotive && bHasVotiveImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image for votive Mass if so
+      GetImageFilenameAndWakeTime(votiveimagefilename, ts.Hour, votiveimagecount, waketime);    
       bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
     }
     else {
       if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+        GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);    
         bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
       }
     }
@@ -2717,6 +2738,68 @@ String replacefields(String s, time64_t date) {
 
   return s;
   */
+}
+
+int8_t GetImageCount(String imagefilename) {
+  // returns -1 if no image is found
+  // returns number of images with imagefilename.bwr, imagefilename-2.bwr etc if imagefilename is found.
+  
+  int8_t imagecount = 0;
+  bool bFound = false;
+
+  while(SD.exists(imagecount < 1 ? imagefilename + String(F(".bwr")) : imagefilename + String(F("-")) + String(imagecount + 1) + String(F(".bwr")))) {
+    DEBUG_PRT.println(String(F("GetImageCount(): found image ")) + (imagecount < 2 ? imagefilename + String(F(".bwr")) : imagefilename + String(F("-")) + String(imagecount) + String(F(".bwr"))));
+       
+    imagecount++;
+    bFound = true;
+  }
+
+  return bFound ? imagecount : -1; 
+}
+
+void GetImageFilenameAndWakeTime(String& imagefilename, uint8_t Hour, int8_t imagecount, int8_t& waketime) {
+  DEBUG_PRT.print(F("GetImageFilenameAndWakeTime() Hour="));
+  DEBUG_PRT.print(Hour);
+  DEBUG_PRT.print(F(" imagecount="));
+  DEBUG_PRT.println(imagecount);
+  
+  if (imagecount <= 1) return; // only one image, so waketime will be default and imagefilename need not be modified
+
+  int8_t imagenumber = 1;
+  
+  if (Hour >= 20 && Hour < 24) { // evening
+    switch (imagecount) {     
+      case 2:
+        imagenumber = (Hour >= 20 && Hour < 22) ? 1 : 2;
+        waketime    = (Hour >= 20 && Hour < 22) ? 22 : -1; // -1 indicates use default waketime - will be midnight
+        break;
+      
+      case 3:
+        imagenumber = (Hour == 20) ? 1 : 
+                      (Hour == 21) ? 2 : 3;
+
+        waketime    = (Hour == 20) ? 21 : 
+                      (Hour == 21) ? 22 : -1; // -1 indicates use default waketime - will be midnight
+        break;
+      
+      default:
+        return;
+        break;
+    }
+
+    DEBUG_PRT.print(F("GetImageFilenameAndWakeTime() imagenumber="));
+    DEBUG_PRT.print(waketime);
+    DEBUG_PRT.print(F(" waketime="));
+    DEBUG_PRT.println(waketime);
+
+    if (imagenumber == 1) return; // no need to modify the filename for first image (no "-1.bwr" - subpart number is omitted in naming scheme for first image)
+    imagefilename = imagefilename.substring(0, imagefilename.lastIndexOf(".bwr")) + String(F("-")) + String(imagenumber) + String(F(".bwr"));
+    
+    DEBUG_PRT.print(F("GetImageFilenameAndWakeTime() calculated imagefilename="));
+    DEBUG_PRT.println(imagefilename);
+  }
+
+  return;
 }
 
 bool DisplayImage(String filename, int16_t xpos, int16_t ypos) {

@@ -246,6 +246,10 @@ time64_t Tridentine::nativity(int year) {
 	return date(25, 12, year);
 }
 
+bool Tridentine::IsImmaculateConception(time64_t datetime) {
+	return issameday(date(8, 12, year(datetime)), datetime);
+}
+
 time64_t Tridentine::weekday_before(int weekdayBefore, time64_t datetime) {
 	if (weekdayBefore < 0 || weekdayBefore > 6) return (time64_t)-1;
 

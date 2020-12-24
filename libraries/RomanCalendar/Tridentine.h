@@ -195,6 +195,7 @@ public:
 	static time64_t end_date(int year);
 	static time64_t first_advent_sunday(int year);
 	static time64_t nativity(int year);
+	static bool IsImmaculateConception(time64_t datetime);
 	static time64_t weekday_before(int weekdayBefore, time64_t date);
 	static time64_t sunday_before(time64_t date);
 	static int weekday(time64_t date, bool bUsePythonWeekdayFormat = true);
