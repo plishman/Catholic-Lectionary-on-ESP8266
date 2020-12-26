@@ -2196,8 +2196,10 @@ void LatinMassPropers(time64_t& date,
 
   // need to exclude commemoration on Sundays and Feasts of the Lord
   bIsFeast = (bFeastDayOnly || !bSunday && cls_feast >= cls_season || cls_feast >= 6);
-  bFeastDayOnly = (cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
-                                                                                 // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
+  bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
+  // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
+  // PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
+  
   // If it is a votive day and the feast is of the same or lower priority, 
   // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
   bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls()) <= Tridentine::getClassIndex(votive.cls())) || (!bIsFeast && Tridentine::getClassIndex(season.cls()) <= Tridentine::getClassIndex(votive.cls()))));

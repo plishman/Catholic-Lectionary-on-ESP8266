@@ -1321,6 +1321,16 @@ bool Bidi::RenderTextEx(String& s,
 	DEBUG_PRT.print(F(", (*ypos + font_ascent) < fbheight ="));
 	DEBUG_PRT.println((*ypos + font_ascent) < fbheight);
 
+	if ((*ypos + font_ascent) >= fbheight) {
+		DEBUG_PRT.print(F("Line would overflow text area so returning true (no more room)"));
+		return true; // PLL-26-12-2020
+					 // no room for the current line as a larger disk font has just been selected than was used for the calculation of the previous call to RenderTextEx(),
+					 // which would cause the displayed text to run over the bottom of the text area if we tried to draw it. Also, this condition means the following while
+					 // loop would not get executed at all, so no attempt would be made to draw the text, but the code after it would fall through and return false, since
+					 // the *ypos value (which is tested after the while loop) would not have been increased, due to the failure of the while loop to run and draw the line 
+					 // of text.
+	}
+
 	while ((*ypos + font_ascent) < fbheight && endstrpos < s.length() && !bDisplayEllipsisNow) {
 		bLastLine = (wrap_text && (*ypos + font_ascent < fbheight && *ypos + (font_ascent * 2) >= fbheight)); //only worry about last line if wrapping text
 		
@@ -1590,7 +1600,10 @@ bool Bidi::RenderTextEx(String& s,
 	DEBUG_PRT.print(F(", *xpos="));
 	DEBUG_PRT.println(*xpos);
 	
-	if ((*ypos >= fbheight) || (bLastLine && bMoreText && (bInsertEllipsis || *xpos >= fbwidth))) return true; // will return true if the text overflows the screen
+	if ((*ypos >= fbheight) || (bLastLine && bMoreText && (bInsertEllipsis || *xpos >= fbwidth))) {
+		DEBUG_PRT.print(F("Text area full, returning true (no more room)"));	// PLL-26-12-2020
+		return true; // will return true if the text overflows the screen
+	}
 	
 	return false;						// otherwise will return false if there is more space
 
