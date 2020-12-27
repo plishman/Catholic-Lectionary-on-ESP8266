@@ -1072,6 +1072,9 @@ void loop(void) {
       }
     }
     else { // if bLatinMass
+      DEBUG_PRT.print(F("latinmass_custom_waketime = "));
+      DEBUG_PRT.println(latinmass_custom_waketime);
+     
       if (latinmass_custom_waketime == -1) {
         if (ts.Hour >= 0 && ts.Hour < 9) {
           rtcData.data.wake_hour_counter = 9 - ts.Hour; // midnight to 8am Introit (Gloria at 9am)
@@ -1086,8 +1089,8 @@ void loop(void) {
           Hour = ts.Hour + 1;
         }
       }
-      else {
-          Hour = latinmass_custom_waketime;        
+      else {          
+          Hour = latinmass_custom_waketime;       
           if (latinmass_custom_waketime == 0) latinmass_custom_waketime = 24; // handle wrap around
           rtcData.data.wake_hour_counter = latinmass_custom_waketime - ts.Hour;
       }
@@ -2240,12 +2243,13 @@ void LatinMassPropers(time64_t& date,
       DEBUG_PRT.println(F("Feast day only"));
       ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
 
-      if (bHasImage && ts.Hour == 19) { // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
-        waketime = ts.Hour + 1;
-      }
-
-      if (bHasImage) { // between 8pm and midnight
-        GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+      if (bHasImage) {
+        if (ts.Hour == 19) { // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
+          waketime = ts.Hour + 1;
+        }
+        else { // between 8pm and midnight
+          GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+        }
       }
       
       if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
@@ -2552,14 +2556,13 @@ void LatinMassPropers(time64_t& date,
                           bRTL, bRenderRtl, bWrapText, bMoreText);
       }
     }
-    else {
-      if ((!bIsVotive && bHasImage) || (bIsVotive && bHasVotiveImage)) {
-        if (ts.Hour == 19) {
-          waketime = 20; // at 7pm the Postcommunio is displayed until midnight. If there is an image to display, wake up at 8pm to display the image between 8pm and midnight if so
-        }
-        else if (ts.Hour >= 0 && waketime < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
-          waketime = 8;
-        }
+    
+    if (bHasImage || bHasVotiveImage) {
+      if (ts.Hour == 19) {
+        waketime = 20; // at 7pm the Postcommunio is displayed until midnight. If there is an image to display, wake up at 8pm to display the image between 8pm and midnight if so
+      }
+      else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
+        waketime = 8;
       }
     }
   }
@@ -2750,7 +2753,7 @@ int8_t GetImageCount(String imagefilename) {
   bool bFound = false;
 
   while(SD.exists(imagecount < 1 ? imagefilename + String(F(".bwr")) : imagefilename + String(F("-")) + String(imagecount + 1) + String(F(".bwr")))) {
-    DEBUG_PRT.println(String(F("GetImageCount(): found image ")) + (imagecount < 2 ? imagefilename + String(F(".bwr")) : imagefilename + String(F("-")) + String(imagecount) + String(F(".bwr"))));
+    DEBUG_PRT.println(String(F("GetImageCount(): found image ")) + (imagecount < 1 ? imagefilename + String(F(".bwr")) : imagefilename + String(F("-")) + String(imagecount + 1) + String(F(".bwr"))));
        
     imagecount++;
     bFound = true;
@@ -2768,7 +2771,7 @@ void GetImageFilenameAndWakeTime(String& imagefilename, uint8_t Hour, int8_t ima
   if (imagecount <= 1) return; // only one image, so waketime will be default and imagefilename need not be modified
 
   int8_t imagenumber = 1;
-  
+
   if (Hour >= 20 && Hour < 24) { // evening
     switch (imagecount) {     
       case 2:
