@@ -2242,17 +2242,23 @@ void LatinMassPropers(time64_t& date,
     if (bFeastDayOnly) { // is a saint's feast only
       DEBUG_PRT.println(F("Feast day only"));
       ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
+      bool bImageIsDisplayed = false;
 
       if (bHasImage) {
-        if (ts.Hour == 19) { // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
-          waketime = ts.Hour + 1;
+        if (ts.Hour == 19) {
+          waketime = 20; // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
         }
-        else { // between 8pm and midnight
-          GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+        else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
+          waketime = 8;
         }
       }
+
+      if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+        GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);    
+        bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+      }
       
-      if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
+      if (!bImageIsDisplayed) { // from 8pm until midnight and midnight to 8am, display the Saint's image(s) (if available)
         bOverflowedScreen = false;
         subpart = 0;
         while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText)) {
@@ -2262,7 +2268,7 @@ void LatinMassPropers(time64_t& date,
                             line_number, fbwidth, fbheight, 
                             bRTL, bRenderRtl, bWrapText, bMoreText);
         }
-      }
+      }      
     }
     else { // there is both a feast and a seasonal day
       DEBUG_PRT.println(F("Feast day and seasonal day"));
@@ -2535,11 +2541,9 @@ void LatinMassPropers(time64_t& date,
       GetImageFilenameAndWakeTime(votiveimagefilename, ts.Hour, votiveimagecount, waketime);    
       bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
     }
-    else {
-      if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
-        GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);    
-        bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-      }
+    else if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+      GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);    
+      bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
     }
 
     MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
