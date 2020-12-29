@@ -1117,7 +1117,10 @@ void loop(void) {
 void config_server(String lang)
 {  
   // Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
-  if (!bDisplayWifiConnectedScreen) return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
+  if (!bDisplayWifiConnectedScreen) {
+    network.wifi_sleep(); // PLL-29-12-2020 no longer needed, sleep wifi to save power
+    return; // only run the webserver if the wifi connected screen is shown (will only show once, when power is first connected). So after resetting (eg. when settings have been updated) it the webserver should not be run
+  }
 
   if (!bEEPROM_checksum_good) {
     if (Battery::power_connected() && bNetworkAvailable) {
@@ -1217,6 +1220,7 @@ void config_server(String lang)
       else // battery power was disconnected
       {
         DEBUG_PRT.println(F("Power disconnected, stopping web server and displaying reading"));
+        network.wifi_sleep(); // PLL-29-12-2020 no longer needed, sleep wifi to save power
       }
     }
   }
