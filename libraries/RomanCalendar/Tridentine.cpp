@@ -2458,9 +2458,15 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			break;
 		}
 
-		dir_season = F("Epiphany");
-		dir_sub = String(season_week);
-		dir_day = (FPSTR(WeekDays[day]));
+		if(season_week > 0 && !sunday(Epiphany(year))) { // if Epiphany is on a Sunday, week including the Sunday will be calculated as week 0. If Epiphany is not on a 
+			season_week -= 1;							 // Sunday, the first week will be calculated as week 1 (this fixes this for Epiphany)
+		}
+
+		if (season_week > 0) {	// Weekdays of the days after Epiphany before the following Sunday (if Epiphany is not itself on a Sunday) are given as dates, eg Die Septima Januarii
+			dir_season = F("Epiphany");
+			dir_sub = String(season_week);
+			dir_day = (FPSTR(WeekDays[day]));
+		}
 		break;
 
 	case SEASON_SEPTUAGESIMA:
