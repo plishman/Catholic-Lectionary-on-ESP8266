@@ -2458,11 +2458,26 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			break;
 		}
 
+		DEBUG_PRT.print(F("Epiphany: season_week is "));
+		DEBUG_PRT.println(season_week);
+
+		if (datetime < sunday_after(Epiphany(year))) {
+			season_week = 0;
+		}
+/*
 		if(season_week > 0 && !sunday(Epiphany(year))) { // if Epiphany is on a Sunday, week including the Sunday will be calculated as week 0. If Epiphany is not on a 
 			season_week -= 1;							 // Sunday, the first week will be calculated as week 1 (this fixes this for Epiphany)
+		
+			DEBUG_PRT.print(F("Epiphany is on a sunday and season_week is "));
+			DEBUG_PRT.println(season_week);	
 		}
+*/
+
+		DEBUG_PRT.print(F("Epiphany, after processing, season_week is "));
+		DEBUG_PRT.println(season_week);	
 
 		if (season_week > 0) {	// Weekdays of the days after Epiphany before the following Sunday (if Epiphany is not itself on a Sunday) are given as dates, eg Die Septima Januarii
+			DEBUG_PRT.print(F("Setting Epiphany season/sub/day for season week"));
 			dir_season = F("Epiphany");
 			dir_sub = String(season_week);
 			dir_day = (FPSTR(WeekDays[day]));
@@ -3321,6 +3336,8 @@ bool Tridentine::getIndexRecord(File& file, IndexRecord& ir) {	// gets the index
 }
 
 uint8_t Tridentine::getClassIndex(String cls) {
+	/// TODO: PLL-12-01-2021 Need to handle first two Sundays of Advent (Semiduplex II. classis) and Semiduplex Dominica minor, eg. 20th Sunday after Pentecost
+	
 	const char* const tradtable[8] = {
         "none", "Simplex", "Semiduplex", "Duplex",
         "Duplex majus", "Duplex II. classis", "Duplex I. classis", "Duplex I. classis"
@@ -3466,6 +3483,8 @@ bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool&
 		return false;
 	}
 */
+
+	bMoreText = false; // PLL-30-03-2021
 
 	if (!_open) {
 		DEBUG_PRT.println(F("MissalReading::get(): MissalReading object is not open - call open() first"));

@@ -1210,6 +1210,38 @@ bool Bidi::RenderTextEx(String& s,
 			            bRTL, render_right_to_left, wrap_text, bMoreText, last_line_height, format_action);
 }
 
+void Bidi::RemoveTrailingLineBreaks(String& s) 
+{
+	// not optimized, but should be rarely used - PLL-30-03-2021
+	// makes sure that trailing <br> tags do not cause an unnecessary ellipsis to be generated at the end of the displayed text
+
+	bool bLineBreakFoundAtEnd = false;
+	int numLineBreaksTrimmed = 0;
+	do
+	{
+		bLineBreakFoundAtEnd = false;
+		if (s.endsWith("<br>") || s.endsWith("<BR>")) 
+		{
+			s = s.substring(0, s.length() - 4);
+			bLineBreakFoundAtEnd = true;
+			numLineBreaksTrimmed++;
+		}
+		else if (s.endsWith("<br/>") || s.endsWith("<BR/>")) 
+		{
+			s = s.substring(0, s.length() - 5);
+			bLineBreakFoundAtEnd = true;
+			numLineBreaksTrimmed++;
+		}
+	} while (bLineBreakFoundAtEnd);
+
+	if (numLineBreaksTrimmed > 0) 
+	{
+		DEBUG_PRT.println();
+		DEBUG_PRT.print(numLineBreaksTrimmed);
+		DEBUG_PRT.println(F(" trailing line break(s) trimmed at end of text\n"));
+	}
+}
+
 // render bidi text using disk font
 bool Bidi::RenderTextEx(String& s, 
 				        int* xpos, int* ypos, 
@@ -1233,6 +1265,12 @@ bool Bidi::RenderTextEx(String& s,
 						uint8_t format_action)			// either TB_FORMAT_NONE, TB_FORMAT_JUSTIFY, TB_FORMAT_CENTRE
 {
 	//if (diskfont.available == false) return true; // if no diskfont is available, return true to stop caller from trying to output more text (is used to indicate screen full)
+
+	#ifdef LM_DEBUG
+		return true;	// headless debugging mode - no text output (calling code writes calendar for year to disk)
+	#endif
+
+	if (!bMoreText) RemoveTrailingLineBreaks(s); // remove trailing <br> tags if this is the last piece of text in the block to be drawn (to avoid unnecessary ellipsis)
 
 	last_line_height = 0;
 	

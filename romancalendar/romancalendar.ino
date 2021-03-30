@@ -73,6 +73,11 @@ extern "C" {
 
 DebugPort Debug_Prt;
 
+#ifdef LM_DEBUG
+  File cfile;
+  bool cclosefile = false;
+#endif
+
 GxIO_Class io(SPI, /*CS=D16*/ D8, /*DC=D4*/ -1, /*RST=D5*/ D2);  // dc=-1 -> not used (using 3-wire SPI)
 GxEPD_Class ePaper(io, D2, D3 /*RST=D5*/ /*BUSY=D12*/);
 
@@ -1029,6 +1034,29 @@ void loop(void) {
       }
     }
     else { // if bLatinMass
+
+//#define LM_DEBUG 1 - see RCGlobals.h
+#ifdef LM_DEBUG
+      cclosefile = false; // global
+      
+      WriteCalendarDay("<table>\n");
+
+      time64_t testdate = Temporale::date(1, 1, 2021);
+      for (int t = 0; t < 365; t++) {
+        DEBUG_PRT.print(".");
+        WriteCalendarDay("<tr>\n");
+        String datestring = c._I18n->getdate(testdate);
+        DoLatinMassPropers(testdate, datestring, c._I18n->configparams.right_to_left, c._I18n->configparams.lectionary_path, c._I18n->configparams.lang, latinmass_custom_waketime);
+        testdate += SECS_PER_DAY;
+        WriteCalendarDay("\n</tr>\n");
+      }
+
+      cclosefile = true;
+      WriteCalendarDay("</table>\n");
+      DEBUGPRT_END 
+      SleepForHours(next_wake_hours_count);
+#endif
+      
       String datestring = c._I18n->getdate(date);
       DoLatinMassPropers(date, datestring, c._I18n->configparams.right_to_left, c._I18n->configparams.lectionary_path, c._I18n->configparams.lang, latinmass_custom_waketime);
     }
@@ -2035,7 +2063,9 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   DEBUG_PRT.println(F("Displaying calendar"));
 
 #ifdef USE_SPI_RAM_FRAMEBUFFER
-  fb.cls();   // clear framebuffer ready for text to be drawn
+  #ifndef LM_DEBUG
+    fb.cls();   // clear framebuffer ready for text to be drawn
+  #endif
   fb.setRotation(EPD_ROTATION); //90 degrees
 #else
   ePaper.setRotation(EPD_ROTATION);
@@ -2061,8 +2091,10 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   
   LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime);
       
-  updateDisplay(display_reading, diskfont_normal._FontHeader.antialias_level);
-  DEBUG_PRT.println(F("OK"));
+  #ifndef LM_DEBUG
+    updateDisplay(display_reading, diskfont_normal._FontHeader.antialias_level);
+    DEBUG_PRT.println(F("OK"));
+  #endif
   return true;
 }
 
@@ -2090,10 +2122,10 @@ void LatinMassPropers(time64_t& date,
 
   DEBUG_PRT.print(F("Done"));
   DEBUG_PRT.print(F("Loading fonts.."));
-  diskfont_normal.begin("/Fonts/droid11.lft");
-  diskfont_i.begin("/Fonts/droid11i.lft");
-  diskfont_plus1_bi.begin("/Fonts/droi12bi.lft");
-  diskfont_plus2_bi.begin("/Fonts/droi13bi.lft");
+  if (!diskfont_normal.available) diskfont_normal.begin("/Fonts/droid11.lft");
+  if (!diskfont_i.available) diskfont_i.begin("/Fonts/droid11i.lft");
+  if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("/Fonts/droi12bi.lft");
+  if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("/Fonts/droi13bi.lft");
   DEBUG_PRT.println(F("Done"));
   DiskFont* pDiskfont = &diskfont_normal;
   DEBUG_PRT.println(F("Assigned font to diskfont"));
@@ -2201,15 +2233,28 @@ void LatinMassPropers(time64_t& date,
   int8_t cls_season = Tridentine::getClassIndex(season.cls());
   int8_t cls_feast = Tridentine::getClassIndex(feast.cls());
 
+  DEBUG_PRT.print(F("cls_season="));
+  DEBUG_PRT.print(cls_season);
+  DEBUG_PRT.print(F(" cls_feast="));
+  DEBUG_PRT.println(cls_feast);
+
   // need to exclude commemoration on Sundays and Feasts of the Lord
-  bIsFeast = (bFeastDayOnly || !bSunday && cls_feast >= cls_season || cls_feast >= 6);
+  bIsFeast = (bFeastDayOnly || 
+              (!bSunday && cls_feast >= cls_season) ||              
+              (cls_feast >= 6) ||                                   // the additions in the commented three lines below may have introduced bugs - need testing  
+              (!bSunday && cls_feast == 0 && cls_season <= 2) ||    // PLL-12-01-2021 commemoration is 0, need to display these eg. on 5 Dec 2020, which is the commemoration of S. Sabbae Abbatis. To display on Seasonal days <= Semiduplex
+              (cls_season - cls_feast == 1) ||                      // PLL-12-01-2021 display feast if it is 1 class lower than that of the season
+              (bSunday && cls_feast > cls_season && cls_feast >= 5) // PLL-12-01-2021 Patched for Feast of St Luke Evangelist on October 18 (Duplex II. classis) if on a Sunday
+             ); 
   bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
   // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
   // PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
   
   // If it is a votive day and the feast is of the same or lower priority, 
   // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
-  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls()) <= Tridentine::getClassIndex(votive.cls())) || (!bIsFeast && Tridentine::getClassIndex(season.cls()) <= Tridentine::getClassIndex(votive.cls()))));
+  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls()) <= Tridentine::getClassIndex(votive.cls())) 
+           || (!bIsFeast && Tridentine::getClassIndex(season.cls()) <= Tridentine::getClassIndex(votive.cls())))
+              );
 
   if (bIsVotive) {
     DEBUG_PRT.println(F("Votive Mass"));
@@ -2297,9 +2342,11 @@ void LatinMassPropers(time64_t& date,
       MissalReading* p_mr_Comm = &season;
 
       // PLL-24-12-2020 This needs understanding and fixing!
-      bool bSaintsDayTakesPrecedence = (!(cls_feast == cls_season)); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
-      bool bDisplayComm = (cls_feast >= cls_season && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
-      /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class?
+      bool bSaintsDayTakesPrecedence = (cls_feast >= cls_season && !bSunday/*|| (cls_season < 2 && !(cls_feast == cls_season))*/); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
+      //PLL-12-01-2021 Saint's day takes precedence if its class is greater the class of the season [and it is not a Sunday - PLL-12-01-2021]
+      
+      bool bDisplayComm = ((cls_feast >= cls_season || cls_feast == 0 /*PLL-12-01-2021 or commemoration*/) && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
+      /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class? [No - not in Epiphany/days of January]
       // need to exclude commemoration on Sundays and Feasts of the Lord
       bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
       
@@ -2652,6 +2699,10 @@ int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_
                      line_height, 
                      TB_FORMAT_CENTRE);
 
+  #ifdef LM_DEBUG
+    WriteCalendarDay("<td>" + d + "</td>");
+  #endif
+
   //fb.drawFastHLine(0, (int)line_height, fb.width(), GxEPD_BLACK);
 #ifdef USE_SPI_RAM_FRAMEBUFFER
   fb.drawFastHLine(0, text_ypos + line_height, fb.width(), GxEPD_BLACK);
@@ -2708,6 +2759,10 @@ void display_date_ex(time64_t date, String datestr, String day, bool right_to_le
   text_ypos = fbheight - diskfont_normal._FontHeader.charheight - 1;  // TODO: calculate maximum height of text before rendering rather than relying on the smallest 
   bRed = false; //       (default) font height for the offset
 
+  #ifdef LM_DEBUG
+    WriteCalendarDay("<td>" + datestr + "</td>");
+  #endif
+
   day.replace("Hebdomadam", "Hebd."); // bid of a bodge to make it fit in the bottom right Sanctoral field on the display - should have a measure text function 
   day.replace("Octavam", "Oct.");  // to check if the text fits first, then do the replacement if it does not.
                                       
@@ -2717,6 +2772,10 @@ void display_date_ex(time64_t date, String datestr, String day, bool right_to_le
                      line_number, fbwidth, fbheight, 
                      bRTL, right_to_left, false, false,
                      TB_FORMAT_LJUSTIFY);
+
+  #ifdef LM_DEBUG
+    WriteCalendarDay("<td>" + day + "</td>");
+  #endif
 }
 
 String replacefields(String s, time64_t date) {
@@ -2833,6 +2892,10 @@ void GetImageFilenameAndWakeTime(String& imagefilename, uint8_t Hour, int8_t ima
 }
 
 bool DisplayImage(String filename, int16_t xpos, int16_t ypos) {
+#ifdef LM_DEBUG
+  return false;
+#endif
+
   // Display 8 greyscale image from SD card in native format for display (4bpp, b3=red/black)
   if (!SD.exists(filename)) {
     DEBUG_PRT.print(F("DisplayImage() Image ["));
@@ -2885,3 +2948,26 @@ bool DisplayImage(String filename, int16_t xpos, int16_t ypos) {
   fileImg.close();
   return true;
 }
+
+#ifdef LM_DEBUG
+//File cfile;
+//bool cclosefile = false;
+
+void WriteCalendarDay(String text) {
+  //if (!cfile) {
+  //  cfile = SD.open("/calendar.txt", sdfat::O_RDWR | sdfat::O_APPEND);
+  if (!cfile) {
+    SD.remove("/calendar.txt");
+    cfile = SD.open("/calendar.txt", sdfat::O_RDWR | sdfat::O_CREAT);
+  }
+  //}
+  
+  if (cfile) {
+    cfile.print(text);
+  }
+
+  if (cclosefile) {
+    cfile.close();
+  }
+}
+#endif

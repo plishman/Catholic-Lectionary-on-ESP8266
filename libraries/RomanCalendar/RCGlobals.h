@@ -1,5 +1,10 @@
 #ifndef _RCGLOBALS42_H
 #define _RCGLOBALS42_H
+	
+	/// Debugging - comment out before building if not debugging. Will output a calendar year to sd card as /calendar.txt if LM_DEBUG is defined
+	//#define LM_DEBUG 1	// debugging - comment out for normal build
+	//////////////////
+
 	#ifdef _WIN32
 		const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
 	#else
