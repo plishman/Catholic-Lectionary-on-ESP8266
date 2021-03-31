@@ -3502,6 +3502,10 @@ bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool&
 		bMoreText = true;
 		bool bTextAvailable = getText(_fppropers, _ir, text, bFileOk, bMoreText);
 
+		if (!bMoreText && _ir.partnumber < _ir.partcount - 1) { // PLL-31-03-2021 If there is no more text for this part (of a multipart record)
+			bMoreText = true; 									// PLL-31-03-2021 and it is not the last subpart, then there is more text, so set bMoreText.
+		}
+
 		if (!bTextAvailable && _ir.partnumber < _ir.partcount - 1) {
 			DEBUG_PRT.println(F("MissalReading::get(): More subparts found, getting index for next subpart"));
 			ir_subpart++;
@@ -3511,10 +3515,24 @@ bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool&
 			}
 
 			bTextAvailable = getText(_fppropers, _ir, text, bFileOk, bMoreText);
+
+			if (!bMoreText && _ir.partnumber < _ir.partcount - 1) { // PLL-31-03-2021 If there is no more text for this part (of a multipart record)
+				bMoreText = true; 									// PLL-31-03-2021 and it is not the last subpart, then there is more text, so set bMoreText.
+			}
+
+			DEBUG_PRT.print(F("\nMissalReading::get(): new subpart: bMoreText = "));
+			DEBUG_PRT.println(bMoreText);
+			DEBUG_PRT.print(F("MissalReading::get(): bTextAvailable = "));
+			DEBUG_PRT.println(bTextAvailable);
+			return true;
+		}
+		else {
+			DEBUG_PRT.print(F("\nMissalReading::get(): part or subpart: bMoreText = "));
+			DEBUG_PRT.println(bMoreText);
 		}
 		
 		DEBUG_PRT.print(F("MissalReading::get(): bTextAvailable = "));
-		DEBUG_PRT.print(bTextAvailable);
+		DEBUG_PRT.println(bTextAvailable);
 		return bTextAvailable;
 	}
 
