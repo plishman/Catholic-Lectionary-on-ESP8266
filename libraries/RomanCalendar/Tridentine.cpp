@@ -2512,6 +2512,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		if (issameday(datetime, AshWednesday(year))) { HolyDayOfObligation = true; ImageFilename = F("AshWednesday"); }
 		if (issameday(datetime, GoodFriday(year))) { HolyDayOfObligation = true; ImageFilename = F("GoodFriday"); }
 		if (issameday(datetime, MaundyThursday(year))) { ImageFilename = F("MaundyThursday"); }
+		if (issameday(datetime, PalmSunday(year))) { ImageFilename = F("PalmSunday"); }
 		// PLL-14-12-2020
 
 		if (datetime >= (AshWednesday(year) + SECS_PER_DAY) && datetime < sunday_after(AshWednesday(year))) {
