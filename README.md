@@ -28,6 +28,14 @@ Arabic ligaturization is supported, and in the SD card archive an Arabic Bible i
 Several Toolchain projects are provided, written in C# and C++, one of which - TheDotFactory (https://github.com/pavius/the-dot-factory/tree/master/TheDotFactory) - is not mine, but I have modified it to output "disk fonts", which are bitmap fonts which can be used as an alternative to the built-in rom font used by default. (They may be useful for other character sets needing more detail and larger characters, such as Chinese or Arabic).
 <p>
 
+<h3>SD Card Image for use with Lectionary</h3>
+<p>
+The Lectionary's most current SD card file tree (in .rar format) can be found at https://drive.google.com/file/d/1XaUvDGA-_tJGDTKUNYaKT58bz0dVddp_/view?usp=sharing (Github lfs large file support is over quota and has been disabled, so the file will be hosted on a Google drive account for now).
+</p>
+<p>
+The SD card file tree image contains all of the Liturgical readings, Bibles texts and pictures needed for the Lectionary to work. Extract these files to an SD card of max 32Gb in size.
+</p>
+
 <h3>Debug Output</h3>
 <h4>Output to file DEBUGLOG.TXT on SD card</h4>
 <p>
@@ -73,6 +81,6 @@ Modified versions of the Time and SPI arduino libraries are also used: The time 
 
 Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the other libraries on which this project depends.
 <p>
-There is a lot to this project, and it has taken me over a year to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
+There is a lot to this project, and it has taken me over four years to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
 </p>
 [This readme is still in the process of being updated]
