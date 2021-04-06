@@ -13,7 +13,7 @@ It is based on the Ruby program calendarium-romanum (https://github.com/igneus/c
 The Latin Mass Propers (shown above) are now available in several languages and versions, based on output captured from a modified version of the Divinum Officium project (https://github.com/DivinumOfficium/divinum-officium). As programmed, Latin Mass Propers update twelve times daily. The Introitus for the day's Mass is shown from Midnight to 9am, then the Gloria, Collect, Lesson, Gradual, Gospel, Credo, Offertorium, Secreta, Prefatio, Communio are shown at hourly intervals thereafter, until 7pm, when the Postcommunio is shown (until midnight). On Good Friday and Holy Saturday a slightly different pattern occurs, due to the Propers for these days having more parts.
 </p>
 <p>
-Images for seasonal days, feasts and votive masses are included on the SD card file tree. If an image or images are available for a given day, they will be displayed between midnight and 8am and between 8pm and midnight, with all of the text readings displayed at hourly intervals during the day in between as above. 
+Images for seasonal days, feasts and votive masses are included in the SD card file tree. If an image or images are available for a given day, they will be displayed between midnight and 8am and between 8pm and midnight, with all of the text readings displayed at hourly intervals during the day in between as above. 
 </p>
 <p>
 On Good Friday an image will also be displayed at 3pm for one hour, followed by the readings for the Adoration of the Cross and Communion up to 8pm, when the image shown at 3pm will be displayed again until midnight.
