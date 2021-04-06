@@ -2323,7 +2323,7 @@ void Tridentine::GetFileDir(time64_t datetime, String& FileDir_Season, String& F
 
 
 
-void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& ImageFilename, String& VotiveImageFilename) {
+void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename) {
 	DEBUG_PRT.print(F("Tridentine::GetFileDir2():"));
 
 	bool bSaturday = (weekday(datetime) == PY_SAT); // for Saturday of Our Lady Votive Masses
@@ -2338,7 +2338,10 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 
 	FileDir_Season = "";
 	FileDir_Saint = "";
-	ImageFilename = "";
+	
+	String ImageFilename = "";
+	SeasonImageFilename = "";
+	SaintImageFilename = "";
 	VotiveImageFilename = "";
 
 	uint8_t season = Season(datetime);
@@ -2532,10 +2535,17 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	case SEASON_EASTER:
 		dir_season = F("Easter");
 		
+		if(season_week == 0) {
+			// Octave of Easter
+			ImageFilename = String(F("Easter")) + String(FPSTR(WeekDays[day]));
+		}
+
 		// PLL-14-12-2020
 		if (issameday(datetime, Easter(year))) { ImageFilename = F("EasterSunday"); }
 		if (issameday(datetime, Ascension(year))) { ImageFilename = F("AscensionThursday"); }
 		// PLL-14-12-2020
+
+		if (issameday(datetime, sunday_after(Easter(year)))) { ImageFilename = F("OctaveDayOfEaster"); }
 
 		if (season_week < 7) {
 			dir_sub = String(season_week);
@@ -2684,22 +2694,22 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
 
 		if (ImageFilename == "") {	// PLL-14-12-2020
-			ImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 
 			if (isleap(year)) {
 				if (month_of_year == 2 && day_of_month == 24) {
 					FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th
-					ImageFilename = "";
+					SaintImageFilename = "";
 				}
 
 				if (month_of_year == 2 && day_of_month == 25) {
 					FileDir_Saint = String(F("/2/24/")); // Handle St Matthias day in leap years, which falls on 25th Feb instead of 24th Feb, so get Propers for 25th from 2/24 in this case
-					ImageFilename = String(F("/2/24-2"));
+					SaintImageFilename = String(F("/2/24-2"));
 				}
 			}
 		}
 		else { // PLL-14-12-2020
-			ImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.
+			SeasonImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.
 		} // PLL-14-12-2020
 	}
 	DEBUG_PRT.print(F(" 2"));
@@ -2710,7 +2720,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		dir_subsub = "";
 		dir_day = String(day_of_month); // wonder what might happen on St Matthias' day in a leap year if bOverrideIfFeast gets set. I don't think it can happen though
 		if (ImageFilename == "") {
-			ImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 		}
 	}
 
@@ -3336,30 +3346,56 @@ bool Tridentine::getIndexRecord(File& file, IndexRecord& ir) {	// gets the index
 	return false;
 }
 
-uint8_t Tridentine::getClassIndex(String cls) {
+uint8_t Tridentine::getClassIndex(String cls, bool bUseNewClasses) {
 	/// TODO: PLL-12-01-2021 Need to handle first two Sundays of Advent (Semiduplex II. classis) and Semiduplex Dominica minor, eg. 20th Sunday after Pentecost
 	
-	const char* const tradtable[8] = {
-        "none", "Simplex", "Semiduplex", "Duplex",
-        "Duplex majus", "Duplex II. classis", "Duplex I. classis", "Duplex I. classis"
+	// problem: if (say) Duplex I. classis is passed in, how to avoid matching Duplex with (Duplex I. Classis).indexOf("Duplex")
+
+	DEBUG_PRT.print(F("\ngetClassIndex() cls =["));
+	DEBUG_PRT.print(cls);
+	DEBUG_PRT.print(F("], bUseNewClasses="));
+	DEBUG_PRT.println(bUseNewClasses);
+
+	const char* const tradtable[7] = {
+        "none", 
+		"Simplex", 
+		"Semiduplex", 
+		"Duplex",
+        "Duplex majus", 
+		"Duplex II. classis", 
+		"Duplex I. classis" //, 
+		//"Duplex I. classis"
 	};
     
-	const char* const newtable[8] = {
+	const char* const newtable[7] = {
         "none",
         "Commemoratio",
         "III. classis",
         "III. classis",
         "III. classis",
         "II. classis",
-        "I. classis",
-        "I. classis"
+        "I. classis" //,
+        //"I. classis"
 	};
 
-	for (uint8_t i = 0; i < 8; i++) {
-		if (cls == String(tradtable[i]) || cls == String(newtable[i])) return i;
+	uint8_t foundlast = 0; // tradtable: String such as Duplex I. classis will contain both Duplex and Duplex I.classis, so will match the wrong class value in this case
+						   // taking the *last* matched value will solve this *for this application and set of strings*
+	uint8_t foundfirst = 0; // newtable: Strings such as I. classis will be found in I. classis, II. classis and III. classis. So for this case, need to take the *first*
+							// matched value will solve this for this set of strings.
+
+	for (uint8_t i = 0; i < 7; i++) {
+		//if (cls == String(tradtable[i]) || cls == String(newtable[i])) return i;
+		if ((!bUseNewClasses && cls.indexOf(tradtable[i]) != -1) || (bUseNewClasses && cls.indexOf(newtable[i]) != -1))  {
+			if (foundfirst == 0) foundfirst = i;
+			foundlast = i;
+			DEBUG_PRT.printf("getClassIndex() i=%d, indexOf: classtable[i]=%d\n", i, bUseNewClasses ? cls.indexOf(newtable[i]) : cls.indexOf(tradtable[i]));
+		}
+		//return i; // PLL-05-04-2021 Check if class string is present in passed string, rather than an exact match, due to possibilities such as "Dies Octavæ I. classis"
+					// (in newtable[]) being passed to function
 	}
 	
-	return 0;
+	return bUseNewClasses ? foundfirst : foundlast;
+	//return 0;
 }
 
 bool Tridentine::getText(File& file, IndexRecord& indexrecord, String& s, bool& bFileOk, bool& bMoreText) {

@@ -2087,7 +2087,7 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   //Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt"); //removed - using Tridentine::GetFileDir function instead - PLL 19-10-2020
   Tr_Calendar_Day td;
   //Tridentine::get(date, td, true);
-  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation, td.ImageFilename, td.VotiveImageFilename);
+  Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation, td.SeasonImageFilename, td.SaintsImageFilename, td.VotiveImageFilename);
   
   LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime);
       
@@ -2155,6 +2155,8 @@ void LatinMassPropers(time64_t& date,
   //String lang = "en";
   Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt");
 */
+  // PLL-05-04-2021 Fix for Liturgical class comparison function which was only partially working
+  bool bUseNewClasses = (lect.indexOf("1960") > -1); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
 
   tmElements_t ts;
   breakTime(date, ts);
@@ -2165,10 +2167,19 @@ void LatinMassPropers(time64_t& date,
   //DEBUG_PRT.println(td.Colour);
   //DEBUG_PRT.println(td.Mass);
   //DEBUG_PRT.println(td.Commemoration);
-  DEBUG_PRT.println(td.HolyDayOfObligation);
-  DEBUG_PRT.println(td.FileDir_Season);
-  DEBUG_PRT.println(td.FileDir_Saint);
-  DEBUG_PRT.println(td.ImageFilename);
+  DEBUG_PRT.print(F("td.HolyDayOfObligation=["));
+  DEBUG_PRT.print(td.HolyDayOfObligation);
+  DEBUG_PRT.print(F("]\ntd.FileDir_Season=["));
+  DEBUG_PRT.print(td.FileDir_Season);
+  DEBUG_PRT.print(F("]\ntd.FileDir_Saint=["));
+  DEBUG_PRT.print(td.FileDir_Saint);
+  DEBUG_PRT.print(F("]\ntd.SeasonImageFilename=["));
+  DEBUG_PRT.print(td.SeasonImageFilename);
+  DEBUG_PRT.print(F("]\ntd.SaintsImageFilename=["));
+  DEBUG_PRT.print(td.SaintsImageFilename);
+  DEBUG_PRT.print(F("]\ntd.VotiveImageFilename=["));
+  DEBUG_PRT.print(td.VotiveImageFilename);
+  DEBUG_PRT.println(F("]"));
 
   int8_t filenumber = ts.Hour - 8;    // (Done) - TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
 
@@ -2187,31 +2198,45 @@ void LatinMassPropers(time64_t& date,
   String fileroot_img = "/" + lect + "/images";
   String liturgical_day = "";
   String sanctoral_day = "";
-  String imagefilename = td.ImageFilename != "" ? fileroot_img + td.ImageFilename + ".bwr" : "";
+  String seasonimagefilename = td.SeasonImageFilename != "" ? fileroot_img + td.SeasonImageFilename + ".bwr" : "";
+  String saintsimagefilename = td.SaintsImageFilename != "" ? fileroot_img + td.SaintsImageFilename + ".bwr" : "";
   String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
 
   bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
   bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
   bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
-  bool bHasImage = (td.ImageFilename != "" && SD.exists(imagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
+  bool bHasSeasonImage = (td.SeasonImageFilename != "" && SD.exists(seasonimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
+  bool bHasSaintsImage = (td.SaintsImageFilename != "" && SD.exists(saintsimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
   bool bHasVotiveImage = (td.VotiveImageFilename != "" && SD.exists(votiveimagefilename)); // if the Mass for the day is a Votive Mass, an image will be displayed if available
-  int8_t imagecount = -1;
+  int8_t seasonimagecount = -1;
+  int8_t saintsimagecount = -1;
   int8_t votiveimagecount = -1;
 
   // image filenames are of the form 10-11.bwr, and 10-11-2.bwr, 10-11-3.bwr etc if there is more than one image
-  if (bHasImage) imagecount = GetImageCount(fileroot_img + td.ImageFilename); // get count of images to be displayed this day
+  if (bHasSeasonImage) seasonimagecount = GetImageCount(fileroot_img + td.SeasonImageFilename); // get count of images to be displayed this day
+  if (bHasSaintsImage) saintsimagecount = GetImageCount(fileroot_img + td.SaintsImageFilename); // get count of images to be displayed this day
   if (bHasVotiveImage) votiveimagecount = GetImageCount(fileroot_img + td.VotiveImageFilename); // get count of votive images to be displayed this day (if applicable)
-  
-  DEBUG_PRT.print(F("imagefilename is ["));
-  DEBUG_PRT.print(imagefilename);
+
+  int8_t imagecount = saintsimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+  bool bHasImage = bHasSaintsImage;
+  String imagefilename = saintsimagefilename;
+    
+  DEBUG_PRT.print(F("seasonimagefilename is ["));
+  DEBUG_PRT.print(seasonimagefilename);
+  DEBUG_PRT.print(F("]\nsaintsimagefilename is ["));
+  DEBUG_PRT.print(saintsimagefilename);
   DEBUG_PRT.print(F("]\nvotiveimagefilename is ["));
   DEBUG_PRT.print(votiveimagefilename);
-  DEBUG_PRT.print(F("]\nbHasImage is "));
-  DEBUG_PRT.println(bHasImage);
+  DEBUG_PRT.print(F("]\nbHasSeasonImage is "));
+  DEBUG_PRT.println(bHasSeasonImage);
+  DEBUG_PRT.print(F("bHasSaintsImage is "));
+  DEBUG_PRT.println(bHasSaintsImage);
   DEBUG_PRT.print(F("bHasVotiveImage is "));
   DEBUG_PRT.println(bHasVotiveImage);
-  DEBUG_PRT.print(F("imagecount="));
-  DEBUG_PRT.println(imagecount);
+  DEBUG_PRT.print(F("seasonimagecount="));
+  DEBUG_PRT.println(seasonimagecount);
+  DEBUG_PRT.print(F("saintsimagecount="));
+  DEBUG_PRT.println(saintsimagecount);
   DEBUG_PRT.print(F("votiveimagecount="));
   DEBUG_PRT.println(votiveimagecount);
   
@@ -2230,8 +2255,8 @@ void LatinMassPropers(time64_t& date,
   season.open(fileroot + td.FileDir_Season);
 
   bool bSunday = Tridentine::sunday(date);
-  int8_t cls_season = Tridentine::getClassIndex(season.cls());
-  int8_t cls_feast = Tridentine::getClassIndex(feast.cls());
+  int8_t cls_season = Tridentine::getClassIndex(season.cls(), bUseNewClasses);
+  int8_t cls_feast = Tridentine::getClassIndex(feast.cls(), bUseNewClasses);
 
   DEBUG_PRT.print(F("cls_season="));
   DEBUG_PRT.print(cls_season);
@@ -2252,8 +2277,8 @@ void LatinMassPropers(time64_t& date,
   
   // If it is a votive day and the feast is of the same or lower priority, 
   // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
-  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls()) <= Tridentine::getClassIndex(votive.cls())) 
-           || (!bIsFeast && Tridentine::getClassIndex(season.cls()) <= Tridentine::getClassIndex(votive.cls())))
+  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses)) 
+           || (!bIsFeast && Tridentine::getClassIndex(season.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses)))
               );
 
   if (bIsVotive) {
@@ -2262,7 +2287,7 @@ void LatinMassPropers(time64_t& date,
   
   // Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
 
-    //if (Tridentine::getClassIndex(indexheader_saint.cls) > Tridentine::getClassIndex(indexheader_season.cls)) {
+    //if (Tridentine::getClassIndex(indexheader_saint.cls, bUseNewClasses) > Tridentine::getClassIndex(indexheader_season.cls, bUseNewClasses)) {
       // Feast day takes precendence
       /*
         In this case:
@@ -2348,7 +2373,7 @@ void LatinMassPropers(time64_t& date,
       bool bDisplayComm = ((cls_feast >= cls_season || cls_feast == 0 /*PLL-12-01-2021 or commemoration*/) && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
       /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class? [No - not in Epiphany/days of January]
       // need to exclude commemoration on Sundays and Feasts of the Lord
-      bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls()) >= Tridentine::getClassIndex(season.cls()));
+      bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls(), bUseNewClasses) >= Tridentine::getClassIndex(season.cls(), bUseNewClasses));
       
       if (Tridentine::sunday(date)) { // TODO: may need to make allowance for feasts that move, such as feast of St Matthias, and for feasts of the Lord which override Sundays
         bSaintsDayTakesPrecedence = false;
@@ -2358,6 +2383,13 @@ void LatinMassPropers(time64_t& date,
       if (!bSaintsDayTakesPrecedence) {
         p_mr_Day = &season;
         p_mr_Comm = &feast;
+
+        if (bHasSeasonImage) {
+          DEBUG_PRT.println(F("Using image from the season"));
+          imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+          bHasImage = bHasSeasonImage;
+          imagefilename = seasonimagefilename;   
+        }
       }
 
       if (bIsVotive) { // in this case, the feast is shown in the commemoration position (bottom left of the screen), and the votive is shown as the heading. The seasonal day is not shown
@@ -2502,6 +2534,13 @@ void LatinMassPropers(time64_t& date,
   }
   else { // is a seasonal day only
     DEBUG_PRT.println(F("Seasonal day only"));
+    if (bHasSeasonImage) {
+      DEBUG_PRT.println(F("Using image from the season"));
+    }
+    imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+    bHasImage = bHasSeasonImage;
+    imagefilename = seasonimagefilename;   
+
     ypos = display_day_ex(date, season.name(), season.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
 
     subpart = 0;

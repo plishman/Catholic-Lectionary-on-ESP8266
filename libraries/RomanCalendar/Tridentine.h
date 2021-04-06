@@ -41,7 +41,8 @@ struct Tr_Calendar_Day {
 	String FileDir_Season;
 	String FileDir_Saint;
 	String FileDir_Votive;
-	String ImageFilename;
+	String SeasonImageFilename;
+	String SaintsImageFilename;
 	String VotiveImageFilename;
 };
 
@@ -274,14 +275,14 @@ public:
 	static void GetVotiveMass(time64_t datetime, bool& is_votive, uint8_t& cls, uint8_t& col, String& Mass, String& Commemoration);
 	static void GetDay(time64_t datetime, String& Mass);
 	static void GetFileDir(time64_t datetime, String& FileDir_Season, String& FileDir_Saint);
-	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& ImageFilename, String& VotiveImageFilename); // used for getting filedirs for DivinumOfficium-based calendar database
+	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename); // used for getting filedirs for DivinumOfficium-based calendar database
 	static bool FileExists(String filename);
 
 	///////////////////////////////////
 	// Functions for reading the texts
 	static bool getHeaderRecord(File& file, IndexHeader& ih);
 	static bool getIndexRecord(File& file, IndexRecord& ir);
-	static uint8_t getClassIndex(String cls);
+	static uint8_t getClassIndex(String cls, bool bUseNewClasses);
 	static bool getText(File& file, IndexRecord& indexrecord, String& s, bool& bFileOk, bool& bMoreText);
 	static void DumpIndexHeader(IndexHeader& ih);
 	static void DumpIndexRecord(IndexRecord& ir);
