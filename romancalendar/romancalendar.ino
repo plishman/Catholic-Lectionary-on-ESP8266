@@ -21,6 +21,9 @@
 #define FS_NO_GLOBALS
 #include <FS.h>
 
+#include "SimpleFTPServer.h"  // PLL-08-04-2021
+FtpServer ftpSrv;
+
 //----------
 #include <pins_arduino.h>
 //#include <I2CSerialPort.h>
@@ -1165,10 +1168,13 @@ void config_server(String lang)
   }
 
   if (Battery::power_connected() && bNetworkAvailable) {
-    DEBUG_PRT.println(F("Power is connected, starting config web server and OTA update server"));
+    DEBUG_PRT.println(F("Power is connected, starting config web server, FTP Server and OTA update server"));
     DEBUG_PRT.print(F("USB voltage is "));
     DEBUG_PRT.println(String(Battery::battery_voltage()));
 
+    // PLL-08-04-2021 FTP Server
+    ftpSrv.begin(LECT_FTP_USER, LECT_FTP_PASS);    //username, password for ftp.   (default 21, 50009 for PASV)
+    
     // PLL-27-04-2020 OTA Update code (https://randomnerdtutorials.com/esp8266-ota-updates-with-arduino-ide-over-the-air/)   
     ArduinoOTA.onStart([]() {
       DEBUG_PRT.println(F("OTA Start"));
@@ -1205,30 +1211,77 @@ void config_server(String lang)
     DEBUG_PRT.print(F("free memory = "));
     DEBUG_PRT.println(String(system_get_free_heap_size()));
 
+    #define SERVER_DELAY_SLOW 100;
+    #define SERVER_DELAY_FAST 2;
+
+    #define FINALDELAY 7000 // milliseconds
+
+    #define FINAL_DELAY_SLOW FINALDELAY / SERVER_DELAY_SLOW; // number of further loops of the server mainloop to run before shutting down
+    #define FINAL_DELAY_FAST FINALDELAY / SERVER_DELAY_FAST;
+
+    unsigned long delay_msec = SERVER_DELAY_SLOW;
+
     unsigned long server_start_time = millis();
-    bool bTimeUp = false;
-   
+    bool bTimeUp = false;    
+    uint8_t ftpsrv_status = 0; //PLL-10-04-2021 TODO: finish code to lengthen timeout when FTP server activity is detected
+    uint8_t last_ftpsrv_status = 0;
+    bool bPowerConnected = Battery::power_connected();
+    unsigned long batt_conn_interval_start = millis();
+
+    bool bSettingsUpdated = false;
+    
     if (Config::StartServer(lang)) {
       DEBUG_PRT.println(F("Config web server started, listening for requests..."));
 
-      #define FINALDELAY 70
-      int finaldelay = FINALDELAY; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
-      while(Battery::power_connected() && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp && !Config::bComplete) {
+      unsigned long finaldelay = FINAL_DELAY_SLOW; // this should give time for the "settings updated" page to download its UI language JSON file (7 seconds max)
+      while(bPowerConnected && (!Config::bSettingsUpdated || finaldelay > 0) && !bTimeUp && !Config::bComplete) {
         server.handleClient();  // Web server
         ArduinoOTA.handle(); // PLL-27-04-2020 OTA Update server
+        
+        ftpsrv_status = ftpSrv.handleFTP(); //PLL-08-04-2021 FTP Server
+
+        if (ftpsrv_status != last_ftpsrv_status) {
+          DEBUG_PRT.print(F("FTP server status change: "));
+          DEBUG_PRT.print(last_ftpsrv_status);
+          DEBUG_PRT.print(F(" to "));
+          DEBUG_PRT.print(ftpsrv_status);
+          last_ftpsrv_status = ftpsrv_status;
+          DEBUG_PRT.print(F(". ftpSrv.isInUse() = "));
+          DEBUG_PRT.println(ftpSrv.isInUse());
+        }
+        
+        // run as fast as possible if the FTP server is active, delay 100ms/loop otherwise  
+        if (!bSettingsUpdated) {  // only if not in finaldelay timeout (occurs after settings have been updated via the web interface)
+          if (ftpSrv.isInUse()) { 
+            delay_msec = SERVER_DELAY_FAST; 
+            finaldelay = FINAL_DELAY_FAST;
+          }
+          else {
+            delay_msec = SERVER_DELAY_SLOW; 
+            finaldelay = FINAL_DELAY_SLOW;
+          }
+        }
+        
+        delay(delay_msec);
         wdt_reset();
-        delay(100);
+        //delay(5);
         //DEBUG_PRT.println("Battery voltage is " + String(Battery::battery_voltage()));
 
         if (Config::bSettingsUpdated) {
-          if (finaldelay == FINALDELAY) { // first time entering this, clock will just have been set, so power line enable from clock chip will be off, but still held up by USB 5V input
+          if (!bSettingsUpdated) { // first time entering this, clock will just have been set, so power line enable from clock chip will be off, but still held up by USB 5V input
             Config::SetPowerOn();         // hold up the power enable line. If this is not done, then if USB power is disconnected before reset (but after settings updated), ESP8266 will not restart
-          }                               // if USB power is disconnected after update but before reset, then the alarm should trigger in 3 seconds and switch on the ESP8266 rather than immediately
+            bSettingsUpdated = true;      // if USB power is disconnected after update but before reset, then the alarm should trigger in 3 seconds and switch on the ESP8266 rather than immediately
+          }                         
           finaldelay--;
         }
 
-        if (millis() > (server_start_time + 1000*8*60)) {
-          bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again.
+        if (!ftpSrv.isInUse() && millis() > (server_start_time + 1000*8*60)) {
+          bTimeUp = true; // run the server for an 10 minutes max, then sleep. If still on usb power, the web server will run again. Will not happen until the FTP server is idle
+        }
+
+        if (millis() > batt_conn_interval_start + 1000) {
+          batt_conn_interval_start = millis();
+          bPowerConnected = Battery::power_connected(); // sample the state of the ADC/power connected sensor every 1 second only, since it interferes with internet connectivity at higher rates
         }
       }
 
