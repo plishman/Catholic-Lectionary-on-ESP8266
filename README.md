@@ -31,6 +31,20 @@ Arabic ligaturization is supported, and in the SD card archive an Arabic Bible i
 
 ![Preview5](./lectionary6.jpg)
 
+<h3>Embedded FTP Server</h3>
+<p>
+The Lectionary now has an embedded FTP server to enable wireless access to the SD card database of readings, to allow updates to the SD card without removing it from the unit. The FTP server code was adapted from Renzo Mischianti's SimpleFTPServer (https://www.mischianti.org/2020/02/08/ftp-server-on-esp8266-and-esp32/ / GitHub https://github.com/xreef/SimpleFTPServer to support SD card access on ESP8266 (previously supported only SPIFFS).
+</p>
+<h4>FTP Server Notes</h4>
+<ul>
+  <li>The FTP Server only runs when the USB power is plugged in. It will continue to wait for a connection for up to ten minutes, before returning to the Mass reading.</li>
+  <li>If there are active transfers going on when the usual 10 minute timeout period expires, the FTP Server will delay the Mass reading and continue to run until the client disconnects.</li>  
+  <li>The username and password for the FTP server is <code>Lectionary</code>.</li>
+  <li>The FTP Server has a short login timeout, so is best used with automated FTP clients such as FileZilla, which pre-store the login credentials and transmit them to the server immediately upon connection.</li>
+  <li>The FTP Server supports only one connection at a time, so this needs to be configured in the client.</li>
+  <li>The transfer speed to and from the SD card is typically about 90 - 100 kB/sec (speed limited by SPI access to the SD card).</li>
+</ul>
+
 <h3>ToolChain</h3>
 <p>
 Several Toolchain projects are provided, written in C# and C++, one of which - TheDotFactory (https://github.com/pavius/the-dot-factory/tree/master/TheDotFactory) - is not mine, but I have modified it to output "disk fonts", which are bitmap fonts which can be used as an alternative to the built-in rom font used by default. (They may be useful for other character sets needing more detail and larger characters, such as Chinese or Arabic).
