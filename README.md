@@ -33,7 +33,7 @@ Arabic ligaturization is supported, and in the SD card archive an Arabic Bible i
 
 <h3>Embedded FTP Server</h3>
 <p>
-The Lectionary now has an embedded FTP server to enable wireless access to the SD card database of readings, to allow updates to the SD card without removing it from the unit. The FTP server code was adapted to support SD card access on ESP8266 from Renzo Mischianti's SimpleFTPServer (https://www.mischianti.org/2020/02/08/ftp-server-on-esp8266-and-esp32/ / GitHub https://github.com/xreef/SimpleFTPServer (previously it supported only SPIFFS on ESP8266).
+The Lectionary now has an embedded FTP server which enables wireless access to the SD card database of readings, to allow updates to the SD card without removing it from the unit. The FTP server code was adapted to support SD card access on ESP8266 from Renzo Mischianti's SimpleFTPServer (https://www.mischianti.org/2020/02/08/ftp-server-on-esp8266-and-esp32/ / GitHub https://github.com/xreef/SimpleFTPServer (previously it supported only SPIFFS on ESP8266).
 </p>
 <h4>FTP Server Notes</h4>
 <ul>
