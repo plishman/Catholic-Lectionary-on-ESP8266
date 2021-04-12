@@ -2318,12 +2318,13 @@ void LatinMassPropers(time64_t& date,
 
   // need to exclude commemoration on Sundays and Feasts of the Lord
   bIsFeast = (bFeastDayOnly || 
-              (!bSunday && cls_feast >= cls_season) ||              
+              (bIsFeast && (                                        // PLL-12-04-2021 Can only be a feast day if bIsFeast is already true, indicating that there is a 
+              (!bSunday && cls_feast >= cls_season) ||              //  calendar entry for a feast on this day in the database
               (cls_feast >= 6) ||                                   // the additions in the commented three lines below may have introduced bugs - need testing  
               (!bSunday && cls_feast == 0 && cls_season <= 2) ||    // PLL-12-01-2021 commemoration is 0, need to display these eg. on 5 Dec 2020, which is the commemoration of S. Sabbae Abbatis. To display on Seasonal days <= Semiduplex
               (cls_season - cls_feast == 1) ||                      // PLL-12-01-2021 display feast if it is 1 class lower than that of the season
               (bSunday && cls_feast > cls_season && cls_feast >= 5) // PLL-12-01-2021 Patched for Feast of St Luke Evangelist on October 18 (Duplex II. classis) if on a Sunday
-             ); 
+             ))); 
   bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
   // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
   // PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
