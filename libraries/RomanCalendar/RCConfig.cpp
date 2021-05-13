@@ -29,17 +29,17 @@ bool loadFromSdCard(String path) {
   DEBUG_PRT.print(path);
   
   if(path.endsWith(".src")) path = path.substring(0, path.lastIndexOf("."));
-  else if(path.endsWith(".htm")) dataType = "text/html";
-  else if(path.endsWith(".css")) dataType = "text/css";
-  else if(path.endsWith(".js")) dataType = "application/javascript";
-  else if(path.endsWith(".png")) dataType = "image/png";
-  else if(path.endsWith(".gif")) dataType = "image/gif";
-  else if(path.endsWith(".jpg")) dataType = "image/jpeg";
-  else if(path.endsWith(".ico")) dataType = "image/x-icon";
-  else if(path.endsWith(".xml")) dataType = "text/xml";
-  else if(path.endsWith(".pdf")) dataType = "application/pdf";
-  else if(path.endsWith(".zip")) dataType = "application/zip";
-  else if(path.endsWith(".jsn")) dataType = "application/json";
+  else if(path.endsWith(".htm")) dataType = F("text/html");
+  else if(path.endsWith(".css")) dataType = F("text/css");
+  else if(path.endsWith(".js")) dataType  = F("application/javascript");
+  else if(path.endsWith(".png")) dataType = F("image/png");
+  else if(path.endsWith(".gif")) dataType = F("image/gif");
+  else if(path.endsWith(".jpg")) dataType = F("image/jpeg");
+  else if(path.endsWith(".ico")) dataType = F("image/x-icon");
+  else if(path.endsWith(".xml")) dataType = F("text/xml");
+  else if(path.endsWith(".pdf")) dataType = F("application/pdf");
+  else if(path.endsWith(".zip")) dataType = F("application/zip");
+  else if(path.endsWith(".jsn")) dataType = F("application/json");
 
   File dataFile = SD.open(path.c_str());
   if(dataFile.isDirectory()){
@@ -58,7 +58,11 @@ bool loadFromSdCard(String path) {
 
   if (server.hasArg("download")) dataType = "application/octet-stream";
 
+  #ifndef CORE_v3_EXPERIMENTAL
   if (server.streamFile(dataFile, dataType) != dataFile.size()) {
+  #else
+  if (streamFile(dataFile, dataType) != dataFile.size()) {
+  #endif
     DEBUG_PRT.println(F("Sent less data than expected!"));
   }
 
@@ -69,6 +73,26 @@ bool loadFromSdCard(String path) {
 
   return true;
 }
+
+#ifdef CORE_v3_EXPERIMENTAL
+// workaround for v3 server.streamFile() not working
+size_t streamFile(File& file, String& contentType) {
+    //if (bUseHTTPServerWorkarounds) {
+      char buf[128];                              // streamFile workaround
+      int siz = file.size();
+      int out = siz;
+      while(siz > 0) {
+        size_t len = std::min((int)(sizeof(buf) - 1), siz);
+        file.read((uint8_t *)buf, len);
+        server.client().write((const char*)buf, len);
+        siz -= len;
+      }  
+      return out-siz; // number of bytes transmitted
+    //}
+    
+    //return server.streamFile(file, contentType);  // streamFile workaround not needed
+}
+#endif
 
 void handleNotFound() {
 	if(loadFromSdCard(server.uri())) return;
@@ -219,6 +243,10 @@ String getQueryStringParam(String param_name, String default_value) {
 
 
 bool Config::StartServer(String lang) {
+	//bUseHTTPServerWorkarounds = String(system_get_sdk_version()).startsWith("2.2.2-dev");
+  	//DEBUG_PRT.print(bUseHTTPServerWorkarounds ? F("U") : F("Not U"));
+  	//DEBUG_PRT.println(F("sing streamFile workaround"));
+
 	bSettingsUpdated = false;
 	bComplete = false;
 

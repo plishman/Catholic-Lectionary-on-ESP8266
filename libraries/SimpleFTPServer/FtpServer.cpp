@@ -890,30 +890,34 @@ bool FtpServer::openDir( FTP_DIR * pdir )
 {
   bool openD;
 #if STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD || STORAGE_TYPE == STORAGE_SD2
+  #if STORAGE_TYPE == STORAGE_SD2
+    //dir.setTimeCallback(fsTimeStampCallback);
+  #endif
+
   if( cwdName == 0 ) {
   
-  #if STORAGE_TYPE == STORAGE_SD
+    #if STORAGE_TYPE == STORAGE_SD
 	    dir = STORAGE_MANAGER.open( "/" );
 	  } else {
 	    dir = STORAGE_MANAGER.open( cwdName );
 	  }
 	  openD = true;
-  /*
-  #elif STORAGE_TYPE == STORAGE_SD2
-    dir = STORAGE_MANAGER.openDir( "/" );
-  } else {
-    dir = STORAGE_MANAGER.openDir( cwdName );
-  }
-  openD = dir.rewind();
-  */
-  #else
-    dir = STORAGE_MANAGER.openDir( "/" );
-  } else {
-    dir = STORAGE_MANAGER.openDir( cwdName );
-  }
-  openD = dir.rewind();
-
+    
+    #elif STORAGE_TYPE == STORAGE_SD2
+      dir = STORAGE_MANAGER.openDir( "/" );
+    } else {
+      dir = STORAGE_MANAGER.openDir( cwdName );
+    }
+    openD = dir.rewind();
+       
+    #else
+      dir = STORAGE_MANAGER.openDir( "/" );
+    } else {
+      dir = STORAGE_MANAGER.openDir( cwdName );
+    }
+    openD = dir.rewind();
   #endif
+
   if( ! openD ) {
     client.print( F("550 Can't open directory ") ); client.println( cwdName );
   }
@@ -1023,7 +1027,7 @@ bool FtpServer::doList()
     return false;
   }
 #if STORAGE_TYPE == STORAGE_SPIFFS || STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD || STORAGE_TYPE == STORAGE_SD2
-  #if ESP8266 && STORAGE_TYPE != STORAGE_SD
+  #if ESP8266 && STORAGE_TYPE != STORAGE_SD // && STORAGE_TYPE != STORAGE_SD2
     if( dir.next())
   #else
     File fileDir = dir.openNextFile();
@@ -1037,7 +1041,7 @@ bool FtpServer::doList()
 	  } else {
   #endif
 	data.print( F("+r,s") );
-  #if ESP8266 && STORAGE_TYPE != STORAGE_SD
+  #if ESP8266 && STORAGE_TYPE != STORAGE_SD // && STORAGE_TYPE != STORAGE_SD2
 	data.print( long( dir.fileSize()) );
 	data.print( F(",\t") );
     data.println( dir.fileName() );
@@ -1105,7 +1109,7 @@ bool FtpServer::doMlsd()
   // Get next file  
   #if STORAGE_TYPE == STORAGE_SPIFFS  || STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD || STORAGE_TYPE == STORAGE_SD2
     DEBUG_PRINTLN("DIR MLSD ");
-    #if ESP8266 && STORAGE_TYPE != STORAGE_SD
+    #if ESP8266 && STORAGE_TYPE != STORAGE_SD // && STORAGE_TYPE != STORAGE_SD2
       if( dir.next())
     #else
       File fileDir = dir.openNextFile();
@@ -1116,11 +1120,23 @@ bool FtpServer::doMlsd()
         char dtStr[ 15 ];
 
         // Get the file's datestamp
-        struct tm * timeinfo;
-
         #if STORAGE_TYPE == STORAGE_SD
           strcpy(dtStr, "19700101000000");
+
+        #elif STORAGE_TYPE == STORAGE_SD2
+          //time_t t = fileDir.getLastWrite();
+          time_t t = dir.fileTime();
+          //t = now();
+          //strcpy(dtStr, "19710101000000");
+          
+          //timeinfo = localtime ( &time );
+          // 2000 01 01 16 06 56
+          
+          sprintf(dtStr,"%04d%02d%02d%02d%02d%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+
+          //strftime (dtStr,15,"%Y%m%d%H%M%S",timeinfo);       
         #else
+          struct tm * timeinfo;
           #if ESP8266
             time_t time = dir.fileTime();
           #else
@@ -1131,10 +1147,10 @@ bool FtpServer::doMlsd()
 
           // 2000 01 01 16 06 56
 
-          strftime (dtStr,15,"%Y%m%d%H%M%S",timeinfo);
+          strftime (dtStr,15,"%Y%m%d%H%M%S",timeinfo);       
         #endif
 
-        #if ESP8266 && STORAGE_TYPE != STORAGE_SD
+        #if ESP8266 && STORAGE_TYPE != STORAGE_SD // && STORAGE_TYPE != STORAGE_SD2
           // Get the filename fn
           String fn = dir.fileName();
           #if STORAGE_TYPE == STORAGE_SPIFFS
@@ -1155,11 +1171,15 @@ bool FtpServer::doMlsd()
         #if STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD2
           // Send the kind of file (file or dir) to the client
           data.print( ( dir.isDirectory() ? F("dir") : F("file")) );
+
         #elif STORAGE_TYPE == STORAGE_SD
           data.print( ( fileDir.isDirectory() ? F("dir") : F("file")) );
+
         #else
           data.print( F("file") );
+
         #endif
+        
         // Send datestamp dtstr, size fz and filename fn to the client
         data.print( F(";Modify=") ); data.print(dtStr);// data.print( makeDateTimeStr( dtStr, time, time) );
         data.print( F(";Size=") ); data.print( fz );
@@ -1169,10 +1189,13 @@ bool FtpServer::doMlsd()
 
         #if STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD2
           DEBUG_PRINT( ( dir.isDirectory() ? F("dir") : F("file")) );
+        
         #elif STORAGE_TYPE == STORAGE_SD
           DEBUG_PRINT( ( fileDir.isDirectory() ? F("dir") : F("file")) );
+        
         #else
           DEBUG_PRINT( F("file") );
+        
         #endif
 
         DEBUG_PRINT( F(";Modify=") ); DEBUG_PRINT(dtStr); //DEBUG_PRINT( makeDateTimeStr( dtStr, time, time) );
@@ -1522,34 +1545,6 @@ bool FtpServer::openFile( char path[ FTP_CWD_SIZE ], int readTypeInt ) {
 
 #if (STORAGE_TYPE == STORAGE_SD2)
 bool FtpServer::openFile( char path[ FTP_CWD_SIZE ], const char * readType ) {
-	
-  /*
-  fs::OpenMode openmode = fs::OM_DEFAULT;
-  fs::AccessMode accessmode = fs::AM_READ;
-  
-  switch(readTypeInt) 
-  {
-    case O_READ:
-      accessmode = fs::AM_READ;
-
-    case O_WRITE:
-      accessmode = fs::AM_WRITE;
-
-    case O_RDWR:
-      accessmode = fs::AM_RW;
-
-    case O_APPEND:
-      accessmode = fs::AM_RW;
-      openmode = fs::OM_APPEND;
-
-    case O_CREAT:
-      accessmode = fs::AM_RW;
-      openmode = fs::OM_CREATE;
-
-      break;
-  }
-  */
-
 	DEBUG_PRINT(F("File to open [") );
 	DEBUG_PRINT( path );
 	DEBUG_PRINT(F("] readType ") );
@@ -1564,15 +1559,30 @@ bool FtpServer::openFile( char path[ FTP_CWD_SIZE ], const char * readType ) {
 	DEBUG_PRINT(F("]: ") );
 	file = STORAGE_MANAGER.open( path, openmode, accessmode );
   */
+	//file.setTimeCallback(fsTimeStampCallback);
   file = STORAGE_MANAGER.open( path, readType );
 	if (!file) {
 		DEBUG_PRINTLN(F("FALSE"));
 		return false;
 	}else{
-		DEBUG_PRINTLN(F("TRUE"));
+    DEBUG_PRINTLN(F("TRUE"));
 		return true;
 	}
 }
+
+/*
+time_t fsTimeStampCallback() {
+  #ifdef TIME_64BIT
+    time_t t = now32();
+    Serial.printf("fsTimeStampCallback() (32bit): %2d/%2d/%4d %2d:%2d:%2d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+    return t;
+  #else
+    time64_t t = now();
+    Serial.printf("fsTimeStampCallback() (64bit): %2d/%2d/%4d %2d:%2d:%2d", year(t), month(t), day(t), hour(t), minute(t), second(t));
+    return (time_t)t;
+  #endif
+}
+*/
 
 #elif (STORAGE_TYPE == STORAGE_SPIFFS || STORAGE_TYPE == STORAGE_LITTLEFS || STORAGE_TYPE == STORAGE_SD)
 bool FtpServer::openFile( char path[ FTP_CWD_SIZE ], const char * readType ) {

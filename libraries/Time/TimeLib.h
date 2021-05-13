@@ -1,4 +1,4 @@
-#include <I2CSerialPort.h>
+//#include <I2CSerialPort.h>
 /*
   time.h - low level time and date functions
 */
@@ -17,12 +17,22 @@
 #include <sys/types.h> // for __time_t_defined, but avr libc lacks sys/types.h
 #endif
 
-
 #if !defined(__time_t_defined) // avoid conflict with newlib or other posix libc
 typedef unsigned long time_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
-#endif
+#endif                        
 
-typedef long long time64_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
+#define TIME_64BIT 1 // 64bit implementation (time64_t)
+
+#if defined(_USE_LONG_TIME_T) || __LONG_MAX__ > 0x7fffffffL // if _USE_LONG_TIME_T is defined then time_t will be defined as a long only (32bits)
+#define TIME_NATIVE_64BIT 0 
+#define	_TIME64_T_ uint32_t //__int_least64_t
+#else
+#define TIME_NATIVE_64BIT 1
+#define	_TIME64_T_ time_t     // if not, time_t is 64bits already
+#endif
+typedef	_TIME64_T_	time64_t;
+
+//typedef long long time64_t; // ****was unsigned long, which is 32 bit. Going to try 64 bit to overcome the y2038 problem
 
 // This ugly hack allows us to define C++ overloaded functions, when included
 // from within an extern "C", as newlib's sys/stat.h does.  Actually it is
@@ -60,19 +70,19 @@ typedef struct  {
 #define  tmYearToY2k(Y)      ((Y) - 30)    // offset is from 2000
 #define  y2kYearToTm(Y)      ((Y) + 30)   
 
-typedef time_t(*getExternalTime)();
+typedef time64_t(*getExternalTime)();
 //typedef void  (*setExternalTime)(const time_t); // not used in this version
 
 
 /*==============================================================================*/
 /* Useful Constants */
-#define SECS_PER_MIN  ((time_t)(60UL))
-#define SECS_PER_HOUR ((time_t)(3600UL))
-#define SECS_PER_DAY  ((time_t)(SECS_PER_HOUR * 24UL))
-#define DAYS_PER_WEEK ((time_t)(7UL))
-#define SECS_PER_WEEK ((time_t)(SECS_PER_DAY * DAYS_PER_WEEK))
-#define SECS_PER_YEAR ((time_t)(SECS_PER_WEEK * 52UL))
-#define SECS_YR_2000  ((time_t)(946684800UL)) // the time at the start of y2k
+#define SECS_PER_MIN  ((time64_t)(60ULL))
+#define SECS_PER_HOUR ((time64_t)(3600ULL))
+#define SECS_PER_DAY  ((time64_t)(SECS_PER_HOUR * 24ULL))
+#define DAYS_PER_WEEK ((time64_t)(7ULL))
+#define SECS_PER_WEEK ((time64_t)(SECS_PER_DAY * DAYS_PER_WEEK))
+#define SECS_PER_YEAR ((time64_t)(SECS_PER_WEEK * 52ULL))
+#define SECS_YR_2000  ((time64_t)(946684800ULL)) // the time at the start of y2k
  
 /* Useful Macros for getting elapsed time */
 #define numberOfSeconds(_time_) (_time_ % SECS_PER_MIN)  
@@ -96,37 +106,54 @@ typedef time_t(*getExternalTime)();
 #define daysToTime_t    ((D)) ( (D) * SECS_PER_DAY) // fixed on Jul 22 2011
 #define weeksToTime_t   ((W)) ( (W) * SECS_PER_WEEK)   
 
+// if _USE_LONG_TIME_T is defined then time_t will be defined as a long only (32bits), so need to have both 32bit (time_t) and 64 bit (time64_t) functions defined
+#if defined(_USE_LONG_TIME_T) || __LONG_MAX__ > 0x7fffffffL 
 /* 64 bit time */
 typedef union {
   uint64_t time;
   uint32_t words[2];
 } T64;
 
+time64_t TO64( time_t t );
+
 /*============================================================================*/
 /*  time and date functions   */
+
 int     hour();            // the hour now 
 int     hour(time_t t);    // the hour for the given time
+int     hour(time64_t t);    // the hour for the given time
 int     hourFormat12();    // the hour now in 12 hour format
 int     hourFormat12(time_t t); // the hour for the given time in 12 hour format
+int     hourFormat12(time64_t t); // the hour for the given time in 12 hour format
 uint8_t isAM();            // returns true if time now is AM
 uint8_t isAM(time_t t);    // returns true the given time is AM
+uint8_t isAM(time64_t t);    // returns true the given time is AM
 uint8_t isPM();            // returns true if time now is PM
 uint8_t isPM(time_t t);    // returns true the given time is PM
+uint8_t isPM(time64_t t);    // returns true the given time is PM
 int     minute();          // the minute now 
 int     minute(time_t t);  // the minute for the given time
+int     minute(time64_t t);  // the minute for the given time
 int     second();          // the second now 
 int     second(time_t t);  // the second for the given time
+int     second(time64_t t);  // the second for the given time
 int     day();             // the day now 
 int     day(time_t t);     // the day for the given time
+int     day(time64_t t);     // the day for the given time
 int     weekday();         // the weekday now (Sunday is day 1) 
 int     weekday(time_t t); // the weekday for the given time 
+int     weekday(time64_t t); // the weekday for the given time 
 int     month();           // the month now  (Jan is month 1)
 int     month(time_t t);   // the month for the given time
+int     month(time64_t t);   // the month for the given time
 int     year();            // the full four digit year: (2009, 2010 etc) 
 int     year(time_t t);    // the year for the given time
+int     year(time64_t t);    // the year for the given time
 
-time_t now();              // return the current time as seconds since Jan 1 1970 
+time_t   now32();          // return the current time as seconds since Jan 1 1970 
+time64_t now();            // return the current time as seconds since Jan 1 1970 (64bit)
 void    setTime(time_t t);
+void    setTime(time64_t t);
 void    setTime(int hr,int min,int sec,int day, int month, int yr);
 void    adjustTime(long adjustment);
 
@@ -143,10 +170,64 @@ void    setSyncProvider( getExternalTime getTimeFunction); // identify the exter
 void    setSyncInterval(time_t interval); // set the number of seconds between re-sync
 
 /* low level functions to convert to and from system time                     */
+void breakTime(time_t time, tmElements_t &tm);  // break time_t into elements
 void breakTime(time64_t time, tmElements_t &tm);  // break time_t into elements
+time_t makeTime32(tmElements_t &tm);
 time64_t makeTime(tmElements_t &tm);  // convert time elements into time_t
 //void breakTime(T64 &timeInput, tmElements_t &tm);
 //void makeTime(tmElements_t &tm, T64 &t64); // fixed for 64 bit time_t values
+#else
+/* 64 bit time */
+typedef union {
+  uint64_t time;
+  uint32_t words[2];
+} T64;
+
+time64_t TO64( time_t t );
+
+// 64 bit time native, so don't need to differentiate between 32 and 64 bit function prototypes
+int     hour();            // the hour now 
+int     hour(time64_t t);    // the hour for the given time
+int     hourFormat12();    // the hour now in 12 hour format
+int     hourFormat12(time64_t t); // the hour for the given time in 12 hour format
+uint8_t isAM();            // returns true if time now is AM
+uint8_t isAM(time64_t t);    // returns true the given time is AM
+uint8_t isPM();            // returns true if time now is PM
+uint8_t isPM(time64_t t);    // returns true the given time is PM
+int     minute();          // the minute now 
+int     minute(time64_t t);  // the minute for the given time
+int     second();          // the second now 
+int     second(time64_t t);  // the second for the given time
+int     day();             // the day now 
+int     day(time64_t t);     // the day for the given time
+int     weekday();         // the weekday now (Sunday is day 1) 
+int     weekday(time64_t t); // the weekday for the given time 
+int     month();           // the month now  (Jan is month 1)
+int     month(time64_t t);   // the month for the given time
+int     year();            // the full four digit year: (2009, 2010 etc) 
+int     year(time64_t t);    // the year for the given time
+
+time64_t now();            // return the current time as seconds since Jan 1 1970 (64bit)
+void    setTime(time64_t t);
+void    setTime(int hr,int min,int sec,int day, int month, int yr);
+void    adjustTime(long adjustment);
+
+/* date strings */ 
+#define dt_MAX_STRING_LEN 9 // length of longest date string (excluding terminating null)
+char* monthStr(uint8_t month);
+char* dayStr(uint8_t day);
+char* monthShortStr(uint8_t month);
+char* dayShortStr(uint8_t day);
+	
+/* time sync functions	*/
+timeStatus_t timeStatus(); // indicates if time has been set and recently synchronized
+void    setSyncProvider( getExternalTime getTimeFunction); // identify the external time provider
+void    setSyncInterval(time64_t interval); // set the number of seconds between re-sync
+
+/* low level functions to convert to and from system time                     */
+void breakTime(time64_t time, tmElements_t &tm);  // break time_t into elements
+time64_t makeTime(tmElements_t &tm);  // convert time elements into time_t
+#endif // #if defined(_USE_LONG_TIME_T) || __LONG_MAX__ > 0x7fffffffL
 } // extern "C++"
 #endif // __cplusplus
 #endif /* _Time_h */

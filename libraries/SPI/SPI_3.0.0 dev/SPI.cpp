@@ -315,26 +315,6 @@ uint8_t SPIClass::transfer(uint8_t data) {
     return (uint8_t) (SPI1W0 & 0xff);
 }
 
-// 02 July 2018 Transfer 9 bit data for epaper and other spi displays
-void SPIClass::transfer_9bit(uint8_t low_8bit, uint8_t high_bit) {
-    while(SPI1CMD & SPIBUSY) {}
-   
-	setDataBits(9);
-
-	uint32_t regvalue = 0;
-
-	if(high_bit) {
-		regvalue|=0x0080; //write the 9th bit
-	}
-	regvalue |= low_8bit >> 1;
-	regvalue |= (low_8bit & 1) ? 0x8000 : 0;
-
-	SPI1W0 = regvalue;
-    SPI1CMD |= SPIBUSY;
-    while(SPI1CMD & SPIBUSY) {}
-    //return (uint16_t) (SPI1W0 & 0x1ff);	
-}
-//
 uint16_t SPIClass::transfer16(uint16_t data) {
     union {
             uint16_t val;

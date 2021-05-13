@@ -2542,7 +2542,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 
 		// PLL-14-12-2020
 		if (issameday(datetime, Easter(year))) { ImageFilename = F("EasterSunday"); }
-		if (issameday(datetime, Ascension(year))) { ImageFilename = F("AscensionThursday"); }
+		if (issameday(datetime, Ascension(year))) { ImageFilename = F("AscensionThursday"); HolyDayOfObligation = true;}
 		// PLL-14-12-2020
 
 		if (issameday(datetime, sunday_after(Easter(year)))) { ImageFilename = F("OctaveDayOfEaster"); }
@@ -3455,7 +3455,7 @@ void Tridentine::DumpIndexRecord(IndexRecord& ir) {
 MissalReading::MissalReading() {
 }
 
-bool MissalReading::open(String& filedir) {
+bool MissalReading::open(String filedir) {
 	DEBUG_PRT.print(F("MissalReading::open() filedir="));
 	
 	filecount = -1;
@@ -3681,7 +3681,15 @@ String MissalReading::heading() {
 }
 
 String MissalReading::name() {
+/*	if (_ih.commemoration != "") {
+		return _ih.commemoration;		// PLL-17-04-2021 when asked for name(), return the name of the commemoration if it is present (is blank for non-commemorations)
+	}
+*/	
 	return _ih.name;
+}
+
+bool MissalReading::isCommemorationOnly() {
+	return (name() == "");
 }
 
 String MissalReading::commemoration() {

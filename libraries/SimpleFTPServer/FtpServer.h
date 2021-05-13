@@ -573,4 +573,8 @@ private:
            bytesTransfered;           //
 };
 
+#if STORAGE_TYPE == STORAGE_SD2
+//time_t fsTimeStampCallback();   //FS callback for file timestamping
+#endif
+
 #endif // FTP_SERVER_H

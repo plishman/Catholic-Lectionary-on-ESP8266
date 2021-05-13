@@ -17,9 +17,15 @@
 #include <ArduinoOTA.h>
 
 #include <ESP8266WebServer.h>
-#include <SD.h>
-#define FS_NO_GLOBALS
-#include <FS.h>
+//#ifndef CORE_v3_EXPERIMENTAL
+  #include <SD.h>
+  #include <FS.h>
+  #define FS_NO_GLOBALS
+//#else
+//  #include <SDFS.h>
+//  //using namespace sdfat;
+//  #define SD_FAT_TYPE 3
+//#endif
 
 #include "SimpleFTPServer.h"  // PLL-08-04-2021
 FtpServer ftpSrv;
@@ -475,7 +481,10 @@ void checkSpiffsDump() {
   // copy crashdump file from spiffs to sd card (should happen after rebooting)
   
   fs::File f_spiffs = SPIFFS.open(F(CRASHFILEPATH), "r");
-  if(!f_spiffs) return;
+  if(!f_spiffs) {
+    DEBUG_PRT.println(F("No crash file found in SPIFFS"));
+    return;
+  }
 
   File f_sd = SD.open(F(CRASHFILEPATH), sdfat::O_RDWR | sdfat::O_APPEND);
   if(!f_sd) f_sd = SD.open(F(CRASHFILEPATH), sdfat::O_RDWR | sdfat::O_CREAT);
@@ -534,7 +543,7 @@ void savetoSpiffs(struct rst_info * rst_info, uint32_t stack, uint32_t stack_end
 
 /**
  * This function is called automatically if ESP8266 suffers an exception
- * It should be kept quick / consise to be able to execute before hardware wdt may kick in
+ * It should be kept quick / concise to be able to execute before hardware wdt may kick in
  */
 extern "C" void custom_crash_callback(struct rst_info * rst_info, uint32_t stack, uint32_t stack_end )
 {
@@ -563,7 +572,36 @@ extern "C" void custom_crash_callback(struct rst_info * rst_info, uint32_t stack
   }
 }
 
+#ifdef CORE_v3_EXPERIMENTAL
+//------------------------------------------------------------------------------
+// Call back for file timestamps.  Only called for file create and sync().
+void dateTime(uint16_t* date, uint16_t* time) {
 
+  time64_t t;
+  Config::getDateTime(&t);  // need to get the time without DST for file datestamps, as these are calculated by the ftp client etc, hence not using getLocalDateTime.
+
+  DEBUG_PRT.printf("dateTime() Timestamp is %02d/%02d/%04d %02d:%02d:%02d\n", day(t), month(t), year(t), hour(t), minute(t), second(t));
+
+  // Return date using FS_DATE macro to format fields.
+  *date = sdfat::FS_DATE(year(t), month(t), day(t));
+
+  // Return time using FS_TIME macro to format fields.
+  *time = sdfat::FS_TIME(hour(t), minute(t), second(t));
+
+  DEBUG_PRT.printf("FAT_DATE: %02d/%02d/%04d %02d:%02d:%02d\n", sdfat::FS_DAY(*date), sdfat::FS_MONTH(*date), sdfat::FS_YEAR(*date), sdfat::FS_HOUR(*time), sdfat::FS_MINUTE(*time), sdfat::FS_SECOND(*time));
+}
+
+time_t fsTimeStampCallback() {
+  #if TIME_NATIVE_64BIT == 0
+    time_t t = now32();
+  #else
+    time_t t = now();
+  #endif
+
+  DEBUG_PRT.printf("fsTimeStampCallback(): %02d/%02d/%04d %02d:%02d:%02d", day(t), month(t), year(t), hour(t), minute(t), second(t));
+  return t;
+}
+#endif
 
 /**
  * setup
@@ -578,13 +616,25 @@ void setup() {
   pinMode(D8, OUTPUT); 
   digitalWrite(D8, HIGH); // set epaper display to not selected
 
-  SD.begin(D1, SPI_HALF_SPEED);
+  bool bSDOk = SD.begin(D1, SPI_HALF_SPEED);
+  bool bSpiffsOk = SPIFFS.begin();
     
-  SPIFFS.begin();
   //DEBUG_PRT.begin(1,3,8);
+
+  #ifdef CORE_v3_EXPERIMENTAL
+  // Timestamping works correctly when Lectionary is built with v3.0 of the ESP8266 libaries and tools (still in development)
+  sdfat::FsDateTime::setCallback(dateTime); 
+  SDFS.setTimeCallback(fsTimeStampCallback);
+  #endif
+  
   DEBUGPRT_BEGIN
   delay(100);
-  //Serial.println("-");
+
+  DEBUG_PRT.print(F("\n**Lectionary************\nMount:"));
+  DEBUG_PRT.print(F(" SD FS: "));
+  DEBUG_PRT.print(bSDOk);
+  DEBUG_PRT.print(F(", SPIFFS FS: "));
+  DEBUG_PRT.println(bSpiffsOk);
   
   DEBUG_PRT.print(F("free memory = "));
   //Serial.println("=");
@@ -616,14 +666,21 @@ void setup() {
   DEBUG_PRT.println(F("0123456789"));
   DEBUG_PRT.println(F("--------------------------"));
   
-  DEBUG_PRT.println(F("Running"));
+  DEBUG_PRT.print(F("Running version: "));
+  DEBUG_PRT.println(ESP.getFullVersion());
 
   //WiFi.disconnect(); // testing - so have to connect to a network each reboot
 
   battery_test();
-
   clock_battery_test();
 
+/*
+  #ifdef CORE_v3_EXPERIMENTAL
+  // Timestamping works correctly when Lectionary is built with v3.0 of the ESP8266 libaries and tools (still in development)
+  // (needed to merge v3 SPI driver with old version to support 9bit transfers to epaper display)
+  sdfat::FsDateTime::setCallback(dateTime); 
+  #endif
+*/
   // Check if EEPROM checksum is good
 
   //Config c;
@@ -870,8 +927,27 @@ void clock_battery_test() {
     }
 */
     Config::InvalidateEEPROM(); // if the clock stopped, invalidate the eeprom contents, to force the user to reset them on next boot (connect usb 5v).
+    setTime(0, 0, 0, 1, 1, 2000); // default to midnight on 1-1-2000 if clock has stopped
+  }
+  else {
+    setSyncProvider(timeProvider);
+    setSyncInterval(120);    
   }
 }
+
+time64_t timeProvider()
+{
+  time64_t t;
+  Config::getLocalDateTime(&t);
+  return t;
+}
+
+/*
+void datestampProvider(uint16_t* stamp_date, uint16_t* stamp_time) {
+  *stamp_date = FAT_DATE(year(), month(), day());
+  *stamp_time = FAT_TIME(hour(), minute(), second());
+}
+*/
 
 bool connect_wps(){
   DEBUG_PRT.println(F("Please press WPS button on your router.\n Press any key to continue..."));
@@ -894,7 +970,7 @@ bool connect_wps(){
 /**
  * loop
  **/
-void loop(void) {  
+void loop(void) {   
   /************************************************/ 
   // *0* Check battery and if on usb power, start web server to allow user to use browser to configure lectionary (address is http://lectionary.local)
   Calendar c(D1); // PLL 29-04-2020 now create calendar object before running config server, so that the language setting can be determined and sent to the config webpage
@@ -905,6 +981,10 @@ void loop(void) {
   }
   DEBUG_PRT.println(F("*0*\n"));
   config_server(config_server_lang);  // config server will run if battery power is connected
+
+  //- uncomment to cause a crash (debugging/testing) --------------------------------------
+  //while(true){};
+  //---------------------------------------------------------------------------------------
 
   /************************************************/ 
   // *1* Create calendar object and load config.csv
@@ -943,8 +1023,9 @@ void loop(void) {
     //time64_t date = c.temporale->date(12,11,2017);
     DEBUG_PRT.println(F("Getting datetime..."));
     //time64_t date = timeserver.local_datetime();
-    time64_t date;
-    Config::getLocalDateTime(&date);
+    //time64_t date;
+    //Config::getLocalDateTime(&date);
+    time64_t date = now();
 
     roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
                      // will round to the hour.
@@ -1211,11 +1292,15 @@ void config_server(String lang)
     DEBUG_PRT.print(F("free memory = "));
     DEBUG_PRT.println(String(system_get_free_heap_size()));
 
-    #define SERVER_DELAY_SLOW 100;
+    #define SERVER_DELAY_SLOW 10;
     #define SERVER_DELAY_FAST 2;
 
+    #ifdef CORE_v3_EXPERIMENTAL
+    #define FINALDELAY 20000 // milliseconds  (web serving is slower due to needed streamFile() workaround with current dev version of ESP8266 Core and libraries)
+    #else
     #define FINALDELAY 7000 // milliseconds
-
+    #endif
+    
     #define FINAL_DELAY_SLOW FINALDELAY / SERVER_DELAY_SLOW; // number of further loops of the server mainloop to run before shutting down
     #define FINAL_DELAY_FAST FINALDELAY / SERVER_DELAY_FAST;
 
@@ -1323,8 +1408,10 @@ void roundupdatetohour(time64_t& date) {
 // Powers down ESP and peripherals for the number of hours, minutes and seconds specified (no rounding), using the DS3231 clock chip alarm,
 // or if that fails (because micro is on 5V etc) then deepSleep is used. Sleep duration of up to a year should be possible
 void SleepFor(int hours, int minutes, int seconds) {
-    time64_t date;
-    Config::getLocalDateTime(&date);
+    //time64_t date;
+    //Config::getLocalDateTime(&date);
+
+    time64_t date = now();
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1363,8 +1450,10 @@ void SleepFor(int hours, int minutes, int seconds) {
 // Powers down ESP and peripherals for the number of hours specified (rounded down to the top of the hour), using the DS3231 clock chip alarm,
 // or if that fails (because micro is on 5V etc), then deepSleep is used.
 void SleepForHours(int num_hours) {
-    time64_t date;
-    Config::getLocalDateTime(&date);
+    //time64_t date;
+    //Config::getLocalDateTime(&date);
+
+    time64_t date = now();
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1384,8 +1473,10 @@ void SleepForHours(int num_hours) {
 }
 
 void SleepUntilStartOfHour() {
-    time64_t date;
-    Config::getLocalDateTime(&date);
+    //time64_t date;
+    //Config::getLocalDateTime(&date);
+
+    time64_t date = now();
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -2214,7 +2305,7 @@ void LatinMassPropers(time64_t& date,
   tmElements_t ts;
   breakTime(date, ts);
 
-  DEBUG_PRT.printf("Datetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+  DEBUG_PRT.printf("\nDatetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
   //DEBUG_PRT.println(td.DayofWeek);
   //DEBUG_PRT.println(td.Cls);
   //DEBUG_PRT.println(td.Colour);
@@ -2226,6 +2317,8 @@ void LatinMassPropers(time64_t& date,
   DEBUG_PRT.print(td.FileDir_Season);
   DEBUG_PRT.print(F("]\ntd.FileDir_Saint=["));
   DEBUG_PRT.print(td.FileDir_Saint);
+  DEBUG_PRT.print(F("]\ntd.FileDir_Votive=["));
+  DEBUG_PRT.print(td.FileDir_Votive);
   DEBUG_PRT.print(F("]\ntd.SeasonImageFilename=["));
   DEBUG_PRT.print(td.SeasonImageFilename);
   DEBUG_PRT.print(F("]\ntd.SaintsImageFilename=["));
@@ -2359,7 +2452,6 @@ void LatinMassPropers(time64_t& date,
       */
     //}
 
-  bool bFeastIsCommemoration = false;
   bool bFileOk = false;
   String s = "";
   bool bOverflowedScreen = true;
@@ -2434,7 +2526,7 @@ void LatinMassPropers(time64_t& date,
       }
       */
             
-      if (!bSaintsDayTakesPrecedence) {
+      if (!bSaintsDayTakesPrecedence || feast.isCommemorationOnly()) { // PLL-23-04-2021 seasonal day takes precedence if feast is commemoration only (collect, secreta and postcommunio have commemoration text)
         p_mr_Day = &season;
         p_mr_Comm = &feast;
 
@@ -2450,16 +2542,31 @@ void LatinMassPropers(time64_t& date,
         p_mr_Day = &votive;
         p_mr_Comm = &feast; 
       }
+
+      bool bIsCommemorationAndSeasonalDayOnly = feast.isCommemorationOnly() && !bIsVotive;
+
+      // on commemorational day, when not also a votive mass day, want the commemoration in the top position on the display (display_date_ex call)
+      if (bIsCommemorationAndSeasonalDayOnly) { // in this case p_mr_Comm will point to the feast, want day name from this. p_mr_Day will point to the season
+        sanctoral_day = p_mr_Day->name(); // text in lower position is from the season, text in upper position will be the name of the commemoration
+      }
+      else {
+        sanctoral_day = p_mr_Comm->name(); // text in lower position will be from the season, or the feast if !bSaintsDayTakesPrecedence (based on rank)
+      }                               
             
-      sanctoral_day = p_mr_Comm->name();
-      ypos = display_day_ex(date, p_mr_Day->name(), p_mr_Day->colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
+      ypos = display_day_ex(date, 
+                            bIsCommemorationAndSeasonalDayOnly ? p_mr_Comm->commemoration() : p_mr_Day->name(), 
+                            p_mr_Day->colour(),         // will be the colour of the season if a commemoration (because in this case p_mr_Day will point to the season,
+                            td.HolyDayOfObligation,     // according to the logic (feast.isCommemorationOnly() && !bIsVotive)), or the colour of the feast if not  
+                            right_to_left, 
+                            bLiturgical_Colour_Red, 
+                            diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
 
       DEBUG_PRT.print(F("filenumber is "));
       DEBUG_PRT.println(filenumber);
       
       // Feast day takes precedence, seasonal day is commemoration
       switch(filenumber) {
-        case 0: // Introitus (from the feast)  
+        case 0: // Introitus (from the feast (PLL-23-04-2021 Unless is a commemoration only, in which case use the introitus from the season))
         case 5: // Gospel
             subpart = 0;
             p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
@@ -2537,7 +2644,7 @@ void LatinMassPropers(time64_t& date,
               }
               //// TODO: PLL-25-07-2020 Find out how this works! 
               //         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
-              if (!bSaintsDayTakesPrecedence || bDisplayComm) {
+              if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
                 //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
                 if (!bOverflowedScreen && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
                   String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
@@ -2552,18 +2659,60 @@ void LatinMassPropers(time64_t& date,
                 int8_t linecount = 0;
                 subpart = 0;
                 p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
+
+                if (bIsCommemorationAndSeasonalDayOnly) {
+                  // eat three more lines if so
+                  p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (<BR>)
+                  p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (Let us pray), (This is in the text where the seasonal day's text goes, which we've already printed from a separate file)
+                  p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line ("Oratio missing"), should then get a " <BR>" on its own line after (placeholder for seasonal day's text, already printed from a separate file)
+                }
+
                 while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
-                  if ((linecount == 0 && filenumber == 8) ||                       // commemorio line is first line in this case
-                      (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemorio line comes after <br>"Let us pray"<br> line
-                    String commtext = "<BR><FONT COLOR=\"red\"><I>Commemorio " + p_mr_Comm->name() + "</I></FONT><BR>";
-                    if (!bOverflowedScreen) {
-                      bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
-                                          pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
-                                          bBold, bItalic, bRed, fontsize_rel, 
-                                          line_number, fbwidth, fbheight, 
-                                          bRTL, bRenderRtl, bWrapText, true);
-                    }          
+                  DEBUG_PRT.print(F("\nlinecount: "));
+                  DEBUG_PRT.println(linecount);
+
+                  if (!bIsCommemorationAndSeasonalDayOnly) 
+                  {
+                    if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
+                        (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemoratio line comes after <br>"Let us pray"<br> line
+                      String commtext = "<BR><FONT COLOR=\"red\"><I>Commemoratio " + p_mr_Comm->name() + "</I></FONT><BR>";
+                      if (!bOverflowedScreen) {
+                        bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
+                                            pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                            bBold, bItalic, bRed, fontsize_rel, 
+                                            line_number, fbwidth, fbheight, 
+                                            bRTL, bRenderRtl, bWrapText, true);
+                      }          
+                    }
                   }
+                  else {
+                    if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
+                        (linecount == 2 && (filenumber == 2 || filenumber == 11)))   // commemoratio line comes after <br>"Let us pray"<br> line
+                    {
+                      String commtext = "<BR><FONT COLOR=\"red\"><I>" + p_mr_Comm->commemoration() + "</I></FONT><BR>"; // text will include "Commemoratio" and the Saint's name in this case
+                      
+                      if (filenumber == 2 || filenumber == 11) // if not secreta, there will be an extra "Commemoratio" line in the text to eat, which will be replaced with the full text "Commemoratio: <Saint's name>"
+                      {
+                        p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat the line ("Commemoratio:")
+                      }
+
+                      if (filenumber == 8) // add a linefeed before the text in this case (overprints on last line of seasonal text otherwise)
+                      {
+                        commtext = " <BR>" + commtext;
+                      }
+                      
+                      if (!bOverflowedScreen) 
+                      {
+                        bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb, 
+                                            pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, 
+                                            bBold, bItalic, bRed, fontsize_rel, 
+                                            line_number, fbwidth, fbheight, 
+                                            bRTL, bRenderRtl, bWrapText, true);
+                      }          
+                    }
+                  }
+
+
                   
                   if (!bOverflowedScreen) {
                     bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb, 

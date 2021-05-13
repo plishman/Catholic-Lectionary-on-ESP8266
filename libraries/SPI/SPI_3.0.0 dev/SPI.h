@@ -62,7 +62,6 @@ public:
   void setClockDivider(uint32_t clockDiv);
   void beginTransaction(SPISettings settings);
   uint8_t transfer(uint8_t data);
-  void transfer_9bit(uint8_t data, uint8_t high_bit); //02 July 2018  uint16_t transfer16(uint16_t data);
   uint16_t transfer16(uint16_t data);
   void transfer(void *buf, uint16_t count);
   void write(uint8_t data);

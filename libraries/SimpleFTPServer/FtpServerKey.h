@@ -27,12 +27,13 @@
 
 
 // Uncomment to enable printing out nice debug messages.
-#define FTP_SERVER_DEBUG
+//#define FTP_SERVER_DEBUG
 
 // Define where debug output will be printed.
-#include "RCGlobals.h"
-#include "DebugPort.h"
-#define DEBUG_PRINTER DEBUG_PRT
+//#include "RCGlobals.h"
+//#include "DebugPort.h"
+//#define DEBUG_PRINTER DEBUG_PRT
+#define DEBUG_PRINTER Serial
 
 
 /*

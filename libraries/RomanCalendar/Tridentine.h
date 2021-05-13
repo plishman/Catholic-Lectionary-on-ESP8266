@@ -77,12 +77,13 @@ public:
 	int curr_subpartlen = -1;
 
 	MissalReading();
-	bool open(String& filedir);
+	bool open(String filedir);
 	bool get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText);
 	bool getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetIndexFilePtr = false);
 	void close();
 	String heading();
 	String name();
+	bool isCommemorationOnly();
 	String commemoration();
 	String cls();
 	String colour();

@@ -62,8 +62,6 @@
 #define WAKE_FLAGS_STILL_CHARGING_DONT_REDISPLAY_WIFI_CONNECTED_IMAGE 0xf0
 enum wake_reasons {WAKE_UNKNOWN, WAKE_ALARM_1, WAKE_ALARM_2, WAKE_USB_5V, WAKE_DEEPSLEEP};
 
-
-
 // https://stackoverflow.com/questions/30223983/c-add-up-all-bytes-in-a-structure
 template<typename T> int CountBytes(const T & t)
 {
@@ -119,6 +117,11 @@ typedef struct {
 extern ESP8266WebServer server;
 	
 bool loadFromSdCard(String path);
+#ifdef CORE_v3_EXPERIMENTAL
+//bool bUseHTTPServerWorkarounds = false;
+size_t streamFile(File& file, String& contentType);	// workaround for server.streamFile on v3 core, which doesn't appear to work at the moment (even in exacmple sketch)
+#endif
+
 void handleNotFound();
 void handleSettingsJson();
 void handleSetConf();

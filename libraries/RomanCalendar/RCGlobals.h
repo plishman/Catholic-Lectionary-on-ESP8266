@@ -5,6 +5,8 @@
 	//#define LM_DEBUG 1	// debugging - comment out for normal build
 	//////////////////
 
+	//#define CORE_v3_EXPERIMENTAL 1	// comment out for building with release cores < 3.0.0
+
 	#ifdef _WIN32
 		const int BEGIN_EPOCH = 1900; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
 	#else
@@ -72,4 +74,7 @@
 		//#include <GxEPD.h>
 		//#include <GxGDEW042Z15/GxGDEW042Z15.h>      // 4.2" b/w/r
 	#endif
+
+	#define LECT_FTP_USER "Lectionary"
+	#define LECT_FTP_PASS "Lectionary"
 #endif
