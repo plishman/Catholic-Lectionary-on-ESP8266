@@ -835,14 +835,21 @@ time64_t Tridentine::LadyDay(int year) {
             return lady_day*/
 	time64_t lady_day = date(25, 3, year);
 	if ((PalmSunday(year) <= lady_day) && (lady_day <= QuasimodoSunday(year))) {
+		DEBUG_PRT.println(F("Lady Day transferred to day after Quasimodo Sunday, as it falls within Holy Week and Easter"));
 		return QuasimodoSunday(year) + 1 * SECS_PER_DAY;
 	}
 	else if (weekday(lady_day) == 6) {
+		DEBUG_PRT.println(F("Lady Day transferred to Monday after, as 25th March in on a Sunday"));
 		return lady_day + 1 * SECS_PER_DAY;
 	}
 	else {
 		return lady_day;
 	}
+}
+
+bool Tridentine::IsLadyDay (time64_t datetime) 
+{
+	return issameday(datetime, LadyDay(year(datetime)));
 }
 
 time64_t Tridentine::StJoseph(int year) {
@@ -2320,7 +2327,14 @@ void Tridentine::GetFileDir(time64_t datetime, String& FileDir_Season, String& F
 }
 
 
+bool Tridentine::IsPassionWeek (time64_t datetime) 
+{
+	// PLL-01-06-2021 Work around for bug in Divinum Officium (version I used) that made days of Holy Week Class IV instead of Class III/Semiduplex
+	
+	time64_t palm_sunday = PalmSunday(year(datetime));
 
+	return (datetime >= (palm_sunday - SECS_PER_WEEK) && datetime < palm_sunday);
+}
 
 
 void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename) {
@@ -2617,7 +2631,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		}
 
 		if (issameday(datetime, AllSouls(year))) {
-			dir_season = "11";	// 11/2/[1 2 or 3]. (There are 3 masses during All Souls day)
+			dir_season = F("11");	// 11/2/[1 2 or 3]. (There are 3 masses during All Souls day)
 			dir_sub = F("2");
 			int8_t hour = ::hour(datetime);
 			if (hour >= 0 && hour < 6) {
@@ -2688,25 +2702,43 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		break;
 	}
 
+	bool bIsLadyDay = issameday(datetime, LadyDay(year));
+	if (bIsLadyDay) {
+		FileDir_Saint = String(F("/3/25/")); 	// Lady Day is moveable, but get the devotional image and Mass Propers from March 25th, it's default date
+		SaintImageFilename = String(F("/3/25"));
+	}
+	else {
+		if (month_of_year == 3 && day_of_month == 25) { // is 25th of March, but not Lady Day, so it has been moved
+			bSuppressFeast = true;						// so don't fetch the Feast Propers for this day
+		}
+	}
+
     //String filename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/title_en.txt"));
 	DEBUG_PRT.print(F(" 1"));
+
 	if (!bSuppressFeast) {
-		FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
+		if (!bIsLadyDay) // filedir is precalculated to take account of transferred date if so, so don't overwrite with default
+		{
+			FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
+		}
 
-		if (ImageFilename == "") {	// PLL-14-12-2020
-			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+		bool bIsStMatthiasDayInLeapYear = false;
 
-			if (isleap(year)) {
-				if (month_of_year == 2 && day_of_month == 24) {
-					FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th
-					SaintImageFilename = "";
-				}
-
-				if (month_of_year == 2 && day_of_month == 25) {
-					FileDir_Saint = String(F("/2/24/")); // Handle St Matthias day in leap years, which falls on 25th Feb instead of 24th Feb, so get Propers for 25th from 2/24 in this case
-					SaintImageFilename = String(F("/2/24-2"));
-				}
+		if (isleap(year)) {
+			if (month_of_year == 2 && day_of_month == 24) {
+				FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th
+				SaintImageFilename = "";
+				bIsStMatthiasDayInLeapYear = true;
 			}
+
+			if (month_of_year == 2 && day_of_month == 25) {
+				FileDir_Saint = String(F("/2/24/")); // Handle St Matthias day in leap years, which falls on 25th Feb instead of 24th Feb, so get Propers for 25th from 2/24 in this case
+				SaintImageFilename = String(F("/2/24-2"));
+			}
+		}
+
+		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay) { // If St Matthias' Day or Lady Day, the SaintImageFilename will already have been set appropriately
+			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 		}
 		else { // PLL-14-12-2020
 			SeasonImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.

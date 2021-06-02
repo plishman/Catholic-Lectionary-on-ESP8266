@@ -1,16 +1,16 @@
 #include "RCConfig.h"
 #include "DebugPort.h"
+#include "RCGlobals.h"
 #include "SD.h"
 
 extern "C" {
 #include "user_interface.h"
 }
 
-String Config::_lang = "default";
-
 //Config::Config() {}
 bool Config::bSettingsUpdated = false;
 bool Config::bComplete = false;
+String Config::_lang = "default";
 
 bool loadFromSdCard(String path) {
   String dataType = "text/plain";
@@ -58,11 +58,11 @@ bool loadFromSdCard(String path) {
 
   if (server.hasArg("download")) dataType = "application/octet-stream";
 
-  #ifndef CORE_v3_EXPERIMENTAL
+  //#ifndef CORE_v3_EXPERIMENTAL
   if (server.streamFile(dataFile, dataType) != dataFile.size()) {
-  #else
-  if (streamFile(dataFile, dataType) != dataFile.size()) {
-  #endif
+  //#else
+  //if (streamFile(dataFile, dataType) != dataFile.size()) {
+  //#endif
     DEBUG_PRT.println(F("Sent less data than expected!"));
   }
 
@@ -70,6 +70,15 @@ bool loadFromSdCard(String path) {
   DEBUG_PRT.println(F("...got file"));
 
   Config::bComplete = (Config::bSettingsUpdated && path == "/html/lang/" + Config::_lang + ".jsn"); // PLL-15-12-2020 can check Config::bComplete reduce delay to reboot after settings updated
+
+  DEBUG_PRT.print(F("\nbSettingsUpdated="));
+  DEBUG_PRT.print(Config::bSettingsUpdated);
+  DEBUG_PRT.print(F(", path=["));
+  DEBUG_PRT.print(path);
+  DEBUG_PRT.print(F(", Config::_lang=["));
+  DEBUG_PRT.print(Config::_lang);
+  DEBUG_PRT.print(F("], bComplete="));
+  DEBUG_PRT.println(Config::bComplete);
 
   return true;
 }
@@ -293,8 +302,12 @@ bool Config::StartServer(String lang) {
 		Config::_lang = "default";
 	}
 
+	DEBUG_PRT.print(F("Config::_lang is set to ["));
+	DEBUG_PRT.print(Config::_lang);
+	DEBUG_PRT.println(F("]"));
+
 	server.begin();
-	DEBUG_PRT.println ( "HTTP server started" );
+	DEBUG_PRT.println (F("HTTP server started"));
   
 	return true;	
 }

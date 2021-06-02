@@ -1370,6 +1370,8 @@ void config_server(String lang)
         }
       }
 
+      delay(1000);  // give last file (typically the <lang>.jsn file) time to complete sending before shutting down the webserver
+
       Config::StopServer();
 
       if (Config::bSettingsUpdated) {
@@ -2349,7 +2351,7 @@ void LatinMassPropers(time64_t& date,
   String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
 
   bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
-  bool bIsFeast = SD.exists(fileroot + td.FileDir_Saint); // if there is no feast day on this day, the directory/propers for this day will not exist
+  bool bIsFeast =  (td.FileDir_Saint  != "" && SD.exists(fileroot + td.FileDir_Saint)); // if there is no feast day on this day, the directory/propers for this day will not exist
   bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
   bool bHasSeasonImage = (td.SeasonImageFilename != "" && SD.exists(seasonimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
   bool bHasSaintsImage = (td.SaintsImageFilename != "" && SD.exists(saintsimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
@@ -2418,7 +2420,11 @@ void LatinMassPropers(time64_t& date,
               (cls_season - cls_feast == 1) ||                      // PLL-12-01-2021 display feast if it is 1 class lower than that of the season
               (bSunday && cls_feast > cls_season && cls_feast >= 5) // PLL-12-01-2021 Patched for Feast of St Luke Evangelist on October 18 (Duplex II. classis) if on a Sunday
              ))); 
-  bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !Tridentine::IsImmaculateConception(date)/*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
+
+  bool bIsImmaculateConception = Tridentine::IsImmaculateConception(date);
+  bool bIsLadyDay = Tridentine::IsLadyDay(date);  // shouldn't both be true!
+  
+  bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !bIsImmaculateConception && !bIsLadyDay /*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
   // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
   // PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
   
@@ -2525,7 +2531,11 @@ void LatinMassPropers(time64_t& date,
         bSaintsDayTakesPrecedence = false;
       }
       */
-            
+
+      bDisplayComm = (bDisplayComm || bIsLadyDay && (cls_season >= 2 || Tridentine::IsPassionWeek(date))); // PLL-01-06-2021 Display commemoration of the seasonal day if the seasonal day is Class III (Semiduplex) or above
+      // PLL-01-06-2021 in the version of Divinum Officium I based the Latin Mass Propers database on, weekdays of Passion Week were reported as Class IV, which
+      // breaks the logic which decides whether to show the commemoration of the seasonal day if Lady Day falls within Passion Week. This is a workaround for that
+      
       if (!bSaintsDayTakesPrecedence || feast.isCommemorationOnly()) { // PLL-23-04-2021 seasonal day takes precedence if feast is commemoration only (collect, secreta and postcommunio have commemoration text)
         p_mr_Day = &season;
         p_mr_Comm = &feast;
@@ -2644,7 +2654,7 @@ void LatinMassPropers(time64_t& date,
               }
               //// TODO: PLL-25-07-2020 Find out how this works! 
               //         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
-              if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
+              if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-01-06-2021 Added LadyDay because Divinum Officium displays the commemoration on this day, despite it being a Class I feast //PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
                 //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
                 if (!bOverflowedScreen && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
                   String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
@@ -2655,7 +2665,7 @@ void LatinMassPropers(time64_t& date,
                                   line_number, fbwidth, fbheight, 
                                   bRTL, bRenderRtl, bWrapText, true);
                 }          
-                
+                // ******* PLL-01-06-2021 need to make sure that Postcommunio etc displays commemoration for seasonal day on Lady Day (25th March unless moved)
                 int8_t linecount = 0;
                 subpart = 0;
                 p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading

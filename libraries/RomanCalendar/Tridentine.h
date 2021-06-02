@@ -223,6 +223,7 @@ public:
 	static time64_t PassionSunday(int year);
 	static time64_t SevenSorrows(int year);
 	static time64_t LadyDay(int year);
+	static bool IsLadyDay (time64_t datetime); 
 	static time64_t StJoseph(int year);
 	static time64_t PalmSunday(int year);
 	static time64_t MondayOfHolyWeek(int year);
@@ -276,6 +277,7 @@ public:
 	static void GetVotiveMass(time64_t datetime, bool& is_votive, uint8_t& cls, uint8_t& col, String& Mass, String& Commemoration);
 	static void GetDay(time64_t datetime, String& Mass);
 	static void GetFileDir(time64_t datetime, String& FileDir_Season, String& FileDir_Saint);
+	static bool IsPassionWeek (time64_t datetime);
 	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename); // used for getting filedirs for DivinumOfficium-based calendar database
 	static bool FileExists(String filename);
 
