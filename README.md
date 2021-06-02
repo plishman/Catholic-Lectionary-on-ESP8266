@@ -52,7 +52,7 @@ Several Toolchain projects are provided, written in C# and C++, one of which - T
 
 <h3>SD Card Image for use with Lectionary</h3>
 <p>
-The Lectionary's most current SD card file tree (in .rar format) can be found at https://drive.google.com/file/d/1XaUvDGA-_tJGDTKUNYaKT58bz0dVddp_/view?usp=sharing (Github lfs large file support is over quota and has been disabled, so the file will be hosted on a Google drive account for now).
+The Lectionary's most current SD card file tree (in .rar format) can be found at https://drive.google.com/file/d/1GsByWi46RJPEapOSLRSnK3cgRlzHhWx0/view?usp=sharing (Github lfs large file support is over quota and has been disabled, so the file will be hosted on a Google drive account for now).
 </p>
 <p>
 The SD card file tree image contains all of the Liturgical readings, Bibles texts and pictures needed for the Lectionary to work. Extract these files to an SD card of max 32Gb in size.
