@@ -307,6 +307,12 @@ uint8_t FrameBuffer::readPixel(int16_t x, int16_t y, bool bUseRotation) {
 }
 
 void FrameBuffer::render(GxEPD_Class& ePaper) {
+	#ifdef GAMMA_CORRECT_FONT
+	bool bCorrectRed = true;
+	#else
+	bool bCorrectRed = false;
+	#endif
+	
 	// flush the single byte 2 pixel cache
 	poke(cached_address, cached_byte, true); // write out last byte if write is pending (will write if the cache_flushed flag is false)
 	cached_address = -1;
@@ -377,7 +383,7 @@ void FrameBuffer::render(GxEPD_Class& ePaper) {
 			int lsaturation = (lpixel & 0x7) << 1; // saturation arg is 4 bit, but lsbit is thrown away
 
 			if (lsaturation != 0) { // 0 = white, don't draw pixel if so (screen will have been cls'd on initialization)
-				ePaper.drawPixel(x, y, lcolor, lsaturation);			
+				ePaper.drawPixel(x, y, lcolor, lsaturation, bCorrectRed);			
 			}
 			
 			uint16_t rcolor = GxEPD_BLACK;
@@ -387,7 +393,7 @@ void FrameBuffer::render(GxEPD_Class& ePaper) {
 			int rsaturation = (rpixel & 0x7) << 1; // saturation arg is 4 bit, but lsbit is thrown away
 			
 			if (rsaturation != 0) { // 0 = white, don't draw pixel if so (screen will have been cls'd on initialization)
-				ePaper.drawPixel(x+1, y, rcolor, rsaturation); 
+				ePaper.drawPixel(x+1, y, rcolor, rsaturation, bCorrectRed); 
 			}
 					
 			x+=2;	// 2 pixels per byte

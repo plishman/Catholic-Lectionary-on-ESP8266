@@ -156,6 +156,8 @@ public:
 	int DrawCharAt(int x, int y, char ascii_char, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
 	int DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth, FONT_INFO* font, DiskFont_FontCharInfo& fci, FB_EPAPER ePaper, uint16_t colored);
 
+	uint8_t display_gamma (uint8_t pxvalue, float gamma);
+
 	void StripTags(String& text);
 	
 	void DrawStringAt(int x, int y, String text, FB_EPAPER ePaper, uint16_t color, bool right_to_left, bool reverse_string);

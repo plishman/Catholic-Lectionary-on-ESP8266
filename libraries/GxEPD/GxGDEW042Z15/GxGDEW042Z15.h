@@ -96,7 +96,7 @@ class GxGDEW042Z15 : public GxEPD
     void fillScreen(uint16_t color); // 0x0 black, >0x0 white, to buffer
     void update(void);
 	
-	void drawPixel(int16_t x, int16_t y, uint16_t color, int saturation);	//PLL 06-01-2019
+	void drawPixel(int16_t x, int16_t y, uint16_t color, int saturation, bool bCorrectRed = true);	//PLL 06-01-2019 //PLL 06-07-2021 added bCorrectRed parameter to turn off red shade shaping
 	void resetRefreshNumber(int bpp);										//
 	int getRefreshNumber();													//
 	bool decRefreshNumber();												//

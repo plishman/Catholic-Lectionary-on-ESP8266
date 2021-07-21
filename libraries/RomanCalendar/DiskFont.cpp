@@ -516,7 +516,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 				pxvalue = pxvalue >> (4 - ((i % 2) * 4));
 
 				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+					ePaper.drawPixel(x + i, y + j, color, display_gamma(pxvalue, 1.0/2.2));	//PLL-02-06-2021 display_gamma_mod
 				}
 				
 				if (((i % 2) * 4) == 4) {
@@ -565,7 +565,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 				pxvalue = pxvalue >> (6 - ((i % 4) * 2));
 
 				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+					ePaper.drawPixel(x + i, y + j, color, display_gamma(pxvalue, 1.0/2.2)); // PLL-05-07-2021 display_gamma mod
 				}
 				
 				if (((i % 4) * 2) == 6) {
@@ -727,7 +727,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 				//DEBUG_PRT.printf("%1d", pxvalue);
 				
 				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+					ePaper.drawPixel(x + i, y + j, color, display_gamma(pxvalue, 1.0/2.2)); // PLL-05-07-2021 display_gamma mod
 					
 					/*
 					switch(pxvalue){
@@ -776,7 +776,7 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 				//DEBUG_PRT.printf("%1d", pxvalue);
 				
 				if (pxvalue != 0) {
-					ePaper.drawPixel(x + i, y + j, color, pxvalue);
+					ePaper.drawPixel(x + i, y + j, color, display_gamma(pxvalue, 1.0/2.2)); // PLL-05-07-2021 display_gamma mod
 				}
 				
 				if (((i % 2) * 4) == 4) {
@@ -826,6 +826,24 @@ int DiskFont::DrawCharAt(int x, int y, uint32_t codepoint, double& advanceWidth,
 
 //	return char_width + 1;
 }
+
+uint8_t DiskFont::display_gamma (uint8_t pxvalue, float gamma) 
+{
+	#ifdef GAMMA_CORRECT_FONT
+	float xp_a = (float)pxvalue / 15.0;	// scale to 0..1 (1=opaque, treating pxvalue as an alpha channel on a black pixel)
+	//float xp_b = 1.0;	// display is white, opaque = rgb = 1, alpha = 1
+
+	//float xp_o = xp_a + xp_b * (1 - xp_a);
+
+	float Co = pow((1 - xp_a), gamma);	// gamma compositing function reduces to this with white, opaque background (=1) as Cb and alpha b and alpha blended pixels of glyph as being black (=0)
+
+	return (uint8_t) (15 - round(Co * 15));
+	#else
+	return pxvalue;
+	#endif
+
+}
+
 
 
 void DiskFont::StripTags(String& text) {

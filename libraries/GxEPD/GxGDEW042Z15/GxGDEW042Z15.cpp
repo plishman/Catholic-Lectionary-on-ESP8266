@@ -99,33 +99,33 @@ const uint8_t GxGDEW042Z15::lut_24_black[] =
 #define LUT_RED_COUNT2 				8
 #define LUT_RED_REPCOUNT 			11
 
-#define LUT_RED_REPS_7 				0x0F	
-#define LUT_RED_C1_7 				0x03
-#define LUT_RED_C2_7 				0x0E
+#define LUT_RED_REPS_7 				0x0F // was 0x0F  PLL-07-07-2021	
+#define LUT_RED_C1_7 				0x03  // was 0x03  PLL-07-07-2021	
+#define LUT_RED_C2_7 				0x0E  // was 0x0E  PLL-07-07-2021	
 		
 #define LUT_RED_REPS_6 				0x01	
-#define LUT_RED_C1_6 				0x01
-#define LUT_RED_C2_6 				0x0C
+#define LUT_RED_C1_6 				0x01  // was 0x01  PLL-07-07-2021
+#define LUT_RED_C2_6 				0x0C  // was 0x0C  PLL-07-07-2021
 		
 #define LUT_RED_REPS_5 				0x01	
-#define LUT_RED_C1_5 				0x01
-#define LUT_RED_C2_5 				0x0C
+#define LUT_RED_C1_5 				0x01  // was 0x01  PLL-07-07-2021
+#define LUT_RED_C2_5 				0x0C  // was 0x0C  PLL-07-07-2021
 		
 #define LUT_RED_REPS_4 				0x01	
-#define LUT_RED_C1_4 				0x01
-#define LUT_RED_C2_4 				0x0C
+#define LUT_RED_C1_4 				0x01  // was 0x01  PLL-07-07-2021
+#define LUT_RED_C2_4 				0x0C  // was 0x0C  PLL-07-07-2021
 		
 #define LUT_RED_REPS_3 				0x01	
-#define LUT_RED_C1_3 				0x01
-#define LUT_RED_C2_3 				0x0C
+#define LUT_RED_C1_3 				0x01  // was 0x01  PLL-07-07-2021
+#define LUT_RED_C2_3 				0x0C  // was 0x0C  PLL-07-07-2021
 		
 #define LUT_RED_REPS_2 				0x01	
 #define LUT_RED_C1_2 				0x01
-#define LUT_RED_C2_2 				0x0C
+#define LUT_RED_C2_2 				0x0C  // was 0x0C  PLL-07-07-2021
 		
 #define LUT_RED_REPS_1 				0x01	
 #define LUT_RED_C1_1 				0x01
-#define LUT_RED_C2_1 				0x0C
+#define LUT_RED_C2_1 				0x0C  // was 0x0C  PLL-07-07-2021
 
 //BLACK
 #define LUT_VCOM_DC_BLACK_COUNT1 	1
@@ -136,29 +136,29 @@ const uint8_t GxGDEW042Z15::lut_24_black[] =
 #define LUT_BLACK_COUNT2 			2
 #define LUT_BLACK_REPCOUNT 			5
 
-#define LUT_BLACK_REPS_7 			0x08	//8*10*2 = 160
+#define LUT_BLACK_REPS_7 			0x08	//new pal was:0x0F	//was 8 8*10*2 = 160
 #define LUT_BLACK_C1_7 				0x0A
 #define LUT_BLACK_C2_7 				0x0A
 		
-#define LUT_BLACK_REPS_6 			0x04 //0x03	//8*3*2 = 48
+#define LUT_BLACK_REPS_6 		  	0x04 //0x03	//8*3*2 = 48
 #define LUT_BLACK_C1_6 				0x03 //0x03
 #define LUT_BLACK_C2_6 				0x03 //0x03
 		
-#define LUT_BLACK_REPS_5 			0x03 //0x03	//4*3*2 = 24
-#define LUT_BLACK_C1_5 				0x02
-#define LUT_BLACK_C2_5				0x02
+#define LUT_BLACK_REPS_5 			0x03  //was 0x03	PLL-08-07-2021 //4*3*2 = 24
+#define LUT_BLACK_C1_5 				0x02  //was 0x02  PLL-07-07-2021
+#define LUT_BLACK_C2_5				0x02  //was 0x02  PLL-07-07-2021
 		
-#define LUT_BLACK_REPS_4 			0x02	//2*3*2 = 12
-#define LUT_BLACK_C1_4 				0x01
-#define LUT_BLACK_C2_4 				0x01
+#define LUT_BLACK_REPS_4 			0x02	//new pal 0x03	//2*3*2 = 12
+#define LUT_BLACK_C1_4 				0x01	//new pal 0x02  //was 0x01  PLL-07-07-2021
+#define LUT_BLACK_C2_4 				0x01	//new pal 0x02  //was 0x01  PLL-07-07-2021
 		
 #define LUT_BLACK_REPS_3 			0x02	//1*3*2 = 6
-#define LUT_BLACK_C1_3 				0x01
-#define LUT_BLACK_C2_3 				0x01
+#define LUT_BLACK_C1_3 				0x01  //was 0x01  PLL-07-07-2021
+#define LUT_BLACK_C2_3 				0x01  //was 0x01  PLL-07-07-2021
 		
-#define LUT_BLACK_REPS_2 			0x01	//1*2*2 = 4
-#define LUT_BLACK_C1_2 				0x01
-#define LUT_BLACK_C2_2 				0x01
+#define LUT_BLACK_REPS_2 			0x01	//was 0x01  PLL-07-07-2021 //1*2*2 = 4
+#define LUT_BLACK_C1_2 				0x01  //was 0x01  PLL-07-07-2021
+#define LUT_BLACK_C2_2 				0x01  //was 0x01  PLL-07-07-2021 
 		
 #define LUT_BLACK_REPS_1 			0x01	//1*1*2 = 2
 #define LUT_BLACK_C1_1 				0x01
@@ -745,9 +745,9 @@ void GxGDEW042Z15::_wakeUp(void)
   if (_rst >= 0)
   {
     digitalWrite(_rst, 0);
-    delay(750);
+    delay(1000);          // was 750 - lengthened due to slight instability when using grey/red level lookup tables 
     digitalWrite(_rst, 1);
-    delay(500);
+    delay(750);           // was 500
   }
   IO.writeCommandTransaction(0x06); //boost
   IO.writeDataTransaction (0x17);
@@ -1771,13 +1771,18 @@ void GxGDEW042Z15::_writeData(uint8_t data)
   IO.writeDataTransaction(data);
 }
 
-void GxGDEW042Z15::drawPixel(int16_t x, int16_t y, uint16_t color, int saturation)
+//void GxGDEW042Z15::drawPixel(int16_t x, int16_t y, uint16_t color, int saturation)
+//{
+//  drawPixel(int16_t x, int16_t y, uint16_t color, int saturation, true);
+//}
+
+void GxGDEW042Z15::drawPixel(int16_t x, int16_t y, uint16_t color, int saturation, bool bCorrectRed)
 {		
 	uint8_t threshold = 0;
 
-	const uint8_t weights_red_3bpp[8]   = {0, 7, 6, 4, 2, 1, 1, 1}; // add a bias to the left, to intensify lighter intensities (which are weak in its value scale)
-	//const uint8_t weights_red_3bpp[8]   = {0, 7, 6, 5, 4, 3, 2, 1};
-	const uint8_t weights_black_3bpp[8] = {0, 7, 6, 5, 4, 3, 2, 1};
+	const uint8_t weights_red_3bpp[8]             = {0, 7, 6, 4, 2, 1, 1, 1}; // add a bias to the left, to intensify lighter intensities (which are weak in its value scale)
+	const uint8_t weights_red_uncorrected_3bpp[8] = {0, 7, 6, 5, 4, 3, 2, 1};
+	const uint8_t weights_black_3bpp[8]           = {0, 7, 6, 5, 4, 3, 2, 1};
 	//const uint8_t weights_black_3bpp[8]   = {0, 7, 6, 4, 2, 1, 1, 1}; // add a bias to the left, to intensify lighter intensities (which are weak in its value scale)
 	//const uint8_t weights_black_3bpp[8] = {0, 7, 6, 5, 4, 2, 1, 1};
 
@@ -1798,7 +1803,12 @@ void GxGDEW042Z15::drawPixel(int16_t x, int16_t y, uint16_t color, int saturatio
 					break;
 				
 				case GxEPD_RED:
-					threshold = weights_red_3bpp[_refreshnumber];
+					if (bCorrectRed) {
+            threshold = weights_red_3bpp[_refreshnumber];
+          }
+          else {
+            threshold = weights_red_uncorrected_3bpp[_refreshnumber];   // PLL-06-07-2021
+          }
 					break;
 				
 				case GxEPD_WHITE:

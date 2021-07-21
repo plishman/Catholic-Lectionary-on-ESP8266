@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"pangocairo.h": "c",
+			"fontconfig.h": "c",
+			"cairo-win32.h": "c",
+			"cairo-ft.h": "c",
+			"ft2build.h": "c"
+		}
+	}
+}

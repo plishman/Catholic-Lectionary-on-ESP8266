@@ -104,9 +104,9 @@
             this.cbxOutputAdvanceHeight = new System.Windows.Forms.CheckBox();
             this.cbxOutputAdvanceWidth = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.cbxUseHinting = new System.Windows.Forms.CheckBox();
             this.label25 = new System.Windows.Forms.Label();
             this.cbxAntialiasLevel = new System.Windows.Forms.ComboBox();
-            this.cbxUseHinting = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.gbxPadding.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -987,6 +987,19 @@
             this.groupBox9.Text = "Antialias";
             this.groupBox9.Enter += new System.EventHandler(this.groupBox9_Enter);
             // 
+            // cbxUseHinting
+            // 
+            this.cbxUseHinting.AutoSize = true;
+            this.cbxUseHinting.Checked = true;
+            this.cbxUseHinting.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbxUseHinting.Location = new System.Drawing.Point(127, 21);
+            this.cbxUseHinting.Name = "cbxUseHinting";
+            this.cbxUseHinting.Size = new System.Drawing.Size(92, 17);
+            this.cbxUseHinting.TabIndex = 2;
+            this.cbxUseHinting.Text = "Use Hinting";
+            this.cbxUseHinting.UseVisualStyleBackColor = true;
+            this.cbxUseHinting.CheckedChanged += new System.EventHandler(this.onOutputConfigurationFormChange);
+            // 
             // label25
             // 
             this.label25.AutoSize = true;
@@ -1004,19 +1017,6 @@
             this.cbxAntialiasLevel.Size = new System.Drawing.Size(61, 21);
             this.cbxAntialiasLevel.TabIndex = 0;
             this.cbxAntialiasLevel.SelectedIndexChanged += new System.EventHandler(this.onOutputConfigurationFormChange);
-            // 
-            // cbxUseHinting
-            // 
-            this.cbxUseHinting.AutoSize = true;
-            this.cbxUseHinting.Checked = true;
-            this.cbxUseHinting.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbxUseHinting.Location = new System.Drawing.Point(127, 21);
-            this.cbxUseHinting.Name = "cbxUseHinting";
-            this.cbxUseHinting.Size = new System.Drawing.Size(92, 17);
-            this.cbxUseHinting.TabIndex = 2;
-            this.cbxUseHinting.Text = "Use Hinting";
-            this.cbxUseHinting.UseVisualStyleBackColor = true;
-            this.cbxUseHinting.CheckedChanged += new System.EventHandler(this.onOutputConfigurationFormChange);
             // 
             // OutputConfigurationForm
             // 

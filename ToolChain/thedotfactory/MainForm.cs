@@ -10,6 +10,18 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
  * details. You should have received a copy of the GNU General Public License along 
  * with The Dot Factory. If not, see http://www.gnu.org/licenses/.
+ *
+ * 
+ * 
+ * 
+ * 
+ * Notes:
+ * *************************
+ * ***     *Only AA4x (4x antialiasing) mode works properly at the moment*, which is what the Lectionary uses (see presets dropdown 
+ * ***     at the top right side of the main window for pre-filled settings choices). 
+ * ***        
+ * ***     Configuration settings are stored in the file "OutputConfigs.xml" - PLL-21-07-2021
+ * *************************
  */
 
 using FontLibrary;
@@ -31,11 +43,29 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Forms.Integration;
 using System.Windows.Documents;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace TheDotFactory
 {
     public partial class MainForm : Form
     {
+        //public string g_palette_filename = @"./palette.gif";
+        public string g_palette_filename = @"./acep_palette_8_black_ordered_0..7.gif"; //@"./palette_new_black_lighter_alt.gif";
+        public bool g_has_palette = false;
+        public List<System.Drawing.Color> g_list_sorted_palette;
+        public ColorPalette g_palette;
+
+        double g_gamma = 1 / 2.2;
+
+        public int m_displaycharsbitmap_width = 1000;
+        public int m_displaycharsbitmap_height = 1000;
+        public Bitmap m_displaycharsbmp = null;
+        public Graphics m_dcb_graph = null;
+        public int m_dcb_x = 0;
+        public int m_dcb_y = 0;
+        public int m_dcb_scale = 1;
+
         // formatting strings
         public const string HeaderStringColumnStart = "\t0b";
         public const string HeaderStringColumnMid = ", 0b";
@@ -111,6 +141,8 @@ namespace TheDotFactory
             // the original bitmap
             public Bitmap bitmapOriginal;
 
+            public MemoryStream memoryStream;
+
             // the bitmap to generate into a string (flipped, trimmed - if applicable)
             public Bitmap bitmapToGenerate;
 
@@ -171,6 +203,10 @@ namespace TheDotFactory
             splitContainer1.Panel2MinSize = 260;
 
             CbxCharacterRange = new ComboBoxItem("Utf8 Character Range", characterrange);
+
+            g_has_palette = File.Exists(g_palette_filename);
+            g_palette = new Bitmap(g_palette_filename).Palette;
+            g_list_sorted_palette = Px.GetSortedColourPalette(g_palette);
         }
 
         //        public void RemoveNonGlyphsFromString(ref SortedList<int, string> characterList)
@@ -221,18 +257,47 @@ namespace TheDotFactory
                 }
         */
 
-        public bool GetFontAscentAndDescent(ref double ascent, ref double descent, ref double linespacing, ref double baseline)
+        public bool GetFontAscentAndDescent(Typeface typeface, double fontsize, ref double ascent, ref double descent, ref double linespacing, ref double baseline)
         {
-            ascent = 1.0;
-            descent = 1.0;
-            linespacing = 1.0;
+            if (!cbxUsePango.Checked)
+            {
+                ascent = 1.0;
+                descent = 1.0;
+                linespacing = 1.0;
 
-            double toPixels = (96 / 72) * g_wpf_fontsize;
+                double toPixels = (96 / 72) * fontsize;
 
-            //linespacing = g_wpf_typeface.FontFamily.LineSpacing;
-            linespacing = g_wpf_typeface.FontFamily.LineSpacing * toPixels;
-            baseline = g_wpf_typeface.FontFamily.Baseline * toPixels;
+                //linespacing = g_wpf_typeface.FontFamily.LineSpacing;
+                linespacing = typeface.FontFamily.LineSpacing * toPixels;
+                baseline = typeface.FontFamily.Baseline * toPixels;
+            }
+            else
+            {
 
+                string fontname = typeface.FontFamily.ToString();
+                bool bold = typeface.Weight.ToString().Contains("Bold");
+                bool italic = typeface.Style.ToString().Contains("Italic");
+
+                double width = 0;
+                double height = 0;
+                double advanceWidth = 0;
+                double advanceHeight = 0;
+                double bearingX = 0;
+                double bearingY = 0;
+                double line_gap = 0;
+
+                // measure the size of teh character in pixels
+                GetGlyphMetrics(
+                    fontname, fontsize, bold, italic, (uint)'A', 
+                    ref width, ref height, 
+                    ref advanceWidth, ref advanceHeight, 
+                    ref bearingX, ref bearingY, 
+                    ref ascent, ref descent, 
+                    ref line_gap, ref linespacing
+                    );
+
+                baseline = ascent;
+            }
 //            if (g_font == null) return false;
 //
 //            System.Drawing.FontStyle f = System.Drawing.FontStyle.Regular;
@@ -253,57 +318,86 @@ namespace TheDotFactory
             return true;
         }
 
-
-        public bool GetCharAdvanceWidthAndHeight(int charindex, ref double width, ref double height)
+        public bool GetCharAdvanceWidthAndHeight(Typeface typeface, double fontsize, int charindex, ref double width, ref double height)
         {
-            //if (g_font == null) return false;
-
-            try
+            if (!cbxUsePango.Checked)
             {
-                //                string fontname = g_font.Name;
-                //
-                //                if (g_font.Bold) fontname += " Bold";
-                //                if (g_font.Italic) fontname += " Italic";
+                //if (g_font == null) return false;
 
-                var typeface = g_wpf_typeface; //new Typeface(fontname);
-
-                //new GlyphTypeface(new Uri(fontname));
-                GlyphTypeface glyph;
-                typeface.TryGetGlyphTypeface(out glyph);
-
-                double w = 0;
-                double h = 0;
-                //double w2 = 0;
-                //double h2 = 0;
-
-                if (charindex < 65536)
+                try
                 {
-                    var character = (char)charindex;
-                    var glyphIndex = glyph.CharacterToGlyphMap[character];
+                    //                string fontname = g_font.Name;
+                    //
+                    //                if (g_font.Bold) fontname += " Bold";
+                    //                if (g_font.Italic) fontname += " Italic";
 
-                    w = glyph.AdvanceWidths[glyphIndex];
-                    h = glyph.Height - glyph.TopSideBearings[glyphIndex]
-                                                    - glyph.BottomSideBearings[glyphIndex];
+                    //var typeface = g_wpf_typeface; //new Typeface(fontname);
 
-                    //getTextAdvance(Char.ConvertFromUtf32(charindex), ref w2, ref h2);
+                    //new GlyphTypeface(new Uri(fontname));
+                    GlyphTypeface glyph;
+                    typeface.TryGetGlyphTypeface(out glyph);
 
-                    width = w * (/*g.DpiX*/ 96 / 72) * g_wpf_fontsize; // g_font.Size;
-                    height = h * (/*g.DpiY*/ 96 / 72) * g_wpf_fontsize; // g_font.Size;
+                    double w = 0;
+                    double h = 0;
+                    //double w2 = 0;
+                    //double h2 = 0;
+
+                    if (charindex < 65536)
+                    {
+                        var character = (char)charindex;
+                        var glyphIndex = glyph.CharacterToGlyphMap[character];
+
+                        w = glyph.AdvanceWidths[glyphIndex];
+                        h = glyph.Height - glyph.TopSideBearings[glyphIndex] - glyph.BottomSideBearings[glyphIndex];
+
+                        //getTextAdvance(Char.ConvertFromUtf32(charindex), ref w2, ref h2);
+
+                        width = w * (/*g.DpiX*/ 96 / 72) * fontsize; // g_font.Size;
+                        height = h * (/*g.DpiY*/ 96 / 72) * fontsize; // g_font.Size;
+                    }
+                    else
+                    {
+                        getTextAdvance(Char.ConvertFromUtf32(charindex), ref width, ref height);
+                    }
+
+                    return true;
                 }
-                else
+                catch (Exception e)
                 {
-                    getTextAdvance(Char.ConvertFromUtf32(charindex), ref width, ref height);
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                    return false;
                 }
-
-
-                return true;
             }
-
-            catch (Exception e)
+            else
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
-                return false;
+                string fontname = typeface.FontFamily.ToString();
+                bool bold = typeface.Weight.ToString().Contains("Bold");
+                bool italic = typeface.Style.ToString().Contains("Italic");
+
+                double advanceWidth = 0;
+                double advanceHeight = 0;
+                double bearingX = 0;
+                double bearingY = 0;
+                double ascent = 0;
+                double descent = 0;
+                double line_gap = 0;
+                double linespacing = 0;
+
+                // measure the size of teh character in pixels
+                GetGlyphMetrics(
+                    fontname, fontsize, bold, italic, (uint)charindex,
+                    ref width, ref height,
+                    ref advanceWidth, ref advanceHeight,
+                    ref bearingX, ref bearingY,
+                    ref ascent, ref descent,
+                    ref line_gap, ref linespacing
+                    );
+                height = Math.Abs(height); // coordinate system on target is downwards + , so remove negative (pango calculates downwards - )
+                advanceHeight = Math.Abs(advanceHeight);
+                width = advanceWidth;
+                
             }
+            return true;
         }
 
         private void getTextAdvance(string text, ref double width, ref double height)
@@ -880,21 +974,89 @@ namespace TheDotFactory
             //            Console.WriteLine("Total {0} fonts support {1}", count, characterToCheck);
         }
 
-        // convert a letter to bitmap
-        private void convertCharacterToBitmap(int character, Typeface typeface, double fontsize,/*Font font,*/ out Bitmap outputBitmap, Rectangle largestBitmap)
+
+        // convert a letter to bitmap (Pango custom DLL)
+        private void PangoConvertCharacterToBitmap(
+            int character, 
+            Typeface typeface, 
+            double fontsize, 
+            MemoryStream memoryStream, 
+            out Bitmap outputBitmap, 
+            Rectangle largestBitmap)
+        {
+            string fontname = typeface.FontFamily.ToString();
+            bool bold = typeface.Weight.ToString().Contains("Bold");
+            bool italic = typeface.Style.ToString().Contains("Italic");
+
+            double width = 0;
+            double height = 0;
+            double advanceWidth = 0;
+            double advanceHeight = 0;
+            double bearingX = 0;
+            double bearingY = 0;
+            double ascent = 0;
+            double descent = 0;
+            double line_height = 0;
+            double line_gap = 0;
+
+            outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            // measure the size of teh character in pixels
+            GetGlyphBitmapAndMetrics(fontname, fontsize, bold, italic, (uint)character, ref width, ref height, ref advanceWidth, ref advanceHeight, ref bearingX, ref bearingY, ref ascent, ref descent, ref line_height, ref line_gap, ref outputBitmap);
+
+            pictureBox1.Image = outputBitmap;
+            //glyphBitmap.Save("p.bmp");
+
+            // output bitmap so it can be seen onscreen
+            if (chkSaveBitmap.Checked)
+            {
+                //int scale = 4;
+                var scaledWidth = (int)(outputBitmap.Width * m_dcb_scale);
+                var scaledHeight = (int)(outputBitmap.Height * m_dcb_scale);
+
+                int destwidth = outputBitmap.Width * m_dcb_scale;
+                int destheight = outputBitmap.Height * m_dcb_scale;
+                Rectangle destRect1 = new Rectangle(m_dcb_x, m_dcb_y, destwidth, destheight);
+
+                float srcx = 0.0F;
+                float srcy = 0.0F;
+                float srcwidth = (float)outputBitmap.Width;
+                float srcheight = (float)outputBitmap.Height;
+                GraphicsUnit destunits = GraphicsUnit.Pixel;
+
+                m_dcb_graph.DrawImage(outputBitmap, destRect1, srcx, srcy, srcwidth, srcheight, destunits);
+
+                m_dcb_x += scaledWidth;
+                if (m_dcb_x + scaledWidth > m_displaycharsbitmap_width)
+                {
+                    m_dcb_x = 0;
+                    m_dcb_y += scaledHeight;
+                }
+            }
+        }
+
+
+
+// convert a letter to bitmap
+private void convertCharacterToBitmap(int character, Typeface typeface, double fontsize,/*Font font,*/MemoryStream memoryStream, out Bitmap outputBitmap, Rectangle largestBitmap)
         {
             // get the string
             string letterString = Char.ConvertFromUtf32(character);
+
+            //var textBrush = new SolidColorBrush(Colors.Black) { Opacity = 1.0 };
+            var scalefactor = 1;
 
             var formattedText = new FormattedText(
                 letterString,
                 CultureInfo.CurrentCulture,
                 System.Windows.FlowDirection.LeftToRight,
                 typeface, /*new Typeface(this.textBlock.FontFamily, this.textBlock.FontStyle, this.textBlock.FontWeight, this.textBlock.FontStretch),*/
-                fontsize, /*this.textBlock.FontSize,*/
+                fontsize * scalefactor, /*this.textBlock.FontSize,*/
                 System.Windows.Media.Brushes.Black,
                 1.0
             );
+
+
 
 
             //            // create bitmap, sized to the correct size
@@ -906,59 +1068,209 @@ namespace TheDotFactory
             //            System.Drawing.Text.TextRenderingHint textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
             //
             //            if (m_outputConfig.bEnableHinting) textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            /*
+                        System.Windows.Media.PixelFormat pixelFormat = PixelFormats.Pbgra32;
+                        // set anti alias as required
+                        switch (m_outputConfig.antialiasLevel)
+                        {
+                            case OutputConfiguration.AntialiasLevel.x2:
+                                //gfx.TextRenderingHint = textRenderingHint;
+                                //pixelFormat = PixelFormats.Gray2;
+                                break;
 
-            System.Windows.Media.PixelFormat pixelFormat = PixelFormats.Pbgra32;
-            // set anti alias as required
-            switch (m_outputConfig.antialiasLevel)
-            {
-                case OutputConfiguration.AntialiasLevel.x2:
-                    //gfx.TextRenderingHint = textRenderingHint;
-                    //pixelFormat = PixelFormats.Gray2;
-                    break;
+                            case OutputConfiguration.AntialiasLevel.x4:
+                                //gfx.TextRenderingHint = textRenderingHint;
+                                //pixelFormat = PixelFormats.Gray4;
+                                break;
 
-                case OutputConfiguration.AntialiasLevel.x4:
-                    //gfx.TextRenderingHint = textRenderingHint;
-                    //pixelFormat = PixelFormats.Gray4;
-                    break;
-
-                default:
-                    //gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit; // defaults to 1bpp
-                    //pixelFormat = PixelFormats.BlackWhite;
-                    //TextOptions.SetTextRenderingMode(formattedText, TextRenderingMode.Aliased);
-                    break;
-            }
+                            default:
+                                //gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit; // defaults to 1bpp
+                                //pixelFormat = PixelFormats.BlackWhite;
+                                //TextOptions.SetTextRenderingMode(formattedText, TextRenderingMode.Aliased);
+                                break;
+                        }
 
 
-            int stride = (largestBitmap.Width * pixelFormat.BitsPerPixel + 7) / 8;
-            byte[] pixels = new byte[stride * largestBitmap.Height];
-            BitmapSource bitmapSource = BitmapSource.Create(largestBitmap.Width, largestBitmap.Height, 96, 96, pixelFormat, null, pixels, stride);
+                        int stride = (largestBitmap.Width * pixelFormat.BitsPerPixel + 7) / 8;
+                        byte[] pixels = new byte[stride * largestBitmap.Height];
+                        BitmapSource bitmapSource = BitmapSource.Create(largestBitmap.Width, largestBitmap.Height, 96, 96, pixelFormat, null, pixels, stride);
 
-            var visual = new DrawingVisual();
-            using (DrawingContext drawingContext = visual.RenderOpen())
-            {
-                //drawingContext.DrawImage(bitmapSource, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
-                drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
-            }
+                        var visual = new DrawingVisual();
+                        using (DrawingContext drawingContext = visual.RenderOpen())
+                        {
+                            //drawingContext.DrawImage(bitmapSource, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
+                            drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
+                        }
 
-            RenderTargetBitmap bm = new RenderTargetBitmap(largestBitmap.Width, largestBitmap.Height, 96, 96, PixelFormats.Pbgra32);
+                        RenderTargetBitmap bm = new RenderTargetBitmap(largestBitmap.Width, largestBitmap.Height, 96, 96, PixelFormats.Pbgra32);
+                        bm.Render(visual);
+                        outputBitmap = getBitmap((BitmapSource)bm);
+
+                        outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height);
+                        for (int y = 0; y < bm.PixelHeight; y++)
+                        {
+                            for (int x = 0; x < bm.PixelWidth; x++)
+                            {
+                                int b = (~getPixel(bm, x, y)) & 0xff;
+                                byte p = (byte)b;
+
+                                int c = (0xff << 24) | (p << 16) | (p << 8) | p;
+                                outputBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(c));
+
+                                Console.Write(String.Format("{0} ", b.ToString("x2")));
+                            }
+                            Console.WriteLine();
+                        }
+            */
+
+            DrawingVisual visual = new DrawingVisual();
+            
+            DrawingContext drawingContext = visual.RenderOpen();
+            //var backgroundBrush = new SolidColorBrush(Colors.White) { Opacity = 0.5 };
+            //drawingContext.DrawRectangle(backgroundBrush, null, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
+            drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, null, new Rect(0, 0, largestBitmap.Width * scalefactor, largestBitmap.Height * scalefactor));
+            drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
+            drawingContext.Close();
+                        
+            RenderTargetBitmap bm = new RenderTargetBitmap(largestBitmap.Width * scalefactor, largestBitmap.Height * scalefactor, 96, 96, PixelFormats.Pbgra32);
+            
             bm.Render(visual);
-            outputBitmap = getBitmap((BitmapSource)bm);
 
-            outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height);
-            for (int y = 0; y < bm.PixelHeight; y++)
+            //MemoryStream stream = new MemoryStream();
+            BitmapEncoder encoder = new PngBitmapEncoder(); //BmpBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bm));
+            //encoder.Save(stream);
+
+            BitmapImage bitmapImage = new BitmapImage();
+
+            encoder.Save(memoryStream);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+            Bitmap inputBitmap = new Bitmap(memoryStream);
+            outputBitmap = ResizeBitmap(inputBitmap, largestBitmap.Width, largestBitmap.Height);
+            pictureBox1.Image = outputBitmap;
+            //outputBitmap.Save("p.bmp");
+
+            //outputBitmap = new Bitmap(stream);
+
+
+            /*
+                                    outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height);
+                                    for (int y = 0; y < bm.PixelHeight; y++)
+                                    {
+                                        for (int x = 0; x < bm.PixelWidth; x++)
+                                        {
+                                            Console.Write(String.Format("{0} ", getPixel(bm, x, y).ToString("x8")));
+
+                                            int b = (~getPixel(bm, x, y)) & 0xff;
+                                            byte p = (byte)b;
+
+                                            int c = (0xff << 24) | (p << 16) | (p << 8) | p;
+                                            outputBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(c));
+
+                                            //Console.Write(String.Format("{0} ", b.ToString("x2")));
+                                        }
+                                        Console.WriteLine();
+                                    }
+            */
+            Console.WriteLine();
+
+            /* // experimental
+                        System.Windows.Media.PixelFormat pixelFormat = PixelFormats.Indexed4;
+                        int stride = (largestBitmap.Width * pixelFormat.BitsPerPixel + 7) / 8;
+                        byte[] pixels = new byte[stride * largestBitmap.Height];
+                        byte[] epaperGreyLevels = { 0, 0, 25, 58, 96, 164, 205, 255 };
+                        List<System.Windows.Media.Color> epaperColours = new List<System.Windows.Media.Color>();
+
+                        for (int i = 0; i < epaperGreyLevels.Length; i++)
+                        {
+                            byte p = epaperGreyLevels[i];
+
+                            // create greyscale color table
+                            epaperColours.Add(System.Windows.Media.Color.FromArgb(255,p,p,p));
+                        }
+                        BitmapPalette pal = new BitmapPalette(epaperColours);
+                        BitmapSource bitmapSource = BitmapSource.Create(largestBitmap.Width, largestBitmap.Height, 96, 96, pixelFormat, pal, pixels, stride);
+
+                        var visual = new DrawingVisual();
+                        using (DrawingContext drawingContext = visual.RenderOpen())
+                        {
+                            //drawingContext.DrawImage(bitmapSource, new Rect(0, 0, largestBitmap.Width, largestBitmap.Height));
+                            drawingContext.DrawText(formattedText, new System.Windows.Point(0, 0));
+                        }
+
+                        RenderTargetBitmap bm = new RenderTargetBitmap(largestBitmap.Width, largestBitmap.Height, 96, 96, PixelFormats.Pbgra32);
+                        bm.Render(visual);
+                        outputBitmap = getBitmap((BitmapSource)bm);
+
+                        outputBitmap = new Bitmap(largestBitmap.Width, largestBitmap.Height);
+                        for (int y = 0; y < bm.PixelHeight; y++)
+                        {
+                            for (int x = 0; x < bm.PixelWidth; x++)
+                            {
+                                int b = (~getPixel(bm, x, y)) & 0xff;
+                                byte p = (byte)b;
+
+                                int c = (0xff << 24) | (p << 16) | (p << 8) | p;
+                                outputBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(c));
+
+                                Console.Write(String.Format("{0} ", b.ToString("x2")));
+                            }
+                            Console.WriteLine();
+                        }
+            */
+
+
+
+
+            // output bitmap so it can be seen onscreen
+            if (chkSaveBitmap.Checked)
             {
-                for (int x = 0; x < bm.PixelWidth; x++)
+                //int scale = 4;
+                var scaledWidth = (int)(outputBitmap.Width * m_dcb_scale);
+                var scaledHeight = (int)(outputBitmap.Height * m_dcb_scale);
+
+                ////var m_displaycharsbmp = new Bitmap(scaledWidth, scaledHeight);
+                //var graph = Graphics.FromImage(m_displaycharsbmp);
+
+                // uncomment for higher quality output
+                //m_dcb_graph.InterpolationMode = InterpolationMode.NearestNeighbor;
+                //graph.CompositingQuality = CompositingQuality.HighQuality;
+                //m_dcb_graph.SmoothingMode = SmoothingMode.None;
+                //float scale = Math.Min(width / outputBitmap.Width, height / outputBitmap.Height);
+
+                //graph.Clear(System.Drawing.Color.Black);
+                //graph.DrawImage(outputBitmap, ((int)width - scaleWidth) / 2, ((int)height - scaleHeight) / 2, scaleWidth, scaleHeight);
+
+                int destwidth = bm.PixelWidth * m_dcb_scale;
+                int destheight = bm.PixelHeight * m_dcb_scale;
+                Rectangle destRect1 = new Rectangle(m_dcb_x, m_dcb_y, destwidth, destheight);
+
+                float srcx = 0.0F;
+                float srcy = 0.0F;
+                float srcwidth = (float)bm.PixelWidth;
+                float srcheight = (float)bm.PixelHeight;
+                GraphicsUnit destunits = GraphicsUnit.Pixel;
+
+                m_dcb_graph.DrawImage(outputBitmap, destRect1, srcx, srcy, srcwidth, srcheight, destunits);
+
+                //pictureBox1.Image = outputBitmap;
+                //pictureBox1.Image = m_displaycharsbmp;
+                //pictureBox1.Image.Save("test.bmp");
+
+                m_dcb_x += scaledWidth;
+                if (m_dcb_x + scaledWidth > m_displaycharsbitmap_width)
                 {
-                    int b = (~getPixel(bm, x, y)) & 0xff;
-                    byte p = (byte)b;
-
-                    int c = (0xff << 24) | (p << 16) | (p << 8) | p;
-                    outputBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(c));
-
-                    //Console.Write(String.Format("{0} ", b.ToString("x2")));
+                    m_dcb_x = 0;
+                    m_dcb_y += scaledHeight;
                 }
-                //Console.WriteLine();
             }
+            
+            //pictureBox1.Image.Save("test.png");
 
 
             // draw centered text
@@ -973,6 +1285,17 @@ namespace TheDotFactory
             //gfx.DrawString(letterString, font, System.Drawing.Brushes.Black, bitmapRect, drawFormat);
         }
 
+        public Bitmap ResizeBitmap(Bitmap bmp, int width, int height)
+        {
+            Bitmap result = new Bitmap(width, height);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.DrawImage(bmp, 0, 0, width, height);
+            }
+
+            return result;
+        }
+
         public byte getPixel(BitmapSource bitmap, int x, int y)
         {
             var bytesPerPixel = (bitmap.Format.BitsPerPixel + 7) / 8;
@@ -985,6 +1308,12 @@ namespace TheDotFactory
             {
                 return bytes[3];
             }
+
+            if (bitmap.Format == PixelFormats.Gray8)
+            {
+                return bytes[1];
+            }
+
             return 0;
         }
 
@@ -1077,14 +1406,22 @@ namespace TheDotFactory
             for (border.topY = 0; border.topY < bitmap.Height; ++border.topY)
             {
                 // if found first column from the left, stop looking
-                if (!bitmapRowIsEmpty(bitmap, border.topY)) break;
+                if (!bitmapRowIsEmpty(bitmap, border.topY))
+                {
+                    //Console.WriteLine("first row: border.topY: {0}", border.topY);
+                    break;
+                }
             }
 
             // search for first row (y) from the bottom to contain data
             for (border.bottomY = bitmap.Height - 1; border.bottomY >= 0; --border.bottomY)
             {
                 // if found first column from the left, stop looking
-                if (!bitmapRowIsEmpty(bitmap, border.bottomY)) break;
+                if (!bitmapRowIsEmpty(bitmap, border.bottomY))
+                {
+                    //Console.WriteLine("last row: border.bottomY: {0}", border.bottomY);
+                    break;
+                }
             }
 
             // check if the bitmap contains any black pixels
@@ -1411,6 +1748,16 @@ namespace TheDotFactory
         // create the page array with 4x antialiasing (2bpp)
         private void convertBitmapToPageArrayAA4X(Bitmap bitmapToGenerate, out ArrayList pages)
         {
+            bool bHasPalette = File.Exists(g_palette_filename);
+            Bitmap pal_bmp = new Bitmap(1,1);
+            int pal_colourcount = 0;
+
+            if (bHasPalette)
+            {
+                pal_bmp = new Bitmap(g_palette_filename);
+                pal_colourcount = Px.CountImageColors(ref pal_bmp);
+            }
+
             //progressBar1.Maximum = (bitmapToGenerate.Width * bitmapToGenerate.Height) * progressBar1.Width;
             //progressBar1.Minimum = 0;
             //progressBar1.Value = 0;
@@ -1434,14 +1781,34 @@ namespace TheDotFactory
 
                     // is pixel set?
                     byte px = 0;
-                    int gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
+                    if (!g_has_palette)
+                    {
+                        int gval = bitmapToGenerate.GetPixel(column, row).G; // may cause problems if font antialiasing is rendered in A rather than RGB
 
-                    //Console.Write(gval.ToString("x2").PadLeft(2, '0') + " ");
+                        //Console.Write(gval.ToString("x2").PadLeft(2, '0') + " ");
 
-                    // threshold to 16 values (4 bits)
+                        // threshold to 16 values (4 bits)
 
-                    px = (byte)(15 - (gval / 16));
+                        px = (byte)(15 - (gval / 16));
+                    }
+                    else
+                    {
+                        int paletteindex = 0;
+                        System.Drawing.Color c = bitmapToGenerate.GetPixel(column, row);
+                        //g_list_sorted_palette = Px.GetSortedColourPalette(g_palette);
 
+                        //for (int i = 0; i < p.Entries.Length; i++)
+                        //{
+                        //    Console.WriteLine("palette entry {0} {1}", i, p.Entries[i].A == 0 ? "is empty" : "is not empty");
+                        //}
+                        
+
+                        Px.FindClosestPaletteColour(c, pal_bmp.Palette, ref paletteindex);
+                        paletteindex = Px.FindClosestPaletteIndex(c, g_list_sorted_palette);
+                        px = (byte)(((paletteindex) & 0xF) << 1);
+                        //Console.Write(px);
+                        //*******
+                    }
                     // set the appropriate bit in the page
                     if (m_outputConfig.byteOrder == OutputConfiguration.ByteOrder.MsbFirst) currentValue |= (byte)(px << (4 - bitsRead));
                     else currentValue |= (byte)(px << bitsRead);
@@ -1580,13 +1947,109 @@ namespace TheDotFactory
         //            System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
         //        }
 
+
+        // PLL-30-06-2021 Use custom Pango DLL for font rendering and metrics
+
+        void GetGlyphMetrics(
+            string fontname, 
+            double size, bool bold, bool italic, uint codepoint32, 
+            ref double width, ref double height, 
+            ref double advanceWidth, ref double advanceHeight, 
+            ref double bearingX, ref double bearingY, 
+            ref double ascent, ref double descent, 
+            ref double line_gap, ref double line_height)
+        {
+            NativeMethods.getGlyph(fontname, size, bold ? 1 : 0, italic ? 1 : 0, codepoint32, g_gamma, IntPtr.Zero, 1, 1, ref width, ref height, ref advanceWidth, ref advanceHeight, ref bearingX, ref bearingY, ref ascent, ref descent, ref line_gap, ref line_height);
+            advanceHeight = Math.Abs(advanceHeight);
+            height = Math.Abs(height);  // Pango/harfbuzz produces negative values for these, assuming bottom to top (-ve) coordinates, lectionary uses top to bottom +ve coordinates
+        }
+
+        void GetGlyphBitmapAndMetrics(string fontname, double size, bool bold, bool italic, uint codepoint32, 
+            ref double width, ref double height, 
+            ref double advanceWidth, ref double advanceHeight, 
+            ref double bearingX, ref double bearingY, 
+            ref double ascent, ref double descent, 
+            ref double line_height, ref double line_gap, 
+            ref Bitmap bmp)
+        {          
+            //NativeMethods.getGlyph(fontname, size, bold ? 1 : 0, italic ? 1 : 0, codepoint32, IntPtr.Zero, 1, 1, ref width, ref height, ref advanceWidth, ref advanceHeight, ref bearingX, ref bearingY, ref ascent, ref descent, ref line_gap, ref line_height);
+            //
+            //int xres = (int)Math.Ceiling(advanceWidth);
+            //int yres = (int)Math.Ceiling(line_height + 0.5);
+
+            //Bitmap bmp = new Bitmap(xres, yres, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+            int result = NativeMethods.getGlyph(fontname, size, bold ? 1 : 0, italic ? 1 : 0, codepoint32, g_gamma, data.Scan0, bmp.Width, bmp.Height, ref width, ref height, ref advanceWidth, ref advanceHeight, ref bearingX, ref bearingY, ref ascent, ref descent, ref line_gap, ref line_height);
+            advanceHeight = Math.Abs(advanceHeight);
+            height = Math.Abs(height);  // Pango/harfbuzz produces negative values for these, assuming bottom to top (-ve) coordinates, lectionary uses top to bottom +ve coordinates
+
+            bmp.UnlockBits(data);
+
+            //string palette_filename = @"./palette.gif";
+            if (g_has_palette)
+            {
+                //var pal_bmp = new Bitmap(g_palette_filename);
+                //Px.FSDither(bmp, pal_bmp.Palette);
+                Px.FSDither(bmp, g_palette);
+            }
+        }
+
+        Rectangle PangoGetLargestBitmapFromCharInfo(CharacterGenerationInfo[] charInfoArray)
+        {
+            string fontname = g_wpf_typeface.FontFamily.ToString();
+            double size = g_wpf_fontsize;
+            bool bold = g_wpf_typeface.Weight.ToString().Contains("Bold");
+            bool italic = g_wpf_typeface.Style.ToString().Contains("Italic");
+
+            double largestWidth = 1;
+            double largestHeight = 1;
+        
+            // iterate through chars
+            for (int charIdx = 0; charIdx < charInfoArray.Length; ++charIdx)
+            {
+                double width = 0;
+                double height = 0;
+                double advanceWidth = 0;
+                double advanceHeight = 0;
+                double bearingX = 0;
+                double bearingY = 0;
+                double ascent = 0;
+                double descent = 0;
+                double line_height = 0;
+                double line_gap = 0;
+
+                // measure the size of teh character in pixels
+                GetGlyphMetrics(fontname, size, bold, italic, (uint)charInfoArray[charIdx].character, ref width, ref height, ref advanceWidth, ref advanceHeight, ref bearingX, ref bearingY, ref ascent, ref descent, ref line_gap, ref line_height);
+
+                //return new Size(formattedText.Width, formattedText.Height);
+
+                // check if larger
+                largestHeight = Math.Max(largestHeight, Math.Ceiling(line_height + 0.5));
+                largestWidth = Math.Max(largestWidth, advanceWidth);
+            }
+        
+            // largest rect
+            Rectangle largestRect = new Rectangle(0, 0, 0, 0);
+        
+            largestRect.Height = (int)Math.Ceiling(largestHeight);
+            largestRect.Width = (int)Math.Ceiling(largestWidth);
+        
+            // return largest
+            return largestRect;
+        }
+
+
+
+
         private Typeface g_wpf_typeface = null;
         private double g_wpf_fontsize = 10.0;
 
         Rectangle WPFgetLargestBitmapFromCharInfo(CharacterGenerationInfo[] charInfoArray)
         {
-            double largestWidth = 0;
-            double largestHeight = 0;
+            double largestWidth = 1;
+            double largestHeight = 1;
 
             // iterate through chars
             for (int charIdx = 0; charIdx < charInfoArray.Length; ++charIdx)
@@ -1596,6 +2059,7 @@ namespace TheDotFactory
 
                 // measure the size of teh character in pixels
                 //Size stringSize = TextRenderer.MeasureText(letterString, charInfoArray[charIdx].fontInfo.font);
+
                 var formattedText = new FormattedText(
                     letterString,
                     CultureInfo.CurrentCulture,
@@ -1605,7 +2069,7 @@ namespace TheDotFactory
                     System.Windows.Media.Brushes.Black,
                     1.0
                 );
-
+                
                 //return new Size(formattedText.Width, formattedText.Height);
 
                 // check if larger
@@ -1700,6 +2164,7 @@ namespace TheDotFactory
 
             // set font into into
             //fontInfo.font = font;
+            
             fontInfo.typeface = typeface;
             fontInfo.fontsize = fontsize;
 
@@ -1717,6 +2182,8 @@ namespace TheDotFactory
 
                 // create char info entity
                 fontInfo.characters[fontInfoCharacterIndex] = new CharacterGenerationInfo();
+
+                fontInfo.characters[fontInfoCharacterIndex].memoryStream = new MemoryStream();  //PLL-01-05-2021
 
                 // point back to teh font
                 fontInfo.characters[fontInfoCharacterIndex].fontInfo = fontInfo;
@@ -1739,7 +2206,16 @@ namespace TheDotFactory
             // Find the widest bitmap size we are going to draw
             //
             //Rectangle largestBitmap = getLargestBitmapFromCharInfo(fontInfo.characters);
-            Rectangle largestBitmap = WPFgetLargestBitmapFromCharInfo(fontInfo.characters);
+            Rectangle largestBitmap;
+
+            if (!cbxUsePango.Checked)
+            {
+                largestBitmap = WPFgetLargestBitmapFromCharInfo(fontInfo.characters);
+            }
+            else
+            {
+                largestBitmap = PangoGetLargestBitmapFromCharInfo(fontInfo.characters);   // PLL-30-06-2021
+            }
             //
             // create bitmaps per characater
             //
@@ -1750,10 +2226,23 @@ namespace TheDotFactory
                 bumpProgressBar();
 
                 // generate the original bitmap for the character
-                convertCharacterToBitmap(fontInfo.generatedChars.Keys[charIdx],
-                                         /*font,*/
-                                         typeface, fontsize,
-                                         out fontInfo.characters[charIdx].bitmapOriginal, largestBitmap);
+                if (!cbxUsePango.Checked)
+                {
+
+                    convertCharacterToBitmap(fontInfo.generatedChars.Keys[charIdx],
+                                             /*font,*/
+                                             typeface, fontsize,
+                                             fontInfo.characters[charIdx].memoryStream,
+                                             out fontInfo.characters[charIdx].bitmapOriginal, largestBitmap);
+                }
+                else
+                {
+                    PangoConvertCharacterToBitmap(fontInfo.generatedChars.Keys[charIdx],
+                                                  typeface, fontsize,
+                                                  fontInfo.characters[charIdx].memoryStream,
+                                                  out fontInfo.characters[charIdx].bitmapOriginal, largestBitmap);
+                }
+
 
                 // save
                 // fontInfo.characters[charIdx].bitmapOriginal.Save(String.Format("C:/bms/{0}.bmp", fontInfo.characters[charIdx].character));
@@ -2367,8 +2856,8 @@ namespace TheDotFactory
             return expression.Substring(firstVariableNameCharIndex, lastVariableNameCharIndex - firstVariableNameCharIndex + 1);
         }
 
-        // add a character to teh current char descriptor array
-        private void charDescArrayAddCharacter(CharacterDescriptorArrayBlock desciptorBlock,
+        // add a character to the current char descriptor array
+        private void charDescArrayAddCharacter(CharacterDescriptorArrayBlock descriptorBlock,
                                                FontInfo fontInfo,
                                                int character,
                                                int width, int height, int offset)
@@ -2387,14 +2876,14 @@ namespace TheDotFactory
 
             if (charDescriptor.width > 0 && charDescriptor.height > 0)
             {
-                GetCharAdvanceWidthAndHeight(character, ref w, ref h);
+                GetCharAdvanceWidthAndHeight(g_wpf_typeface, g_wpf_fontsize, character, ref w, ref h);
             }
 
             charDescriptor.advanceWidth = w;
             charDescriptor.advanceHeight = h;
 
             // shove this character to the descriptor block
-            desciptorBlock.characters.Add(charDescriptor);
+            descriptorBlock.characters.Add(charDescriptor);
         }
 
         // gnereate a list of blocks describing the characters
@@ -2674,7 +3163,7 @@ namespace TheDotFactory
             double linespacing = 0.0;
             double baseline = 0.0;
 
-            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing, ref baseline))
+            if (GetFontAscentAndDescent(g_wpf_typeface, g_wpf_fontsize, ref ascent, ref descent, ref linespacing, ref baseline))
             {
                 //Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
                 Console.WriteLine("linespacing = " + linespacing.ToString() + "px, baseline = " + baseline.ToString() + "px" );
@@ -3156,7 +3645,8 @@ namespace TheDotFactory
             RemoveNonGlyphsFromString(charList, ref characterrange);
 
             CbxCharacterRange.value = characterrange;
-            txtInputText.TextBoxControl_Text = characterrange;
+            txtInputText.TextBoxControl_Text = characterrange;  
+            // **** PLL-07-07-2021 crash bug occurs when scrolling through characters above 65535 in the WPF textbox when characters 32-131072 are selected and entered ("+" button). Font selected is Droid Serif 13 point bold italic
             return true;
         }
 
@@ -3204,10 +3694,36 @@ namespace TheDotFactory
             return "";
         }
 
+        private void initOutputBitmap()
+        {
+            if (chkSaveBitmap.Checked)
+            {
+                m_displaycharsbmp = new Bitmap(m_displaycharsbitmap_width, m_displaycharsbitmap_height);
+                m_dcb_x = 0;
+                m_dcb_y = 0;
+                m_dcb_graph = Graphics.FromImage(m_displaycharsbmp);
+                m_dcb_scale = 1;
 
+                // uncomment for higher quality output
+                m_dcb_graph.InterpolationMode = InterpolationMode.NearestNeighbor;
+                //graph.CompositingQuality = CompositingQuality.HighQuality;
+                m_dcb_graph.SmoothingMode = SmoothingMode.None;
+                //float scale = Math.Min(width / outputBitmap.Width, height / outputBitmap.Height);
+            }
+        }
+
+        private void saveOutputBitmap()
+        {
+            if (chkSaveBitmap.Checked)
+            {
+                m_displaycharsbmp.Save("test.bmp");
+            }
+        }
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
+            initOutputBitmap();
+
             progressBar1.Enabled = true;
 
             //CbxCharacterRange
@@ -3243,6 +3759,15 @@ namespace TheDotFactory
 
             progressBar1.Value = 0;
             progressBar1.Enabled = false;
+
+            saveOutputBitmap();
+
+            //if (chkSaveBitmap.Checked)
+            //{
+            //    m_displaycharsbmp.Save("test.bmp");
+            //    //pictureBox1.Image = m_displaycharsbmp;
+            //    //pictureBox1.Image.Save("test.bmp");
+            //}
         }
 
         private void btnBitmapLoad_Click(object sender, EventArgs e)
@@ -3647,13 +4172,14 @@ namespace TheDotFactory
 
         private void btnSaveBinFont_Click(object sender, EventArgs e)
         {
+            initOutputBitmap();
 
             double ascent = 0.0;
             double descent = 0.0;
             double linespacing = 0.0;
             double baseline = 0.0;
 
-            if (GetFontAscentAndDescent(ref ascent, ref descent, ref linespacing, ref baseline))
+            if (GetFontAscentAndDescent(g_wpf_typeface, g_wpf_fontsize, ref ascent, ref descent, ref linespacing, ref baseline))
             {
                 //Console.WriteLine("Font ascent = " + ascent.ToString() + "px, descent = " + descent.ToString() + "px, linespacing = " + linespacing.ToString() + "px");
                 Console.WriteLine("linespacing = " + linespacing.ToString() + "px, baseline = " + baseline.ToString() + "px");
@@ -3894,6 +4420,8 @@ namespace TheDotFactory
                         if (m_outputConfig.outputAdvanceWidth) writer.Write(advanceWidth);
                         if (m_outputConfig.outputAdvanceHeight) writer.Write(advanceHeight);
 
+                        Console.WriteLine("advanceWidth: {0}, advanceHeight:{1}", advanceWidth, advanceHeight);
+
 //                        Console.WriteLine("char='" + character.character + "'\tcharindex=" + charIndex.ToString("X4") + "\tw:" + widthBits.ToString("X4") + "\th:" + heightBits.ToString("X4") + "\toffset:" + offset.ToString("X8") + "\n");
 
                         charIndex++;
@@ -3964,6 +4492,7 @@ namespace TheDotFactory
                         progressBar1.Value = 0;
                         progressBar1.Enabled = false;
             */
+            saveOutputBitmap();
         }
 
         private void button4_Click_2(object sender, EventArgs e)
@@ -3989,6 +4518,11 @@ namespace TheDotFactory
                 bool b = fontGlyphSet.Contains(c);
                 Console.WriteLine(String.Format("{0} is {1}in font", c, b ? "" : "not "));
             }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            g_gamma = (double)numericUpDown1.Value;
         }
 
         /*
@@ -4103,4 +4637,475 @@ namespace TheDotFactory
             }
         }*/
     }
+
+    public class Px
+    {
+        public double A;
+        public double R;
+        public double G;
+        public double B;
+
+        public Px(double A, double R, double G, double B)
+        {
+            this.A = A;
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
+
+        public Px(System.Drawing.Color c)
+        {
+            Set(c);
+        }
+
+        public void Set(System.Drawing.Color c)
+        {
+            this.A = c.A;
+            this.R = c.R;
+            this.G = c.G;
+            this.B = c.B;
+        }
+
+        public System.Drawing.Color GetColor()
+        {
+            int a = (int)(A > 255 ? 255 : A < 0 ? 0 : A);
+            int r = (int)(R > 255 ? 255 : R < 0 ? 0 : R);
+            int g = (int)(G > 255 ? 255 : G < 0 ? 0 : G);
+            int b = (int)(B > 255 ? 255 : B < 0 ? 0 : B);
+
+            return System.Drawing.Color.FromArgb(a, r, g, b);
+        }
+
+        public static Px PxColour(System.Drawing.Color c)
+        {
+            return new Px(c);
+        }
+
+        public static Px FindClosestPaletteColour(Px colour, ColorPalette palette)
+        {
+            int paletteindex = 0;
+            return FindClosestPaletteColour(colour, palette, ref paletteindex);
+        }
+
+        public static int FindClosestPaletteIndex(System.Drawing.Color colour, List<System.Drawing.Color> palette_list)
+        {
+            int a = colour.A;
+            int r = colour.R;
+            int g = colour.G;
+            int b = colour.B;
+
+            double maxdistance = double.MaxValue;
+
+            int nearestcolour = -1;
+
+            for (int i = 0; i < palette_list.Count; i++)
+            {
+                System.Drawing.Color p = palette_list[i];
+                double distance = Math.Sqrt((((a - p.A) * (a - p.A)) + ((r - p.R) * (r - p.R)) + ((g - p.G) * (g - p.G)) + ((b - p.B) * (b - p.B))));
+
+                if (distance < maxdistance)
+                {
+                    maxdistance = distance;
+                    nearestcolour = i;
+                }
+            }
+
+            return nearestcolour;
+        }
+
+        public static System.Drawing.Color FindClosestPaletteColour(System.Drawing.Color colour, ColorPalette palette, ref int PaletteIndex)
+        {
+            Px px = new Px(colour);
+            Px closestColour = FindClosestPaletteColour(px, palette, ref PaletteIndex);
+            return closestColour.GetColor();
+        }
+
+        public static List<System.Drawing.Color> GetSortedColourPalette(ColorPalette palette)
+        {
+            List<System.Drawing.Color> colours = new List<System.Drawing.Color> {};
+            for (int c = 0; c < palette.Entries.Length; c++)
+            {
+                if (palette.Entries[c].A > 0)
+                {
+                    colours.Add(palette.Entries[c]);
+                }
+            }
+
+            // You don't need convert colors into YIQ (i.e. matrix multiplication)
+            // just compare brightness (Y component)
+            colours.Sort((Comparison<System.Drawing.Color>)(
+              (System.Drawing.Color left, System.Drawing.Color right) =>
+                 (left.R * 299 + left.G * 587 + left.B * 114).CompareTo(
+                  right.R * 299 + right.G * 587 + right.B * 114)
+              ));
+
+            colours.Reverse();
+
+            return colours;
+        }
+
+        public static Px FindClosestPaletteColour(Px colour, ColorPalette palette, ref int PaletteIndex)
+        {
+            System.Drawing.Color c = colour.GetColor();
+
+            int a = c.A;
+            int r = c.R;
+            int g = c.G;
+            int b = c.B;
+
+            double maxdistance = double.MaxValue;
+
+            int nearestcolour = -1;
+
+            for (int i = 0; i < palette.Entries.Length; i++)
+            {
+                System.Drawing.Color p = palette.Entries[i];
+                if (p.A > 0)    // only process nontransparent colours
+                {
+                    double distance = Math.Sqrt((((a - p.A) * (a - p.A)) + ((r - p.R) * (r - p.R)) + ((g - p.G) * (g - p.G)) + ((b - p.B) * (b - p.B))));
+
+                    if (distance < maxdistance)
+                    {
+                        maxdistance = distance;
+                        nearestcolour = i;
+                    }
+                }
+            }
+
+            //Color nearest = Color.FromArgb(palette.Colors[nearestcolour].A, palette.Colors[nearestcolour].R, palette.Colors[nearestcolour].G, palette.Colors[nearestcolour].B);
+
+            //return palette.Entries[nearestcolour];
+            PaletteIndex = nearestcolour;
+            return new Px(palette.Entries[nearestcolour]);
+        }
+
+        public static void FSDither(Bitmap bmp, ColorPalette palette)
+        {
+            LockBitmap lockBitmap = new LockBitmap(bmp);
+            lockBitmap.LockBits();
+
+            int x;
+            int y;
+            int w = bmp.Width;
+            int h = bmp.Height;
+
+            Px oldpixel;
+            Px newpixel;
+
+            double quant_error_a = 0;
+            double quant_error_r = 0;
+            double quant_error_g = 0;
+            double quant_error_b = 0;
+
+            Px[,] pxbmp = new Px[w, h];
+
+            for (y = 0; y < h; y++)
+            {
+                for (x = 0; x < w; x++)
+                {
+                    pxbmp[x, y] = new Px(lockBitmap.GetPixel(x, y));
+                }
+            }
+
+            for (y = 0; y < h; y++)
+            {
+                for (x = 0; x < w; x++)
+                {
+                    bool in_bounds = false;
+
+                    oldpixel = pxbmp[x, y];
+                    newpixel = Px.FindClosestPaletteColour(oldpixel, palette);
+                    pxbmp[x, y] = newpixel;
+
+                    quant_error_a = oldpixel.A - newpixel.A;
+                    quant_error_r = oldpixel.R - newpixel.R;
+                    quant_error_g = oldpixel.G - newpixel.G;
+                    quant_error_b = oldpixel.B - newpixel.B;
+
+                    Px x1y;
+                    in_bounds = (x + 1 < w);
+                    x1y = in_bounds ? pxbmp[x + 1, y] : Px.PxColour(System.Drawing.Color.White);
+                    double x1yA = x1y.A + quant_error_a * 7 / 16;
+                    double x1yR = x1y.R + quant_error_r * 7 / 16;
+                    double x1yG = x1y.G + quant_error_g * 7 / 16;
+                    double x1yB = x1y.B + quant_error_b * 7 / 16;
+                    //if (in_bounds) lockBitmap.SetPixel(x + 1, y, Color.FromArgb(x1yA, x1yR, x1yG, x1yB));
+                    if (in_bounds) pxbmp[x + 1, y] = new Px(x1yA, x1yR, x1yG, x1yB);
+
+                    Px xm1y1;
+                    in_bounds = (x - 1 >= 0 && y + 1 < h);
+                    //xm1y1 = in_bounds ? lockBitmap.GetPixel(x - 1, y + 1) : Color.White;
+                    xm1y1 = in_bounds ? pxbmp[x - 1, y + 1] : Px.PxColour(System.Drawing.Color.White);
+                    double xm1y1A = xm1y1.A + quant_error_a * 3 / 16;
+                    double xm1y1R = xm1y1.R + quant_error_r * 3 / 16;
+                    double xm1y1G = xm1y1.G + quant_error_g * 3 / 16;
+                    double xm1y1B = xm1y1.B + quant_error_b * 3 / 16;
+                    //if (in_bounds) lockBitmap.SetPixel(x - 1, y + 1, Color.FromArgb(xm1y1A, xm1y1R, xm1y1G, xm1y1B));
+                    if (in_bounds) pxbmp[x - 1, y + 1] = new Px(xm1y1A, xm1y1R, xm1y1G, xm1y1B);
+
+                    Px xy1;
+                    in_bounds = (y + 1 < h);
+                    //xy1 = in_bounds ? lockBitmap.GetPixel(x, y + 1) : Color.White;
+                    xy1 = in_bounds ? pxbmp[x, y + 1] : Px.PxColour(System.Drawing.Color.White);
+                    double xy1A = xy1.A + quant_error_a * 5 / 16;
+                    double xy1R = xy1.R + quant_error_r * 5 / 16;
+                    double xy1G = xy1.G + quant_error_g * 5 / 16;
+                    double xy1B = xy1.B + quant_error_b * 5 / 16;
+                    //if (in_bounds) lockBitmap.SetPixel(x, y + 1, Color.FromArgb(xy1A, xy1R, xy1G, xy1B));
+                    if (in_bounds) pxbmp[x, y + 1] = new Px(xy1A, xy1R, xy1G, xy1B);
+
+                    Px x1y1;
+                    in_bounds = (x + 1 < w && y + 1 < h);
+                    //x1y1 = in_bounds ? lockBitmap.GetPixel(x + 1, y + 1) : Color.White;
+                    x1y1 = in_bounds ? pxbmp[x + 1, y + 1] : Px.PxColour(System.Drawing.Color.White);
+                    double x1y1A = x1y1.A + quant_error_a * 1 / 16;
+                    double x1y1R = x1y1.R + quant_error_r * 1 / 16;
+                    double x1y1G = x1y1.G + quant_error_g * 1 / 16;
+                    double x1y1B = x1y1.B + quant_error_b * 1 / 16;
+                    //if (in_bounds) lockBitmap.SetPixel(x + 1, y + 1, Color.FromArgb(x1y1A, x1y1R, x1y1G, x1y1B));
+                    if (in_bounds) pxbmp[x + 1, y + 1] = new Px(x1y1A, x1y1R, x1y1G, x1y1B);
+
+                    /*
+                    pixel[x + 1][y] := pixel[x + 1][y] + quant_error × 7 / 16
+                    pixel[x - 1][y + 1] := pixel[x - 1][y + 1] + quant_error × 3 / 16
+                    pixel[x][y + 1] := pixel[x][y + 1] + quant_error × 5 / 16
+                    pixel[x + 1][y + 1] := pixel[x + 1][y + 1] + quant_error × 1 / 16
+                    */
+                }
+
+            }
+
+            for (y = 0; y < h; y++)
+            {
+                for (x = 0; x < w; x++)
+                {
+                    lockBitmap.SetPixel(x, y, Px.FindClosestPaletteColour(pxbmp[x, y], palette).GetColor());
+                }
+            }
+
+            lockBitmap.UnlockBits();
+            /*
+            for each y from top to bottom do
+                for each x from left to right do
+                    oldpixel := pixel[x][y]
+                    newpixel := find_closest_palette_color(oldpixel)
+                    pixel[x][y] := newpixel
+                    quant_error := oldpixel - newpixel
+                    pixel[x + 1][y] := pixel[x + 1][y] + quant_error × 7 / 16
+                    pixel[x - 1][y + 1] := pixel[x - 1][y + 1] + quant_error × 3 / 16
+                    pixel[x][y + 1] := pixel[x][y + 1] + quant_error × 5 / 16
+                    pixel[x + 1][y + 1] := pixel[x + 1][y + 1] + quant_error × 1 / 16
+            */
+
+        }
+
+        public static int CountImageColors(ref Bitmap bmp)
+        {
+            LockBitmap lockBitmap = new LockBitmap(bmp);
+            lockBitmap.LockBits();
+
+            int count = 0;
+            HashSet<System.Drawing.Color> colors = new HashSet<System.Drawing.Color>();
+            //Bitmap bmp = null;
+
+            for (int y = 0; y < bmp.Size.Height; y++)
+            {
+                for (int x = 0; x < bmp.Size.Width; x++)
+                {
+                    colors.Add(lockBitmap.GetPixel(x, y));
+                }
+            }
+
+            lockBitmap.UnlockBits();
+            count = colors.Count;
+            colors.Clear();
+            return count;
+        }
+
+    }
+
+    // https://www.codeproject.com/Tips/240428/Work-with-Bitmaps-Faster-in-Csharp-3#:~:text=When%20you%20are%20working%20with%20bitmaps%20in%20C%23%2C,the%20pixel%20value.%20But%20they%20are%20very%20slow.
+    public class LockBitmap
+    {
+        Bitmap source = null;
+        IntPtr Iptr = IntPtr.Zero;
+        BitmapData bitmapData = null;
+
+        public byte[] Pixels { get; set; }
+        public int Depth { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        public LockBitmap(Bitmap source)
+        {
+            this.source = source;
+        }
+
+        /// <summary>
+        /// Lock bitmap data
+        /// </summary>
+        public void LockBits()
+        {
+            try
+            {
+                // Get width and height of bitmap
+                Width = source.Width;
+                Height = source.Height;
+
+                // get total locked pixels count
+                int PixelCount = Width * Height;
+
+                // Create rectangle to lock
+                Rectangle rect = new Rectangle(0, 0, Width, Height);
+
+                // get source bitmap pixel format size
+                Depth = System.Drawing.Bitmap.GetPixelFormatSize(source.PixelFormat);
+
+                // Check if bpp (Bits Per Pixel) is 8, 24, or 32
+                if (Depth != 8 && Depth != 24 && Depth != 32)
+                {
+                    throw new ArgumentException("Only 8, 24 and 32 bpp images are supported.");
+                }
+
+                // Lock bitmap and return bitmap data
+                bitmapData = source.LockBits(rect, ImageLockMode.ReadWrite,
+                                             source.PixelFormat);
+
+                // create byte array to copy pixel values
+                int step = Depth / 8;
+                Pixels = new byte[PixelCount * step];
+                Iptr = bitmapData.Scan0;
+
+                // Copy data from pointer to array
+                Marshal.Copy(Iptr, Pixels, 0, Pixels.Length);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Unlock bitmap data
+        /// </summary>
+        public void UnlockBits()
+        {
+            try
+            {
+                // Copy data from byte array to pointer
+                Marshal.Copy(Pixels, 0, Iptr, Pixels.Length);
+
+                // Unlock bitmap data
+                source.UnlockBits(bitmapData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Get the color of the specified pixel
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public System.Drawing.Color GetPixel(int x, int y)
+        {
+            System.Drawing.Color clr = System.Drawing.Color.Empty;
+
+            // Get color components count
+            int cCount = Depth / 8;
+
+            // Get start index of the specified pixel
+            int i = ((y * Width) + x) * cCount;
+
+            if (i > Pixels.Length - cCount)
+                throw new IndexOutOfRangeException();
+
+            if (Depth == 32) // For 32 bpp get Red, Green, Blue and Alpha
+            {
+                byte b = Pixels[i];
+                byte g = Pixels[i + 1];
+                byte r = Pixels[i + 2];
+                byte a = Pixels[i + 3]; // a
+                clr = System.Drawing.Color.FromArgb(a, r, g, b);
+            }
+            if (Depth == 24) // For 24 bpp get Red, Green and Blue
+            {
+                byte b = Pixels[i];
+                byte g = Pixels[i + 1];
+                byte r = Pixels[i + 2];
+                clr = System.Drawing.Color.FromArgb(r, g, b);
+            }
+            if (Depth == 8)
+            // For 8 bpp get color value (Red, Green and Blue values are the same)
+            {
+                byte c = Pixels[i];
+                clr = System.Drawing.Color.FromArgb(c, c, c);
+            }
+            return clr;
+        }
+
+        /// <summary>
+        /// Set the color of the specified pixel
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="color"></param>
+        public void SetPixel(int x, int y, System.Drawing.Color color)
+        {
+            // Get color components count
+            int cCount = Depth / 8;
+
+            // Get start index of the specified pixel
+            int i = ((y * Width) + x) * cCount;
+
+            if (Depth == 32) // For 32 bpp set Red, Green, Blue and Alpha
+            {
+                Pixels[i] = color.B;
+                Pixels[i + 1] = color.G;
+                Pixels[i + 2] = color.R;
+                Pixels[i + 3] = color.A;
+            }
+            if (Depth == 24) // For 24 bpp set Red, Green and Blue
+            {
+                Pixels[i] = color.B;
+                Pixels[i + 1] = color.G;
+                Pixels[i + 2] = color.R;
+            }
+            if (Depth == 8)
+            // For 8 bpp set color value (Red, Green and Blue values are the same)
+            {
+                Pixels[i] = color.B;
+            }
+        }
+    }
+
+    public partial class NativeMethods
+    {
+        /// Return Type: int
+        ///font_name: char*
+        ///font_size: double
+        ///is_bold: int
+        ///is_italic: int
+        ///codepoint: unsigned int
+        ///scan0: unsigned char*
+        ///bm_width: int
+        ///bm_height: int
+        ///width: double*
+        ///height: double*
+        ///advanceWidth: double*
+        ///advanceHeight: double*
+        ///bearingX: double*
+        ///bearingY: double*
+        ///ascent: double*
+        ///descent: double*
+        ///line_gap: double*
+        ///line_height: double*
+        [System.Runtime.InteropServices.DllImportAttribute("DotFactoryDll.dll", EntryPoint = "getGlyph", CallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public static extern int getGlyph([System.Runtime.InteropServices.InAttribute()] [System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.LPStr)] string font_name, double font_size, int is_bold, int is_italic, uint codepoint, double gamma, System.IntPtr scan0, int bm_width, int bm_height, ref double width, ref double height, ref double advanceWidth, ref double advanceHeight, ref double bearingX, ref double bearingY, ref double ascent, ref double descent, ref double line_gap, ref double line_height);
+
+    }
+
 }

@@ -32,6 +32,7 @@
 	#define CRASHFILEPATH "/html/CRASHDMP.TXT"
 
 	#define USE_SPI_RAM_FRAMEBUFFER
+	#define FRAMEBUFFER_TEST_GRADIENT 0	// display red and black level test gradients on the screen (set to 1 for debugging/testing only)
 
 	#ifdef USE_SPI_RAM_FRAMEBUFFER
 		#define FB_EPAPER FrameBuffer&  // use SPI ram frame buffer for faster rendering if present
@@ -74,6 +75,8 @@
 		//#include <GxEPD.h>
 		//#include <GxGDEW042Z15/GxGDEW042Z15.h>      // 4.2" b/w/r
 	#endif
+
+	//#define GAMMA_CORRECT_FONT // comment out if fonts are pre-gamma corrected
 
 	#define LECT_FTP_USER "Lectionary"
 	#define LECT_FTP_PASS "Lectionary"

@@ -15,3 +15,20 @@ C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\FontDialog\FontDialo
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\FontDialog\FontDialog\obj\Debug\FontDialog.exe
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\FontDialog\FontDialog\obj\Debug\FontDialog.pdb
 C:\Users\Phil Lishman\Documents\Visual Studio 2017\Projects\FontDialog\FontDialog\obj\Debug\FontDialogDemo.csprojAssemblyReference.cache
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\bin\Debug\FontDialog.exe.config
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\bin\Debug\FontDialog.exe
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\bin\Debug\FontDialog.pdb
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialogDemo.csprojAssemblyReference.cache
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontChooser.baml
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontChooser.g.cs
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\MainWindow.g.cs
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\App.g.cs
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog_MarkupCompile.cache
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog_MarkupCompile.lref
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\MainWindow.baml
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog.g.resources
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog.Properties.Resources.resources
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialogDemo.csproj.GenerateResource.cache
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialogDemo.csproj.CoreCompileInputs.cache
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog.exe
+C:\Users\Phil Lishman\Documents\github-lectionary\Arduino\ToolChain\FontDialog\FontDialog\obj\Debug\FontDialog.pdb

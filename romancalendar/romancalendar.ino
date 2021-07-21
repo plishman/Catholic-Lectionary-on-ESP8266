@@ -209,24 +209,29 @@ void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messageco
 		}
 
 // testing
-/*
+
 #ifdef USE_SPI_RAM_FRAMEBUFFER
+#if FRAMEBUFFER_TEST_GRADIENT
   int16_t x=10;
   int16_t y=150;
   for (int16_t j = y; j < y+16; j++) {
     for (int16_t i = x; i < x+16; i++) {
       for(int16_t k=0; k<8; k++) {
         int16_t xp = i + (16*k);
-        fb.drawPixel(xp, j, GxEPD_BLACK, k*2, false);
-        fb.drawPixel(xp, j+16, GxEPD_BLACK, k*2, true);
-        fb.drawPixel(xp, j+32, GxEPD_RED, k*2, false);
-        fb.drawPixel(xp, j+48, GxEPD_RED, k*2, true);
+        //fb.drawPixel(xp, j, GxEPD_BLACK, k*2, false*/);
+        //fb.drawPixel(xp, j+16, GxEPD_BLACK, k*2, true);
+        //fb.drawPixel(xp, j+32, GxEPD_RED, k*2, false);
+        //fb.drawPixel(xp, j+48, GxEPD_RED, k*2, true);
+        fb.drawPixel(xp, j, GxEPD_BLACK, k*2);
+        fb.drawPixel(xp, j+16, GxEPD_BLACK, k*2);
+        fb.drawPixel(xp, j+32, GxEPD_RED, k*2);
+        fb.drawPixel(xp, j+48, GxEPD_RED, k*2);
       }
     }
   }
-
 #endif
-*/
+#endif
+
 // testing
 
 		do {
