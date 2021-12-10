@@ -2895,8 +2895,8 @@ void LatinMassPropers(time64_t& date,
                     commtext.replace(" %{monthweek} %{month}", "");
                     //Bidi::printf("linecount=%d, filenumber=%d", linecount, filenumber);
 
-                    if (!bIsVotive || (bIsVotive && linecount == 0 && filenumber == 8)) {
-                      commtext = "<BR>" + commtext;
+                    if (!bIsVotive || ((bIsVotive && linecount == 0 && filenumber == 8) || (linecount == 0 && filenumber == 8))) {
+                      commtext = " <BR>" + commtext;
                     }
 
                     bool b_text_starts_with_br = (s.indexOf("<BR>") == 0);
@@ -2920,7 +2920,7 @@ void LatinMassPropers(time64_t& date,
                     }
                   }
                 }
-                else {
+                else {                 
                   if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
                     (linecount == 2 && (filenumber == 2 || filenumber == 11)))   // commemoratio line comes after <br>"Let us pray"<br> line
                   {
@@ -2933,6 +2933,7 @@ void LatinMassPropers(time64_t& date,
 
                     if (filenumber == 8) // add a linefeed before the text in this case (overprints on last line of seasonal text otherwise)
                     {
+                      DEBUG_PRT.println("Prepending linebreak to commtext");
                       commtext = " <BR>" + commtext;
                     }
 
@@ -2948,6 +2949,10 @@ void LatinMassPropers(time64_t& date,
                 }
 
                 if (!bOverflowedScreen) {
+                  //if (s.length() == 4 && s == "<BR>") {
+                  //  DEBUG_PRT.println("adding space to <BR> for font height measurement");
+                  //  s = " <BR>";
+                  //}
                   bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
                     pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
                     bBold, bItalic, bRed, fontsize_rel,
