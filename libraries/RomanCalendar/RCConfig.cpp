@@ -12,7 +12,12 @@ bool Config::bSettingsUpdated = false;
 bool Config::bComplete = false;
 String Config::_lang = "default";
 
+bool Config::bHaveNewConfigCsv = false;
+
 bool loadFromSdCard(String path) {
+  DEBUG_PRT.print(F("\n\nloadFromSdCard(): ---vvv---"));
+  DEBUG_PRT.println(path);
+
   String dataType = "text/plain";
   if(path.endsWith("/")) path += "index.htm";
 
@@ -32,6 +37,7 @@ bool loadFromSdCard(String path) {
   else if(path.endsWith(".htm")) dataType = F("text/html");
   else if(path.endsWith(".css")) dataType = F("text/css");
   else if(path.endsWith(".js")) dataType  = F("application/javascript");
+  else if(path.endsWith(".webp")) dataType = F("image/webp");
   else if(path.endsWith(".png")) dataType = F("image/png");
   else if(path.endsWith(".gif")) dataType = F("image/gif");
   else if(path.endsWith(".jpg")) dataType = F("image/jpeg");
@@ -51,6 +57,9 @@ bool loadFromSdCard(String path) {
   	DEBUG_PRT.print(path);
   }
 
+  DEBUG_PRT.print("\nRequested file: ");
+  DEBUG_PRT.println(path);
+
   if (!dataFile) {
 	DEBUG_PRT.println(F("...Couldn't open file."));
     return false;
@@ -69,7 +78,7 @@ bool loadFromSdCard(String path) {
   dataFile.close();
   DEBUG_PRT.println(F("...got file"));
 
-  Config::bComplete = (Config::bSettingsUpdated && path == "/html/lang/" + Config::_lang + ".jsn"); // PLL-15-12-2020 can check Config::bComplete reduce delay to reboot after settings updated
+  Config::bComplete = (Config::bHaveNewConfigCsv && Config::bSettingsUpdated /*&& path == "/html/lang/" + Config::_lang + ".json"*/); // PLL-15-12-2020 can check Config::bComplete reduce delay to reboot after settings updated
 
   DEBUG_PRT.print(F("\nbSettingsUpdated="));
   DEBUG_PRT.print(Config::bSettingsUpdated);
@@ -79,6 +88,8 @@ bool loadFromSdCard(String path) {
   DEBUG_PRT.print(Config::_lang);
   DEBUG_PRT.print(F("], bComplete="));
   DEBUG_PRT.println(Config::bComplete);
+
+  DEBUG_PRT.println(F("^^^loadFromSdCard()----^^^\n\n"));
 
   return true;
 }
@@ -142,6 +153,156 @@ void handleSettingsJson() {
     DEBUG_PRT.println(line);
 }
 
+
+File fsUploadFile;              // a File object to temporarily store the received file
+
+void handleFileUpload(){ // upload a new file to the SPIFFS
+  //File fsUploadFile;              // a File object to temporarily store the received file (module/global)
+  	HTTPUpload& upload = server.upload();
+  	if(upload.status == UPLOAD_FILE_START)
+	{
+		if (fsUploadFile) 
+		{
+			DEBUG_PRT.println(F("Already uploading a file, only 1 upload file supported at a time!"));
+	    	server.send(500, "text/plain", "500: only 1 file can be uploaded at a time");
+			return;
+		}
+
+    	String filename = upload.filename;
+    	if(!filename.startsWith("/")) filename = "/"+filename;
+    	DEBUG_PRT.print(F("handleFileUpload Name: ")); Serial.println(filename);
+    	fsUploadFile = SD.open(filename, "w");            // Open the file for writing in SD (create if it doesn't exist)
+    	filename = String();
+  	} 
+	
+	else if(upload.status == UPLOAD_FILE_WRITE) 
+	{
+    	if(fsUploadFile) 
+		{
+      		fsUploadFile.write(upload.buf, upload.currentSize); // Write the received bytes to the file
+		}
+  	} 
+	
+	else if(upload.status == UPLOAD_FILE_END) 
+	{
+    	if(fsUploadFile) 
+		{                                    // If the file was successfully created
+      		fsUploadFile.close();                               // Close the file again
+      		DEBUG_PRT.print(F("handleFileUpload Size: ")); Serial.println(upload.totalSize);
+      		server.sendHeader("Location","/success.html");      // Redirect the client to the success page
+      		server.send(303);
+		}
+    } 
+	
+	else 
+	{
+      	server.send(500, "text/plain", "500: couldn't create file");
+	 	if (fsUploadFile) 
+		{
+			fsUploadFile.close();
+	  	}
+    }
+}
+
+void handleConfigFileUpload() { // upload a new file to the SPIFFS
+	DEBUG_PRT.println("handleConfigFileUpload()");
+
+	String config_csv = F(CONFIG_CSV);
+	String config_csv_new = config_csv + F(".new");
+	String config_csv_old = config_csv + F(".old");
+
+  	//File fsUploadFile;              // a File object to temporarily store the received file (module/global)
+  	HTTPUpload& upload = server.upload();
+  	if(upload.status == UPLOAD_FILE_START) 
+	{
+		DEBUG_PRT.println(F("UPLOAD_FILE_START"));
+		
+		if (fsUploadFile) 
+		{
+			DEBUG_PRT.println(F("Already uploading a file, only 1 upload file supported at a time!"));
+	    	server.send(500, "text/plain", "500: only 1 file can be uploaded at a time");
+			return;
+		}
+
+    	String filename = upload.filename;
+    	
+		if(!filename.startsWith("/")) 
+		{
+			filename = "/" + filename;
+		}
+
+    	DEBUG_PRT.print(F("handleConfigFileUpload Name: ")); 
+		DEBUG_PRT.println(filename);
+    	
+		if (filename == config_csv) {
+			SD.remove(config_csv_new);
+			fsUploadFile = SD.open(config_csv_new, "w");            // Open the file for writing in SD (create if it doesn't exist)
+    		//filename = String();
+		}
+  	} 
+
+	else if(upload.status == UPLOAD_FILE_WRITE) 
+	{
+		DEBUG_PRT.println(F("UPLOAD_FILE_WRITE"));
+    	if(fsUploadFile) 
+		{
+      		fsUploadFile.write(upload.buf, upload.currentSize); // Write the received bytes to the file
+		}
+  	} 
+
+	else if(upload.status == UPLOAD_FILE_END) 
+	{
+		DEBUG_PRT.println(F("UPLOAD_FILE_END"));
+    	if(fsUploadFile) {                                    // If the file was successfully created
+      		fsUploadFile.close();                               // Close the file again
+      		
+			DEBUG_PRT.print(F("handleConfigFileUpload Size: ")); 
+	  		DEBUG_PRT.println(upload.totalSize);
+	  		DEBUG_PRT.println(F("Attempting to commit new config.csv:"));
+	  		//SD.remove(config_csv_old); // is done by copy function
+	  		SD.remove(config_csv_old);
+	  		copyfile(config_csv, config_csv_old);
+	  		SD.remove(config_csv);
+
+	  		if (!copyfile(config_csv_new, config_csv)) 
+			{
+	  			DEBUG_PRT.print(F("Couldn't copy ")); 
+				DEBUG_PRT.print(config_csv_new); 
+				DEBUG_PRT.print(F(" to ")); 
+				DEBUG_PRT.print(config_csv); 
+				DEBUG_PRT.print(F(" - trying to fall back to old file"));
+				
+				if(copyfile(config_csv_old, config_csv)) 
+				{
+	  	  			DEBUG_PRT.println(F("..Success"));
+					server.send(500, "text/plain", "500: File uploaded, but Lectionary could not copy the file to the destination config.csv, old config.csv is active");
+				}
+				else 
+				{
+					DEBUG_PRT.println(F("PANIC - FAILED -- There will be no config file on SD card!"));
+					server.send(500, "text/plain", "500: File uploaded, but Lectionary could not copy the file to the destination config.csv, Panic - NO CONFIG is active!");
+	    		}
+	  		}
+			else 
+			{
+				DEBUG_PRT.println(F("File uploaded, new config.csv active"));
+		  		server.send(200, "text/plain", "200: OK");
+		  		Config::bHaveNewConfigCsv = true; // will trigger a rename of the new config.csv.new file to config.csv when the settings have also successfully been received.
+			}
+	  		//server.sendHeader("Location","/setdate.htm");      // Redirect the client to the success page
+      		//server.send(303);
+    	}
+	}
+	else 
+	{
+		DEBUG_PRT.println(F("Error uploading file: Sending Status:500"));
+      	server.send(500, "text/plain", "500: couldn't create file");
+	  	if (fsUploadFile) 
+		{
+		  	fsUploadFile.close();
+	  	}
+    }
+}
 
 void handleSetConf() {
     String tz = getQueryStringParam("timezone", ""); // "timezone", "0"
@@ -220,8 +381,31 @@ void handleSetConf() {
 	DEBUG_PRT.println(String(c.data.timezone_offset));
     DEBUG_PRT.print(F("lectionary = "));
 	DEBUG_PRT.println(String(c.data.lectionary_config_number));
-	
+
+	// remove config.csv.old, rename config.csv to config.csv.old and rename /config.csv.new to config.csv
+	// the index.htm configuration webpage should already have uploaded the new config.csv, via an xhr request.
+	/*
+	if (Config::bHaveNewConfigCsv) {
+		DEBUG_PRT.println(F("Attempting to commit new config.csv:"));
+		String config_csv = F(CONFIG_CSV);
+		String config_csv_new = config_csv + F(".new");
+		String config_csv_old = config_csv + F(".old");
+
+		//SD.remove(config_csv_old); // is done by copy function
+		copyfile(config_csv, config_csv_old);
+		if (copyfile(config_csv_new, config_csv)) {
+		  	DEBUG_PRT.print(F("Couldn't copy ")); DEBUG_PRT.print(config_csv_new); DEBUG_PRT.print(F(" to ")); DEBUG_PRT.print(config_csv); DEBUG_PRT.print(F(" - trying to fall back to old file"));
+		  	if(copyfile("/config.csv.old", "/config.csv")) {
+				DEBUG_PRT.println(F("..Success"));
+		  	}
+		  	else {
+			  	DEBUG_PRT.println(F("PANIC - FAILED -- There will be no config file on SD card!"));
+		  	}
+	  	}
+	}
+	*/
 	Config::bSettingsUpdated = true;
+	
 
 	bool b404 = !loadFromSdCard("setconf.htm");
 	
@@ -229,6 +413,48 @@ void handleSetConf() {
 		server.send(404, "text/plain", "Settings updated (setconf.htm not found)");
 		DEBUG_PRT.println(F("Sending 404"));
 	}
+}
+
+bool copyfile(String fromFile, String toFile) {
+	DEBUG_PRT.print(F("copyfile() Copying file from "));
+	DEBUG_PRT.print(fromFile);
+	DEBUG_PRT.print(F(" to "));
+	DEBUG_PRT.println(toFile);
+
+	if (SD.exists(toFile)) {
+    	SD.remove(toFile);
+  	}
+
+  	File fileIn = SD.open(fromFile, FILE_READ);
+	if (!fileIn) {
+		return false;
+	}
+
+  	File fileOut = SD.open(toFile, FILE_WRITE);
+
+	if (!fileOut) {
+		fileIn.close();
+		return false;
+	}
+
+	uint8_t buf[128];
+	const int buf_size = 128;
+	long bytes_remaining = 0;
+
+	if (fileIn.available()) {
+		bytes_remaining = fileIn.size();
+	}
+
+  	while (fileIn.available() && bytes_remaining > 0) {
+    	long bytes_to_read = bytes_remaining < buf_size ? bytes_remaining : buf_size;
+		fileIn.read(buf, bytes_to_read);
+		fileOut.write(buf, bytes_to_read);
+		bytes_remaining -= buf_size;
+  	}
+  	fileIn.close();
+  	fileOut.close();
+	
+	return true;
 }
 
 
@@ -258,6 +484,8 @@ bool Config::StartServer(String lang) {
 
 	bSettingsUpdated = false;
 	bComplete = false;
+	
+	bHaveNewConfigCsv = false;
 
 	wl_status_t status = WiFi.status();
 	if(status == WL_CONNECTED) {
@@ -290,12 +518,23 @@ bool Config::StartServer(String lang) {
 	//MDNS.addService("http", "tcp", 80);
 	//
 	//DEBUG_PRT.println(F("mDNS responder started"));
-  
+  	server.on ("/uploadconfig.htm", HTTP_POST,                       // if the client posts to the upload page
+    	[](){ server.send(200); },                          // Send status 200 (OK) to tell the client we are ready to receive
+    	handleConfigFileUpload                                    // Receive and save the file
+  	);
+
+	// allows files to be uploaded to any part of the SD card - flexible, but potentially a risk
+  	server.on ("/upload.htm", HTTP_POST,                       // if the client posts to the upload page
+    	[](){ server.send(200); },                          // Send status 200 (OK) to tell the client we are ready to receive
+    	handleFileUpload                                    // Receive and save the file
+  	);
+
+
 	server.on ( "/settings.json", handleSettingsJson );
 	server.on ( "/setconf.htm", handleSetConf );
 	server.onNotFound ( handleNotFound );
 
-	if (lang != "" and SD.exists("/html/lang/" + lang + ".jsn")) {
+	if (lang != "" and SD.exists("/html/lang/" + lang + ".json")) {
 		Config::_lang = lang;
 	}
 	else {

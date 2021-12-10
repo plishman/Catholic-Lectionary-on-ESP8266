@@ -1,0 +1,32 @@
+cs:
+  weekday:
+    '0': Neděle
+    '1': Pondělí
+    '2': Úterý
+    '3': Středa
+    '4': Čtvrtek
+    '5': Pátek
+    '6': Sobota
+  month:
+    '1': led.
+    '2': ún.
+    '3': brez.
+    '4': dub.
+    '5': kvet.
+    '6': cerv.
+    '7': cerven.
+    '8': srp.
+    '9': zár.
+    '10': ríj.
+    '11': list.
+    '12': pros.
+  date: '%{d} %{mmm} %{yyyy}'
+  ordinals: period
+  colour:
+    violet: fialová
+    white: bílá
+    green: zelená
+    red: červená
+  holy_day_of_obligation: <b>+</b>
+  or: nebo
+  ellipsis: [..]

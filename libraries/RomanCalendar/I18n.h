@@ -42,7 +42,8 @@ public:
 	int font_fixed_spacecharwidth = 2;
 	bool cr_after_verse = false;
 	bool show_verse_numbers = false;
-	
+	bool b_use_extraordinary_form = false;
+
 	void Clear();	
 	void Dump();
 	ConfigParams();

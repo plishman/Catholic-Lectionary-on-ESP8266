@@ -10,8 +10,10 @@ bool DiskFont::OpenFontFile() {
 	DEBUG_PRT.print(F("Diskfont::OpenFontFile() Font filename is ["));
 	DEBUG_PRT.print(_fontfilename);
 	DEBUG_PRT.println(F("]"));
-	
-	_file_sd = SD.open(_fontfilename.c_str(), FILE_READ);
+
+	String fontfilename = "/Fonts/" + _fontfilename;
+
+	_file_sd = SD.open(fontfilename.c_str(), FILE_READ);
 
 	if (!_file_sd.available()) {
 		DEBUG_PRT.print(F("unable to open diskfont from SD card, trying spiffs..."));

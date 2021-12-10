@@ -1,13 +1,34 @@
-#ifndef TRIDENTINE_H
-#define TRIDENTINE_H
+#pragma once
+#ifndef _TRIDENTINE_H_
+#define _TRIDENTINE_H_
 
-#include "TimeLib.h"
-//#include "WString.h"  
-#include "yml.h"
-#include "Ordinalizer.h"
-#include "Arduino.h"
-#include "DebugPort.h"
-#include "RCGlobals.h"
+#ifdef _WIN32
+	#define BEGIN_EPOCH 1970
+	
+	#include "WString.h"
+	#include "PROGMEM.h"
+	#include "Sd.h"
+	#include "DebugPort.h"
+	#include "yml.h"
+	#include "TimeLib.h"
+	#include "Csv.h"
+	#include "Ordinalizer.h"
+	#include <stdio.h>
+	#include <stdint.h>
+
+	const char* system_get_free_heap_size();
+#else
+	#include "TimeLib.h"
+	//#include "WString.h"  
+	#include "yml.h"
+	#include "Ordinalizer.h"
+	#include "Arduino.h"
+	#include "DebugPort.h"
+	#include "RCGlobals.h"
+	#include "Csv.h"
+#endif
+
+
 
 //const int BEGIN_EPOCH = 1970; // 1900 for 64-bit time64_t, sometimes 1970 (may be on embedded system)
 
@@ -30,7 +51,7 @@
 #define SEASON_PENTECOST		   7
 #define SEASON_AFTER_PENTECOST	   8
 
-struct Tr_Calendar_Day {
+typedef struct Tr_Calendar_Day {
 	time64_t datetime;
 	String DayofWeek;
 	String Cls;
@@ -44,17 +65,17 @@ struct Tr_Calendar_Day {
 	String SeasonImageFilename;
 	String SaintsImageFilename;
 	String VotiveImageFilename;
-};
+} Tr_Calendar_Day;
 
-struct IndexHeader {
+typedef struct IndexHeader {
 	String heading;
 	String name;
 	String commemoration;
 	String cls;
 	String colour;
-};
+} IndexHeader;
 
-struct IndexRecord {
+typedef struct IndexRecord {
 	String heading;
 	int8_t filenumber;
 	int8_t filecount;
@@ -62,7 +83,7 @@ struct IndexRecord {
 	int8_t partcount;
 	int fileoffset_start;
 	int fileoffset_end;
-};
+} IndexRecord;
 
 class MissalReading {
 public:
@@ -79,13 +100,21 @@ public:
 	MissalReading();
 	bool open(String filedir);
 	bool get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText);
+	bool get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText, bool& bResetPropersFilePtr);
 	bool getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetIndexFilePtr = false);
 	void close();
-	String heading();
-	String name();
+	bool isOpen();
+	String heading(bool b_commemoration = false);
+	String name(bool b_commemoration = false);
 	bool isCommemorationOnly();
 	String commemoration();
 	String cls();
+	void setClass(String class_name);	// use rarely, in the case when a Class has been incorrectly specified in the database (principally 1st and 2nd class vigils)
+	
+	void patchHolyFamily1570();
+	void patchDiesJanuarii1955(String& filedir); // Patch January 2-5 and 7-12 to be treated as ferial in 1955 Mass (http://divinumofficium.com/www/horas/Help/Rubrics/1955.txt paras 14+15)
+	void patchOctaveDayofAscension();	// in D.O., the Propers are headed "Feria V in Octava Ascensionis" for the Octave Day of Ascension, whereas the Ordo has it as "Octavæ Ascensionis" - the Octave of Ascension. This patch makes the Propers heading "Octavæ Ascensionis".
+	
 	String colour();
 	static bool getHeaderRecord(File& file, IndexHeader& ih);
 	static bool getIndexRecord(File& file, IndexRecord& ir);
@@ -198,6 +227,55 @@ public:
 	static time64_t first_advent_sunday(int year);
 	static time64_t nativity(int year);
 	static bool IsImmaculateConception(time64_t datetime);
+	
+	// Common Octaves
+	static time64_t ImmaculateConception(int year);
+	static time64_t NativityStJohnBaptist(int year);
+	static time64_t MartyrdomOfSSPeterAndPaul(int year);
+	static time64_t AssumptionOfMary(int year);
+	static time64_t AllSaints(int year);
+	//
+
+	// Simple Octaves
+	static time64_t StStephen(int year);
+	static time64_t StStephenProtomartyr(int year);
+	static time64_t StJohnApostle(int year);
+	static time64_t HolyInnocents(int year);
+	static time64_t StLawrence(int year);
+	static time64_t NativityOfMary(int year);
+	//
+	// for vigils
+	static time64_t NativityOfJohnBaptist(int year);
+
+	// for Divino Afflatu mass
+	static time64_t StJosephSponsi(int year);
+	//
+	static time64_t CircumcisionOfTheLord(int year);
+	static time64_t BaptismOfTheLord(int year);
+	static time64_t FindingOfTheHolyCross(int year);
+	static time64_t StJoachimFatherOfMary(int year);
+	static time64_t StAnneMotherOfMary(int year);
+	static time64_t Annunciation(int year);
+	static time64_t StMichaelArchangelDedication(int year);
+	static time64_t PurificationOfMary(int year);
+	static time64_t PreciousBloodOfJesus(int year);
+	static time64_t VisitationOfMary(int year);
+	static time64_t TransfigurationOfTheLord(int year);
+	static time64_t HolyCross(int year);
+	static time64_t DedicationOfTheLateranBasilica(int year);
+	static time64_t StJosephOpificis(int year);
+
+	static bool IsAlsoFeastOfTheLord(time64_t datetime);
+
+	static time64_t SSPhilipAndJames(int year);
+	static time64_t StJames(int year);
+	static time64_t StBartholomew(int year);
+	static time64_t StMatthew(int year);
+	static time64_t SSSimonAndJude(int year);
+	static time64_t StAndrew(int year);
+	static time64_t StThomas(int year);
+
+
 	static time64_t weekday_before(int weekdayBefore, time64_t date);
 	static time64_t sunday_before(time64_t date);
 	static int weekday(time64_t date, bool bUsePythonWeekdayFormat = true);
@@ -263,6 +341,10 @@ public:
 	static time64_t MichaelmasEmbertide(int year, int day);
 	static time64_t AllSouls(int year);
 	static time64_t ChristTheKing(int year);
+
+#ifdef _WIN32
+	static bool print_season;
+#endif
 	static uint8_t Season(time64_t datetime);
 	static time64_t Season_beginning(uint8_t season, time64_t datetime);	static uint8_t Season_Week(time64_t datetime, uint8_t season);
 	static void ColourAndClass(time64_t datetime, uint8_t& col, uint8_t& cls);
@@ -278,8 +360,19 @@ public:
 	static void GetDay(time64_t datetime, String& Mass);
 	static void GetFileDir(time64_t datetime, String& FileDir_Season, String& FileDir_Saint);
 	static bool IsPassionWeek (time64_t datetime);
-	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename); // used for getting filedirs for DivinumOfficium-based calendar database
-	static bool FileExists(String filename);
+	static bool IsHolyWeek(time64_t datetime);
+	static uint8_t mass_type;
+
+#define MASS_TRIDENTINE_1570 1
+#define MASS_TRIDENTINE_1910 2
+#define MASS_DIVINEAFFLATU 3
+#define MASS_1955 4
+#define MASS_1960 5
+#define MASS_1960NEW 6
+#define MASS_1965_67 7
+
+	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, uint8_t MassType = MASS_1960); // used for getting filedirs for DivinumOfficium-based calendar database
+	//static bool FileExists(String filename);
 
 	///////////////////////////////////
 	// Functions for reading the texts

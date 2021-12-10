@@ -124,9 +124,13 @@ size_t streamFile(File& file, String& contentType);	// workaround for server.str
 
 void handleNotFound();
 void handleSettingsJson();
+void handleFileUpload();
+void handleConfigFileUpload();
 void handleSetConf();
 String getQueryStringParam(String param_name, String default_value);
 bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
+bool copyfile(String fromFile, String toFile);
+
 
 class Config {
 public:
@@ -136,6 +140,8 @@ public:
 //	ESP8266WebServer server;
 	static bool bSettingsUpdated;
 	static bool bComplete;
+	
+	static bool bHaveNewConfigCsv;
 		
 	//Config();
 	//~Config();

@@ -17,9 +17,9 @@ public:
 	Ordinalizer(String type);
 	void SetType(String type);
 	String ordinalize(int number);
-	String ord_french(int number);
-	String ord_english(int number);
-	String to_roman(unsigned int value);
+	static String ord_french(int number);
+	static String ord_english(int number);
+	static String to_roman(unsigned int value);
 };
 
 #endif

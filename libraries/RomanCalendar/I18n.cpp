@@ -1,6 +1,7 @@
 //#include "stdafx.h"
 #include "Csv.h"
 #include "I18n.h"
+#include "Ordinalizer.h"
 
 //ConfigParams class
 void ConfigParams::Clear() {
@@ -22,11 +23,13 @@ void ConfigParams::Clear() {
 	font_fixed_spacecharwidth = 2;		
 	cr_after_verse = false;
 	show_verse_numbers = false;
+	b_use_extraordinary_form = false;
 }
 
 void ConfigParams::Dump() {
 	DEBUG_PRT.print(F("\tdesc=")); 										DEBUG_PRT.println(desc);
 	DEBUG_PRT.print(F("\tlang=")); 										DEBUG_PRT.println(lang);
+	DEBUG_PRT.print(F("\tMass Form in use="));							DEBUG_PRT.println(b_use_extraordinary_form ? F("Extraordinary Form") : F("Novus Ordo"));
 	DEBUG_PRT.print(F("\tyml_filename=")); 								DEBUG_PRT.println(yml_filename);
 	DEBUG_PRT.print(F("\tsanctorale_filename=")); 						DEBUG_PRT.println(sanctorale_filename);
 	DEBUG_PRT.print(F("\tbible_filename=")); 							DEBUG_PRT.println(bible_filename);
@@ -81,6 +84,7 @@ ConfigParams::ConfigParams(const ConfigParams &p2) {
 	font_fixed_spacecharwidth = p2.font_fixed_spacecharwidth;
 	cr_after_verse = p2.cr_after_verse;
 	show_verse_numbers = p2.show_verse_numbers;
+	b_use_extraordinary_form = p2.b_use_extraordinary_form;
 	
 }
 ///////
@@ -230,6 +234,7 @@ bool I18n::get_config( void ) {
 	
 	String s_cr_after_verse = "";
 	String s_show_verse_numbers = "";
+	String s_mass_form = "";
 /*
 	bool transfer_to_sunday = false;
 	bool celebrate_feast_of_christ_priest = false;
@@ -302,6 +307,9 @@ bool I18n::get_config( void ) {
 		s_show_verse_numbers = csv.getCsvField(csv_record, &pos);
 		c.show_verse_numbers = ((s_show_verse_numbers.indexOf("true") != -1) || s_show_verse_numbers == "1");		
 		
+		s_mass_form = csv.getCsvField(csv_record, &pos);
+		c.b_use_extraordinary_form = (s_mass_form == "EF" ? true : false);
+		
 		if (_lectionary_config_number == i) {
 			c.Dump();
 			bFoundSelection = true;
@@ -360,6 +368,7 @@ String I18n::getdate(time64_t t) {
 	
 	date_format.replace("%{m}", String(ts.Month));
 	date_format.replace("%{mm}", ts.Month > 9 ? String(ts.Month) : "0" + String(ts.Month));
+	date_format.replace("%{mmx}", Ordinalizer::to_roman(ts.Month));	// roman numerals for month (eg, Hungary)
 	date_format.replace("%{mmm}", get("month." + String(ts.Month)));
 	
 	String yy = tmYearToCalendar(ts.Year) % 100 < 10 ? "0" + String(tmYearToCalendar(ts.Year) % 100) : String(tmYearToCalendar(ts.Year) % 100);

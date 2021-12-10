@@ -1,7 +1,573 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	<meta charset="utf-8" /> 
+		<meta charset="utf-8" /> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title id="id-title-lectionary-config">Catholic Lectionary Configuration</title>
+		<style>
+			body,html {
+    			margin: 0;
+    			padding: 0;
+			}
+
+			* {
+    			box-sizing: border-box;
+			}
+
+			body {
+				background-color: linen;
+				font-family:'Times New Roman';
+				background-image: url('moire-fabric-cardinal-red.webp'); /*urlencoded filenames not supported on lectionary (will not decode %20 etc, so no spaces or special characters)*/
+				background-size: cover;
+				overflow: auto;
+				/*font-size: 175%;*/
+			}
+
+			/*
+			#inner_div {
+				position: absolute;
+				z-index: 1000;
+				margin: 30px;
+			}
+
+
+			#container_div {
+				font-size: 28px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -95px;
+				margin-left: -250px;
+				width: 500px;
+				height: 190px;
+				background: rgba(0,0,0,0.1);
+			}​
+			*/
+
+			#container_div {			
+				min-height: 100vh;
+				min-width: max-content;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				padding: 0;
+				margin: 0;
+				overflow-x: hidden;
+			}
+
+			#inner_div {
+				margin: 30px;
+				height: 40%;
+				width: 40%;
+				background-color:white; /*rgb(255, 244, 227);*/
+				padding: 0px;
+				/*padding: 25px;*/
+				border-radius: 10px;
+				position: relative;
+				text-align: center;			
+				transition:height 1s ease-in-out;
+				overflow: auto;
+				min-width: min-content;
+				max-width: fit-content;
+				filter: drop-shadow(0 0 2rem rgba(0,0,0,1));
+			}
+
+			@media screen and (max-width:379px) {
+  				/* for screens that are at least 320 pixels wide but less than or equal to 640 pixels wide */
+				html {
+					font-size: 4em;
+				}
+
+				input[type="checkbox"] {
+					width: 1.25rem;
+					height: 1.25rem;
+				}
+
+				input[type="radio"] {
+    				width: 1.25rem;
+ 				 	height: 1.25rem;
+				}
+
+				#inner_div {
+					width: auto;
+				}
+
+				.slider {
+					width: 10rem;
+				}
+			}
+
+			@media screen and (min-width:380px) and (max-width:639px) {
+  				/* for screens that are at least 320 pixels wide but less than or equal to 640 pixels wide */
+				html {
+					font-size: 2.75em;
+				}
+
+				input[type="checkbox"] {
+					width: 1.25rem;
+					height: 1.25rem;
+				}
+
+				input[type="radio"] {
+    				width: 1.25rem;
+ 				 	height: 1.25rem;
+				}
+
+				#inner_div {
+					width: auto;
+				}
+
+				.slider {
+					width: 10rem;
+				}
+			}
+
+			@media screen and (min-width:640px) and (max-width:1366px) {
+  				/* for screens that are at least 768 pixels wide */
+				html {
+					font-size: 1.4em;
+				}
+
+				input[type="checkbox"] {
+					width: 1.25rem;
+					height: 1.25rem;
+				}
+
+				input[type="radio"] {
+    				width: 1.25rem;
+ 				 	height: 1.25rem;
+				}
+
+				#inner_div {
+					width: auto;
+				}
+
+				.slider {
+					width: 20rem;
+				}
+			}
+			
+
+			@media screen and (min-width:1367px) {
+				html {
+					font-size: 1em;
+				}
+
+				input[type="checkbox"] {
+					width: 1.25rem;
+					height: 1.25rem;
+				}
+
+				input[type="radio"] {
+    				width: 1.25rem;
+ 				 	height: 1.25rem;
+				}
+
+				#inner_div {
+					width: 40%;
+				}
+
+				.slider {
+					width: 20rem;
+				}
+
+			}
+
+
+				/*#content {
+			}*/
+			
+			#spinner_container {
+				position: fixed;
+				z-index: 999;
+				width: 100%;			
+				height: 100%;
+				overflow: show;
+				margin: auto;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				background: rgba(255, 255, 255, 0.75)
+			}
+			
+			#inner_spinner_container {
+				position: fixed;
+				z-index: 1000;
+				height: 64px;
+				width: 64px;
+				overflow: show;
+				margin: auto;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+			}
+		</style>
+		
+		<style>
+			.lds-spinner {
+			  color: official;
+			  display: inline-block;
+			  position: relative;
+			  width: 64px;
+			  height: 64px;
+			}
+			.lds-spinner div {
+			  transform-origin: 32px 32px;
+			  animation: lds-spinner 1.2s linear infinite;
+			}
+			.lds-spinner div:after {
+			  content: " ";
+			  display: block;
+			  position: absolute;
+			  top: 3px;
+			  left: 29px;
+			  width: 5px;
+			  height: 14px;
+			  border-radius: 20%;
+			  background: rgb(255, 0, 0);
+			}
+			.lds-spinner div:nth-child(1) {
+			  transform: rotate(0deg);
+			  animation-delay: -1.1s;
+			}
+			.lds-spinner div:nth-child(2) {
+			  transform: rotate(30deg);
+			  animation-delay: -1s;
+			}
+			.lds-spinner div:nth-child(3) {
+			  transform: rotate(60deg);
+			  animation-delay: -0.9s;
+			}
+			.lds-spinner div:nth-child(4) {
+			  transform: rotate(90deg);
+			  animation-delay: -0.8s;
+			}
+			.lds-spinner div:nth-child(5) {
+			  transform: rotate(120deg);
+			  animation-delay: -0.7s;
+			}
+			.lds-spinner div:nth-child(6) {
+			  transform: rotate(150deg);
+			  animation-delay: -0.6s;
+			}
+			.lds-spinner div:nth-child(7) {
+			  transform: rotate(180deg);
+			  animation-delay: -0.5s;
+			}
+			.lds-spinner div:nth-child(8) {
+			  transform: rotate(210deg);
+			  animation-delay: -0.4s;
+			}
+			.lds-spinner div:nth-child(9) {
+			  transform: rotate(240deg);
+			  animation-delay: -0.3s;
+			}
+			.lds-spinner div:nth-child(10) {
+			  transform: rotate(270deg);
+			  animation-delay: -0.2s;
+			}
+			.lds-spinner div:nth-child(11) {
+			  transform: rotate(300deg);
+			  animation-delay: -0.1s;
+			}
+			.lds-spinner div:nth-child(12) {
+			  transform: rotate(330deg);
+			  animation-delay: 0s;
+			}
+			@keyframes lds-spinner {
+			  0% {
+				opacity: 1;
+			  }
+			  100% {
+				opacity: 0;
+			  }
+			}
+		</style>
+		<style>
+			.slidecontainer {
+			  width: 100%;
+			}
+
+			.slider {
+			  -webkit-appearance: none;
+			  /*width: 20rem;*/ /* see @media queries above*/
+			  height: 1.5rem;
+			  background: #d3d3d3;
+			  outline: none;
+			  opacity: 0.7;
+			  -webkit-transition: .2s;
+			  transition: opacity .2s;
+			  display: inline-block;
+			}
+
+			.slider:hover {
+			  opacity: 1;
+			}
+			
+			.slider::-webkit-slider-thumb {
+			  -webkit-appearance: none;
+			  appearance: none;
+			  width: 1.5rem;
+			  height: 1.5rem;
+			  background: rgb(220, 0, 0);
+			  cursor: pointer;
+			}
+
+			.slider::-moz-range-thumb {
+			  width: 1rem;
+			  height: 1rem;
+			  background: rgb(220, 0, 0);
+			  cursor: pointer;
+			}
+
+			.contrast-legend {
+				font-size: 2.5rem;
+				margin:auto;
+			}
+			
+			.contrast-legend-lower {
+				color: grey;
+			}
+
+			.contrast-legend-higher {
+				color: black;
+			}
+
+			#contrast-control-container {
+				display: flex;
+  				flex-wrap: wrap;
+				flex-direction: row;
+				justify-content: center;
+  				align-items: center;
+  				align-content: center
+			}
+			
+			.contrast-control-item {
+				/*flex: 1 0 auto;*/
+				flex: 0 0 auto;
+				margin: 2px;
+				display:flex;
+			}
+
+
+
+		</style>
+		
+		<style>
+			div#configure_catholic_lectionary_text {
+				margin-left: 1.5rem;
+				margin-right: 1.5rem;
+			}
+
+			div#id-lectionary-settings-updated-message, div#id-lectionary-settings-update-error-message {
+				margin: 1.5rem;
+				font-size: 1.5rem;
+			}
+
+			div.config-form-container {
+				/*margin: 10px;*/
+				margin: 25px;
+			}
+
+			div.mass-form-container {
+				/*padding: 25px;*/
+				margin: 25px;
+			}
+
+			div.class-form-field {
+				margin: 10px;
+				padding: 5px;
+				display: inline-block;
+				font-size: large;
+			}
+
+			div.class-form-field:hover {
+				background:rgba(0,0,0,0.1);
+				color: rgb(220, 0, 0);
+				border-radius: 0.25rem;
+			}
+
+			div.class-form-field {
+				color: rgb(220, 0, 0);			
+			}
+
+			/*
+			label.class-form-field {
+				font-size: 1.25rem;
+			}
+			*/
+
+			div.class-input-hidden, #mass-config-csv-file {
+				display: none;
+			}
+
+			.class-form-field:hover, select.class-form-field > option {
+				color: rgb(220, 0, 0);
+			}
+
+			input.class-form-field, select.class-form-field, input.class-form-field[type="checkbox"] {
+				background-color:transparent;
+				border:1px solid black;
+				padding: 5px;
+			}
+			
+			input.class-form-field:focus, select.class-form-field:focus {
+				outline: none; /*1px solid rgb(220,0,0);*/
+				text-decoration: underline;
+			}
+
+			input[type="submit"], button {
+				background: white;
+				border: 1px solid black;
+				border-radius: 3px;
+				font-size: 1.75rem;
+				margin-top: 25px;
+			}
+
+			.class-submit-button {
+				font-family: "Caladea";
+			}
+
+			input[type="submit"]:hover, button:hover {
+				background:rgba(0,0,0,0.1);
+				color: rgb(220, 0, 0);
+			}
+
+			input[type="range"]:focus, input[type="checkbox"]:focus {
+				outline: 2px solid black;
+				text-decoration: none;
+			}
+
+			/*
+			input.class-form-field, select.class-form-field, select.class-form-field > option {
+				font-family: 'Caladea';
+			}
+			*/
+
+			div.class-form-field-full-width {
+				width: 100%;
+			}
+
+			fieldset.class-fieldset {
+				border:0.15rem solid black;
+				border-radius: 0.25rem;
+				display: block;
+			}
+
+			
+			/*
+			legend.class-fieldset {
+				font-size: 1.5rem;
+				text-align: left;
+			}
+			*/
+
+			input.class-form-field /*, .class-form-field > div */ {
+				font-size: 1.5rem;
+			}
+
+			label.class-form-field {
+				font-size: 2rem;
+			}
+
+			legend.class-fieldset {
+				text-align: left;
+				font-size: 1.75rem;
+			}
+
+			select.class-form-field {
+				font-size: 1.25rem;
+			}
+
+			h1 {
+				font-size: 3.5rem;
+			}
+
+			div#select-mass-type-radiobuttons-container {
+				margin-left: 1.5rem;
+				margin-right: 1.5rem;
+			}
+
+			div#select-mass-type-radiobuttons-container > label {
+				font-size: 1.75rem;
+				display: inline-block;
+			}
+
+			div#contrast-level-text {
+				font-size: 1rem;
+				display: block;
+			}
+
+			div.hidden, fieldset.hidden {
+				display: none;
+			}
+
+			div.shown, fieldset.shown {
+				display: block;
+			}
+			
+			/*
+			select {
+				width: auto;
+				overflow: hidden;
+				white-space: pre;
+				text-overflow: ellipsis;
+				-webkit-appearance: none;
+			}
+			*/
+
+			#bluelight-filter {
+  				position: fixed; top:0; left:0; z-index:9999;
+  				height:100%; width:100%;
+  				pointer-events: none;
+  				background-color: rgba(128,128,64,0.15);
+  				mix-blend-mode: multiply;
+				margin: 0;
+				padding: 0;
+			}
+
+			#SelectConfig { /*legacy element*/
+				display: none;
+			}
+
+		</style>
+
+		<script type="text/javascript">
+			//https://gist.github.com/plbowers/7560ae793613ee839151624182133159
+			const csvStringToArray = (strData, header=true) =>
+			{
+				if (!strData) return [[]];
+
+				//const objPattern = new RegExp(("(\\,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\\,\\r\\n]*))"),"gi");
+				const objPattern = new RegExp(("(\\,|\\r?\\n|\\r|^)(?:\"((?:\\\\.|\"\"|[^\\\\\"])*)\"|([^\\,\"\\r\\n]*))"),"gi");
+				let arrMatches = null, arrData = [[]];
+				while (arrMatches = objPattern.exec(strData)){
+					if (arrMatches[1].length && arrMatches[1] !== ",") arrData.push([]);
+					arrData[arrData.length - 1].push(arrMatches[2] ? 
+						arrMatches[2].replace(new RegExp( "[\\\\\"](.)", "g" ), '$1') :
+						arrMatches[3]);
+				}
+				if (header) {
+					hData = arrData.shift();
+					hashData = arrData.map(row => {
+						let i = 0;
+						return hData.reduce(
+							(acc, key) => { 
+								acc[key] = row[i++]; 
+								return acc; 
+							},
+							{}
+						);
+					});
+					return hashData;
+				} else {
+					return arrData;
+				}
+			}
+		</script>
+
 		<script type="text/javascript">
 			// ref: http://stackoverflow.com/a/1293163/2343
 			// This will parse a delimited string into an array of
@@ -90,9 +656,40 @@
 				return( arrData );
 			}
 		</script>
+		
+		<script type="text/javascript">
+			//https://stackoverflow.com/questions/26736587/how-to-add-and-remove-classes-in-javascript-without-jquery
+			function hasClass(el, className)
+			{
+				if (el.classList)
+					return el.classList.contains(className);
+				return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+			}
+
+			function addClass(el, className)
+			{
+				if (el.classList)
+					el.classList.add(className)
+				else if (!hasClass(el, className))
+					el.className += " " + className;
+			}
+
+			function removeClass(el, className)
+			{
+				if (el.classList)
+					el.classList.remove(className)
+				else if (hasClass(el, className))
+				{
+					var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+					el.className = el.className.replace(reg, ' ');
+				}
+			}
+		</script>
+		
 		<script type="text/javascript">
 			var bControlsUpdated = false;
 			var bUILangUpdated = false;
+			var bFontsReady = false;
 
 			Date.prototype.stdTimezoneOffset = function () {
 				var jan = new Date(this.getFullYear(), 0, 1);
@@ -105,6 +702,7 @@
 			}
 
 			function MakeConfigOpt(config) {
+				//deprecated
 				var optlist = "";
 				var i = 1; //line 0 contains the headings
 				
@@ -130,6 +728,7 @@
 			}
 			
 			function LoadConfigOpt() {
+				//deprecated
 				var config;
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
@@ -147,6 +746,7 @@
 			}
 			
 			function LoadConfigState() {
+				//deprecated
 				var configstate;
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
@@ -172,7 +772,17 @@
 						//document.getElementById("spinner_container").style.visibility = "hidden";
 					}
 				};
+				
 				xhttp.open("GET", "settings.json", true);
+
+				//https://stackoverflow.com/questions/22356025/force-cache-control-no-cache-in-chrome-via-xmlhttprequest-on-f5-reload
+				// via Cache-Control header:
+				xhttp.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+    			// fallbacks for IE and older browsers:
+    			xhttp.setRequestHeader("Expires", "Tue, 01 Jan 1980 1:00:00 GMT");
+    			xhttp.setRequestHeader("Pragma", "no-cache"); //Edit: I noticed this is required for Chrome some time ago... forgot to mention her
+				////
+
 				xhttp.send();
 			}
 
@@ -180,43 +790,113 @@
 				document.getElementById(el).value = val;
 			}
 
+			var g_ui_lang = "default";
+			var g_b_already_tried_default = false;
+
 			function SetUILang(lang) {
-				g('lang', lang);
+				const INDEX_I18N_ELEMENT_ID = 0;
+				const INDEX_I18N_STRING = 1;
+
+				console.log("Attempting to set UI language to", lang);				
+
+				//var current_lang = document.getElementById("lang").value;
+				if (lang != undefined && lang != "default" && lang == g_ui_lang) {
+					console.log("Current UI language is already set to", lang, ", returning");
+					return;
+				}
+
+				var current_ui_lang = localStorage.getItem("lectionary_ui_lang");				
+				if (current_ui_lang == undefined) {
+					console.log("lectionary_ui_lang key in localstorage is undefined, setting to default");
+					localStorage.setItem("lectionary_ui_lang", "default");
+				}
+
+				//g('lang', lang);
+				if (lang == undefined) {
+					if (current_ui_lang == undefined) {
+						console.log("Lectionary language cannot be", lang, "setting to default");
+						lang = "default";
+					}
+					else {
+						console.log("Lectionary language cannot be", lang, "leaving as", current_ui_lang);
+						lang = current_ui_lang;
+					}
+				}
 
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
 						langstrings = JSON.parse(xhttp.responseText);
-						
-						for (var i = 0; i < langstrings.length; i++){
-							var obj = langstrings[i];
-							for (var key in obj){
-								var attrName = key;
-								var attrValue = obj[key];
 
-								if (document.getElementById(attrName)) document.getElementById(attrName).innerHTML = attrValue;
+						var font_family = langstrings.font_family;
+
+						if (font_family) {							
+							var style = document.createElement('style');
+							var css_font = langstrings.fontfile_regular ? "@font-face { font-family: " + font_family + "; src: url('" + langstrings.fonts_folder + langstrings.fontfile_regular + "'); }" : ""; 
+							var css_font_bold = langstrings.fontfile_bold ? "@font-face { font-family: " + font_family + "; font-weight: bold; src: url('" + langstrings.fonts_folder + langstrings.fontfile_bold + "');}" : "";
+							var css_font_italic = langstrings.fontfile_italic ? "@font-face { font-family: " + font_family + "; font-style: italic; src: url('" + langstrings.fonts_folder + langstrings.fontfile_italic + "');}" : "";
+							var css_font_bolditalic = langstrings.fontfile_bolditalic ? "@font-face { font-family: " + font_family + "; font-weight: bold; font-style: italic; src: url('" + langstrings.fonts_folder + langstrings.fontfile_bolditalic + "');}" : "";
+							style.innerHTML += css_font + css_font_bold + css_font_italic + css_font_bolditalic;
+
+							var css_inputstyle = "input.class-form-field, select.class-form-field, select.class-form-field > option, button.class-submit-button {font-family: '" + font_family +  "';}";
+							style.innerHTML += css_inputstyle;
+							document.head.appendChild(style);
+							document.body.style.fontFamily = font_family;
+							document.fonts.ready.then(function () { bFontsReady = true; });
+						}
+
+						for (var i = 0; i < langstrings[lang].length; i++) {
+							var id = langstrings[lang][i][INDEX_I18N_ELEMENT_ID];
+							var str = langstrings[lang][i][INDEX_I18N_STRING];
+
+							var el = document.getElementById(id);
+							if (el && str ) {
+								if (el.type && el.type == "submit" && el.tagName == "INPUT") {
+									el.value = str;
+								}
+								else {
+									el.innerHTML = str;
+								}
 							}
 						}
+						g_ui_lang = lang; //can be "default" if the lang.json file is missing
+						localStorage.setItem("lectionary_ui_lang", lang);
 						bUILangUpdated = true;
+						g_b_already_tried_default = false;
 						//document.getElementById("spinner_container").style.visibility = "hidden";
 					}
 				};
-				xhttp.open("GET", "lang/"+ lang + ".jsn", true);
+				xhttp.open("GET", "lang/"+ lang + ".json", true);
 				xhttp.send();
+				xhttp.onloadend = function() { // the bUILangUpdated flag test ensures that if a UI language has already been set, it will be left unchanged if the new language is not found, otherwise, a default language will be tried
+  				 	if(xhttp.status == 404 && !bUILangUpdated)  {	// load the default language the first time, leave it to what it was before on subsequent calls, if the [lang].json file is not available
+						var ui_lang = localStorage.getItem("lectionary_ui_lang");	// is the default language set in the localstorage?
+						if (ui_lang && !g_b_already_tried_default) {
+							console.log("UI language not found, trying default UI language specified in localstorage as ", ui_lang);
+							g_b_already_tried_default = true;
+							SetUILang(ui_lang);
+						}
+						else {  // the g_b_already_tried_default flag should ensure that only try to set the value stored in the key 'lectionary_ui_lang' in localstorage is only tried once. If it fails, then "default" will be used, which should always work
+							console.log("UI language not found (tried localstorage also), setting to default");
+							SetUILang("default");
+						}
+					}
+				}
 			}
 
 			function ClearSpinner() {
-				if (bControlsUpdated && bUILangUpdated) {
+				if (bControlsUpdated && bUILangUpdated && bFontsReady) {
 					document.getElementById("spinner_container").style.visibility = "hidden";	
 				}
 				else {
-					window.setTimeout(ClearSpinner, 250);					
+					window.setTimeout(ClearSpinner, 500);					
 				}	
 			}
 
 			function InitOpts() {
+				//deprecated
 				document.getElementById("spinner_container").style.visibility = "visible";
-				window.setTimeout(ClearSpinner, 250);
+				window.setTimeout(ClearSpinner, 500);
 				
 				LoadConfigOpt();
 			}
@@ -266,178 +946,1262 @@
 				g('timezone', 0.0-((d.getTimezoneOffset()+now_dstoffset)/60.0));
 			}
 		</script>
-		
-		<style>
-			body {
-				background-color: linen;
-			}
+	
+		<script type="text/javascript"> 
+			// form JSON field variables
+			// general
+			const INDEX_FIELDTYPE = 0;
+			const INDEX_FIELDSET_NUMBER = 1;
 
-			#inner_div {
-				position: absolute;
-				z-index: 1000;
-				margin: 30px;
-			}
-
-			#container_div {
-				font-size: 28px;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				margin-top: -95px;
-				margin-left: -250px;
-				width: 500px;
-				height: 190px;
-				background: rgba(0,0,0,0.1);
-			}​
+			// option
+			const INDEX_OPT_VALUES_TABLE_NAME = 2;
+			const INDEX_OPT_DEFAULT_SELECTEDITEM_NUMBER = 3;
+			const INDEX_OPT_LABELTEXT = 4;
+			const INDEX_OPT_ELEMENT_NAME = 5;
+			const INDEX_OPT_ELEMENT_ID = 6;
+			const INDEX_OPT_ELEMENT_CLASSES = 7;
 			
-			/*#content {
-			}*/
-			
-			#spinner_container {
-				position: fixed;
-				z-index: 999;
-				width: 500px;			
-				height: 190px;
-				overflow: show;
-				margin: auto;
-				top: 0;
-				left: 0;
-				bottom: 0;
-				right: 0;
-				background: rgba(0, 0, 0, 0.75)
-			}
-			
-			#inner_spinner_container {
-				position: fixed;
-				z-index: 1000;
-				height: 64px;
-				width: 64px;
-				overflow: show;
-				margin: auto;
-				top: 0;
-				left: 0;
-				bottom: 0;
-				right: 0;
-			}
-		</style>
-		<style>
-			.lds-spinner {
-			  color: official;
-			  display: inline-block;
-			  position: relative;
-			  width: 64px;
-			  height: 64px;
-			}
-			.lds-spinner div {
-			  transform-origin: 32px 32px;
-			  animation: lds-spinner 1.2s linear infinite;
-			}
-			.lds-spinner div:after {
-			  content: " ";
-			  display: block;
-			  position: absolute;
-			  top: 3px;
-			  left: 29px;
-			  width: 5px;
-			  height: 14px;
-			  border-radius: 20%;
-			  background: #fff;
-			}
-			.lds-spinner div:nth-child(1) {
-			  transform: rotate(0deg);
-			  animation-delay: -1.1s;
-			}
-			.lds-spinner div:nth-child(2) {
-			  transform: rotate(30deg);
-			  animation-delay: -1s;
-			}
-			.lds-spinner div:nth-child(3) {
-			  transform: rotate(60deg);
-			  animation-delay: -0.9s;
-			}
-			.lds-spinner div:nth-child(4) {
-			  transform: rotate(90deg);
-			  animation-delay: -0.8s;
-			}
-			.lds-spinner div:nth-child(5) {
-			  transform: rotate(120deg);
-			  animation-delay: -0.7s;
-			}
-			.lds-spinner div:nth-child(6) {
-			  transform: rotate(150deg);
-			  animation-delay: -0.6s;
-			}
-			.lds-spinner div:nth-child(7) {
-			  transform: rotate(180deg);
-			  animation-delay: -0.5s;
-			}
-			.lds-spinner div:nth-child(8) {
-			  transform: rotate(210deg);
-			  animation-delay: -0.4s;
-			}
-			.lds-spinner div:nth-child(9) {
-			  transform: rotate(240deg);
-			  animation-delay: -0.3s;
-			}
-			.lds-spinner div:nth-child(10) {
-			  transform: rotate(270deg);
-			  animation-delay: -0.2s;
-			}
-			.lds-spinner div:nth-child(11) {
-			  transform: rotate(300deg);
-			  animation-delay: -0.1s;
-			}
-			.lds-spinner div:nth-child(12) {
-			  transform: rotate(330deg);
-			  animation-delay: 0s;
-			}
-			@keyframes lds-spinner {
-			  0% {
-				opacity: 1;
-			  }
-			  100% {
-				opacity: 0;
-			  }
-			}
-		</style>
-		<style>
-			.slidecontainer {
-			  width: 100%;
+			const INDEX_OPTLIST_DATA_TEXT = 0;
+			const INDEX_OPTLIST_DATA_VALUE = 1;
+
+			// input
+			const INDEX_INPUT_LABELTEXT = 2;
+			const INDEX_INPUT_DEFAULTVALUE = 3;
+			const INDEX_INPUT_ELEMENT_ID = 4;
+			const INDEX_INPUT_ELEMENT_CLASSES = 5;
+
+			// range
+			const INDEX_RANGE_LABELTEXT = 2; 
+			const INDEX_RANGE_MINVAL = 3; 
+			const INDEX_RANGE_MAXVAL = 4; 
+			const INDEX_RANGE_VALUE = 5; 
+			const INDEX_RANGE_STEP = 6; 
+			const INDEX_RANGE_ELEMENT_ID = 7; 
+			const INDEX_RANGE_ELEMENT_CLASSES = 8;
+
+			//csv_form_fields_order array
+			const INDEX_CSV_HEADING = 0;
+			const INDEX_CSV_FORM_FIELD_ID = 1;
+			const INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR = 2;
+			const INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX = 3;
+
+			//form_fields array
+			const INDEX_FORMFIELDS_FIELDTYPE = 0;
+
+			function ShowForm(mass_type) {
+				console.log("Showing mass form", mass_type);
+				var radio_selector = document.getElementsByName("mass_type");
+				var radio_selector_to_select = 0;
+
+				switch(mass_type) {
+					case "EF":
+						//var ui_lang = JSON.parse(document.getElementById("id-opt-ef-languages").value);								
+						//SetUILang(ui_lang);
+						showHideMassForm('id-form-EF-container', 'id-form-NO-container');						
+						break;
+					
+					case "NO":
+						//var ui_lang = JSON.parse(document.getElementById("id-opt-no-languages").value)[0];								
+						//SetUILang(ui_lang);
+						showHideMassForm('id-form-NO-container', 'id-form-EF-container');
+						radio_selector_to_select = 1;
+						break;
+					
+					default:
+						console.log("mass_type unknown, leaving currently active form shown");
+						break;
+				}
+				radio_selector[radio_selector_to_select].checked = true;
 			}
 
-			.slider {
-			  -webkit-appearance: none;
-			  width: 61%;
-			  height: 25px;
-			  background: #d3d3d3;
-			  outline: none;
-			  opacity: 0.7;
-			  -webkit-transition: .2s;
-			  transition: opacity .2s;
+
+			function showHideMassForm(id_show, id_hide) {
+				removeClass(document.getElementById(id_show), "hidden");
+				addClass(document.getElementById(id_hide), "hidden");
+
+				/*
+				if (c.value == "EF") {
+					document.getElementById("form-EF").style.display = 'block';
+					document.getElementById("form-NO").style.display = 'none';
+				} else if (c.value == "NO") {
+					document.getElementById("form-EF").style.display = 'none';
+					document.getElementById("form-NO").style.display = 'block';
+				}
+				*/
 			}
 
-			.slider:hover {
-			  opacity: 1;
-			}
-			
-			.slider::-webkit-slider-thumb {
-			  -webkit-appearance: none;
-			  appearance: none;
-			  width: 25px;
-			  height: 25px;
-			  background: #4CAF50;
-			  cursor: pointer;
+			function findFormFieldIndex(form_fields, field_id) {
+				var index=0;
+				while (index < form_fields.length && getConfigFormFieldId(form_fields[index], form_fields) != field_id) {
+					index++;
+				}
+				if (index == form_fields.length) {
+					return -1;
+				}
+
+				return index;
 			}
 
-			.slider::-moz-range-thumb {
-			  width: 25px;
-			  height: 25px;
-			  background: #4CAF50;
-			  cursor: pointer;
+			function getConfigFormFieldId(form_field, form_fields) {
+				// due to a design weakness (mine!), the element id's of the form elements are in 
+				// different positions in the array, for different types of form field.
+				// this sorts it out and makes the calling code more readable.
+				var id = "";
+				
+				switch(form_field[0]) 
+				{
+					case "option":
+						id = form_field[INDEX_OPT_ELEMENT_ID];
+						break;
+					
+					case "text":
+					case "checkbox":
+						id = form_field[INDEX_INPUT_ELEMENT_ID];
+						break;
+											
+					case "range":
+						id = form_field[INDEX_RANGE_ELEMENT_ID];
+						break;
+					
+					default:
+						break;
+				}
+				return id;
 			}
-		</style>
+
+			function doMassCsv(form_fields, csv_form_fields_order)
+			{
+				console.log("doMassCsv() form_fields is ", form_fields, "\ncsv_form_fields_order is ", csv_form_fields_order);
+				
+				/*
+				//csv_form_fields_order array
+				const INDEX_CSV_HEADING = 0;
+				const INDEX_CSV_FORM_FIELD_ID = 1;
+				const INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR = 2;
+				const INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX = 3;
+
+				//form_fields array
+				const INDEX_FORMFIELDS_FIELDTYPE = 0;
+				*/
+
+				var csv = "";
+
+				var b_output_headings = false;
+				var f = 0;
+				var csv_headings_line = "";
+
+				// if no headings are specified (are included, but set to ""), no headings line will be output
+				for(var f = 0; f < csv_form_fields_order.length; f++) {
+					if (csv_form_fields_order[f][INDEX_CSV_HEADING] != "") {
+						b_output_headings = true;
+					}
+					csv_headings_line += '"' + csv_form_fields_order[f][INDEX_CSV_HEADING] + '"';
+					if (f < csv_form_fields_order.length - 1) {
+						csv_headings_line += ",";
+					}
+				}
+
+				for(var f = 0; f < csv_form_fields_order.length; f++) {
+					var csv_field = csv_form_fields_order[f];
+					var field_id = csv_field;
+
+					if (Array.isArray(csv_field)) {
+						field_id = csv_field[INDEX_CSV_FORM_FIELD_ID];	// if the field id specifies extra parameters, the form dom element id will be the first element of the array
+					}
+
+					var formfield_index = findFormFieldIndex(form_fields, field_id);
+
+					if (formfield_index == -1) {
+						console.log("doMassCsv() couldn't find form field record with id ", field_id);
+						continue;
+					}
+					
+					var field = form_fields[formfield_index];
+
+					//var field_id = getConfigFormFieldId(field, form_fields);
+					var el = document.getElementById(field_id);
+
+					if (el) {
+						var value_to_use = "all"; // use whole value (which may be a JSON string) rather than a single element of it
+						var b_use_text = false;	// set if want to read the text value of the selected option, rather than the value
+						var b_parse_json = false; // set if instructed to parse JSON
+
+						var csv_use_field_text_or_value;
+						if (Array.isArray(csv_field) && csv_field.length > INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR) {
+							csv_use_field_text_or_value = csv_field[INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR];
+						}
+
+						if (csv_use_field_text_or_value) {
+							switch(csv_use_field_text_or_value) {
+							case "text":	// if want the text field of an option control (rather than the value)
+								b_use_text = true;
+								break;
+							
+							// if "value" is specified without the index of a JSON subelement to return, the whole value will be JSON.parse'd 
+							case "value":
+								b_parse_json = true;
+								
+								if (csv_field.length > INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX) {
+				
+									var csv_json_value_indexof_value_to_use = csv_field[INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX];
+				
+									if (csv_json_value_indexof_value_to_use) { 
+										value_to_use = parseInt(csv_json_value_indexof_value_to_use); // if want one item of the value field, which is expected in JSON format
+									}
+								}
+								break;
+							}
+						}
+						
+						switch(field[INDEX_FORMFIELDS_FIELDTYPE]) 
+						{
+							case "option":
+								if (b_use_text) {
+									csv += '"' + el.options[el.selectedIndex].text + '"';
+								}
+								else {
+									if (value_to_use == "all") {
+										if (b_parse_json) {
+											csv += '"' + JSON.parse(el.options[el.selectedIndex].value) + '"';
+										}
+										else {
+											csv += '"' + el.options[el.selectedIndex].value + '"';
+										}
+									}
+									else {
+										csv += '"' + JSON.parse(el.options[el.selectedIndex].value)[value_to_use] + '"';
+									}
+								}
+								break;
+							
+							case "text":
+								csv += '"' + el.value + '"'
+								break;
+
+							case "checkbox":
+								csv += el.checked ? '"1"' : '"0"';
+								break;
+													
+							case "range":
+								csv += '"' + el.value + '"'
+								break;
+							
+							default:
+								break;
+						}
+						if (!(f == csv_form_fields_order.length - 1)) {
+							csv += ",";
+						}
+					}
+					else {
+						console.log("doMassCSV - missing field ", field);
+					}
+				}
+
+				var csv_result = csv;
+				//var csv_result = [];
+				
+				if (b_output_headings) {
+					csv_result = csv_headings_line + "\n" + csv_result;
+					//csv_result.push(csv_headings_line);
+				}
+				//else {
+				//	csv_result.push("");
+				//}
+				//csv_result.push(csv);
+
+				console.log(csv_result);
+				return csv_result;
+			}
+
+			function MakeOptJson(field, config_json) {
+				var table = config_json[field[INDEX_OPT_VALUES_TABLE_NAME]]; // is the name of the array variable containing the text and data for the option list, eg "masses"
+				var opt_list = []; // = table[0]; // the captions (which appear in the combobox)
+				var opt_values = []; // = JSON.stringify(table[1]); // the data corresponding to the captions
+
+				table.forEach(function(item, index, array) {
+					//console.log(item, index)
+					opt_list.push(item[INDEX_OPTLIST_DATA_TEXT]);
+					opt_values.push(item[INDEX_OPTLIST_DATA_VALUE]);
+				})
+				
+
+				var opt_selected_index = field[INDEX_OPT_DEFAULT_SELECTEDITEM_NUMBER]; // index of default selected option
+				var opt_label = field[INDEX_OPT_LABELTEXT];	// label text for option list
+				var opt_name = field[INDEX_OPT_ELEMENT_NAME];	// name for option list
+				var opt_id = field[INDEX_OPT_ELEMENT_ID];		// id for option element
+				var opt_class = field[INDEX_OPT_ELEMENT_CLASSES];	// css class(es) for option element
+
+				return MakeOpt(opt_list, opt_values, opt_selected_index, opt_label, opt_name, opt_id, opt_class);
+			}
+
+			function MakeOpt(opt_list, opt_values, opt_selected_index, opt_label, opt_name, opt_id, opt_class) {
+				var html = "";
+				var optlist_html = "";
+
+
+				if (opt_list.length > 0 && opt_label != "") {
+					var label_i18n = '<div id="' + opt_id + '-text">' + opt_label + '</div>';
+					html += '<label for="' + opt_id + '" id="label-' + opt_id + '" class="' + opt_class + '">' + label_i18n + '</label>';
+				}
+				
+				var i = 0;
+				
+				var have_opt_values = (opt_values.length == opt_list.length);
+
+				while (i < opt_list.length) {
+					if (opt_list[i] != '') {
+						var opt_text = ''; 
+						var opt_value;
+						var selected = '';
+						
+						opt_text = opt_list[i];
+						opt_value = have_opt_values ? JSON.stringify(opt_values[i]) : i;
+						
+						selected = (i == opt_selected_index) ? "selected='1'" : "";
+
+						optlist_html += "<option " + selected + " value='" + opt_value + "'>" + opt_text + "</option>\r\n";
+					}
+					i++;
+				}
+				html += "<select name='" + opt_name + "' id='" + opt_id + "' class='" + opt_class + "'>\r\n" + optlist_html + "</select>\r\n";
+				return '<div class="' + opt_class + '">' + html + '</div>';
+			}
+
+			function MakeInputJson(field) {
+				var input_type = field[INDEX_FIELDTYPE];
+				var input_label = field[INDEX_INPUT_LABELTEXT];
+				var input_value = field[INDEX_INPUT_DEFAULTVALUE];
+				var input_id = field[INDEX_INPUT_ELEMENT_ID];
+				var input_class = field[INDEX_INPUT_ELEMENT_CLASSES];
+
+				return MakeInput(input_type, input_label, input_value, input_id, input_class);
+			}
+
+			function MakeInput(input_type, input_label, input_value, input_id, input_class) {
+				var input = "";
+
+				if (input_label != "") {
+					var label_i18n = '<div id="' + input_id + '-text">' + input_label + '</div>';
+					input += '<label for="' + input_id + '" id="label-' + input_id + '" class="' + input_class + '">' + label_i18n + '</label>\r\n';
+				}
+				input += '<input type="' + input_type + '" value="' + input_value + '" id="' + input_id + '" class="' + input_class + '">\r\n';
+				// maybe a bug - if the input is a checkbox, if the default is checked, the attribute "checked='1'" needs to be added. Maybe "value=" will do
+				return '<div class="' + input_class + '">' + input + '</div>';
+			}
+
+			function MakeRangeJson(field) {
+				var range_label = field[INDEX_RANGE_LABELTEXT];
+				var range_min = field[INDEX_RANGE_MINVAL];
+				var range_max = field[INDEX_RANGE_MAXVAL];
+				var range_value = field[INDEX_RANGE_VALUE];
+				var range_step = field[INDEX_RANGE_STEP];
+				var range_id = field[INDEX_RANGE_ELEMENT_ID];
+				var range_class = field[INDEX_RANGE_ELEMENT_CLASSES];
+
+				return MakeRange(range_label, range_min, range_max, range_value, range_step, range_id, range_class);
+			}
+
+			function MakeRange(range_label, range_min_value, range_max_value, range_value, range_step, range_id, range_class) {
+				var range = "";
+
+				range_step = (range_step == "") ? "1" : range_step;
+
+				var range_valuediv_id = range_id + '-value';
+				var range_valuediv = '<div id="' +  range_valuediv_id + '"></div>'; 
+				//var range_value_code = "oninput=\"document.getElementById('" + range_valuediv_id + "').innerHTML=this.value;\"";
+				var range_value_code = "oninput=\"UpdateRangeText('" + range_id + "','" + range_valuediv_id + "');\"";
+
+				if (range_label != "") {
+					var label_i18n = '<div id="' + range_id + '-text">' + range_label + '</div>';
+					range += '<label for="' + range_id + '" id="label-' + range_id + '" class="' + range_class + '">' + label_i18n + '</label>';
+				}
+				range += '<input type="range" min="' + range_min_value + '" max="' + range_max_value + '" value="' + range_value + '" step="' + range_step + '" id="' + range_id + '" class="' + range_class + '" ' + range_value_code + '>\r\n';
+				
+				return '<div class="' + range_class + '">' + range + range_valuediv + '</div>'; 
+			}
+
+			function MakeMassConfigForms(config_json, mass_type) {
+				var form_fields;
+				var form_fieldsets;
+
+				switch (mass_type)
+				{
+					case "EF":
+						form_fields = config_json.extraordinary_form_fields;
+						form_fieldsets = config_json.extraordinary_form_fieldsets;
+						break;
+
+					case "NO":
+						form_fields = config_json.novus_ordo_form_fields;
+						form_fieldsets = config_json.novus_ordo_form_fieldsets;
+						break;
+					
+					default:
+						return "";
+				}
+				return MakeForm(form_fields, form_fieldsets);
+			}
+
+			function MakeForm(form_fields, form_fieldsets) {
+				const INDEX_FIELDSET_LEGEND_TEXT = 0;
+				const INDEX_FIELDSET_ELEMENT_ID = 1;
+				const INDEX_FIELDSET_ELEMENT_CLASSES = 2;
+				
+				var form_innerhtml = "";
+				var fieldsetname = "";
+				var last_fieldset_name = "";
+				var b_have_fieldset = false;
+
+				for(var f = 0; f < form_fields.length; f++) {
+					var field = form_fields[f];
+					
+					var fieldset_name = field[INDEX_FIELDSET_NUMBER];
+					if (fieldset_name != last_fieldset_name) {
+						last_fieldset_name = fieldset_name;
+						if (fieldset_name != "") {
+
+							if (b_have_fieldset) {
+								form_innerhtml += "</fieldset>";
+							}
+							
+							if (!form_fieldsets[fieldset_name]) {
+								console.log("MakeForm() fieldset description not found for fieldset name ", fieldset_name)
+								continue;
+							}
+
+							var fieldset_data = form_fieldsets[fieldset_name];
+
+							if (!(Array.isArray(fieldset_data) && fieldset_data.length == 3)) {
+								console.log("MakeForm() fieldset description for fieldset named ", fieldset_name, " is malformed");
+								continue;
+							}
+
+							var fieldset_legendtext = fieldset_data[INDEX_FIELDSET_LEGEND_TEXT];
+							var fieldset_id = fieldset_data[INDEX_FIELDSET_ELEMENT_ID];
+							var fieldset_classes = fieldset_data[INDEX_FIELDSET_ELEMENT_CLASSES];
+
+							form_innerhtml += '<fieldset id="' + fieldset_id + '" class="' + fieldset_classes + '">';
+							form_innerhtml += '<legend id="' + fieldset_id + '-legend" class="' + fieldset_classes + '">' + fieldset_legendtext + '</legend>';
+							b_have_fieldset = true;
+						}
+						else {
+							if (b_have_fieldset) {
+								form_innerhtml += "</fieldset>";
+								b_have_fieldset = false;
+							}
+						}
+					}
+
+					switch(field[INDEX_FIELDTYPE]) 
+					{
+						case "option":
+							form_innerhtml += MakeOptJson(field, config_json); // need config_json here because it contains the table/array from which the list and data for the option list will be taken
+							break;
+						
+						case "text":
+						case "checkbox":
+							form_innerhtml += MakeInputJson(field);
+							break;
+												
+						case "range":
+							form_innerhtml += MakeRangeJson(field);
+							break;
+						
+						default:
+							break;
+					}
+				}
+
+				return form_innerhtml;
+			}
+
+			function AttachOptPopulateTrigger(triggers) {
+				if (Array.isArray(triggers)) {
+					for (var i = 0; i < triggers.length; i+=2) {
+						var opt_id = triggers[i];
+						var opt_trigger_ids = triggers[i+1];
+						var opt = document.getElementById(opt_id);
+
+						if (opt) {
+							AttachTrigger(opt, opt_trigger_ids); // need to do this in a function call to prevent the addEventListener inline function from being overwritten on subsequent iterations of this loop
+							//opt.addEventListener("change", function(){OptPopulateTrigger(opt, opt_trigger_ids);});
+						}
+						else {
+							console.log("trigger element missing - id ", opt_id);
+						}
+					}
+				}
+			}
+
+			function AttachTrigger(opt, opt_trigger_ids) {
+				opt.addEventListener("change", function(){OptPopulateTrigger(opt, opt_trigger_ids), { 'bubbles': true };});
+			}
+
+			function OptPopulateTrigger(opt, field_ids) {
+				//var opt_value = JSON.parse(opt.selected.value);
+				//Load the form field ids named in the array 'field_ids' with the value data in the selected option record
+				if (!opt) {
+					console.log("OptPopulateTrigger - opt not found");
+					return;
+				}
+
+				var opt_value = JSON.parse(opt.options[opt.selectedIndex].value);
+				console.log("opt_value:", opt_value);
+				//if more than one field is to be updated when the option is changed
+				if (Array.isArray(opt_value) && Array.isArray(field_ids) && opt_value.length <= field_ids.length) {
+					field_ids.forEach(function(item, index, array) {
+						// get the element named in the field_ids array
+						var field_id_tokens = item.split(',');
+						var field_id = Array.isArray(field_id_tokens) ? field_id_tokens[0] : item;
+						var field_to_use = "all";
+						if (Array.isArray(field_id_tokens) && field_id_tokens.length == 2) {
+							field_to_use = parseInt(field_id_tokens[1]); // the field of a JSON value to place in the target form element
+						}
+						
+						var el = document.getElementById(field_id);
+						if (el) {
+							// if the target for the trigger is an Option box, need to hunt for the right entry to select						
+							console.log(el.nodeName);
+
+							var b_reset_if_unmodified = el.classList.contains("reset");
+
+							switch(el.nodeName) {
+								case "SELECT":	
+									//if (el.nodeName == "SELECT") {	
+									var bfound = false;
+									var target_optindex = 0;
+									// target_optindex - index of record currently being compared with the current opt_value array entry
+									while(!bfound && target_optindex < el.options.length) {
+										var target_optvals = JSON.parse(el.options[target_optindex].value);
+										// if the target option values are an array, need to compare each item with the source option list's selected value(s)
+										if (Array.isArray(target_optvals)) {
+											var t_index = 0;
+											while (!bfound && t_index < target_optvals.length) {
+												// check all of the entries in the target option list's values data (JSON, possibly arrays of values for each entry)
+												console.log(target_optvals[t_index], t_index, opt_value[index], index);
+												if (target_optvals[t_index] == opt_value[index]) {	
+													bfound = true;
+													console.log("bfound=true (target_optvals is array)");
+												}
+												else {
+													t_index++;
+												}
+											}
+											target_optindex++;
+										}
+										else if (target_optvals == opt_value[index]) {
+											console.log("bfound=true (target_optvals is not an array)");
+											bfound = true;
+										}
+										else {
+											target_optindex++;
+										}
+									}
+									if (bfound) {
+										console.log("target_optindex matched target SELECT item number ", target_optindex)
+										el.options.selectedIndex = target_optindex - 1; // is zero based
+										el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+									}
+									else {
+										if (b_reset_if_unmodified) {
+											el.selectedIndex = el.defaultSelected;
+											console.log("resetting option to default (has class 'reset')");
+										}
+									}
+									//}
+									break;
+							
+								//else if (el.nodeName == "INPUT") {
+								case "INPUT":
+									if (el.type == 'checkbox') {
+										console.log("checkbox");
+										if (opt_value[index]) {
+											console.log("checkbox, matched index=", index, opt_value[index]);
+											if (opt_value[index] != "0" && opt_value[index] != "false") {
+												console.log("setting checkbox");
+												el.checked = true;
+											}
+											else {
+												console.log("clearing checkbox");
+												el.checked = false;
+											}
+											el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+										}
+										else {
+											if (b_reset_if_unmodified) {
+												el.checked = (el.defaultValue == "1");
+												el.dispatchEvent(new Event("change"));
+												console.log("opt_value", index ," not specified, resetting checkbox (has class 'reset')", el.id, " unchanged");
+											}
+											else {
+												console.log("opt_value", index ," not specified, leaving checkbox", el.id, " unchanged");
+											}
+										}
+									}
+									else {
+										console.log("matched index=", index, "opt_value[index]=", opt_value[index]);
+										
+										if (opt_value[index]) {
+											if (field_to_use = "all") {
+												el.value = opt_value[index];
+											}
+											else {
+												el.value = JSON.parse(opt_value[index])[field_to_use];	// only use one of the subfields of the JSON data stored as the source Option list's value corresponing to the selected option
+												console.log("JSON field to use is ", field_to_use, ", value is ", el.value);
+											}
+											el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+											el.dispatchEvent(new Event("input"));	// cause an input event so that range inputs will update their text
+										}
+										else {
+											if (b_reset_if_unmodified) {
+												el.value = el.defaultValue;
+												el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+												el.dispatchEvent(new Event("input"));	// cause an input event so that range inputs will update their text
+												console.log("opt_value ", index ," not specified - resetting input (has class 'reset')", el.id);
+											}
+											else {
+												console.log("opt_value ", index ," not specified - leaving input ", el.id, " unchanged");
+											}
+										}
+									}
+									break;
+							
+								default:
+									console.log("nothing matched");
+									break;
+							}
+						}
+					})
+				}
+				else {	// if only one
+					// get the element named in the field_ids array
+					var field_id_tokens = field_ids[0].split(',');
+					var field_id = Array.isArray(field_id_tokens) ? field_id_tokens[0] : field_ids;
+					var field_to_use = "all";
+					if (Array.isArray(field_id_tokens) && field_id_tokens.length == 2) {
+						field_to_use = parseInt(field_id_tokens[1]); // the field of a JSON value to place in the target form element
+					}
+
+					var el = document.getElementById(field_id);
+
+					if (el) {
+						if (field_to_use == "all") {
+							console.log("opt_value", opt_value);
+							el.value = opt_value;
+						}
+						else {
+							console.log("opt_value field in use ", field_to_use, "=", opt_value[field_to_use]);
+							el.value = opt_value[field_to_use];
+						}
+						el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+					}
+				}
+			}
+
+			function UpdateRangeText(range_id, text_id) {
+				var range = document.getElementById(range_id);
+
+				if (range && range.nodeName == "INPUT") {
+					var text = document.getElementById(text_id);
+					if (text) {
+						text.innerHTML = range.value;
+					}
+				}
+			}
+
+			var g_config;
+
+			function LoadFormJson() {
+				var config;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						//document.getElementById("config").innerHTML = xhttp.responseText;
+						//config = CSVToArray(xhttp.responseText);
+						config_json = JSON.parse(xhttp.responseText);
+
+						g_config = config_json;
+
+						//document.getElementById("config").innerHTML = MakeConfigOpt(config);
+						//document.getElementById("Form-EF").innerHTML = MakeForms(config_json);
+						
+						var form_ef = document.getElementById("form-EF");
+						if (form_ef) {
+							form_ef.innerHTML = MakeMassConfigForms(config_json, "EF");
+							AttachOptPopulateTrigger(config_json.extraordinary_form_populate_triggers);
+							form_ef.addEventListener("change", function() {
+								doMassCsv(config_json.extraordinary_form_fields, config_json.csv_output_fields_extraordinary_form);
+							});
+							
+							// if the language is changed with the EF form's option box, change the UI language
+							var lang_opt_ef = document.getElementById("id-opt-ef-languages");
+							if (lang_opt_ef) {
+								lang_opt_ef.addEventListener("click", function() {
+									UpdateLangNow();
+									
+									//var ui_lang = JSON.parse(document.getElementById("id-opt-ef-languages").value);
+									//SetUILang(ui_lang);
+								});
+								lang_opt_ef.addEventListener("change", function() {
+									UpdateLangNow();
+
+									//var ui_lang = JSON.parse(document.getElementById("id-opt-ef-languages").value);
+									//SetUILang(ui_lang);
+								});
+							} 
+						}
+
+						var form_no = document.getElementById("form-NO");
+						if (form_no) {
+							form_no.innerHTML = MakeMassConfigForms(config_json, "NO");
+							AttachOptPopulateTrigger(config_json.novus_ordo_populate_triggers);
+							form_no.addEventListener("change", function() {
+								doMassCsv(config_json.novus_ordo_form_fields, config_json.csv_output_fields_novus_ordo);
+								//var ui_lang = JSON.parse(document.getElementById("id-opt-no-languages").value)[0];
+								//SetUILang(ui_lang);
+							});					
+							
+							// also, if the language is changed with the NO form's option box, change the UI language
+							var lang_opt_no = document.getElementById("id-opt-no-languages");	
+							if (lang_opt_no) {
+								lang_opt_no.addEventListener("click", function() {
+									UpdateLangNow();
+									
+									//var ui_lang = JSON.parse(document.getElementById("id-opt-no-languages").value)[0];
+									//SetUILang(ui_lang);
+								});					
+								lang_opt_no.addEventListener("change", function() {
+									UpdateLangNow();
+
+									//var ui_lang = JSON.parse(document.getElementById("id-opt-no-languages").value)[0];
+									//SetUILang(ui_lang);
+								});					
+
+							} 
+						}
+						
+						//ShowHideAdvancedOptions("form-EF", false); // hide mass forms' advanced options
+						//ShowHideAdvancedOptions("form-NO", false); // hide mass forms' advanced options
+						LoadLectionaryConfigState();
+						
+						// if a element has the class "send-changeevent-on-create", a change event will be dispatched for it now
+						document.querySelectorAll('.send-changeevent-on-create').forEach(item => {
+							item.dispatchEvent(new Event("change"));	// make the forms use their populate triggers
+						})
+
+						document.querySelectorAll('.send-inputevent-on-create').forEach(item => {
+							item.dispatchEvent(new Event("input"));	// will make the range inputs update their text value displays
+						})
+
+						RestoreState();
+						RestoreSettings(config_json);
+
+						document.getElementById("spinner_container").style.visibility = "hidden";
+					}
+				};
+				xhttp.open("GET", "config.json", true);
+				xhttp.send();
+			}
+				
+			function LoadLectionaryConfigState() {
+				var configstate;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						configstate = JSON.parse(xhttp.responseText);
+						if(configstate.lang) {	// if the json response is missing an entry for lang, don't attempt to set it
+							SetUILang(configstate.lang);
+						}
+
+						//var lectionaryselect = document.getElementById('SelectConfig');
+						//
+						//if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
+						//	lectionaryselect[configstate.lectionary_config_number].selected = 1;
+						//}
+						
+						if (configstate.contrast && configstate.contrast >= 0 && configstate.contrast < 8) {
+							document.getElementById("contrast").value = configstate.contrast.toString();
+						}
+						else {
+							configstate.contrast = "7";
+						}
+						
+						bControlsUpdated = true;
+						
+						//document.getElementById("spinner_container").style.visibility = "hidden";
+					}
+				};
+
+				xhttp.open("GET", "settings.json", true);
+
+				//https://stackoverflow.com/questions/22356025/force-cache-control-no-cache-in-chrome-via-xmlhttprequest-on-f5-reload
+				// via Cache-Control header:
+				xhttp.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+    			// fallbacks for IE and older browsers:
+    			xhttp.setRequestHeader("Expires", "Tue, 01 Jan 1980 1:00:00 GMT");
+    			xhttp.setRequestHeader("Pragma", "no-cache"); //Edit: I noticed this is required for Chrome some time ago... forgot to mention her
+				////
+
+				xhttp.send();
+			}
+
+			function ShowHideOptionsByClass(classname, parent_id, b_show) {
+				var parent_el = document.getElementById(parent_id);
+				
+				if (!parent_el) {
+					console.log("ShowHideOptionsByClass(): parent node with id ", parent_id, " is not found");
+					return
+				}
+
+				var els = parent_el.children;
+				
+				if (!els) {
+					console.log("ShowHideOptionsByClass(): no child elements of parent with id ", parent_id);
+					return;
+				}
+
+				if (els) {
+					var selector = "#" + parent_id + " *." + classname;
+					if (b_show) {
+						document.querySelectorAll(selector).forEach(function(element) {
+    						element.classList.remove("hidden");
+						});
+
+						/*
+						for (var i = 0; i < els.length; i++) {
+							if (hasClass(els[i], classname)) removeClass(els[i], "hidden");
+						}
+						*/
+					}
+					else {
+						var child_els = document.querySelectorAll(selector);
+						document.querySelectorAll(selector).forEach(function(element) {
+    						element.classList.add("hidden");
+						});
+
+						/*
+						for (var i = 0; i < els.length; i++) {
+							if (hasClass(els[i], classname)) addClass(els[i], "hidden");
+						}
+						*/
+					}
+				}
+			}
+
+			function ShowHideAdvancedOptions(parent_id, b_show) {
+				localStorage.setItem(parent_id + "_advanced_options", b_show);
+				
+				ShowHideOptionsByClass('class-input-advanced', parent_id, b_show);
+				ShowHideOptionsByClass('class-fieldset-advanced', parent_id, b_show);
+			}
+
+			function GetMassType() {
+				var show_mass_form_radiobuttons = document.getElementsByName('mass_type');
+				var mass_type = "";
+
+				if (show_mass_form_radiobuttons) {
+					for(i = 0; i < show_mass_form_radiobuttons.length; i++) {
+						if(show_mass_form_radiobuttons[i].checked) {
+							mass_type = show_mass_form_radiobuttons[i].value;
+						}
+					}
+				}
+				
+				return mass_type;
+			}
+
+			function RestoreState() {								
+				var form_EF_checkbox = document.getElementById("id-checkbox-show-form-ef-advanced");
+				var show_advanced_form_ef = localStorage.getItem("form-EF_advanced_options") == "true" ? true : false;
+				form_EF_checkbox.checked = show_advanced_form_ef;
+				ShowHideAdvancedOptions('form-EF', show_advanced_form_ef /*form_EF_checkbox.checked*/);
+
+				var form_NO_checkbox = document.getElementById("id-checkbox-show-form-no-advanced");
+				var show_advanced_form_no = localStorage.getItem("form-NO_advanced_options") == "true" ? true : false;
+				form_NO_checkbox.checked = show_advanced_form_no;
+				ShowHideAdvancedOptions('form-NO', show_advanced_form_no /*form_NO_checkbox.checked*/);
+
+				var mass_type = GetMassType();
+				
+				switch(mass_type)
+				{
+					case "EF":
+						showHideMassForm('id-form-EF-container', 'id-form-NO-container');
+						break;
+					
+					case "NO":
+						showHideMassForm('id-form-NO-container', 'id-form-EF-container');
+						break;
+					
+					default:
+						break;
+				}
+            }
+
+			function UpdateLangNow() {
+				var mass_type = GetMassType();
+				var lang = "en";
+				var settings_form_lang_input = document.getElementById("lang");
+
+				switch(mass_type)
+				{
+					case "EF":
+						lang = JSON.parse(document.getElementById("id-opt-ef-languages").value)[0];
+						settings_form_lang_input.value = lang;
+						break;
+					
+					case "NO":
+						lang = JSON.parse(document.getElementById("id-opt-no-languages").value)[0];						
+						settings_form_lang_input.value = lang;
+						break;
+					
+					default:
+						break;
+				}
+
+				console.log("UpdateLangNow() Getting lang from currently selected form: ", lang);
+				SetUILang(lang);
+				document.getElementById("lang").value = lang;
+			}
+
+
+			function RestoreSettings(config_json) {
+				var xhr_config_csv = new XMLHttpRequest();
+				xhr_config_csv.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						//document.getElementById("config").innerHTML = xhttp.responseText;
+						var config = csvStringToArray(xhr_config_csv.responseText); // CSVToArray(xhr_config_csv.responseText);
+						//console.log(config);
+
+						var xhr_settings = new XMLHttpRequest();
+						xhr_settings.onreadystatechange = function() {
+							if (this.readyState == 4 && this.status == 200) {
+								var configstate = JSON.parse(xhr_settings.responseText);
+								if (configstate.lang) {
+									SetUILang(configstate.lang);
+								}
+
+								//var lectionaryselect = document.getElementById('SelectConfig');
+
+								//if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
+								//	lectionaryselect[configstate.lectionary_config_number].selected = 1;
+								//}
+								
+								if (configstate.contrast && configstate.contrast >= 0 && configstate.contrast < 8) {
+									document.getElementById("contrast").value = configstate.contrast.toString();
+								}
+								else {
+									configstate.contrast = "7";
+								}
+
+								console.log(config);	// the config.csv file, parsed into an associative array of [fieldname, value] pairs
+								console.log(configstate);	// 
+
+								// this will be the line in the CSV file to reload
+								var config_csv_index = configstate.lectionary_config_number < config.length ? configstate.lectionary_config_number : 0;
+								var config_csv_entry_for_index = config[config_csv_index];
+
+								var mass_type = config_csv_entry_for_index["Mass Form"] == "EF" ? "EF" : "NO";
+								console.log("mass_type for restoring settings is", mass_type);
+
+								ShowForm(mass_type);	// display the form appropriate to the currently selected Mass
+
+								var config_json_csv_info = mass_type == "EF" ? config_json["csv_output_fields_extraordinary_form"] : config_json["csv_output_fields_novus_ordo"];
+
+								config_json_csv_info.forEach(function(field, index, array) {
+									var corresponding_form_field_id;
+
+									if (Array.isArray(field) && field.length > INDEX_CSV_FORM_FIELD_ID) {
+										corresponding_form_field_id = field[INDEX_CSV_FORM_FIELD_ID];
+									}
+									else {
+										console.log("CSV field order info variable does not contain an id for the corresponding form element", field, index, array);
+										return; // cause next iteration of the forEach anonymous function loop
+									}
+
+									var el = document.getElementById(corresponding_form_field_id);
+
+									var field_heading = field[INDEX_CSV_HEADING];
+									var field_value = config_csv_entry_for_index[field_heading];
+
+									console.log("\nRestoring value for: ", corresponding_form_field_id, " value to restore:", field_value, " config.csv file heading:", field_heading);							
+
+									var b_compare_option_text_not_value = false;
+									if (field.length > INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR) {
+										b_compare_option_text_not_value = field[INDEX_CSV_FIELD_TEXT_OR_VALUE_SELECTOR] == "text";
+									}
+
+									var opt_json_subitem_index = "all";
+									if (field.length > INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX) {
+										opt_json_subitem_index = parseInt(field[INDEX_CSV_FIELD_JSON_VALUE_SUBITEM_INDEX]);
+									}
+
+									if (el && field_value) {		
+										switch(el.nodeName) {
+										case "SELECT":										
+											//if (el.nodeName == "SELECT") {	
+											var bfound = false;
+											var el_optindex = 0;
+											// target_optindex - index of record currently being compared with the current opt_value array entry
+											while(!bfound && el_optindex < el.options.length) {
+												if (b_compare_option_text_not_value) {
+													if(el.options[el_optindex].text == field_value) {
+														bfound = true;
+														console.log("bfound = true (comparing el.options text not value)");
+														continue; // don't increment index into el.options list at end of while loop
+													}
+												}
+												else {
+													var el_optval = JSON.parse(el.options[el_optindex].value);
+													// if the target option values are an array, need to compare each item with the source option list's selected value(s)
+													if (Array.isArray(el_optval)) {
+														if (opt_json_subitem_index != "all" && el_optval[opt_json_subitem_index].value == field_value) {
+															bfound = true;
+															console.log("found option value (considering whole value, not JSON array subvalues)");
+															continue; // don't increment index into el.options list at end of while loop
+														}
+														else {
+															//compare all entries (if it's a JSON array) in the the option value numbered el_optindex with the value read from the csv file 
+															var optval_index = 0;
+															while (!bfound && optval_index < el_optval.length) {
+																console.log(el_optval[optval_index], optval_index, field_value);
+																if (el_optval[optval_index] == field_value) {	
+																	bfound = true;
+																	console.log("bfound=true (el_optval is array)");
+																}
+																else {
+																	optval_index++;
+																}
+															}
+															if (bfound) {
+																continue;	// don't increment index into el.options list at end of outer while loop
+															}
+														}
+													}
+													else if (el_optval == field_value) {
+														console.log("bfound=true (el_optval is not an array)");
+														bfound = true;
+														continue;
+													}
+												}
+												el_optindex++;
+											}
+
+											if (bfound) {
+												console.log("config value matched target SELECT item number ", el_optindex)
+												el.options.selectedIndex = el_optindex; // is zero based (? - looks like the other time code was used, I had incremented the index value by 1 even after the value had been found - need to check)
+												//el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+											}
+											else {
+												el.selectedIndex = el.defaultSelected;
+												console.log("config value for option not found - resetting option to default");
+											}
+											break;
+									
+										//else if (el.nodeName == "INPUT") {
+										case "INPUT":
+											el.value = el.defaultValue;
+	
+											if (el.type == 'checkbox') {
+												console.log("checkbox");
+												if (field_value != "0" && field_value != "false") {
+													console.log("setting checkbox");
+													el.checked = true;
+												}
+												else {
+													console.log("clearing checkbox");
+													el.checked = false;
+												}
+												//el.dispatchEvent(new Event("change"));	// cause a change event so that the triggers can bubble
+											}
+											else {
+												el.value = field_value;
+
+												if (el.type == "range") {
+													el.dispatchEvent(new Event("input"));	// cause an input event for the range so that it updates its label
+												}
+											}
+											break;
+									
+										default:
+											console.log("form element type is not supported for restoring config value");
+											break;
+										}
+									}
+								});
+							}
+						};
+						xhr_settings.open("GET", "settings.json", true);
+
+						//https://stackoverflow.com/questions/22356025/force-cache-control-no-cache-in-chrome-via-xmlhttprequest-on-f5-reload
+						// via Cache-Control header:
+						xhr_settings.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+						// fallbacks for IE and older browsers:
+						xhr_settings.setRequestHeader("Expires", "Tue, 01 Jan 1980 1:00:00 GMT");
+						xhr_settings.setRequestHeader("Pragma", "no-cache"); //Edit: I noticed this is required for Chrome some time ago... forgot to mention her
+						////
+
+						xhr_settings.send();
+					}
+				};
+				xhr_config_csv.open("GET", "config.csv", true);
+				xhr_config_csv.send();
+			}
+
+			function DoSubmit() {
+				//const url = "/upload_config.php";
+				const url = "/uploadconfig.htm";
+
+				if (g_config) {
+					var mass_type = GetMassType();
+
+					var form_fields;
+					var csv_form_fields_order;
+
+					switch(mass_type)
+					{
+						case "EF":
+							form_fields = g_config.extraordinary_form_fields;
+							csv_form_fields_order = g_config.csv_output_fields_extraordinary_form;
+							break;
+
+						case "NO":
+							form_fields = g_config.novus_ordo_form_fields;
+							csv_form_fields_order = g_config.csv_output_fields_novus_ordo;
+							break;
+						
+						default:
+							break;
+					}
+
+					if (form_fields && csv_form_fields_order) {			
+
+						/*
+						var file_el = document.getElementById("mass-config-csv-file");
+						if (file_el) {
+							file_el.file = file;
+						}
+						*/
+
+						var xhr = new XMLHttpRequest();
+						xhr.addEventListener('progress', function(e) {
+							var done = e.position || e.loaded, total = e.totalSize || e.total;
+							console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+						}, false);
+						
+						if ( xhr.upload ) {
+							xhr.upload.onprogress = function(e) {
+								var done = e.position || e.loaded, total = e.totalSize || e.total;
+								console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+							};
+						}
+						
+						xhr.onreadystatechange = function(e) {
+							if ( 4 == this.readyState ) {
+								console.log(['xhr upload complete', e]);
+								DoLectionarySettingsSubmit();
+							}
+						};
+
+						var file = new File([doMassCsv(form_fields, csv_form_fields_order)], "config.csv", {
+							type: "multipart/form-data" /*text/plain*/
+						});
+
+						xhr.open('post', url, true);
+						var formData = new FormData();
+						formData.append("/config.csv", file);
+						xhr.send(formData);
+					}
+				}
+			}
+
+			function DoLectionarySettingsSubmit() {
+				// Access the form element...
+				doDate();
+				const form = document.getElementById("config_form");
+				//sendData("/setconf.php", form);
+				sendData("/setconf.htm", form);
+			}
+
+			function sendData( url, form ) {
+				console.log( 'Sending data' );
+
+				const XHR = new XMLHttpRequest();
+
+				let urlEncodedData = "",
+					urlEncodedDataPairs = [],
+					name;
+
+				var els = form.elements;
+				for(var i = 0; i < els.length; i++) {
+					var item = els[i];
+					console.log(item.name, item.value);
+					urlEncodedDataPairs.push( encodeURIComponent( item.name ) + '=' + encodeURIComponent( item.value ) );
+				}
+
+				console.log(urlEncodedDataPairs);
+				// Turn the data object into an array of URL-encoded key/value pairs.
+				//for( name in data ) {
+				//	urlEncodedDataPairs.push( encodeURIComponent( name ) + '=' + encodeURIComponent( data[name] ) );
+				//}
+
+				// Combine the pairs into a single string and replace all %-encoded spaces to
+				// the '+' character; matches the behavior of browser form submissions.
+				urlEncodedData = urlEncodedDataPairs.join( '&' ).replace( /%20/g, '+' );
+
+				console.log(urlEncodedData);
+
+				// Define what happens on successful data submission
+				XHR.addEventListener( 'load', function(event) {
+					//alert( 'OK Data sent and response loaded.' );
+					ShowModalComplete();
+				} );
+
+				// Define what happens in case of error
+				XHR.addEventListener( 'error', function(event) {
+					//alert( 'Error Something went wrong.' );
+					ShowModalError();
+				} );
+
+				// Set up our request
+				var url = url + "?" + urlEncodedData;
+				console.log(url);
+				XHR.open( 'GET', url );
+
+				// Add the required HTTP header for form data POST requests
+				//XHR.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+
+				// Finally, send our data.
+				XHR.send( null );
+			}
+
+			function ShowModalComplete() {
+				addClass(document.getElementById("id-forms-container"), "hidden");
+				removeClass(document.getElementById("id-lectionary-settings-updated-message"), "hidden");
+			}
+
+			function ShowModalError() {
+				addClass(document.getElementById("id-forms-container"), "hidden");
+				removeClass(document.getElementById("id-lectionary-settings-update-error-message"), "hidden");
+			}
+
+			function DumpIds() {
+				var els = document.querySelectorAll("label > div, fieldset > legend"); 
+				
+				for (var i=0; i<els.length; i++) {
+					var el = els[i];
+					if (el) {
+						console.log('["' + el.id + '", "' + el.innerHTML + '"],');
+					}
+				}
+			}
+		</script>
 	</head>
-	<body onload="InitOpts();">
+	<body id="id-body" onload="LoadFormJson(); /*InitOpts();*/">
+		<div id="bluelight-filter"><!--blue light filter--></div>
 		<div id="spinner_container">
 			<div id="inner_spinner_container">
 				<div class="lds-spinner" id="spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -446,27 +2210,76 @@
 		<div id="container_div">
 			<div id="inner_div">
 				<div id="content">
-					<div id="configure_catholic_lectionary_text"></div>
-					<form action="/setconf.htm" method="GET" id="config_form" onsubmit="doDate();">
-						<div id="config"></div>
-						<input type="hidden" id="hh" name="hh"/>
-						<input type="hidden" id="mm" name="mm"/>
-						<input type="hidden" id="ss" name="ss"/>
-						<input type="hidden" id="day" name="day"/>
-						<input type="hidden" id="mon" name="mon"/>
-						<input type="hidden" id="year" name="year"/>
-						<input type="hidden" id="timezone" name="timezone"/>
-						<input type="hidden" id="dstoffset" name="dstoffset"/>
-						<input type="hidden" id="dststartmonth" name="dststartmonth"/>
-						<input type="hidden" id="dststartday" name="dststartday"/>
-						<input type="hidden" id="dststarthour" name="dststarthour"/>
-						<input type="hidden" id="dstendmonth" name="dstendmonth"/>
-						<input type="hidden" id="dstendday" name="dstendday"/>
-						<input type="hidden" id="dstendhour" name="dstendhour"/>
-						<input type="hidden" id="lang" name="lang"/>
-						<div><span id="contrast_level_text"></span><input type="range" min="1" max="7" value="6" class="slider" id="contrast" name="contrast" step="1"></div>
-						<input id="update" type="submit" value=" Update Settings " />
-					</form>
+					<h1><div id="configure_catholic_lectionary_text"></div></h1>
+					<div id="id-forms-container">
+						<div id="select-mass-type-radiobuttons-container">
+							<label>
+								<input type="radio" name="mass_type" id="id-radiobutton-mass-type-ef" value="EF" checked onClick="ShowForm(this.value); /*showHideMassForm('id-form-EF-container', 'id-form-NO-container');*/"><span id="id-label-radiobutton-mass-type-ef">Extraordinary Form</span>
+							</label>
+							<label>
+								<input type="radio" name="mass_type" id="id-radiobutton-mass-type-no" value="NO" onClick="ShowForm(this.value); /*showHideMassForm('id-form-NO-container', 'id-form-EF-container');*/"><span id="id-label-radiobutton-mass-type-no">Novus Ordo</span>
+							</label>
+						</div>
+						
+						<div id="id-form-EF-container" class="mass-form-container">
+							<form id="form-EF" class="mass-form" onsubmit="doMassCsv(this);"></form>
+							<div id="id-div-show-advanced-form-ef" class="class-form-field-full-width">
+								<label for="id-checkbox-show-form-ef-advanced" id="label-id-checkbox-show-form-ef-advanced"><div id="id-ef-form-advanced-text">Advanced</div></label>
+								<input type="checkbox" id="id-checkbox-show-form-ef-advanced" onchange="ShowHideAdvancedOptions('form-EF', this.checked);"/>
+							</div>	
+						</div>
+
+						<div id="id-form-NO-container" class="mass-form-container hidden">
+							<form id="form-NO" class="mass-form" onsubmit="doMassCsv(this);"></form>
+							<div id="id-div-show-advanced-form-no" class="class-form-field-full-width">
+								<label for="id-checkbox-show-form-no-advanced" id="label-id-checkbox-show-form-no-advanced"><div id="id-no-form-advanced-text">Advanced</div></label>
+								<input type="checkbox" id="id-checkbox-show-form-no-advanced" onchange="ShowHideAdvancedOptions('form-NO', this.checked);"/>
+							</div>	
+						</div>
+
+						<input type="file" id="mass-config-csv-file" class="class-input-hidden"/>
+
+						<div id="id-form-config-container" class="config-form-container">
+							<form id="config_form">
+								<!-- deprecated <div id="config"></div>-->
+								<input type="hidden" id="id-lectionary-csv-line-number-to-use" name="lectionary" value="0"/> <!-- always get settings from config.csv first line now, since with parametric config interface, presets are not stored in config.csv, only 1 line (+headings)-->
+								<input type="hidden" id="hh" name="hh"/>
+								<input type="hidden" id="mm" name="mm"/>
+								<input type="hidden" id="ss" name="ss"/>
+								<input type="hidden" id="day" name="day"/>
+								<input type="hidden" id="mon" name="mon"/>
+								<input type="hidden" id="year" name="year"/>
+								<input type="hidden" id="timezone" name="timezone"/>
+								<input type="hidden" id="dstoffset" name="dstoffset"/>
+								<input type="hidden" id="dststartmonth" name="dststartmonth"/>
+								<input type="hidden" id="dststartday" name="dststartday"/>
+								<input type="hidden" id="dststarthour" name="dststarthour"/>
+								<input type="hidden" id="dstendmonth" name="dstendmonth"/>
+								<input type="hidden" id="dstendday" name="dstendday"/>
+								<input type="hidden" id="dstendhour" name="dstendhour"/>
+								<input type="hidden" id="lang" name="lang"/>
+								<div>								
+									<div id="contrast_level_text"></div>
+									<div id="contrast-control-container">
+										<div class="contrast-legend contrast-legend-lower contrast-control-item">A</div>
+										<div class="contrast-control-item">
+											<input type="range" min="1" max="7" value="6" class="slider" id="contrast" name="contrast" step="1"></input>
+										</div>
+										<div class="contrast-legend contrast-legend-higher contrast-control-item">A</div>
+									</div>
+								</div>
+								<!--<input id="id-update-button" class="class-submit-button" type="submit" value="Update Settings Button (submit)" onclick="DoSubmit()"/>-->
+							</form>
+							<button id="id-update-button" class="class-submit-button" onclick="DoSubmit()">Update Settings Button</button>
+							<!--<button onclick="DumpIds();">Dump IDs</button>-->
+						</div>
+					</div>
+					<div id="id-lectionary-settings-updated-message" class="hidden">
+						<div id="lectionary_settings_updated_text">Lectionary Settings Updated</div>
+					</div>
+					<div id="id-lectionary-settings-update-error-message" class="hidden">
+						<div id="lectionary_settings_not_updated_text">Error: Lectionary Settings could not be updated</div>
+					</div>
 				</div>
 			</div>
 		</div>

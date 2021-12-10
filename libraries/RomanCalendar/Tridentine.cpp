@@ -1,14 +1,18 @@
-#include "TimeLib.h"
 #include "Tridentine.h"
-#include "Csv.h"
+//#include "TimeLib.h"
+//#include "Csv.h"
 
-extern "C" {
-	#include "user_interface.h" // for system_get_free_heap_size
-}
+//extern "C" {
+//	#include "user_interface.h" // for system_get_free_heap_size
+//}
 
-#ifndef __AVR__
-#include <stdio.h>
-#include "yml.h"
+#ifdef _WIN32
+	const char* system_get_free_heap_size() { return "system_get_free_heap_size() called"; }
+	#include "Bidi.h"
+#else
+	extern "C" {
+		#include "user_interface.h" // for system_get_free_heap_size
+	}
 #endif
 
 /*
@@ -246,8 +250,159 @@ time64_t Tridentine::nativity(int year) {
 	return date(25, 12, year);
 }
 
+time64_t Tridentine::ImmaculateConception(int year) {
+	return date(8, 12, year);
+}
+
 bool Tridentine::IsImmaculateConception(time64_t datetime) {
-	return issameday(date(8, 12, year(datetime)), datetime);
+	return issameday(ImmaculateConception(year(datetime)), datetime);
+}
+
+time64_t Tridentine::NativityStJohnBaptist(int year) {
+	return date(24, 6, year);
+}
+
+time64_t Tridentine::MartyrdomOfSSPeterAndPaul(int year) {
+	return date(29, 6, year);
+}
+
+time64_t Tridentine::AssumptionOfMary(int year) {
+	return date(15, 8, year);
+}
+
+time64_t Tridentine::AllSaints(int year) {
+	return date(1, 11, year);
+}
+
+time64_t Tridentine::StStephen(int year) {
+	return date(3, 8, year);
+}
+
+time64_t Tridentine::StStephenProtomartyr(int year) {
+	return date(26, 12, year);
+}
+
+time64_t Tridentine::StJohnApostle(int year) {
+	return date(27, 12, year);
+}
+
+time64_t Tridentine::HolyInnocents(int year) {
+	return date(28, 12, year);
+}
+
+time64_t Tridentine::StLawrence(int year) {
+	return date(10, 8, year);
+}
+
+time64_t Tridentine::NativityOfMary(int year) {
+	return date(8, 9, year);
+}
+
+time64_t Tridentine::NativityOfJohnBaptist(int year) {
+	return date(24, 6, year);
+}
+
+time64_t Tridentine::StJosephSponsi(int year) {
+	time64_t st_joseph_sponsi = Easter(year) + 17 * SECS_PER_DAY;
+
+	if (Tridentine::mass_type != MASS_DIVINEAFFLATU) {
+		st_joseph_sponsi += SECS_PER_YEAR;	// make it so it can't possibly match (Feast is not in other Masses)
+	}
+	
+	return st_joseph_sponsi;
+}
+
+time64_t Tridentine::FindingOfTheHolyCross(int year) {
+	return date(3, 5, year);
+}
+
+time64_t Tridentine::StJoachimFatherOfMary(int year) {
+	return date(16, 8, year);
+}
+
+time64_t Tridentine::StAnneMotherOfMary(int year) {
+	return date(26, 7, year);
+}
+
+time64_t Tridentine::Annunciation(int year) {
+	return date(25, 3, year);
+}
+
+time64_t Tridentine::StMichaelArchangelDedication(int year) {
+	return date(29, 9, year);
+}
+
+time64_t Tridentine::CircumcisionOfTheLord(int year) {
+	return date(1, 1, year);
+}
+
+time64_t Tridentine::BaptismOfTheLord(int year) {
+	return date(13, 1, year);
+}
+
+time64_t Tridentine::PurificationOfMary(int year) {
+	return date(2, 2, year);
+}
+
+time64_t Tridentine::PreciousBloodOfJesus(int year) {
+	return date(1, 7, year);
+}
+
+time64_t Tridentine::VisitationOfMary(int year) {
+	return date(2, 7, year);
+}
+
+time64_t Tridentine::TransfigurationOfTheLord(int year) {
+	return date(6, 8, year);
+}
+
+time64_t Tridentine::HolyCross(int year) {
+	return date(14, 9, year);
+}
+
+time64_t Tridentine::DedicationOfTheLateranBasilica(int year) {
+	return date(9, 11, year);
+}
+
+time64_t Tridentine::StJosephOpificis(int year) {
+	return date(1, 5, year);
+}
+
+bool Tridentine::IsAlsoFeastOfTheLord(time64_t datetime) {
+	int y = year(datetime);
+
+	return (issameday(datetime, PurificationOfMary(y)) 
+		|| issameday(datetime, TransfigurationOfTheLord(y))
+		|| issameday(datetime, HolyCross(y)));
+}
+
+
+time64_t Tridentine::SSPhilipAndJames(int year) {
+	return date(1, 5, year);
+}
+
+time64_t Tridentine::StJames(int year) {
+	return date(25, 7, year);
+}
+
+time64_t Tridentine::StBartholomew(int year) {
+	return date(24, 8, year);
+}
+
+time64_t Tridentine::StMatthew(int year) {
+	return date(21, 9, year);
+}
+
+time64_t Tridentine::SSSimonAndJude(int year) {
+	return date(28, 10, year);
+}
+
+time64_t Tridentine::StAndrew(int year) {
+	return date(30, 11, year);
+}
+
+time64_t Tridentine::StThomas(int year) {
+	return date(21, 12, year);
 }
 
 time64_t Tridentine::weekday_before(int weekdayBefore, time64_t datetime) {
@@ -494,6 +649,10 @@ time64_t Tridentine::HolyName(int year) {
         if holy_name in [new_years_day, dt.date(year, 1, 6), dt.date(year, 1, 7)]:
             return dt.date(year, 1, 2)
         return holy_name*/
+	if (Tridentine::mass_type < MASS_1955) {
+		return date(2, 1, year + 1); // can't happen (Holy Name not present in D.O. software for Mass < 1955)
+	}
+
 	time64_t new_years_day = date(1, 1, year);
 	time64_t holy_name = new_years_day + ((6 - weekday(new_years_day)) * SECS_PER_DAY);
 	if (holy_name == new_years_day || holy_name == date(6, 1, year) || holy_name == date(7, 1, year)) {
@@ -502,6 +661,7 @@ time64_t Tridentine::HolyName(int year) {
 	return holy_name;
 }
 
+uint8_t Tridentine::mass_type = MASS_1960; // set this to the mass in use. It affects whether HolyFamily is set a day before if it would fall on the 13th (which is the octave day of Epiphany)
 
 //class HolyFamily(MovableFeast):
 time64_t Tridentine::HolyFamily(int year) {
@@ -521,12 +681,25 @@ time64_t Tridentine::HolyFamily(int year) {
         if delta == dt.timedelta(0):
             delta = dt.timedelta(7)
         return epiphany + delta*/
+	
 	time64_t epiphany = date(6, 1, year);
-	time64_t delta = (6 - weekday(epiphany)) * SECS_PER_DAY;
-	if (delta == 0) {
-		delta = 7 * SECS_PER_DAY;
+	//time64_t delta = (6 - weekday(epiphany)) * SECS_PER_DAY;
+	//if (delta == 0) {
+	//	delta = 7 * SECS_PER_DAY;
+	//}
+	//return epiphany + delta;
+
+	time64_t holyfamily = sunday_after(epiphany);
+	if (Tridentine::mass_type < MASS_1955 && sunday(date(6 + 7, 1, year))) {
+		holyfamily -= SECS_PER_DAY;	//move HolyFamily back by one day if it falls on the Octave day of Epiphany (pre-1955 calendar) (see https://en.wikipedia.org/wiki/Holy_Family)
+		// edit: Says also that Holy Family was introduced in 1921 (by Pope Benedict XV), so it can't be present in 1570, 1910 and Divino Afflatu (1911) Masses
+		// so return a date that can't possibly match, to suppress the feast in these Masses
+		//return sunday_after(date(6, 1, year + 1));
+		
+		// edit 2: D.O. has it present in Divino Afflatu Mass, and my copy generated it also for 1570 and 1910 Masses, in place of Sunday in the Octave of Epiphany.
+		// So I'm going to include it for all.
 	}
-	return epiphany + delta;
+	return holyfamily;
 }
 
 time64_t Tridentine::Epiphany(int year) {
@@ -1480,9 +1653,11 @@ time64_t Tridentine::AllSouls(int year) {
 	*/
 
 	time64_t all_souls = date(2, 11, year);
+	/*
 	if (weekday(all_souls) == 6) {
-		all_souls += 1 * SECS_PER_DAY;
+		all_souls += 1 * SECS_PER_DAY;	// can't find a Rubric for the transference of All Souls to the 3rd
 	}
+	*/
 	return all_souls;
 }
 
@@ -1505,22 +1680,42 @@ time64_t Tridentine::ChristTheKing(int year) {
 	return halloween - (((weekday(halloween) + 1) % 7) * SECS_PER_DAY);
 }
 
+#ifdef _WIN32
+bool Tridentine::print_season = false;
+#endif
+
 uint8_t Tridentine::Season(time64_t datetime) {
 	int year = ::year(datetime);
 	time64_t nativity = date(25, 12, year);
 	
 	// Advent (Violet)
 	if (datetime >= first_advent_sunday(year) && datetime < nativity) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='color:white; background-color:purple;'> Advent </span>");
+		}
+#endif
 		return SEASON_ADVENT;
+
 	}
 
 	// Christmas (White)
 	time64_t epiphany = date(6, 1, year);
 	if (!(datetime < nativity && datetime > epiphany)) {		
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style=';'>  </span>");
+		}
+#endif
 		return SEASON_CHRISTMAS;
 	}
 
 	if (datetime >= epiphany && datetime < Septuagesima(year)) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='border 1px solid grey;'> Christmas </span>");
+		}
+#endif
 		return SEASON_EPIPHANY;
 	}
 
@@ -1528,29 +1723,59 @@ uint8_t Tridentine::Season(time64_t datetime) {
 	// Violet vestments worn only on Sundays, not weekdays before Lent begins
 	// See https://catholicherald.co.uk/commentandblogs/2018/01/28/what-is-septuagesima/
 	if (datetime >= Septuagesima(year) && datetime < AshWednesday(year)) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='background-color:lightpurple;'> Septuagesima </span>");
+		}
+#endif
 		return SEASON_SEPTUAGESIMA;
 	}
 
 	// Lent (Violet)
 	if (datetime >= AshWednesday(year) && datetime < Easter(year)) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='color:white; background-color:purple;'> Lent </span>");
+		}
+#endif
 		return SEASON_LENT;
 	}
 
 	// Easter (White)
 	if (datetime >= Easter(year) && datetime < Pentecost(year)) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='border 1px solid grey;'> Easter </span>");
+		}
+#endif
 		return SEASON_EASTER;
 	}
 
 	// Octave of Pentecost (Red)
 	if (datetime >= Pentecost(year) && datetime < TrinitySunday(year)) { // Octave of Pentecost
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='background-color:darkred;'> Pentecost </span>");
+		}
+#endif
 		return SEASON_PENTECOST;
 	}
 
 	// from the first week after Pentecost up to the beginning of Advent in the next Liturgical year
 	if ((datetime >= TrinitySunday(year)) && datetime < first_advent_sunday(year)) {
+#ifdef _WIN32
+		if (Tridentine::print_season) {
+			Bidi::printf("<span style='background-color:darkgreen;'> After Pentecost </span>");
+		}
+#endif
 		return SEASON_AFTER_PENTECOST;
 	}
 
+#ifdef _WIN32
+	if (Tridentine::print_season) {
+		Bidi::printf("<span style='background-color:lightgrey;'> Ordinary </span>");
+	}
+#endif
 	return SEASON_ORDINARY;
 }
 
@@ -1573,7 +1798,7 @@ time64_t Tridentine::Season_beginning(uint8_t season, time64_t datetime) {
 	if (season == SEASON_PENTECOST) return Pentecost(year);
 	if (season == SEASON_AFTER_PENTECOST) return TrinitySunday(year);
 
-	printf("Season_beginning(): season unset");
+	DEBUG_PRT.println(F("Season_beginning(): season unset"));
 	return datetime;
 }
 
@@ -1599,6 +1824,12 @@ uint8_t Tridentine::Season_Week(time64_t datetime, uint8_t season) {
 	if (season == SEASON_AFTER_PENTECOST || season == SEASON_ADVENT) {
 		week += 1; // After Pentecost season starts with first sunday after Pentecost (Trinity Sunday), so Pentecost itself is one more week earlier
 	}			   // The first Sunday in Advent is numbered 1, not 0
+
+#ifdef _WIN32
+	if (Tridentine::print_season) {
+		Bidi::printf("<span style='background-color:yellow; font-weight: bold;'> %d </span>", week);
+	}
+#endif
 
 	return week;
 }
@@ -2336,8 +2567,22 @@ bool Tridentine::IsPassionWeek (time64_t datetime)
 	return (datetime >= (palm_sunday - SECS_PER_WEEK) && datetime < palm_sunday);
 }
 
+bool Tridentine::IsHolyWeek(time64_t datetime)
+{
+	time64_t palm_sunday = PalmSunday(year(datetime));
 
-void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename) {
+	return (datetime >= palm_sunday && datetime < (palm_sunday + SECS_PER_WEEK));
+}
+/*
+#define MASS_TRIDENTINE_1570 1
+#define MASS_TRIDENTINE_1910 2
+#define MASS_DIVINEAFFLATU 3
+#define MASS_1955 4
+#define MASS_1960 5
+*/
+
+void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, uint8_t MassType) {
+
 	DEBUG_PRT.print(F("Tridentine::GetFileDir2():"));
 
 	bool bSaturday = (weekday(datetime) == PY_SAT); // for Saturday of Our Lady Votive Masses
@@ -2358,8 +2603,15 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	SaintImageFilename = "";
 	VotiveImageFilename = "";
 
+#ifdef _WIN32
+	Tridentine::print_season = true;
+#endif
 	uint8_t season = Season(datetime);
 	uint8_t season_week = Season_Week(datetime, season);
+#ifdef _WIN32
+	Tridentine::print_season = false;
+#endif
+
 	uint8_t octave_daynumber = 0;
 
 	bool bOverrideIfFeast = false; // if set, then the string in the variable fd will be used as the directory name only if there is no feast day on the same day (these are the month/day folders, eg 1962/01/05/)
@@ -2445,7 +2697,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			break;
 		}
 
-		if (issameday(datetime, HolyName(year))) {
+		if (MassType > MASS_TRIDENTINE_1570 && issameday(datetime, HolyName(year))) {
 			dir_day = F("HolyName");
 			break;
 		}
@@ -2532,7 +2784,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		if (issameday(datetime, PalmSunday(year))) { ImageFilename = F("PalmSunday"); }
 		// PLL-14-12-2020
 
-		if (datetime >= (AshWednesday(year) + SECS_PER_DAY) && datetime < sunday_after(AshWednesday(year))) {
+		if (datetime >= (AshWednesday(year) /*+ SECS_PER_DAY*/) && datetime < sunday_after(AshWednesday(year))) {
 			// Lent begins on Ash Wednesday, but Ash Wednesday and days after ashes occur in the week of Quinquagesima, so are stored in that folder
 			dir_season = F("Quinquagesima");
 			dir_day = (FPSTR(WeekDays[day]));
@@ -2621,15 +2873,16 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			dir_day = (FPSTR(WeekDays[day]));
 			break;
 		}
-
-		if (issameday(datetime, ChristTheKing(year))) {
+		/*
+		if (MassType > MASS_TRIDENTINE_1910 && issameday(datetime, ChristTheKing(year))) {
 			// PLL-14-12-2020
 			ImageFilename = F("ChristusRex");
 			// PLL-14-12-2020
 			dir_day = F("ChristusRex");
 			break;
 		}
-
+		*/
+		/*
 		if (issameday(datetime, AllSouls(year))) {
 			dir_season = F("11");	// 11/2/[1 2 or 3]. (There are 3 masses during All Souls day)
 			dir_sub = F("2");
@@ -2647,7 +2900,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			bSuppressFeast = true;
 			break;
 		}
-
+		*/
 //		if (bSunday) {
 //			dir_sub = String(season_week);
 //			dir_day = "Sunday";
@@ -2725,8 +2978,8 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		bool bIsStMatthiasDayInLeapYear = false;
 
 		if (isleap(year)) {
-			if (month_of_year == 2 && day_of_month == 24) {
-				FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th
+			if (month_of_year == 2 && (day_of_month == 24 || day_of_month == 27)) {
+				FileDir_Saint = "";	// skip St Matthias day on 24th Feb if a leap year, as it is celebrated on the 25th, or St Gabrielis Day on Feb 27th, which also is transferred a day later
 				SaintImageFilename = "";
 				bIsStMatthiasDayInLeapYear = true;
 			}
@@ -2735,6 +2988,33 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 				FileDir_Saint = String(F("/2/24/")); // Handle St Matthias day in leap years, which falls on 25th Feb instead of 24th Feb, so get Propers for 25th from 2/24 in this case
 				SaintImageFilename = String(F("/2/24-2"));
 			}
+
+			if (month_of_year == 2 && day_of_month == 28) {
+				FileDir_Saint = String(F("/2/27/")); // Handle St Gabrielis day in leap years, which falls on 28th Feb instead of 27th Feb, so get Propers for 28th from 2/27 in this case
+				SaintImageFilename = String(F("/2/27-2"));
+			}
+		}
+
+		if (MassType > MASS_TRIDENTINE_1910 && issameday(datetime, ChristTheKing(year))) {
+			SaintImageFilename = F("ChristusRex");
+			FileDir_Saint = F("/Pentecost/ChristusRex/");
+		}
+
+		if (issameday(datetime, AllSouls(year))) {
+			FileDir_Saint = String(F("/11/2/"));
+			int8_t hour = ::hour(datetime);
+			String massnumber = "";
+			if (hour >= 0 && hour < 6) {
+				massnumber = F("1"); // readings from night mass
+			}
+			else if (hour >= 6 && hour < 11) {
+				massnumber = F("2"); // readings from morning mass
+			}
+			else {
+				massnumber = F("3"); // readings from mass during the day
+			}
+			FileDir_Saint = FileDir_Saint + massnumber + String(F("/"));
+			SaintImageFilename = String(F("/11/2"));
 		}
 
 		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay) { // If St Matthias' Day or Lady Day, the SaintImageFilename will already have been set appropriately
@@ -2771,27 +3051,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	//printf("FileDir_Season = %s\n", FileDir.c_str());
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 bool Tridentine::FileExists(String filename) {
 	FILE* fp = fopen(filename.c_str(), "rb");
 
@@ -2801,6 +3061,7 @@ bool Tridentine::FileExists(String filename) {
 	}
 	return false;
 }
+*/
 
 void Tridentine::GetMassAndCommFromTrFixedFeast(Tr_Fixed_Feast& trff, String& Mass, String& Commemoration, uint8_t season, uint8_t day_class) {
 	if (trff.bMassIsCommemoration || (season == SEASON_LENT && day_class <= trff.Class)) { // in lent, feasts become commemorations
@@ -3534,13 +3795,21 @@ bool MissalReading::open(String filedir) {
 	DEBUG_PRT.println(F("ok"));
 	
 	_open = true;
+
+	patchHolyFamily1570();
+	patchDiesJanuarii1955(filedir);
+	patchOctaveDayofAscension();
 	return true;
 }
 
+bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText) {
+	bool bResetPropersFilePtr = false;
+	return get(ir_part, ir_subpart, text, bMoreText, bResetPropersFilePtr);
+}
 
 // get a line of text from the propers files. Continue reading text under currently selected heading line by line, 
 // or skip to next subpart (if any), or return false if text (in all subparts) under heading is exhausted
-bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText) {
+bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText, bool& bResetPropersFilePtr) {
 /*
 	if (!_fpindex.available()) {
 		DEBUG_PRT.println(F("MissalReading::get(): index file is not open"));
@@ -3562,8 +3831,9 @@ bool MissalReading::get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool&
 
 	bool bIndexAvailable = true;
 
-	if (!(ir_part == _ir.filenumber && ir_subpart == _ir.partnumber)) {
+	if (bResetPropersFilePtr || !(ir_part == _ir.filenumber && ir_subpart == _ir.partnumber)) {
 		bIndexAvailable = getIndex(ir_part, ir_subpart);
+		bResetPropersFilePtr = false;
 	}
 
 	if (bIndexAvailable) {
@@ -3631,6 +3901,15 @@ bool MissalReading::getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetInd
 
 		while (_fpindex.available() && !bFoundIndexRecord && bIndexRecordPossible && getIndexRecord(_fpindex, _ir)) {
 
+			// PLL-29-10-2021
+			// nasty hack to take care of the fact that I counted the actual number of "files" in the filecount (that is, 1 for each group of subparts), 
+			// but skipped the file index 3 when dealing with the 1570 Mass (which has no part 3, Lectio) - so the filecount for this Mass's propers 
+			// is 11 rather than 12, although the maximum part index can also be 11 in this case, which breaks the ir_part >= _ir.filecount comparison (below) for the 1570 Mass
+			if (_ir.filecount == 11 && ir_part == 11) _ir.filecount = 12;
+			//
+			// Did the same thing for the Good Friday propers, which have six parts, but the number for _ir.filecount is 5
+			if (_ir.filecount == 5 && ir_part == 5) _ir.filecount = 6;
+
 			if (ir_part >= _ir.filecount || _ir.filenumber > ir_part || (_ir.filenumber == ir_part && ir_subpart >= _ir.partcount)) {
 				bIndexRecordPossible = false;	// can't be present if so
 			}
@@ -3672,6 +3951,11 @@ void MissalReading::close() {
 	DEBUG_PRT.println(F("MissalReading::close()"));
 }
 
+bool MissalReading::isOpen() {
+	return _open;
+}
+
+
 ///////////////////////////////////
 // Functions for reading the texts
 bool MissalReading::getHeaderRecord(File& file, IndexHeader& ih) {
@@ -3697,23 +3981,63 @@ bool MissalReading::getHeaderRecord(File& file, IndexHeader& ih) {
 			ih.cls  = csv.getCsvField(headers, &pos);
 			ih.colour  = csv.getCsvField(headers, &pos);
 
+			int ci = ih.commemoration.indexOf(": ");	// Our Lady of Mount Carmel commemoration heading has a rogue ':' at the beginning. Remove it if found.
+			if (ih.name == "" && ci == 0) {
+				ih.commemoration = ih.commemoration.substring(ci + 2);
+			}
+
 			DumpIndexHeader(ih);
 			//file.seek(filepos); // restore original filepos (if needed?)
 
 			return true;
 		}
 	}
+
 	DEBUG_PRT.print(F("getHeaderRecord() File is not available, free mem="));
 	DEBUG_PRT.println(String(system_get_free_heap_size()));
 	return false;
 }
 
-String MissalReading::heading() {
+void MissalReading::patchHolyFamily1570() {
+	// patch for problem with Tridentine 1570AD Holy Family feast record (which is not a feast in this calendar, but the Sunday within the Octave of Pentecost)
+	// It is missing the Class and Name fields, but they are contained within the Heading string
+	if (isOpen()) {
+		if (_ih.name == "" && _ih.commemoration == "") {
+			_ih.name = _ih.heading.substring(0, _ih.heading.indexOf("  "));
+			_ih.cls = _ih.heading.substring(_ih.heading.indexOf("  ") + 2);
+		}
+	}
+}
+
+void MissalReading::patchDiesJanuarii1955(String& filedir) {
+	if (isOpen() && filedir.indexOf("1955") != -1 && _ih.name.indexOf("Januarii") != -1 && _ih.name.indexOf("Episcopi") == -1) {	// avoid including St. Januarii! (19th Sept)
+		_ih.cls = F("Feria");
+	}
+}
+
+void MissalReading::patchOctaveDayofAscension() {
+	if (isOpen() && _ih.name.indexOf("Feria V in Octava Ascensionis") != -1) {
+		_ih.name = F("Octavæ Ascensionis");
+	}
+}
+
+void MissalReading::setClass(String class_name) {
+	_ih.cls = class_name;
+}
+
+String MissalReading::heading(bool b_commemoration) {
+	if (b_commemoration) {
+		return _ih.commemoration;
+	}
 	return _ih.heading;
 }
 
-String MissalReading::name() {
-/*	if (_ih.commemoration != "") {
+String MissalReading::name(bool b_commemoration) {
+	if (b_commemoration) {
+		return _ih.commemoration;
+	}
+	
+	/*	if (_ih.commemoration != "") {
 		return _ih.commemoration;		// PLL-17-04-2021 when asked for name(), return the name of the commemoration if it is present (is blank for non-commemorations)
 	}
 */	
@@ -3729,6 +4053,9 @@ String MissalReading::commemoration() {
 }
 
 String MissalReading::cls() {
+	DEBUG_PRT.print("cls():");
+	DEBUG_PRT.println(_ih.cls);
+
 	return _ih.cls;
 }
 

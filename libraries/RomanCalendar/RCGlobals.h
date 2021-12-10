@@ -17,6 +17,8 @@
     #define MAX_DEEPSLEEP_SECONDS 4294
 	#define MAX_MEM_BIBLE_REFS 4096
 
+	#define CONFIG_CSV "/config.csv"
+
 // select debug port (comment out next line to default to Serial)
 	#define DEBUG_PRT Debug_Prt
 	
