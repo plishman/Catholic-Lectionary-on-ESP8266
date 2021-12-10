@@ -40,8 +40,8 @@ our $NewMass = 0;
 our $officium = 'missa.pl';
 our $version = 'Rubrics 1960';
 
-@versions =
-  ('Tridentine 1570', 'Tridentine 1910', 'Divino Afflatu', 'Reduced 1955', 'Rubrics 1960', '1965-1967', '1960 Newcalendar');
+@versions = ('Tridentine 1570', 'Tridentine 1910', 'Divino Afflatu', 'Reduced 1955', 'Rubrics 1960', '1965-1967', '1960 Newcalendar');
+#@versions = ('Reduced 1955'); ## Debugging Holy Name - remove and uncomment line above #############################
 
 #***common variables arrays and hashes
 #filled  getweek()
@@ -87,6 +87,179 @@ $ddd_end = 31;
 $mmm_end = 12;
 $yyyy_end = 2020;
 
+
+# Debugging - Ember days in September - remove #########################
+#$ddd = 21; # 28; # day number
+#$mmm = 9; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 24; #24;
+#$mmm_end = 9; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - Ember days in Pentecost - remove #########################
+#$ddd = 8; # 28; # day number
+#$mmm = 6; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 11; #1;
+#$mmm_end = 6; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - Ember days in Quadragesima - remove #########################
+#$ddd = 9; # 28; # day number
+#$mmm = 3; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 12; #1;
+#$mmm_end = 3; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - Ember days in Advent - remove #########################
+#$ddd = 14; # 28; # day number
+#$mmm = 12; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 17; #1;
+#$mmm_end = 12; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - Saturday of Our Lady in Easter - remove #########################
+#$ddd = 24; # 28; # day number
+#$mmm = 5; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 25; #24;
+#$mmm_end = 5; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Saturday of Our Lady in Epiphany - remove #########################
+#$ddd = 11; # 28; # day number
+#$mmm = 1; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 12; #24;
+#$mmm_end = 1; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Saturday of Our Lady (February - March 1st) - remove #########################
+#$ddd = 15; # 28; # day number
+#$mmm = 2; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 16; #24;
+#$mmm_end = 2; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Saturday of Our Lady (Lent) - remove #########################
+#$ddd = 15; # 28; # day number
+#$mmm = 2; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 16; #24;
+#$mmm_end = 2; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Saturday of Our Lady (between Trinity Sunday and Advent) - remove #########################
+#$ddd = 6; # 28; # day number
+#$mmm = 9; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 7; #24;
+#$mmm_end = 9; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Wednesday of the 4th Week of Lent - remove #########################
+$ddd = 2; # 28; # day number
+$mmm = 4; #2; # month number
+$yyyy = 2025; #2021;
+$ddd_end = 3; #24;
+$mmm_end = 4; #3;
+$yyyy_end = 2025; #2021;
+
+
+# Debugging - Palm Sunday - remove #########################
+#$ddd = 13; # 28; # day number
+#$mmm = 4; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 14; #24;
+#$mmm_end = 4; #3;
+#$yyyy_end = 2025; #2021;
+
+
+# Debugging - Ash Wednesday - remove #########################
+#$ddd = 5; # 28; # day number
+#$mmm = 3; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 6; #24;
+#$mmm_end = 3; #3;
+#$yyyy_end = 2025; #2021;
+
+
+# Debugging - Purifcation of the Blessed Virgin Mary - remove #########################
+#$ddd = 2; # 28; # day number
+#$mmm = 2; #2; # month number
+#$yyyy = 2025; #2021;
+#$ddd_end = 3; #24;
+#$mmm_end = 2; #3;
+#$yyyy_end = 2025; #2021;
+
+# Debugging - Holy Saturday
+#$ddd = 30; # 28; # day number
+#$mmm = 3; #2; # month number
+#$yyyy = 2024; #2021;
+#$ddd_end = 31; #24;
+#$mmm_end = 3; #3;
+#$yyyy_end = 2024; #2021;
+
+# Debugging - Friday Advent week IV - remove #########################
+#$ddd = 22; # 28; # day number
+#$mmm = 12; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 23; #1;
+#$mmm_end = 12; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - 6th week of Epiphany - remove #########################
+#$ddd = 13; # 28; # day number
+#$mmm = 2; #2; # month number
+#$yyyy = 3993; #2021;
+#$ddd_end = 21; #1;
+#$mmm_end = 2; #3;
+#$yyyy_end = 3993; #2021;
+
+# Debugging - Dominica II in Quadragesima (Feb 28 2021)
+#$ddd = 13; # 28; # day number
+#$mmm = 3; #2; # month number
+#$yyyy = 2022; #2021;
+#$ddd_end = 14; #1;
+#$mmm_end = 3; #3;
+#$yyyy_end = 2022; #2021;
+
+# Debugging - Holy Name - remove #########################
+#$ddd = 3; # 28; # day number
+#$mmm = 1; #2; # month number
+#$yyyy = 2021; #2021;
+#$ddd_end = 4; #1;
+#$mmm_end = 1; #3;
+#$yyyy_end = 2021; #2021;
+
+# Debugging - Christus Rex
+#$ddd = 25; # day number
+#$mmm = 10; # month number
+#$yyyy = 2020;
+#$ddd_end = 26;
+#$mmm_end = 10;
+#$yyyy_end = 2020;
+
+# Debugging - 1st Week after Pentecost
+#$ddd = 7; # day number
+#$mmm = 6; # month number
+#$yyyy = 2020;
+#$ddd_end = 14;
+#$mmm_end = 6;
+#$yyyy_end = 2020;
+
+# Debugging - Error with Seasonal days also being recorded on Saints' days when no Saints' Day
+#$ddd = 26; # day number
+#$mmm = 5; # month number
+#$yyyy = 2020;
+#$ddd_end = 3;
+#$mmm_end = 6;
+#$yyyy_end = 2020;
+
+
 #$ddd = 4; # day number
 #$mmm = 4; # month number
 #$yyyy = 2020;
@@ -119,8 +292,10 @@ getini('missa');    #files, colors
 $output_lang_count = @output_langs;
 
 
-@versions_dirnames =
-  ('Trid1570', 'Trid1910', 'DivAffla', '1955', '1960', '1965-67', '1960New');
+@versions_dirnames = ('Trid1570', 'Trid1910', 'DivAffla', '1955', '1960', '1965-67', '1960New');
+
+#############Debuging Holy Name - remove and uncomment line above
+#@versions_dirnames = ('1955');
 
 use File::Path qw(remove_tree);
 $dt_process_days = 0;
@@ -129,9 +304,18 @@ $dt_process_days_end = date_to_days($ddd_end, $mmm_end - 1, $yyyy_end);
 
 #########
 # debugging - remove!
-#$dt_process_days_start = date_to_days(15, 11 - 1, 2020);
-#$dt_process_days_end = date_to_days(16, 11 - 1, 2020);
-#$dt_process_days = date_to_days(15, 11 - 1, 2020);
+#$dt_process_days_start = date_to_days(10, 4 - 1, 2020);
+#$dt_process_days_end = date_to_days(13, 4 - 1, 2020);
+#$dt_process_days = date_to_days(10, 4 - 1, 2020);
+
+#$dt_process_days_start = date_to_days(2, 11 - 1, 2020);
+#$dt_process_days_end = date_to_days(3, 11 - 1, 2020);
+#$dt_process_days = date_to_days(2, 11 - 1, 2020);
+
+#$dt_process_days_start = date_to_days(31, 10 - 1, 2020);
+#$dt_process_days_end = date_to_days(1, 11 - 1, 2020);
+#$dt_process_days = date_to_days(31, 10 - 1, 2020);
+
 # debugging - remove!
 
 $bResumed = 0;
@@ -149,7 +333,7 @@ if(!$dt_process_days) {
   print("Starting processing translations...");
 #########
 # debugging - uncomment this before proper use
-  $dt_process_days = date_to_days($ddd, $mmm - 1, $yyyy);
+$dt_process_days = date_to_days($ddd, $mmm - 1, $yyyy);
 # debugging - uncomment this before proper use
 
 
@@ -167,10 +351,18 @@ $op_dir;
 $dtt_days;
 $do_propers;
 #$mass_heading;
+
 $glorialine_la;
 $credoline_la;
+$prefatioline_la;
+$hancigiturline_la;
+$communicantesline_la;
+
 $glorialine_alt;
 $credoline_alt;
+$prefatioline_alt;
+$hancigiturline_alt;
+$communicantesline_alt;
 
 $already_output_latin = 0;
 
@@ -236,12 +428,26 @@ sub resetclassvars {
   $officium = 'missa.pl';
   $version = 'Rubrics 1960';
 
-  @versions =
-    ('Tridentine 1570', 'Tridentine 1910', 'Divino Afflatu', 'Reduced 1955', 'Rubrics 1960', '1965-1967', '1960 Newcalendar');
+  @versions = ('Tridentine 1570', 'Tridentine 1910', 'Divino Afflatu', 'Reduced 1955', 'Rubrics 1960', '1965-1967', '1960 Newcalendar');
+  
+  ### Debugging Dominica II in Quadragesima (Feb 28 2021) (remove before building whole tree)
+  #@versions = ('Tridentine 1570');
+
+  ### Debugging Holy Name of Jesus - remove and uncomment first @versions line above #########################
+  #@versions = ('Reduced 1955');
+
+
 
   #***common variables arrays and hashes
   #filled  getweek()
   @dayname = ();    #0=Advn|Natn|Epin|Quadpn|Quadn|Pascn|Pentn 1=winner title|2=other title
+
+#PLL-20-12-2020
+  $headline = '';
+  $day_name = '';
+  $day_rank = '';
+  $day_title = '';
+#PLL-20-12-2020
 
   #filled by getrank()
   $winner = '';     #the folder/filename for the winner of precedence
@@ -491,8 +697,35 @@ sub mass {
   # PLL 27-07-2020
   if ($testmode eq "Saint") {
     if ($rank <= 2 && $d[6] == 6) { # Saturday of Our Lady (votive) - Saturdays, if Class IV or equivalent
+      my $easter = date_to_days(geteaster($year));
+      my $trinitysunday = $easter + 49 + 7;
+      my $advent_start = getadvent($year);
+
+      my $b_is_advent = ($dtt_days >= getadvent($year) && $dtt_days < date_to_days(25, 12 - 1, $year)) ? 1 : 0;
+      my $b_is_epi_quad = ($dtt_days > date_to_days(6, 1 - 1, $year) && $dtt_days < $easter) ? 1 : 0;
+      my $b_is_easter = ($dtt_days > $easter && $dtt_days < ($easter + 6 * 7)) ? 1 : 0;
+
       $dir_season = "Votive";
-      $dir_day = "OurLady";
+      $dir_sub = "OurLady";
+      $dir_day = "1";
+
+      $dir_day =
+          $b_is_advent != 0 ? "a"
+        : $b_is_epi_quad != 0 ? "c"
+        : ($month == 1 || ($month == 2 && $day == 1)) ? "b"
+        : $b_is_easter != 0 ? "Pasc"
+        : ($dtt_days > $trinitysunday) ? "t"
+        : "1" ;
+
+#      $dir_day =
+#          ($dayname[0] =~ /Adv/i) ? "a"
+#        : ($month == 1 || ($month == 2 && $day == 1)) ? "b"
+#        : ($dayname[0] =~ /(Epi|Quad)/i) ? "c"
+#        : ($dayname[0] =~ /Pasc/i) ? "Pasc"
+#        : ($dtt_days > $trinitysunday) ? "t"
+#        : "1" ;
+      #$C10 = ($missa) ? "C10$C10" : 'C10';
+      # Votive masses for Our Lady will be in Votive/OurLady/[1|a|b|c|Pasc]
     }
   }
   # PLL 27-07-2020

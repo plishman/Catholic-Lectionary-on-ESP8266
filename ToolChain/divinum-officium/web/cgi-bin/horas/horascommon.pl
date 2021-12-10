@@ -138,6 +138,18 @@ sub getweek {
     }
   }
 
+  if ($testmode eq "Saint") {
+    my $halloween = date_to_days(31, 10 - 1, $year);  # PLL-19-12-2020 For Christ the King
+    my @halloween_date = days_to_date($halloween);
+    my $halloween_wday = $halloween_date[6];
+    if ($t == ($halloween - $halloween_wday)) {    # PLL-19-12-2020
+      $dir_season = "Pentecost";
+      $dir_day = "ChristusRex";
+    }
+    return '';
+  }
+
+
 #  if ($testmode eq "Saint") {
 #    if ($rank <= 2 && $d[6] == 6) { # Saturday of Our Lady (votive) - Saturdays, if Class IV or equivalent
 #      $dir_season = "Votive";
@@ -306,6 +318,7 @@ sub getweek {
 
     return getname("Pasc$n");
   }
+
   $n = floor(($t - ($easter + 49)) / 7);
   if ($n < 23) { 
     # PLL 18-06-2020
@@ -316,9 +329,12 @@ sub getweek {
         if ($d[6] == 0) {
           $dir_day = "TrinitySunday";
         }
-
-        if ($d[6] == 4) { # Corpus Christi, Thursday after Trinity Sunday
+        elsif ($d[6] == 4) { # Corpus Christi, Thursday after Trinity Sunday
           $dir_day = "CorpusChristi";
+        }
+        else {
+          $dir_sub = $n;  # PLL-15-12-2020 wasn't outputting 1st week after Pentecost
+          $dir_day = $weekdays_names[$d[6]];
         }
       }
       
@@ -326,9 +342,14 @@ sub getweek {
         $dir_day = "SacredHeartofJesus";
       }
 
-      elsif ($n == 34 && $d[6] == 0) { # Christ the King
-        $dir_day = "ChristusRex";
-      }
+      #my $halloween = date_to_days(31, 10 - 1, $year);
+      #my @halloween_date = days_to_date($halloween);
+      #my $halloween_wday = $halloween_date[6];
+
+      #elsif ($t == ($halloween - $halloween_wday)) {    # PLL-15-12-2020
+      #elsif ($n == 34 && $d[6] == 0) { # Christ the King
+      #  $dir_day = "ChristusRex";
+      #}
       
       else {
         my $first_september = date_to_days(1, 9 - 1, $year);
@@ -574,6 +595,8 @@ sub getrank {
   #  if ($transfer{$nday} =~ /tempora/i) {$tn1 = $transfer{$nday};}
   #}
   if ($testmode =~ /(Saint|Common)/i) { $tn = 'none'; }
+
+  if ($tn =~ /Tempora\/Quad2-0t/ && $vtrans == '1570') { $tn = "Tempora/Quad2-0"; } #PLL-11-11-2021 Tempora/Quad2-0t.txt does not exist, so revert to Quad2-0.txt if this arises
 
   #Vespera anticipation  concurrence
   if (-e "$datafolder/$lang1/$tn.txt" || $dayname[0] =~ /Epi0/i || ($transfer{$nday}) =~ /tempora/i) {

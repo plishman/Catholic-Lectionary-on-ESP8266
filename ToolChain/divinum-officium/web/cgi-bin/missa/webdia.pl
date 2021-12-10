@@ -522,6 +522,9 @@ sub setcell {
     else {
       my $glorianame = %glorianames{$lang};
       my $credoname = %credonames{$lang};
+      my $prefationame = %prefationames{$lang};
+      my $hancigiturname = "Hanc Igitur|Prosba o přijetí darů";
+      my $communicantesname = "Communicantes|Připomínka svatých";
 
       if    ($lang eq "Latin" && $mass_heading =~ /$glorianame/ && $glorialine_la != -1) {                      
         write_ordo($text, $glorialine_la, 1, $lang, $dnn, 1);
@@ -529,13 +532,39 @@ sub setcell {
       elsif ($lang eq "Latin" && $mass_heading =~ /$credoname/ && $credoline_la != -1) {                   
         write_ordo($text, $credoline_la, 1, $lang, $dnn, 1);
       }
+      elsif ($lang eq "Latin" && $mass_heading =~ /$prefationame/ && $prefatioline_la != -1) {                   
+        $text =~ s/\<BR\>.*? \<BR\>\n/ <BR>\n/s; # remove responses at start (which are not shown in the propers)
+        write_ordo($text, $prefatioline_la, 1, $lang, $dnn, 1);
+      }
+      elsif ($lang eq "Latin" && $mass_heading =~ /$communicantesname/ && $prefatioline_la != -1) {                   
+        $text =~ s/^\<.*Communicantes.*(?:\s*\<BR\>\s*)*\s*//;
+        write_ordo($text, $prefatioline_la, 2, $lang, $dnn, 1);
+      }
+      elsif ($lang eq "Latin" && $mass_heading =~ /$hancigiturname/ && $prefatioline_la != -1) {                   
+        $text =~ s/^\<.*Hanc Igitur.*(?:\s*\<BR\>\s*)*\s*//; # strip Hanc Igitur heading, not displayed (only in the Czech, which is localised)
+        write_ordo($text, $prefatioline_la, 3, $lang, $dnn, 1);
+      }
       elsif ($mass_heading_alt =~ /$glorianame/ && $glorialine_alt != -1) {                      
         write_ordo($text, $glorialine_alt, 1, $lang, $dnn, 1);
       }
       elsif ($mass_heading_alt =~ /$credoname/ && $credoline_alt != -1) {                   
         write_ordo($text, $credoline_alt, 1, $lang, $dnn, 1);
+      }
+      elsif ($mass_heading_alt =~ /$prefationame/ && $prefatioline_alt != -1) {                   
+        $text =~ s/\<BR\>.*? \<BR\>\n/ <BR>\n/s; # remove responses at start (which are not shown in the propers)
+        write_ordo($text, $prefatioline_alt, 1, $lang, $dnn, 1);
+      }
+      elsif ($mass_heading_alt =~ /$communicantesname/ && $prefatioline_alt != -1) {                   
+        $text =~ s/^\<.*Communicantes.*(?:\s*\<BR\>\s*)*\s*//;
+        write_ordo($text, $prefatioline_alt, 2, $lang, $dnn, 1);
+      }
+      elsif ($mass_heading_alt =~ /$hancigiturname/ && $prefatioline_alt != -1) {                   
+        $text =~ s/^\<.*Hanc Igitur.*(?:\s*\<BR\>\s*)*\s*//;
+        write_ordo($text, $prefatioline_alt, 3, $lang, $dnn, 1);
         $break_early = 1;
       }
+
+
 
       #if ($lang eq "Latin") {
       #  $fnn_la += 1;

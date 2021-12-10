@@ -115,14 +115,38 @@ sub ordo {
     Spanish => 'Creed|Credo'
   );
 
+  %prefationames = (
+    Cesky => 'Preface|Předmluva|Praefatio',
+    Deutsch => 'Praefatio|Prefatio',
+    English => 'Praefatio|Prefatio|Preface',
+    French => 'Praefatio|Prefatio|Préface|Benedíctus qui venit,',
+    Italiano => 'Praefatio|Prefazio',
+    Latin => 'Praefatio|Prefatio',
+    Magyar => 'Praefatio|Prefatio',
+    Polski => 'Praefatio|Prefacja',
+    Portugues => 'Praefatio|Prefácio|Preface',
+    Spanish => 'Praefatio|Prefatio|Preface'
+  );
+
+#$hancigiturname = "Hanc Igitur";
+#$communicantesname = "Communicantes";
+
   if ($Propers) {
     $glorialine_la = -1;
     $credoline_la = -1;
     $glorialine_alt = -1;
     $credoline_alt = -1;
+    $prefatioline_la = -1;
+    $prefatioline_alt = -1;
+    $hancigiturline_la = -1;
+    $hancigiturline_alt = -1;
+    $communicantesline_la = -1;
+    $communicantesline_alt = -1;
   }
 
 # PLL 18-06-2020
+
+  $multipleheadingsinsinglesection = 0;
 
   while ($ind1 < @script1 || $ind2 < @script2) {  
     #if ($fnn_alt == 15) {
@@ -148,7 +172,46 @@ sub ordo {
     $text1 = resolve_refs($text1, $lang1);      #PLL 17-06-2020 (additional params $filenumber, $dn)
     $text1 =~ s/\<BR\>\s*\<BR\>/\<BR\>/g;
     if ($lang1 =~ /Latin/i) { $text1 = spell_var($text1); }
-    if ($text1 && $text1 !~ /^\s+$/) { setcell($text1, $lang1); }
+    if ($text1 && $text1 !~ /^\s+$/) {
+        my $introitus_unparsed_heading = $text1;
+        my $b_add_unparsed_introitus_heading = 0;
+        if ($introitus_unparsed_heading =~ /(#Introitus<BR>\n(.|\n)*)/i) {
+          # select the string from (including) the unparsed heading, until the end of the string
+          $introitus_unparsed_heading = $1;
+          # replace unparsed heading with correct heading
+          $introitus_unparsed_heading =~ s/#Introitus\<BR\>\n/\<FONT SIZE=+1 COLOR="red"\>\<B\>\<I\>Introitus\<\/I\>\<\/B\>\<\/FONT\>\n\<BR\>\n/; # fix for 2 February, Purification of Mary, where after the prefixed lines, the heading is not expanded. Hacky, might have to fix it properly
+          
+          if ($text1 =~ /((.|\n)*#Introitus<BR>\n)/) {  # split into two parts if unparsed Introitus heading is present
+            $text1 = $1;
+            $text1 =~ s/\#Introitus<BR>\n//; # remove duplicated unparsed Introitus heading
+          }
+          $b_add_unparsed_introitus_heading = 1;
+        }
+
+        if ($multipleheadingsinsinglesection == 0) {
+          setcell($text1, $lang1); 
+          if ($b_add_unparsed_introitus_heading == 1) {
+            $hnn_la++;
+            write_ordo($introitus_unparsed_heading, $fnn_la, $hnn_la, $lang1, $dnn); 
+            #setcell($introitus_unparsed_heading, $lang1); # should increment $dnn_alt (subheading counter)
+            print "wrote $fnn_la, $hnn_la, $lang1, $dnn\n\n$introitus_unparsed_heading\n\n";
+          }
+        }
+        else {
+          if (length($introitus_unparsed_heading)) {
+            print "unparsed Introitus heading in section with multiple headings!"
+          }
+          my $heading = $text1;
+          $heading =~ /^\<FONT SIZE\=\+1 COLOR\=\"red\"\>\<B\>\<I\>[a-zA-ZáæǽéíóúÁǼÆÉÍÓÚ ]*\<\/I\>\<\/B\>\<\/FONT\>\s+\<BR\>\s{1}/g; #just get the heading, not the whole text
+          write_prepend($&, $fnn_la, 1, $lang1, $dnn); #prepend the heading to the first text file (n_1.txt) after the heading desctriptor file (which is file n_0.txt)
+          
+          $heading =~ s/^\<FONT SIZE\=\+1 COLOR\=\"red\"\>\<B\>\<I\>[a-zA-ZáæǽéíóúÁǼÆÉÍÓÚ ]*\<\/I\>\<\/B\>\<\/FONT\>\s+\<BR\>\s{1}//;
+          setcell($heading, $lang1);
+          $multipleheadingsinsinglesection = 0;
+        }
+    }
+
+    #$keepnextpartinsamefileflag = 0;
 
     if ($Propers) {
       $glorianame_la = %glorianames{$lang1};
@@ -160,12 +223,35 @@ sub ordo {
       if ($mass_heading =~ /$credoname_la/) {
         $credoline_la = $fnn_la;
       }
+
+      $prefationame_la = %prefationames{$lang1};
+      if ($mass_heading =~ /$prefationame_la/) {
+        $prefatioline_la = $fnn_la;
+        #$keepnextpartinsamefileflag = 1;
+      }
+
+      #$hancigiturname_la = $hancigiturname;
+      #if ($mass_heading =~ /$hancigiturname_la/) {
+      #  $hancigiturline_la = $fnn_la;
+      #  $keepnextpartinsamefileflag = 1;
+      #}
+
+      #$communicantesname_la = $communicantesname;
+      #if ($mass_heading =~ /$communicantesname_la/) {
+      #  $communicantesline_la = $fnn_la;
+      #}
+
     }
 
     $fnn_la_last = $fnn_la;
     $hnn_la_last = $hnn_la;
-    $fnn_la += 1;
-    $hnn_la = 0;
+    #if ($keepinsamefileflag == 0) {
+      $fnn_la += 1;
+      $hnn_la = 0;
+    #} 
+    #else {
+    #  $hnn_la += 1; # keep in the same file, don't increase $fnn_la
+    #}
 
     if (!$only) {
       if ($Propers && $op_ver =~ /Tridentine 1570/ && $fnn_alt == 3 && $last_mass_heading =~ /Oratio/) { # try catch the case of normal 12 part propers, where the Lesson is omitted in th 1570 mass
@@ -184,8 +270,47 @@ sub ordo {
         #    $hnn_alt += 1; #PLL 18-06-2020         
         #  }
         #}
-        setcell($text2, $lang2); 
+        
+        my $introitus_unparsed_heading = $text2;
+        my $b_add_unparsed_introitus_heading = 0;
+        if ($introitus_unparsed_heading =~ /(#Introitus<BR>\n(.|\n)*)/i) {
+          # select the string from (including) the unparsed heading, until the end of the string
+          $introitus_unparsed_heading = $1;
+          # replace unparsed heading with correct heading
+          $introitus_unparsed_heading =~ s/#Introitus\<BR\>\n/\<FONT SIZE=+1 COLOR="red"\>\<B\>\<I\>Introitus\<\/I\>\<\/B\>\<\/FONT\>\n\<BR\>\n/; # fix for 2 February, Purification of Mary, where after the prefixed lines, the heading is not expanded. Hacky, might have to fix it properly
+          
+          if ($text2 =~ /((.|\n)*#Introitus<BR>\n)/) {  # select the original string up to the unparsed heading inclusive, and split into two subparts if unparsed Introitus heading is present
+            $text2 = $1;
+            $text2 =~ s/\#Introitus<BR>\n//; # remove duplicated unparsed Introitus heading
+          }
+  
+          $b_add_unparsed_introitus_heading = 1;
+        }
+
+        if ($multipleheadingsinsinglesection == 0) {
+          setcell($text2, $lang2); 
+          if ($b_add_unparsed_introitus_heading == 1) {
+            #setcell($introitus_unparsed_heading, $lang2);  # should increment $dnn_alt (subheading counter)
+            $hnn_alt++;
+            write_ordo($introitus_unparsed_heading, $fnn_alt, $hnn_alt, $lang2, $dnn); 
+          }
+        }
+        else {
+          if (length($introitus_unparsed_heading)) {
+            print "unparsed Introitus heading in section with multiple headings!"
+          }
+
+          my $heading = $text2;
+          $heading =~ /^\<FONT SIZE\=\+1 COLOR\=\"red\"\>\<B\>\<I\>[a-zA-ZáæǽéíóúÁǼÆÉÍÓÚ ]*\<\/I\>\<\/B\>\<\/FONT\>\s+\<BR\>\s{1}/g; #just get the heading, not the whole text
+          write_prepend($&, $fnn_alt, 1, $lang2, $dnn); #prepend the heading to the first text file (n_1.txt) after the heading desctriptor file (which is file n_0.txt)
+          $multipleheadingsinsinglesection = 0;
+
+          $heading =~ s/^\<FONT SIZE\=\+1 COLOR\=\"red\"\>\<B\>\<I\>[a-zA-ZáæǽéíóúÁǼÆÉÍÓÚ ]*\<\/I\>\<\/B\>\<\/FONT\>\s+\<BR\>\s{1}//;
+          setcell($heading, $lang2);
+        }
       }
+
+      #$keepnextpartinsamefileflag = 0;
 
       if ($Propers) {
         $glorianame_alt = %glorianames{$lang2};
@@ -197,12 +322,46 @@ sub ordo {
         if ($mass_heading_alt =~ /$credoname_alt/) {
           $credoline_alt = $fnn_alt;
         }
+
+        $prefationame_alt = %prefationames{$lang2};
+        if ($mass_heading_alt =~ /$prefationame_alt/) {
+          $prefatioline_alt = $fnn_alt;
+          #$keepnextpartinsamefileflag = 1;
+        }
+
+        #$hancigiturname_alt = $hancigiturname;
+        #if ($mass_heading_alt =~ /$hancigiturname_alt/) {
+        #  $hancigiturline_alt = $fnn_alt;
+        #  $keepnextpartinsamefileflag = 1;
+        #}
+
+        #$communicantesname_alt = $communicantesname;
+        #if ($mass_heading_alt =~ /$communicantesname_alt/) {
+        #  $communicantesline_alt = $fnn_la;
+        #}
+
       }
 
       $fnn_alt_last = $fnn_alt;
       $hnn_alt_last = $hnn_alt;
-      $fnn_alt += 1;
-      $hnn_alt = 0;
+
+
+      #my $skip_heading_2nd_feb_candles = ($dnn =~ /2\/2/ && $fnn_alt == 0 && $hnn_alt == 6) ? 1 : 0;
+
+      #my $skip_heading_2nd_feb_candles = ($fnn_alt == 0 && $hnn_alt == 5 && $dnn =~ /2\/2/) ? 1 : 0;
+      #if ($dnn =~ /2\/2/) {
+      #  print "--skip_heading_2nd_feb_candles = $skip_heading_2nd_feb_candles, $fnn_alt, $hnn_alt\n";
+      #}
+
+      #if ($keepinsamefileflag == 0) {
+      #if ($skip_heading_2nd_feb_candles == 0) {
+        $fnn_alt += 1;
+        $hnn_alt = 0;
+      #}
+      #} 
+      #else {
+      #  $hnn_alt += 1; # keep in the same file, don't increase $fnn_alt
+      #}
     }
 
     $paragraph_loop_count++;
@@ -255,7 +414,7 @@ sub resolve_refs {
   my $t = shift;
   my $lang = shift;
   my @t = split("\n", $t);
-  my $t = '';
+  my $t = ''; 
 
   #my $filenumber = 0;
   #my $dirname = "";
@@ -372,6 +531,39 @@ sub resolve_refs {
     elsif ($line =~ /^\s*\!\!(.*)/s) {
       my $l = $1; #$l appears to have the reading!
       my $suffix = '';
+      my $writeheading = 1;
+
+      if ($Propers) {
+        if ($lang =~ /Latin/i) {
+          if ($hnn_la > 0) { #more than one heading in this section
+            my $txt = $t;
+            $txt =~ s/\<BR\>\s*\<BR\>/\<BR\>/g;
+            if ($lang =~ /Latin/i) { $txt = spell_var($txt); }
+            if ($txt && $txt !~ /^\s+$/) { 
+              setcell($txt, $lang); 
+              $hnn_la_last = $hnn_la;
+              $hnn_la += 1;
+              $t = "";
+              $writeheading = 0;
+              $multipleheadingsinsinglesection = 1;
+            }
+          }
+        }
+        else {
+          if ($hnn_alt > 0) { #more than one heading in this section
+            my $txt = $t;
+            $txt =~ s/\<BR\>\s*\<BR\>/\<BR\>/g;
+            if ($txt && $txt !~ /^\s+$/) { 
+              setcell($txt, $lang); 
+              $hnn_alt_last = $hnn_alt;
+              $hnn_alt += 1;
+              $t = "";
+              $writeheading = 0;
+              $multipleheadingsinsinglesection = 1;
+            }
+          }
+        }
+      }
 
       #PLL 18-06-2020
       ##$endoutputtext = 1;
@@ -383,18 +575,44 @@ sub resolve_refs {
         $mass_heading = $l;
         $mass_heading =~ s/&nbsp;//;
         if ($Propers) {
-          write_ordo($mass_heading, $fnn_la, $hnn_la, $lang, $dnn); #PLL 17-06-2020
+          if (!($fnn_la == 4 & $hnn_la == 1 && $dnn =~ /11\/2\/[123]/)) { # hack to fix a problem with the Defunctorum mass, which was outputting an unwanted Sequentia heading at the start of the reading
+            if ($writeheading == 1) {
+              write_ordo($mass_heading, $fnn_la, $hnn_la, $lang, $dnn); #PLL 17-06-2020
+            }
+          }
           #$headingnumber += 1; #PLL 17-06-2020
         }
-        $hnn_la += 1; #PLL 18-06-2020
+        if (!($fnn_la == 4 & $hnn_la == 1 && $dnn =~ /11\/2\/[123]/)) { # hack to fix a problem with the Defunctorum mass, which was outputting an unwanted Sequentia heading at the start of the reading
+          if ($writeheading == 1) {
+            $hnn_la += 1; #PLL 18-06-2020
+          }
+        }
       }
       else {
         $mass_heading_alt = $l;
         $mass_heading_alt =~ s/&nbsp;//;
+
+        #my $skip_heading_2nd_feb_candles = ($fnn_alt == 0 && $hnn_alt == 5 && $dnn =~ /2\/2/) ? 1 : 0;
+        #if ($dnn =~ /2\/2/) {
+        #  print "skip_heading_2nd_feb_candles = $skip_heading_2nd_feb_candles, $fnn_alt, $hnn_alt\n";
+        #}
+        #
+        #if ($skip_heading_2nd_feb_candles == 1) {
+        #  $mass_heading_alt = "";
+        #}
+
         if ($Propers) {
-          write_ordo($mass_heading_alt, $fnn_alt, $hnn_alt, $lang, $dnn); #PLL 17-06-2020
+          if (!($fnn_alt == 4 & $hnn_alt == 1 && $dnn =~ /11\/2\/[123]/)) { #&& $skip_heading_2nd_feb_candles == 0) { # hack to fix a problem with the Defunctorum mass, which was outputting an unwanted Sequentia heading at the start of the reading
+            if ($writeheading == 1) {  # PLL-23-11-2021 check if Latin Mass has a new heading for this subsection as well, do not output heading if there is not a new one also in the Latin Mass corresponding subsection
+              write_ordo($mass_heading_alt, $fnn_alt, $hnn_alt, $lang, $dnn); #PLL 17-06-2020
+            }
+          }
         }
-        $hnn_alt += 1; #PLL 18-06-2020
+        if (!($fnn_alt == 4 & $hnn_alt == 1 && $dnn =~ /11\/2\/[123]/)) { #&& $skip_heading_2nd_feb_candles == 0) { # hack to fix a problem with the Defunctorum mass, which was outputting an unwanted Sequentia heading at the start of the reading
+          if ($writeheading == 1) {
+            $hnn_alt += 1; #PLL 18-06-2020
+          }
+        }
       }
       #$endoutputtext = 1;
       #outputordo($t, $lang);  
@@ -606,25 +824,27 @@ sub columnsel {
 
 #PLL 16-06-2020
 sub write_ordo {
-    my $outputtext = shift; # text
-    my $n = shift; # file number
-    my $m = shift; # file subpart number
-    my $lang = shift; # language
-    my $dirname = shift; # subdirectory
-    my $overwrite = shift; # whether to overwrite file if present
-    my $append = shift; # whether to clobber or append
+  my $outputtext = shift; # text
+  my $n = shift; # file number
+  my $m = shift; # file subpart number
+  my $lang = shift; # language
+  my $dirname = shift; # subdirectory
+  my $overwrite = shift; # whether to overwrite file if present
+  my $append = shift; # whether to clobber or append
 
-    if ($already_output_latin && $lang eq "Latin") {
-      return;
-    }
+  if ($already_output_latin && $lang eq "Latin") {
+    return;
+  }
 
-    my $tldname = %tldnames{$lang};
+  my $tldname = %tldnames{$lang};
 
-    my $path = "./output/$op_dir/" . $tldname . "/" . $dirname;
-    checkdir($path);
+  my $path = "./output/$op_dir/" . $tldname . "/" . $dirname;
+  checkdir($path);
 
   if ($output_all_data) {
     my $fname = $path . "/" . $n . "_" . $m . "_" . $tldname . ".txt";
+
+    #print "write_ordo() " . $fname;
 
     if (!$overwrite && -e $fname) {
       return; # don't output text more than once (now each whole subheading text is output at once rather than in bits as before)
@@ -640,6 +860,41 @@ sub write_ordo {
     print DATA $outputtext;
     close(DATA);
   }
+}
+
+sub write_prepend {
+    my $outputtext = shift; # text
+    my $n = shift; # file number
+    my $m = shift; # file subpart number
+    my $lang = shift; # language
+    my $dirname = shift; # subdirectory
+
+    if ($already_output_latin && $lang eq "Latin") {
+      return;
+    }
+
+    my $tldname = %tldnames{$lang};
+
+    my $path = "./output/$op_dir/" . $tldname . "/" . $dirname;
+    checkdir($path);
+
+    my $fname = $path . "/" . $n . "_" . $m . "_" . $tldname . ".txt";
+
+    #print "write_prepend() " . $fname;
+
+    my $content;
+    if (open(my $fh, '<', $fname))
+    {
+        binmode($fh, ':encoding(utf-8)');
+        local $/;
+        $content = <$fh>;
+    }
+    close($fh);
+
+    open(DATA, ">$fname") or die "Couldn't open file $fname!";
+    binmode(DATA, ':encoding(utf-8)');
+    print DATA $outputtext . $content;
+    close(DATA);
 }
 
 sub write_head {

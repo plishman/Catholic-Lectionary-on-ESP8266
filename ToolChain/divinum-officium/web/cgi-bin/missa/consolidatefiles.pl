@@ -33,6 +33,8 @@ sub ScanDirectory{
 
     my ($startdir) = &cwd; # keep track of where we began
 
+    #print("workdir=[$workdir] outputdirroot=[$outputdirroot] startdir=[$startdir]\n\n");
+
     chdir($workdir) or die "Unable to enter dir $workdir:$!\n";
     opendir(DIR, ".") or die "Unable to open $workdir:$!\n";
     my @names = readdir(DIR) or die "Unable to read $workdir:$!\n";
