@@ -35,8 +35,9 @@ Arabic ligaturization is supported, and in the SD card archive an Arabic Bible i
 <p>
 The web configuration interface has been rewritten and styled:
 </p>
-![](./webef.webp)
-![](./webno.webp)
+
+![EF](./webef.jpg)
+![NO](./webno.jpg)
 
 <h3>Embedded FTP Server</h3>
 <p>
