@@ -745,9 +745,9 @@ void GxGDEW042Z15::_wakeUp(void)
   if (_rst >= 0)
   {
     digitalWrite(_rst, 0);
-    delay(1000);          // was 750 - lengthened due to slight instability when using grey/red level lookup tables 
+    delay(1250);          // was 750 - lengthened due to slight instability when using grey/red level lookup tables 
     digitalWrite(_rst, 1);
-    delay(750);           // was 500
+    delay(850);           // was 500
   }
   IO.writeCommandTransaction(0x06); //boost
   IO.writeDataTransaction (0x17);

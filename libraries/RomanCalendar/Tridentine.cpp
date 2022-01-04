@@ -2694,6 +2694,8 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			}
 
 			HolyDayOfObligation = true;
+			
+			ImageFilename = F("Nativity");
 			break;
 		}
 
