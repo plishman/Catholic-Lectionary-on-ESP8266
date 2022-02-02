@@ -1387,6 +1387,15 @@ bool DiskFont::getCharInfo(String ch, DiskFont_FontCharInfo* &pfci) {
 
 
 bool DiskFont::getCharInfo(int codepoint, uint16_t* blockToCheckFirst, DiskFont_FontCharInfo* &pfci) {
+	if (codepoint == 9) {	//PLL-02-02-2022
+		DEBUG_PRT.println(F("[tab in input converted to a space]"));
+		codepoint = 32; 
+	}
+	else if (codepoint < 32) {
+		DEBUG_PRT.println(F("[ignoring control char in input]"));
+		return false;
+	}						//PLL-02-02-2022
+	
 	//DEBUG_PRT.print(F("@"));
 	//DEBUG_PRT.print(String(codepoint));
 	//DEBUG_PRT.print(F("@"));
