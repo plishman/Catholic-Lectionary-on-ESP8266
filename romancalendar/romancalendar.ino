@@ -3076,6 +3076,10 @@ void LatinMassPropers(time64_t& date,
             (ts.Hour == 8) ? 9 : 0;
         }
 
+        if (ts.Hour == 19 && bHasImage && waketime == 0) {
+          waketime = 20;
+        }
+
         if (bHasImage && (ts.Hour >= 0 && ts.Hour <= 2 || ts.Hour >= 20)) {
           GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
           bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
@@ -3554,7 +3558,7 @@ void LatinMassPropers(time64_t& date,
       GetImageFilenameAndWakeTime(votiveimagefilename, ts.Hour, votiveimagecount, waketime);
       bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
     }
-    else if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8 && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) || (!b_is_Good_Friday && !b_is_Palm_Sunday && ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+    else if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8 && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) || (!b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday && ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
       GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
       bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
     }
