@@ -2960,7 +2960,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	bool bIsLadyDay = issameday(datetime, LadyDay(year));
 	if (bIsLadyDay) {
 		FileDir_Saint = String(F("/3/25/")); 	// Lady Day is moveable, but get the devotional image and Mass Propers from March 25th, it's default date
-		SaintImageFilename = String(F("/3/25"));
+		SaintImageFilename = String(F("/3/25-3"));
 	}
 	else {
 		if (month_of_year == 3 && day_of_month == 25) { // is 25th of March, but not Lady Day, so it has been moved
