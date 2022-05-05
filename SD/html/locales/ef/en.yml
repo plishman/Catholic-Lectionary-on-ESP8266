@@ -1,0 +1,32 @@
+en:
+  weekday:
+    '0': Sunday
+    '1': Monday
+    '2': Tuesday
+    '3': Wednesday
+    '4': Thursday
+    '5': Friday
+    '6': Saturday
+  month:
+    '1': Jan
+    '2': Feb
+    '3': Mar
+    '4': Apr
+    '5': May
+    '6': Jun
+    '7': Jul
+    '8': Aug
+    '9': Sep
+    '10': Oct
+    '11': Nov
+    '12': Dec
+  date: '%{d} %{mmm} %{yyyy}'
+  ordinals: english
+  colour:
+    violet: violet
+    white: white
+    green: green
+    red: red
+  holy_day_of_obligation: <b>+</b>
+  or: or
+  ellipsis: [..]

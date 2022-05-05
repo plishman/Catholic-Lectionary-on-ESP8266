@@ -1,6 +1,6 @@
 #include <RCGlobals.h>
 // Catholic Lectionary on ESP
-// Copyright (c) 2017-2020 Philip Lishman, Licensed under GPL3, see LICENSE
+// Copyright (c) 2017-2022 Philip Lishman, Licensed under GPL3, see LICENSE
 
 // Built with NodeMCU1.0(ESP12E module) config (Tools->Board) Using ESP8266 Community version 2.4.0 (Tools->Board->Boards Manager)
 // Upload speed 921600
@@ -602,7 +602,7 @@ time_t fsTimeStampCallback() {
   #if TIME_NATIVE_64BIT == 0
     time_t t = now32();
   #else
-    time_t t = now();
+    time_t t = now(); // UTC
   #endif
 
   DEBUG_PRT.printf("fsTimeStampCallback(): %02d/%02d/%04d %02d:%02d:%02d", day(t), month(t), year(t), hour(t), minute(t), second(t));
@@ -945,7 +945,8 @@ void clock_battery_test() {
 time64_t timeProvider()
 {
   time64_t t;
-  Config::getLocalDateTime(&t);
+  //Config::getLocalDateTime(&t);
+  Config::getDateTime(&t); //PLL-02-05-2022 Use UTC, convert to Local time when needed
   return t;
 }
 
@@ -1032,10 +1033,22 @@ void loop(void) {
     //time64_t date = timeserver.local_datetime();
     //time64_t date;
     //Config::getLocalDateTime(&date);
-    time64_t date = now();
-
-    roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
+    
+    time64_t UTCdate = now(); // now() now returns UTC rather than Local time
+    
+    roundupdatetohour(UTCdate); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
                      // will round to the hour.
+    
+    time64_t date = UTCdate;
+    bool b_isDST = false;
+    
+    if (!Config::getLocalDateTime(&date, &b_isDST, false)) { // convert date to Local date/time
+      DEBUG_PRT.println(F("getLocalDateTime() returned false: Using UTC date/time"));
+      date = UTCdate; // if DST settings are invalid, use UTC date/time
+    }
+    
+    //roundupdatetohour(date); // the esp8266 wake timer is not very accurate - about +-3minutes per hour, so if the date is within 5 mins of the hour, close to an hour, 
+    //                 // will round to the hour.
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1214,7 +1227,7 @@ void loop(void) {
           rtcData.data.wake_hour_counter = latinmass_custom_waketime - ts.Hour;
       }
     }
-    
+
     DEBUG_PRT.printf("Next reading is in %d hour(s)\n", rtcData.data.wake_hour_counter); 
 
     Config::writeRtcMemoryData(rtcData);        
@@ -1420,7 +1433,7 @@ void SleepFor(int hours, int minutes, int seconds) {
     //time64_t date;
     //Config::getLocalDateTime(&date);
 
-    time64_t date = now();
+    time64_t date = now(); //UTC
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1462,7 +1475,7 @@ void SleepForHours(int num_hours) {
     //time64_t date;
     //Config::getLocalDateTime(&date);
 
-    time64_t date = now();
+    time64_t date = now(); //UTC date/time
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1485,7 +1498,7 @@ void SleepUntilStartOfHour() {
     //time64_t date;
     //Config::getLocalDateTime(&date);
 
-    time64_t date = now();
+    time64_t date = now(); //UTC
     
     tmElements_t ts;
     breakTime(date, ts);
@@ -1494,7 +1507,7 @@ void SleepUntilStartOfHour() {
 
     uint32_t sleepduration_minutes = (60 - ts.Minute); // should wake up at around 10 minutes past the hour (the sleep timer is not terribly accurate!)
     if (sleepduration_minutes <= 7) { // if only a few minutes before the top of the hour, round it up to the next hour and skip the hour plus the difference
-      sleepduration_minutes += 60;  // this can occur because the wake timer is inaccurate (+- about 3 minutes per hour). 
+      sleepduration_minutes += 60;  // this can occur because the wake timer is inaccurate (+- about 3 minutes per hour).
       hourskip = 1; // for the debug output, so that the correct hour is output if the current hour is rounded up
     }
     

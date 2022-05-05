@@ -1,0 +1,32 @@
+la:
+  weekday:
+    '0': Dominica
+    '1': Feria secunda
+    '2': Feria tertia
+    '3': Feria quarta
+    '4': Feria quinta
+    '5': Feria sexta
+    '6': Sabbato
+  month:
+    '1': Ian.
+    '2': Febr.
+    '3': Mart.
+    '4': Apr.
+    '5': Mai.
+    '6': Iun.
+    '7': Iul.
+    '8': Aug.
+    '9': Sept.
+    '10': Oct.
+    '11': Nov.
+    '12': Dec.
+  date: '%{d} %{mmm} %{yyyy}'
+  ordinals: latin
+  colour:
+    violet: violaceus # sc. color
+    white: albus
+    green: viridis
+    red: rubeus
+  holy_day_of_obligation: <b>+</b>
+  or: aut
+  ellipsis: [..]

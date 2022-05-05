@@ -1,5 +1,8 @@
 #include "RCConfig.h"
 #include "DebugPort.h"
+
+//#ifdef _TEST_CONFIG
+#ifndef _WIN32
 #include "RCGlobals.h"
 #include "SD.h"
 
@@ -558,11 +561,11 @@ void Config::StopServer( void ) {
 //Config::~Config() {
 //}
 
+#endif // ifdef _WIN32
 
 bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast) {
 	return SaveConfig(tz, lect_num, debug_mode, epdcontrast, 0, 0, 0, 0, 0, 0, "0.0");
 }
-
 
 bool Config::SaveConfig(String tz, String lect_num, String debug_mode, String epdcontrast,
 						uint32_t dstStartMonth, uint32_t dstStartDay, uint32_t dstStartHour,
@@ -706,7 +709,14 @@ uint16_t Config::GetEPDContrast() {
   }
 }
 
+
+#ifdef _WIN32
+config_t Config::flashData = {0};
+#endif
+
+
 void Config::dump_config(config_t& c) {
+#if _DUMP_CONFIG
 	DEBUG_PRT.print(F("c.data.timezone_offset:\t")); 			DEBUG_PRT.println(String(c.data.timezone_offset));
 	DEBUG_PRT.print(F("c.data.lectionary_config_number:\t")); 	DEBUG_PRT.println(String(c.data.lectionary_config_number));
 //	DEBUG_PRT.print(F("c.data.debug_on:\t")); 					DEBUG_PRT.println(String(c.data.debug_on));
@@ -724,6 +734,16 @@ void Config::dump_config(config_t& c) {
 	DEBUG_PRT.print(F("c.data.epd_contrast:\t")); 				DEBUG_PRT.println(String(c.data.epd_contrast));
 	
 	DEBUG_PRT.print(F("\nc.crc32:\t")); 						DEBUG_PRT.println(String(c.crc32, HEX));
+#endif
+}
+
+bool Config::DstIsValid() {
+	config_t c = { 0 };
+	if (!Config::GetConfig(c)) {
+		return false;
+	}
+
+	return DstIsValid(c);
 }
 
 bool Config::DstIsValid(config_t& c) {
@@ -763,6 +783,8 @@ bool Config::GetConfig(config_t& c) {
 //	  return true;
 //  }
   
+  c = { 0 }; // PLL-21-04-2022 make sure don't return uninitialized data, since saveConfig preserves fields which have not been specified when updating the config
+
   DEBUG_PRT.println(F("Config: EEPROM checksum wrong or uninitialized"));
   return false;
 }
@@ -809,6 +831,7 @@ bool Config::IsNumeric(String str) {
     return true;
 }
 
+#ifndef _WIN32
 //https://github.com/esp8266/Arduino/issues/1539
 void Config::storeStruct(void *data_source, size_t size)
 {
@@ -830,6 +853,21 @@ void Config::loadStruct(void *data_dest, size_t size)
         ((char *)data_dest)[i] = data;
     }
 }
+#else
+void Config::storeStruct(void *data_source, size_t size)
+{
+	config_t* ds = (config_t*)data_source;
+	
+	Config::flashData = *ds;
+}
+
+void Config::loadStruct(void *data_dest, size_t size)
+{
+	config_t* dd = (config_t*)data_dest;
+
+	*dd = Config::flashData;
+}
+#endif
 
 bool Config::ClockWasReset() {
 	bool clockwasreset = false;
@@ -845,7 +883,7 @@ bool Config::getDateTime(time64_t* t) {
 
 bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   clockwasreset = false;
-
+#ifndef _WIN32
   bool ok = false;
   config_t c = {0};
 
@@ -858,7 +896,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   uint8_t bcode = 0; 
   
   buf[0] = 0; // start at register 0 in the ds3231
-  
+
   brzo_i2c_start_transaction(DS3231_I2C_ADDR, I2CSerial.SCL_speed); // 104 is DS3231 device address
     brzo_i2c_write(buf, 1, true);
     brzo_i2c_read(buf, 7, true);
@@ -883,7 +921,7 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
   bool century_overflowed = ((buf[5] & 0x80) != 0);
   
   if (day == 1 && date == 1 && month == 1 && year == 0 && hour == 0 && minute == 0 && second < 10) clockwasreset = true; // assume clock was reset (by power failure etc) if the values read are the same as the reset values (from DS3231 datasheet)
-  
+
   DEBUG_PRT.printf("DS3231 Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", date, month, year, hour, minute, second);
 
   //DEBUG_PRT.printf("-1-");
@@ -945,16 +983,33 @@ bool Config::getDateTime(time64_t* t, bool& clockwasreset) {
 	  setDateTime(*t);
   }
  
-  DEBUG_PRT.printf("UTC Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
+  DEBUG_PRT.printf("getDateTime(): UTC Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
   
   if (*t < 3600 * 24 * 365) return false; // need some overhead. The liturgical calendar starts in 1970 (time_t value == 0), but the first season (Advent) begins in 1969, 
 											// which is outside the range of a time64_t value, and will occur in calculations for year 1970 if not trapped
 
   
   //DEBUG_PRT.printf("-4-");
+#else //if _WIN32
+  *t = now();
+
+  tmElements_t tm;
+  breakTime(*t, tm);
+
+  DEBUG_PRT.printf("getDateTime(): UTC Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second);
+#endif 
 
   return true;
 }
+
+bool Config::isDSTfromUTC(time64_t t) {
+	bool b_isdst = false;
+
+	getLocalDateTime(&t, &b_isdst, false);
+
+	return b_isdst;
+}
+
 
 bool Config::isDST() {
 	time64_t t;
@@ -965,6 +1020,13 @@ bool Config::isDST() {
 	return b_isdst;
 } 
 
+// nb. var t is a Local Date/Time value, not UTC (UTC does not have timezone offset or DST offset applied)
+bool Config::isDST(time64_t t) {
+	bool b_is_dst = t >= dstStart(t) && t < dstEnd(t); // clocks go forward at dstStart - dstOffset o'clock, and back at dstEnd o'clock
+	return b_is_dst;
+}
+
+
 int Config::dstOffset() {
 	config_t c = {0};
 	if (!Config::GetConfig(c)) {
@@ -974,29 +1036,177 @@ int Config::dstOffset() {
 	return (int)(c.data.dst_offset * 3600.0);
 }
 
-bool Config::getLocalDateTime(time64_t* t) { 
-	bool isdst = false;
-	
-	return getLocalDateTime(t, &isdst);
+time64_t Config::dstStart(time64_t curr_t) {
+	config_t c = { 0 };
+	if (!Config::GetConfig(c)) {
+		return 0;
+	}
+
+	if (!(curr_t >= 0)) {
+		DEBUG_PRT.println(F("dstStart(): curr_t is invalid"));
+	}
+
+	if (!DstIsValid(c)) {
+		DEBUG_PRT.println(F("dstStart(): DST settings invalid"));
+		return 0;
+	}
+
+	tmElements_t ts;
+	breakTime(curr_t, ts);
+
+	tmElements_t dst_start = { 0 };
+
+	dst_start.Second = 0;
+	dst_start.Minute = 0;
+	dst_start.Hour = c.data.dst_start_hour;
+	dst_start.Day = c.data.dst_start_day;
+	dst_start.Month = c.data.dst_start_month;
+	dst_start.Year = ts.Year;
+
+	bool b_southern_hemisphere = true;
+
+	if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+		b_southern_hemisphere = false;
+		if (ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day && ts.Hour >= c.data.dst_end_hour) {
+			dst_start.Year++; // start of dst is in next year
+			DEBUG_PRT.println(F("dstStart(): dst_start is in next year (northern hemisphere)"));
+		}
+	}
+
+	time64_t t_dst_start = makeTime(dst_start);
+
+
+	tmElements_t dst_end = { 0 };
+
+	dst_end.Second = 0;
+	dst_end.Minute = 0;
+	dst_end.Hour = c.data.dst_end_hour;
+	dst_end.Day = c.data.dst_end_day;
+	dst_end.Month = c.data.dst_end_month;
+	dst_end.Year = ts.Year;
+
+	if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+		if (ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day && ts.Hour >= c.data.dst_start_hour) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+			dst_end.Year++; // end of dst is in next year						 //	next year
+			DEBUG_PRT.println(F("dstStart(): dst_end is in next year (southern hemisphere)"));
+		}
+	}
+
+	time64_t t_dst_end = makeTime(dst_end);
+
+
+	if (b_southern_hemisphere && t_dst_start > curr_t && t_dst_end > curr_t) {
+		// both the calculated start and end are after *t, so subtract a year from start
+		DEBUG_PRT.println(F("dstStart(): both the calculated start and end are after curr_t, so subtract a year from start"));
+		dst_start.Year--;
+		t_dst_start = makeTime(dst_start);
+	}
+
+	DEBUG_PRT.printf("dstStart(): t_dst_start = %02d/%02d/%04d %02d:%02d:%02d\n", dst_start.Day, dst_start.Month, tmYearToCalendar(dst_start.Year), dst_start.Hour, dst_start.Minute, dst_start.Second);
+	return t_dst_start;
 }
 
-bool Config::getLocalDateTime(time64_t* t, bool* isdst) { 
+time64_t Config::dstEnd(time64_t curr_t) {
+	config_t c = { 0 };
+	if (!Config::GetConfig(c)) {
+		return 0;
+	}
+
+	if (!(curr_t >= 0)) {
+		DEBUG_PRT.println(F("dstEnd(): curr_t is invalid"));
+	}
+
+	if (!DstIsValid(c)) {
+		DEBUG_PRT.println(F("dstEnd(): DST settings invalid"));
+		return 0;
+	}
+
+	tmElements_t ts;
+	breakTime(curr_t, ts);
+
+	tmElements_t dst_end = { 0 };
+
+	dst_end.Second = 0;
+	dst_end.Minute = 0;
+	dst_end.Hour = c.data.dst_end_hour;
+	dst_end.Day = c.data.dst_end_day;
+	dst_end.Month = c.data.dst_end_month;
+	dst_end.Year = ts.Year;
+
+	bool b_southern_hemisphere = false;
+
+	if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+		b_southern_hemisphere = true;
+		if (ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day && ts.Hour >= c.data.dst_start_hour) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+			dst_end.Year++; // end of dst is in next year						 //	next year
+			DEBUG_PRT.println(F("dstEnd(): dst_end is in next year (southern hemisphere)"));
+		}
+	}
+
+	time64_t t_dst_end = makeTime(dst_end);
+
+
+	tmElements_t dst_start = { 0 };
+
+	dst_start.Second = 0;
+	dst_start.Minute = 0;
+	dst_start.Hour = c.data.dst_start_hour;
+	dst_start.Day = c.data.dst_start_day;
+	dst_start.Month = c.data.dst_start_month;
+	dst_start.Year = ts.Year;
+
+
+	if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+		if (ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day && ts.Hour >= c.data.dst_end_hour) {
+			dst_start.Year++; // start of dst is in next year
+			DEBUG_PRT.println(F("dstEnd(): dst_start is in next year (northern hemisphere)"));
+		}
+	}
+
+	time64_t t_dst_start = makeTime(dst_start);
+
+	if (b_southern_hemisphere && t_dst_start < curr_t && t_dst_end < curr_t) {
+		// both the calculated start and end are after *t, so subtract a year from start
+		DEBUG_PRT.println(F("dstEnd(): both the calculated start and end are before curr_t, so add a year to end"));
+		dst_end.Year++;
+		t_dst_end = makeTime(dst_end);
+	}
+
+	DEBUG_PRT.printf("dstEnd(): t_dst_end = %02d/%02d/%04d %02d:%02d:%02d\n", dst_end.Day, dst_end.Month, tmYearToCalendar(dst_end.Year), dst_end.Hour, dst_end.Minute, dst_end.Second);
+	return t_dst_end;
+}
+
+
+int Config::tzOffset() {
+	config_t c = { 0 };
+	if (!Config::GetConfig(c)) {
+		return 0;
+	}
+
+	return (int)(c.data.timezone_offset * 3600.0);
+}
+
+// *t will be left unchanged if DST settings are invalid
+bool Config::getUniversalDatetimeFromLocalDatetime(time64_t* t) {
+	DEBUG_PRT.print(F("getUniversalDatetimeFromLocalDatetime() "));
+
+	time64_t dt = *t;
+
 	tmElements_t ts = {0};
 
 	config_t c = {0};
 	if (!Config::GetConfig(c)) {
-		*t = 0;
-		return false;
+		return false;	// *t left unchanged if no config
 	}
    
-	bool bResult = Config::getDateTime(t);
+	bool b_time_is_valid = dt > 0;
   
 	if (DstIsValid(c)) {
-		if (bResult) {
+		if (b_time_is_valid) {
 			//DEBUG_PRT.printf("(int)(c.data.timezone_offset * 3600.0)=%d\n", (int)(c.data.timezone_offset * 3600.0));
-			*t += (int)(c.data.timezone_offset * 3600.0);	  	
+			//*t += (int)(c.data.timezone_offset * 3600.0);	  	
 	  
-			breakTime(*t, ts);
+			breakTime(dt, ts);
 			// very basic DST support. DST start and end dates are provided by Javascript calculations in the config.htm web page, but in some jurisdictions these dates change from year to 
 			// year, for example the change is made on the last Sunday of a month rather than the same date each year. In these jurisdictions, the DST compensation will likely be wrong in the 
 			// years after the year in which the config.htm page was last used to set the time. This is easily corrected though by using the configuration interface again - this will need to
@@ -1023,15 +1233,146 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 				dst_end.Month    = c.data.dst_end_month;
 				dst_end.Year     = ts.Year; 
 
-				
+				int dst_offset = (int)(c.data.dst_offset * 3600.0);
+
+
 				if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
-					if (c.data.dst_end_month < ts.Month && ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+					if (ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day && ts.Hour >= c.data.dst_start_hour) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
+						dst_end.Year++; // end dst month is in next year						 //	next year
+						DEBUG_PRT.print(F("dst_end is in next year (southern hemisphere): "));
+					}
+				}
+				else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
+					if (ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day && ts.Hour >= c.data.dst_end_hour) {
+						dst_start.Year++; // start dst month is in next year
+						DEBUG_PRT.print(F("dst_start is in next year (northern hemisphere): "));
+					}			
+				}
+				
+				time64_t t_dst_start = makeTime(dst_start);
+				time64_t t_dst_end = makeTime(dst_end);
+				
+				DEBUG_PRT.print("\x1B[93m ");
+				Config::print_time(t_dst_start);
+				Config::print_time(dt);
+				Config::print_time(t_dst_end, false);
+				DEBUG_PRT.print(F(" "));
+				Config::print_time(t_dst_end - dst_offset);
+				DEBUG_PRT.print(" \033[0m");
+
+				if (dt >= t_dst_start && dt < t_dst_end) { // dst in effect if so, so remove it (if it the time does not fall within the skipped hour(s) at the start of DST
+					dt -= dst_offset;
+
+					print_time(dt);
+
+					if (dt >= t_dst_end - dst_offset) {	
+						// NB, since the hour(s) are duplicated for <dstOffset> hour(s) at the end of DST, there is period of time (the duplicated hour(s)) 
+						// for which the UTC time cannot be reliably computed, since one doesn't know if it the the first or second of the duplicated periods
+						dt += dst_offset;
+						DEBUG_PRT.print(F(" (DST->Standard Time) "));
+					}
+					else {
+						DEBUG_PRT.println(F("DST in effect, removing DST offset and timezone offset"));
+					}
+
+				}
+				else {
+					DEBUG_PRT.println(F("Standard Time in effect, only need to remove timezone offset"));
+				}
+			}
+			else {
+				DEBUG_PRT.println(F("DST is not required in this locale, removing timezone offset only")); // timezone offset will still be applied
+			}
+			int timezone_offset = (int)(c.data.timezone_offset * 3600.0);
+			dt -= timezone_offset;	// remove timezone offset
+			*t = dt;
+		}
+	}
+	else {
+		//*isdst = false; // dst settings invalid
+		//if DST settings are invalid, can just return the same datetime as passed in
+		// *t left unchanged
+		return false;
+	}
+	
+	breakTime(dt, ts);
+	DEBUG_PRT.printf("getUniversalDatetimeFromLocalDatetime() UTC Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+
+	*t = dt;
+
+	return true;
+}
+
+
+bool Config::getLocalDateTime(time64_t* utc_time) { 
+	bool isdst = false;
+	
+	return getLocalDateTime(utc_time, &isdst);
+}
+
+
+// if getLocalDateTime returns false *t will be 0 if no config is set (EEPROM checksum error), 
+// or unchanged if the DST settings are invalid/unset (but the EEPROM checksum is good)
+bool Config::getLocalDateTime(time64_t* t, bool* isdst, bool b_use_current_time) { 
+	tmElements_t ts = {0};
+
+	config_t c = {0};
+	if (!Config::GetConfig(c)) {
+		*t = 0;
+		return false;
+	}
+   
+	bool bResult = (b_use_current_time ? Config::getDateTime(t) : *t >= 0); // PLL-11-04-2022 if b_use_current time is true (default parameter value is true), use the current time, otherwise, use the passed in time value in *t
+  
+	if (DstIsValid(c)) {
+		if (bResult) {
+			//DEBUG_PRT.push();
+			//DEBUG_PRT.on();
+			int timezone_offset = (int)(c.data.timezone_offset * 3600.0);
+			//DEBUG_PRT.printf("(int)(c.data.timezone_offset * 3600.0)=%d\n", (int)(c.data.timezone_offset * 3600.0));
+			Config::print_time("UTC datetime passed in: ", *t);
+			*t += timezone_offset;	  	
+	  
+			breakTime(*t, ts);
+			// very basic DST support. DST start and end dates are provided by Javascript calculations in the config.htm web page, but in some jurisdictions these dates change from year to 
+			// year, for example the change is made on the last Sunday of a month rather than the same date each year. In these jurisdictions, the DST compensation will likely be wrong in the 
+			// years after the year in which the config.htm page was last used to set the time. This is easily corrected though by using the configuration interface again - this will need to
+			// done at least once per year in order to keep the DST start and end dates current. (No user input is required in the configuration page, just click on the form submit button and 
+			// the new start and end dates for DST will automatically be recorded.)
+			//
+			dump_config(c);
+			
+			if (c.data.dst_offset != 0.0) {	
+				/*
+				tmElements_t dst_start = {0};
+				tmElements_t dst_end = {0};
+
+				dst_start.Second = 0;
+				dst_start.Minute = 0;
+				dst_start.Hour   = c.data.dst_start_hour;
+				dst_start.Day    = c.data.dst_start_day;
+				dst_start.Month  = c.data.dst_start_month;
+				dst_start.Year   = ts.Year;	
+
+				dst_end.Second   = 0;
+				dst_end.Minute   = 0;
+				dst_end.Hour     = c.data.dst_end_hour;
+				dst_end.Day      = c.data.dst_end_day;
+				dst_end.Month    = c.data.dst_end_month;
+				dst_end.Year     = ts.Year; 
+
+				int dst_offset = (int)(c.data.dst_offset * 3600.0);
+				bool b_southern_hemisphere = false;
+
+				if (c.data.dst_start_month > c.data.dst_end_month) {// in southern hemisphere
+					b_southern_hemisphere = true;
+					if (ts.Month >= c.data.dst_start_month && ts.Day >= c.data.dst_start_day && ts.Hour >= c.data.dst_start_hour) { // ts.Month will be >= dst start month during dst, which is when the end of dst is in the 
 						dst_end.Year++; // end dst month is in next year						 //	next year
 						DEBUG_PRT.printf("dst_end is in next year (southern hemisphere)\n");
 					}
 				}
 				else if (c.data.dst_start_month < c.data.dst_end_month) { // in northern hemisphere
-					if (c.data.dst_start_month < ts.Month && ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day) {
+					if (ts.Month >= c.data.dst_end_month && ts.Day >= c.data.dst_end_day && ts.Hour >= c.data.dst_end_hour) {
 						dst_start.Year++; // start dst month is in next year
 						DEBUG_PRT.printf("dst_start is in next year (northern hemisphere)\n");
 					}			
@@ -1039,13 +1380,42 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 				
 				time64_t t_dst_start = makeTime(dst_start);
 				time64_t t_dst_end = makeTime(dst_end);
-				
-				if (*t > t_dst_start && *t < t_dst_end) { // dst in effect if so, so add it on
+				*/
+
+				int dst_offset = (int)(c.data.dst_offset * 3600.0);
+				time64_t t_dst_start = dstStart(*t);
+				time64_t t_dst_end = dstEnd(*t);
+				/*
+				if (b_southern_hemisphere && t_dst_start > *t && t_dst_end > *t) {
+					// both the calculated start and end are after *t, so subtract a year from start
+					DEBUG_PRT.println(F("both the calculated start and end are after *t, so subtract a year from start"));
+					dst_start.Year--;
+					t_dst_start = makeTime(dst_start);
+				}
+				*/
+				Config::print_time("DST Start: ", t_dst_start);
+				Config::print_time("DST Start - DST offset (time when clocks go forward)", t_dst_start - dst_offset);
+				Config::print_time("DST end: ", t_dst_end);
+				//DEBUG_PRT.pop();
+
+				if (*t >= t_dst_start - dst_offset && *t < t_dst_end) { // dst in effect if so, so add it on
 					
-					*t += (int)(c.data.dst_offset * 3600.0);	  
+					if (*t < t_dst_start && *t >= t_dst_start - dst_offset) {
+						DEBUG_PRT.println(F("Clocks go forward Standard Time->DST"));
+					}
+
+					*t += dst_offset;
 					*isdst = true;
 					
-					DEBUG_PRT.println(F("DST in effect"));
+					if (*t >= t_dst_end) {
+						*t -= dst_offset;
+						*isdst = false;
+
+						DEBUG_PRT.println(F("Clocks go back DST->Standard Time"));
+					}
+					else {
+						DEBUG_PRT.println(F("DST in effect"));
+					}
 				}
 				else {
 					*isdst = false;
@@ -1064,13 +1434,14 @@ bool Config::getLocalDateTime(time64_t* t, bool* isdst) {
 	}
 	
 	breakTime(*t, ts);
-	DEBUG_PRT.printf("Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+	DEBUG_PRT.printf("getLocalDateTime(): Local Datetime = %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 
 	return bResult;
 }
 
 
 bool Config::setDateTime(time64_t t) {
+#ifndef _WIN32
   tmElements_t tm;
 
   breakTime(t, tm);
@@ -1109,6 +1480,10 @@ bool Config::setDateTime(time64_t t) {
 	DEBUG_PRT.print(F("setDateTime() c.data.century="));
 	DEBUG_PRT.println(String(c.data.century));
   }
+#else // if _WIN32
+	setTime(t);
+#endif
+
   return true;
 }
 
@@ -1119,7 +1494,7 @@ bool Config::setAlarmLocalTime(time64_t t, uint8_t alarm_number, uint8_t flags, 
 		t -= (int)(c.data.timezone_offset * 3600.0); // subtract timezone offset from local time
 		 
 		if (DstIsValid(c)) {
-			if (isDST()) t -= dstOffset();			 // and subtract the dst offset (if applicable)
+			if (isDST(t)) t -= dstOffset();			 // and subtract the dst offset (if applicable) PLL-01-05-2022 NB. Bug (fixed), should get the DST setting from the time64_t value passed in. This call will get it from now()
 		}
 		else {
 			DEBUG_PRT.println(F("Config::setAlarmLocalTime() DST setting is not valid, so not adjusting alarm for local DST"));			
@@ -1132,10 +1507,20 @@ bool Config::setAlarmLocalTime(time64_t t, uint8_t alarm_number, uint8_t flags, 
 	return setAlarm(t, alarm_number, flags, enable_alarm);
 }
 
-
+//Set Alarm (UTC)
 bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm) {
 	//if (isDST()) t-=dstOffset();
+	
+	print_time_utc(F("setAlarm() t="), t, false, false);
+	print_time_utc(F(" (Local time: "), t, true, false);
+	print_time_utc(F(") Current time: "), now(), true);
 
+	if (t <= now()) {
+		DEBUG_PRT.println(F("setAlarm() Error: Can't set alarm: Alarm set time is earlier than or equal to current time"));
+		return false;
+	}
+
+#ifndef _WIN32
 	tmElements_t tm;
 	breakTime(t, tm);
 
@@ -1234,10 +1619,11 @@ bool Config::setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enab
 			return DS3231_arm_a2(true);
 		}
 	}
-	
+#endif
 	return true;
 }
 
+#ifndef _WIN32
 bool Config::DS3231_set_addr(const uint8_t addr, const uint8_t val)
 {
 	uint8_t bcode = 0; 
@@ -1320,12 +1706,15 @@ uint8_t Config::DS3231_get_creg(bool& ok)
     rv = DS3231_get_addr(DS3231_CONTROL_ADDR, ok);
     return rv;
 }
-
+#endif
 
 //Alarm 1
 // when the alarm flag is cleared the pulldown on INT is also released
 bool Config::DS3231_clear_a1f()
 {
+#ifdef _WIN32
+	return true;
+#else
 	bool ok = true;
 	
     uint8_t reg_val;
@@ -1336,9 +1725,10 @@ bool Config::DS3231_clear_a1f()
 	}
 	
 	return ok;
+#endif
 }
 
-
+#ifndef _WIN32
 uint8_t Config::DS3231_triggered_a1(bool& ok)
 {
     return DS3231_get_sreg(ok) & DS3231_A1F;
@@ -1359,12 +1749,15 @@ bool Config::DS3231_arm_a1(bool enable) {
 		return DS3231_set_creg(creg & ~DS3231_A1IE);
 	}
 }
-
+#endif
 
 //Alarm 2
 // when the alarm flag is cleared the pulldown on INT is also released
 bool Config::DS3231_clear_a2f()
 {
+#ifdef _WIN32
+	return true;
+#else
 	bool ok = true;
 	
     uint8_t reg_val;
@@ -1375,8 +1768,10 @@ bool Config::DS3231_clear_a2f()
 	}
 	
 	return ok;
+#endif
 }
 
+#ifndef _WIN32
 uint8_t Config::DS3231_triggered_a2(bool& ok)
 {
     return DS3231_get_sreg(ok) & DS3231_A2F;
@@ -1408,11 +1803,18 @@ bool Config::Clock_reset() {
 	
 	return false;
 }
+#endif 
 
 bool Config::ClockStopped(bool& ok) {
+#ifdef _WIN32
+	ok = true;
+	return false;
+#else
 	return ((DS3231_get_sreg(ok) & DS3231_OSF) != 0);
+#endif
 }
 
+#ifndef _WIN32
 bool Config::ClearClockStoppedFlag() {
 	bool ok = true;
 	
@@ -1462,9 +1864,12 @@ bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval) {
 	
 	return false;
 }
+#endif
 
+
+#ifndef _WIN32
 bool Config::readRtcMemoryData(rtcData_t& rtcData) {
-	  // Read struct from RTC memory
+  // Read struct from RTC memory
   if (ESP.rtcUserMemoryRead(0, (uint32_t*) &rtcData, sizeof(rtcData))) {
     DEBUG_PRT.println(F("Read: "));
     //printMemory();
@@ -1500,6 +1905,42 @@ void Config::writeRtcMemoryData(rtcData_t& rtcData) {
 	DEBUG_PRT.println();
   }
 }
+#else
+rtcData_t Config::rtcData = { 0 };
+
+bool Config::readRtcMemoryData(rtcData_t& rtcData) {
+	DEBUG_PRT.println(F("Read: "));
+	//printMemory();
+	//DEBUG_PRT.println("number of hours to next reading: " + String(rtcData.data.wake_hour_counter)); // set to true if the reading should be made this hour (read on waking)
+	//DEBUG_PRT.println("card displayed: " + String(rtcData.data.dcs)); // value shows if any of the error cards are displayed, so that, if the condition has not changed, it need not be redisplayed
+
+	rtcData = Config::rtcData;
+
+	DEBUG_PRT.println();
+	uint32_t crcOfData = calculateCRC32((uint8_t*)(uint8_t*)&rtcData.data, sizeof(rtcData.data));
+	DEBUG_PRT.print(F("CRC32 of data: "));
+	DEBUG_PRT.println(crcOfData, HEX);
+	DEBUG_PRT.print(F("CRC32 read from RTC: "));
+	DEBUG_PRT.println(rtcData.crc32, HEX);
+
+	if (crcOfData != rtcData.crc32) {
+		DEBUG_PRT.println(F("CRC32 in RTC memory doesn't match CRC32 of data. Data is probably invalid!"));
+		return false;
+	}
+
+	DEBUG_PRT.println(F("CRC32 check ok, data is probably valid."));
+	return true;
+}
+
+void Config::writeRtcMemoryData(rtcData_t& rtcData) {
+	rtcData.crc32 = calculateCRC32((uint8_t*)&rtcData.data, sizeof(rtcData.data));
+	Config::rtcData = rtcData;
+	DEBUG_PRT.println(F("Write: "));
+	printMemory(rtcData);
+	DEBUG_PRT.println();
+}
+#endif
+
 
 uint32_t Config::calculateCRC32(const uint8_t *data, size_t length) {
   uint32_t crc = 0xffffffff;
@@ -1535,6 +1976,7 @@ void Config::printMemory(rtcData_t& rtcData) {
   DEBUG_PRT.println();
 }
 
+#ifndef _WIN32
 wake_reasons Config::Wake_Reason() {
 	int retries = 50;
   
@@ -1587,15 +2029,95 @@ wake_reasons Config::Wake_Reason() {
 	DEBUG_PRT.println(F("Woken by Unknown"));
 	return WAKE_UNKNOWN;
 }
+#endif
 
+#ifdef _WIN32
+time64_t Config::waketime = 0;	// for testing in WIN32 environment.
+#endif
 
-bool Config::PowerOff(time64_t wake_datetime) {
-	if (wake_datetime != 0) {
-		if (Config::setAlarmLocalTime(wake_datetime, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
-			DEBUG_PRT.print(F("Alarm 1 set"));
-			tmElements_t ts;
-			breakTime(wake_datetime, ts);
-			DEBUG_PRT.printf(" for %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+bool Config::PowerOff(time64_t wake_datetime) {	// wake_datetime is UTC
+	DEBUG_PRT.println(F("**PowerOff()"));
+
+	time64_t wake_t = wake_datetime;	// wake_datetime should be a Local Date/Time, in the future
+	int dstOffset = Config::dstOffset();
+
+	if (wake_t != 0) {
+		if (DstIsValid()) {
+			time64_t curr_t = 0;
+			if (getDateTime(&curr_t)) {
+				Config::print_time("\ncurr_t: ", curr_t);
+				bool b_curr_t_is_in_DST = Config::isDSTfromUTC(curr_t); 
+				Config::print_time("wake_t: ", wake_t);
+				bool b_wake_t_is_in_DST = Config::isDSTfromUTC(wake_t);
+				DEBUG_PRT.println();
+
+				if (b_curr_t_is_in_DST != b_wake_t_is_in_DST) {
+					DEBUG_PRT.println(F("**Waketime crosses DST <=> Standard Time change"));
+				}
+
+				if (b_curr_t_is_in_DST && !b_wake_t_is_in_DST) {
+					// in DST at current time, but will not be when waking, so add <dstoffset> hours to wake_datetime -
+					// (clocks go back, so get an extra <dstoffset> hour(s) which must be skipped)
+
+					wake_t += dstOffset;
+					DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses DST->Standard time, so adjusting waketime for extra <dstoffset> hour(s)"));
+				}
+				else if (!b_curr_t_is_in_DST && b_wake_t_is_in_DST) {
+					// Not in DST at current time, but will be when waking - more complicated problem, since need to *subtract* <dstoffset> hours from wake_datetime - 
+					// which could mean waking immediately, or setting a waketime earlier than the current time. Need to check for this
+					bool b_isdst = false;
+					time64_t waketime_willbe = wake_t; // wake_t is UTC // -dstOffset;
+					getLocalDateTime(&waketime_willbe, &b_isdst, false); // Convert to Local Time
+					time64_t dstStart = Config::dstStart(curr_t); // UTC, no tz
+					dstStart -= Config::tzOffset(); // take into account tz
+					
+					/*
+					print_time_utc(F("Config::PowerOff(): local current time = "), curr_t, true, false);
+					print_time_utc(" (", curr_t, false, false);
+					DEBUG_PRT.println(F(")"));
+					print_time_utc(F("Config::PowerOff(): local waketime_willbe = "), waketime_willbe, true, false);
+					print_time_utc(F(" ("), waketime_willbe, false, false);
+					DEBUG_PRT.println(F(")"));
+					print_time_utc(F("Config::PowerOff(): dstStart = "), dstStart, false, false);
+					print_time_utc(F(" (Local: "), dstStart, false, false);
+					DEBUG_PRT.println(F(")"));
+					print_time_utc(F("Config::PowerOff(): Clocks go forward at (dstStart + dstOffset) = "), dstStart + dstOffset, false, false);
+					print_time_utc(" (Local: ", dstStart + dstOffset, true, false);
+					DEBUG_PRT.println(F(")"));
+					*/
+
+					if (waketime_willbe >= (dstStart + dstOffset)) {
+						wake_t -= dstOffset;
+						DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses Standard time->DST, but is after the skipped hour(s). Subtracting <dstOffset> hour(s) from waketime, so that waketime in DST is as expected"));
+					}
+
+					//if (waketime_willbe < dstStart) { // if the new waketime would be in the skipped hour(s), will *add* <dstoffset> hours (to skip over the skipped DST hour(s))													  
+					//	wake_t += dstOffset; // skip over the suppressed hour(s) of DST to be sure of not ending up waking in the skipped hour(s)
+					//	DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses Standard time->DST, but is within the skipped hour(s), so adding another <dstOffset> hour(s) to waketime"));
+					//}
+					//else //if (waketime_willbe < (dstStart + (2 * dstOffset)) //(curr_t + 2 * dstOffset)//) {
+					//	//DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses Standard time->DST, but is in the first <dstOffset> hour(s) of DST, not adding/subtracting <dstOffset>"));
+					//	DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses Standard time->DST, but is after the skipped <dstOffset> hour(s) of DST, not adding/subtracting <dstOffset>"));
+					//}
+					//else {
+					//	wake_t -= dstOffset; // DST typically kicks in and out at around 1am or otherwise early in the morning, so this should not generally cause
+					//										// a problem
+					//	DEBUG_PRT.println(F("Config::PowerOff(): wake time crosses Standard time->DST, but is later than the skipped hours, subtracting <dstOffst> from waketime, so wake at the intended time"));
+					//}
+				}
+			}
+		}
+		
+#ifdef _WIN32
+		Config::waketime = wake_t;	// for testing in WIN32 environment.
+#endif
+		//if (Config::setAlarmLocalTime(wake_t, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
+		if (Config::setAlarm(wake_t, 1, A1_MATCH_DATE_AND_TIME, true)) { // wake alarm with A1_MATCH_DAY_AND_TIME allows sleep time of max. 1 week. Now using A1_MATCH_DATE_AND_TIME, should give 1 year.
+			//DEBUG_PRT.print(F("\x1B[93mAlarm 1 set for "));
+			//print_time(wake_t);
+			print_time_utc(F("\x1B[93mAlarm 1 set for "), wake_t, true, false);
+			print_time_utc(F(" ("), wake_t, false, false);
+			DEBUG_PRT.println(F(")\033[0m"));
 			delay(200);
 		}
 		else {
@@ -1628,6 +2150,7 @@ bool Config::PowerOff(time64_t wake_datetime) {
   
 	delay(100);
 	// should be powered off by this point.
+	DEBUG_PRT.println(F("--(Power should be off)\n"));
 	return false;
 }
 
@@ -1644,3 +2167,43 @@ bool Config::SetPowerOn() {
 	
 	return false;
 }
+
+void Config::print_time(time64_t t, bool b_newline) {
+	print_time("", t, b_newline);
+}
+
+void Config::print_time(String caption, time64_t t, bool b_newline) {
+	if (!DEBUG_PRT.isOn()) return;
+	DEBUG_PRT.off();
+	tmElements_t tm;
+	breakTime(t, tm);
+
+	const char* nl = b_newline ? "\n" : "";
+	const char* dst_str = isDST(t) ? " DST" : "";
+	DEBUG_PRT.on();
+	DEBUG_PRT.printf("%s%02d-%02d-%04d %02d:%02d:%02d%s%s", caption.c_str(), tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second, dst_str, nl );
+}
+
+void Config::print_time_utc(String caption, time64_t t, bool b_convert_to_local_time, bool b_newline) {
+	if (!DEBUG_PRT.isOn()) return;
+	DEBUG_PRT.off();
+	tmElements_t tm;
+	breakTime(t, tm);
+
+	const char* nl = b_newline ? "\n" : "";
+	if (b_convert_to_local_time) {
+		time64_t local_time = t;
+		bool isDST = false;
+		getLocalDateTime(&local_time, &isDST, false);
+		breakTime(local_time, tm);
+		const char* dst_str = isDST ? " DST" : "";
+		DEBUG_PRT.on();
+		DEBUG_PRT.printf("%s%02d-%02d-%04d %02d:%02d:%02d%s%s", caption.c_str(), tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second, dst_str, nl);
+	}
+	else {
+		DEBUG_PRT.on();
+		DEBUG_PRT.printf("%s%02d-%02d-%04d %02d:%02d:%02d UTC%s", caption.c_str(), tm.Day, tm.Month, tmYearToCalendar(tm.Year), tm.Hour, tm.Minute, tm.Second, nl);
+	}
+}
+
+//#endif //#ifdef _TEST_CONFIG

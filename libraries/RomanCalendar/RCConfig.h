@@ -3,6 +3,25 @@
 #ifndef _RCCONFIG_H
 #define _RCCONFIG_H
 
+#define _DUMP_CONFIG 1
+
+#ifdef _WIN32
+#include "DebugPort.h"
+#endif
+
+//#ifdef _TEST_CONFIG	// defined in test harness version of DebugPort.h
+
+#ifdef _WIN32
+#define BEGIN_EPOCH 1970
+
+#include "WString.h"
+#include "WCharacter.h"
+#include "PROGMEM.h"
+#include "Sd.h"
+#include "TimeLib.h"
+#include <stdio.h>
+#include <stdint.h>
+#else
 #include "RCGlobals.h"
 
 #include <Arduino.h>
@@ -15,6 +34,7 @@
 
 #include <EEPROM.h>
 #include <pins_arduino.h>
+#endif 
 
 #define EPD_CONTRAST_LEVELS 7
 
@@ -91,11 +111,20 @@ typedef struct {
 #define DEBUG_FLAGS_I2CPORT  1
 #define DEBUG_FLAGS_FILEPORT 2
 
+#ifndef _WIN32
 typedef struct {
   config_data_t data;
   uint32_t crc32;
 } config_t __attribute__ ((packed));
 //
+#else
+typedef struct {
+#pragma pack(push, 1)
+	config_data_t data;
+	uint32_t crc32;
+#pragma pack(pop)
+} config_t;
+#endif
 
 //rtc memory data - specifies what to do on waking
 //enum DisplayCardShown{dc_normal, dc_battery_recharge_image, dc_connect_power_image, dc_wps_connect_image, dc_clock_not_set_image, dc_sd_card_not_inserted_image};
@@ -114,6 +143,7 @@ typedef struct {
 } rtcData_t;
 //
 
+#ifndef _WIN32
 extern ESP8266WebServer server;
 	
 bool loadFromSdCard(String path);
@@ -130,10 +160,15 @@ void handleSetConf();
 String getQueryStringParam(String param_name, String default_value);
 bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
 bool copyfile(String fromFile, String toFile);
-
+#endif
 
 class Config {
 public:
+#ifdef _WIN32
+	static config_t flashData;
+	static rtcData_t rtcData;
+#endif
+
 	static String _lang;
 
 //	I18n* _I18n;
@@ -164,6 +199,7 @@ public:
 	
 	static void dump_config(config_t& c);
 	
+	static bool DstIsValid();
 	static bool DstIsValid(config_t& c);
 	static void InvalidateEEPROM();
 	static void SaveConfig(config_t& c);
@@ -174,18 +210,26 @@ public:
 	static void storeStruct(void *data_source, size_t size);
 	static void loadStruct(void *data_dest, size_t size);
 
+	static bool isDSTfromUTC(time64_t t);
 	static bool isDST();
+	static bool isDST(time64_t t); // nb. var t is a Local Date/Time value, not UTC (which does not have timezone or DST applied)
 	static int dstOffset();
+	static time64_t dstStart(time64_t curr_t);
+	static time64_t dstEnd(time64_t curr_t);
+	static int tzOffset();
+	static bool getUniversalDatetimeFromLocalDatetime(time64_t* t);
 	static bool getLocalDateTime(time64_t* t);
-	static bool getLocalDateTime(time64_t* t, bool* isdst);
+	//static bool getLocalDateTime(time64_t* t, bool* isdst);
+	static bool getLocalDateTime(time64_t* t, bool* isdst, bool b_use_current_time = true);
 	static bool ClockWasReset();
 	static bool getDateTime(time64_t* t);
 	static bool getDateTime(time64_t* t, bool& clockwasreset);
 	static bool setDateTime(time64_t t);
-	
+
 	static bool setAlarmLocalTime(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm);
 	static bool setAlarm(time64_t t, uint8_t alarm_number, uint8_t flags, bool enable_alarm);
 	
+#ifndef _WIN32
 	static bool DS3231_set_addr(const uint8_t addr, const uint8_t val);
 	static uint8_t DS3231_get_addr(const uint8_t addr, bool& ok);
 	
@@ -193,20 +237,33 @@ public:
 	static bool DS3231_set_sreg(const uint8_t val);
 	static uint8_t DS3231_get_sreg(bool& ok);
 	static uint8_t DS3231_get_creg(bool& ok);
-	
+#endif
+
+	// Alarm 1
 	static bool DS3231_clear_a1f(void);
+#ifndef _WIN32
 	static uint8_t DS3231_triggered_a1(bool& ok);
 	static bool DS3231_arm_a1(bool enable);
-	
+	//
+#endif
+
+	// Alarm 2
 	static bool DS3231_clear_a2f(void);
+#ifndef _WIN32
 	static uint8_t DS3231_triggered_a2(bool& ok);
 	static bool DS3231_arm_a2(bool enable);
+	//
 
 	static bool Clock_reset();
+#endif
+
 	static bool ClockStopped(bool& ok);
+
+#ifndef _WIN32
 	static bool ClearClockStoppedFlag();
 	static bool ClearCenturyFlag();
-	
+#endif
+
 	static uint8_t dec2bcd(uint8_t num);
 	static uint8_t bcd2dec(uint8_t num);
 //	bool testArg(String arg, uint32_t min, uint32_t max, uint32_t* outval);
@@ -217,11 +274,18 @@ public:
 	static uint32_t calculateCRC32(const uint8_t *data, size_t length);
 	static void printMemory(rtcData_t& rtcData);
 
+#ifndef _WIN32
 	static wake_reasons Wake_Reason();
+#endif
+
 	static bool PowerOff(time64_t wake_datetime);
 	static bool SetPowerOn();
-	
+
+	static void print_time(time64_t t, bool b_newline = true);
+	static void print_time(String caption, time64_t t, bool b_newline = true);
+	static void print_time_utc(String caption, time64_t t, bool b_convert_to_local_time, bool b_newline = true);
 };
 
 //extern Config Conf;
 #endif
+//#endif // #ifdef _TEST_CONFIG

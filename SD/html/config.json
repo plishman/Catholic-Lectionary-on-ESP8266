@@ -1,0 +1,181 @@
+{
+    "languages": [
+        ["Latin",["la", "/locales/ef/la.yml"]],
+        ["Cesky",["cz", "/locales/ef/cz.yml"]],
+        ["Deutsch",["de", "/locales/ef/de.yml"]],
+        ["English",["en", "/locales/ef/en.yml"]],
+        ["Español",["es", "/locales/ef/es.yml"]],
+        ["Français",["fr", "/locales/ef/fr.yml"]],
+        ["Magyar",["hu", "/locales/ef/hu.yml"]],
+        ["Italiano",["it", "/locales/ef/it.yml"]],
+        ["Polski",["pl", "/locales/ef/pl.yml"]],
+        ["Português",["pt", "/locales/ef/pt.yml"]]
+    ],
+
+    "masses": [
+        ["1570 (Tridentine)","/Lect/EF/Trid1570"],
+        ["1910 (Tridentine)","/Lect/EF/Trid1910"],
+        ["1911 (Divino Afflatu)","/Lect/EF/DivAffla"],
+        ["1955 (Cum Nostra Hac Aetate)","/Lect/EF/1955"],
+        ["1960 (Rubricarum Instructum)","/Lect/EF/1960"],
+        ["1960 New Calendar (Cum Sanctissima)","/Lect/EF/1960New"],
+        ["1965-1967","/Lect/EF/1965-67"]
+    ],
+
+    "extraordinary_form_fields": [
+        ["option", "", "masses", "0", "Select Mass", "ef-masses", "id-opt-ef-masses", "class-mass-form-opt class-form-field send-changeevent-on-create"],
+        ["option", "", "languages", "0", "Select Language", "ef-languages", "id-opt-ef-languages", "class-mass-form-opt class-form-field"],
+        ["text", "", "Calendar Text Translations Filename", "-", "id-ef-yml-locale-file", "class-input-hidden reset class-form-field"],
+        ["text", "", "Sanctorale Calendar Filename", "-", "id-ef-sanctorale-files", "class-input-hidden class-form-field reset"],
+        ["text", "", "Bible Filename", "-", "id-ef-bible-filename", "class-input-hidden reset class-form-field"],
+        ["text", "", "Lectionary DB Folder", "/Lect/EF/", "id-ef-lectionary", "class-input-advanced class-form-field"],
+        ["checkbox", "", "Transfer Certain Feasts To Sunday", "0", "id-ef-transfer-to-sunday", "class-input-hidden class-form-field reset"],
+        ["checkbox", "", "Celebrate Feast of Christ the Eternal Priest", "0", "id-ef-celebrate-feast-of-christ-eternal-priest", "class-input-hidden class-form-field reset"],
+        ["option", "", "fonts", "0", "Select Font", "ef-font", "id-ef-font", "class-input-hidden class-form-field reset"],
+        ["checkbox", "", "RTL Text", "0", "id-ef-text-is-right-to-left", "class-input-hidden class-form-field reset"],
+        ["range", "", "Font Tuning (%)", "0", "100", "50", "1", "id-ef-font-tuning-percent", "class-input-hidden class-form-field reset"],
+        ["checkbox", "", "Paragraph Verses", "0", "id-ef-carriage-return-after-verse", "class-input-hidden class-form-field reset"],
+        ["checkbox", "", "Show Verse Numbers", "0", "id-ef-show-verse-numbers", "class-input-hidden class-form-field reset"],
+        ["text", "", "Mass Form", "EF", "id-ef-mass-form", "class-input-hidden class-form-field"]
+    ],
+
+    "extraordinary_form_fieldsets" : [
+    ],
+
+    "extraordinary_form_populate_triggers": [
+        "id-opt-ef-masses", ["id-ef-lectionary"],
+        "id-opt-ef-languages", ["id-ef-yml-locale-file,1"]
+    ],
+
+    "fonts": [
+        ["builtin (10pt Times New Roman)", "builtin"],
+        ["Arial 11", "Arial 11.lft"],
+        ["Arial 14", "Arial 14.lft"],
+        ["Arial 16", "Arial 16.lft"],
+        ["Bitstream Cyberbit 14", "Bitstream Cyberbit 14.lft"],
+        ["Bitstream Cyberbit 16", "Bitstream Cyberbit 16.lft"],
+        ["Bitstream Cyberbit 22", "Bitstream Cyberbit 22.lft"],
+        ["Calibri 12", "Calibri 12.lft"],
+        ["Calibri 14", "Calibri 14.lft"],
+        ["Droid 10 italic", "Droid 10 italic.lft"],
+        ["Droid Serif 10", "Droid Serif 10.lft"],
+        ["Droid Serif 11 bold italic", "Droid Serif 11 bold italic.lft"],
+        ["Droid Serif 11 italic", "Droid Serif 11 italic.lft"],
+        ["Droid Serif 11", "Droid Serif 11.lft"],
+        ["Droid Serif 12 bold italic", "Droid Serif 12 bold italic.lft"],
+        ["Droid Serif 12", "Droid Serif 12.lft"],
+        ["Droid Serif 13 bold italic", "Droid Serif 13 bold italic.lft"],
+        ["Quivira 10", "Quivira 10.lft"],
+        ["Quivira 11.5", "Quivira 11.5.lft"],
+        ["Quivira 12", "Quivira 12.lft"],
+        ["Simsun 16", "Simsun 16.lft"],
+        ["Simsun 40", "Simsun 40.lft"],
+        ["Times New Roman 10 2xAA", "Times New Roman 10 2xAA.lft"],
+        ["Times New Roman 10", "Times New Roman 10.lft"],
+        ["Times New Roman 12", "Times New Roman 12.lft"]
+    ],
+
+    "novus_ordo_languages": [
+        ["cz","Cesky"],
+        ["cs","Cesky"],
+        ["de","Deutsch"],
+        ["en","English"],
+        ["es","Español"],
+        ["fr","Français"],
+        ["hu","Magyar"],
+        ["it","Italiano"],
+        ["la","Latin"],
+        ["pl","Polski"],
+        ["pt","Português"]
+    ],
+
+    "novus_ordo_bibles": [
+        ["[en] New Jerusalem Bible", ["en", "/Bibles/njb.csv", "/locales/en.yml"]],
+        ["[fr] La Bible de Jerusalem", ["fr","/Bibles/njb_fr.csv", "/locales/fr.yml"]],
+        ["[la] Biblia Sacra Vulgata", ["la", "/Bibles/lat_v.csv", "/locales/la.yml"]],
+        ["[it] La Bibbia CEI 2008", ["it", "/Bibles/cei_2008.csv", "/locales/it.yml"]],
+        ["[cs] Bible Kralická", ["cs", "/Bibles/czeczbkr.csv", "/locales/cs.yml"]],
+        ["[ar] Smith Van Dyke Arabic Bible", ["la", "/Bibles/svd_ara.csv", "/locales/la.yml", "right_to_left", "92"]],
+        ["[en] King James Bible", ["en", "/Bibles/eng_kjv.csv", "/locales/en.yml"]],
+        ["[cn] Chinese Union Bible", ["la", "/Bibles/cn_union.csv", "/locales/la.yml"]]
+    ],
+
+    "novus_ordo_sanctorale": [
+        ["English", ["en", "/sanct/un-en.txt"]],
+        ["Latin", ["la", "/sanct/un-la.txt"]],
+        ["Italiano", ["it", "/sanct/un-it.txt"]],
+        ["Français", ["fr", "/sanct/un-fr.txt"]],
+        ["Cesky", ["cs", "/sanct/czech-cs.txt"]]
+    ],
+
+    "novus_ordo_lectionaries": [
+        ["USCCB", "/Lect/USCCB/"]
+    ],
+
+    "novus_ordo_form_fields": [
+        ["option", "basic", "novus_ordo_bibles", "0", "Select Bible Translation", "no-bibles", "id-opt-no-bibles", "class-mass-form-opt class-form-field send-changeevent-on-create"],
+        ["option", "basic", "novus_ordo_sanctorale", "0", "Select Sanctorale Calendar Language", "no-languages", "id-opt-no-languages", "class-mass-form-opt class-form-field"],
+        ["checkbox", "calendar", "Transfer Certain Feasts To Sunday", "0", "id-transfer-to-sunday", "class-input-advanced class-form-field"],
+        ["checkbox", "calendar", "Celebrate Feast of Christ the Eternal Priest", "0", "id-celebrate-feast-of-christ-eternal-priest", "class-input-advanced class-form-field"],
+        ["checkbox", "text", "Paragraph Verses", "0", "id-carriage-return-after-verse", "class-input-advanced class-form-field"],
+        ["checkbox", "text", "Show Verse Numbers", "0", "id-show-verse-numbers", "class-input-advanced class-form-field"],
+        ["text", "filenames", "Sanctorale Calendar Filename", "-", "id-sanctorale-files", "class-input-advanced class-form-field"],
+        ["text", "filenames", "Calendar Text Translations Filename", "-", "id-yml-locale-file", "class-input-advanced class-form-field"],
+        ["text", "filenames", "Bible Filename", "-", "id-bible-filename", "class-input-advanced class-form-field"],
+        ["option", "lectionary", "novus_ordo_lectionaries", "1", "Lectionary DB Folder", "no-lectionary", "id-opt-no-lectionary", "class-mass-form-opt class-input-advanced class-form-field"],
+        ["option", "font", "fonts", "0", "Select Font", "font", "id-font", "class-input-font class-form-field reset"],
+        ["checkbox", "display", "RTL Text", "0", "id-text-is-right-to-left", "class-input-advanced class-form-field reset"],
+        ["range", "display", "Font Tuning (%)", "0", "100", "50", "1", "id-font-tuning-percent", "class-input-advanced class-form-field send-inputevent-on-create reset"],
+        ["text", "", "Mass Form", "NO", "id-no-mass-form", "class-input-hidden class-form-field"]
+    ],
+
+    "novus_ordo_form_fieldsets" : {
+        "basic" : ["Select Bible and Sanctorale Calendar", "id-fieldset-basic", "class-fieldset"],
+        "calendar" : ["Calendar Options", "id-fieldset-calendar", "class-fieldset class-fieldset-advanced"],
+        "text" : ["Verse Options", "id-fieldset-text", "class-fieldset class-fieldset-advanced"],
+        "filenames" : ["Filenames (advanced use)", "id-fieldset-filenames", "class-fieldset class-fieldset-advanced"],
+        "lectionary" : ["Lectionary Database Selection", "id-fieldset-lectionary", "class-fieldset class-fieldset-advanced"],
+        "font" : ["Font", "id-fieldset-font", "class-fieldset"],
+        "display" : ["Text Display Options", "id-fieldset-display", "class-fieldset class-fieldset-advanced"]
+    },
+
+    "novus_ordo_populate_triggers": [
+        "id-opt-no-bibles", ["id-opt-no-languages", "id-bible-filename", "id-yml-locale-file", "id-text-is-right-to-left", "id-font-tuning-percent"],
+        "id-opt-no-languages", ["id-sanctorale-files,1"]
+    ],
+
+    "csv_output_fields_extraordinary_form" : [
+        ["Display description", "id-opt-ef-masses", "text"], 
+        ["Mass language", "id-opt-ef-languages", "value", "0"], 
+        ["yml locale file", "id-ef-yml-locale-file"], 
+        ["Sanctorale files", "id-ef-sanctorale-files"], 
+        ["Bibles", "id-ef-bible-filename"], 
+        ["Lectionary", "id-ef-lectionary"],
+        ["Transfer to Sunday", "id-ef-transfer-to-sunday"],
+        ["Celebrate Feast of Christ Eternal Priest", "id-ef-celebrate-feast-of-christ-eternal-priest"],
+        ["Font", "id-ef-font", "value"], 
+        ["Text is right to left", "id-ef-text-is-right-to-left"], 
+        ["Font Tuning (percent)", "id-ef-font-tuning-percent"],
+        ["Paragraph verses", "id-ef-carriage-return-after-verse"], 
+        ["Show verse numbers","id-ef-show-verse-numbers"],
+        ["Mass Form", "id-ef-mass-form"]
+    ],
+
+    "csv_output_fields_novus_ordo" : [
+        ["Display description", "id-opt-no-bibles", "text"],
+        ["yml lang", "id-opt-no-languages", "value", "0"],
+        ["yml locale file", "id-yml-locale-file"],
+        ["Sanctorale files", "id-sanctorale-files"],
+        ["Bibles", "id-bible-filename"],
+        ["Lectionary", "id-opt-no-lectionary", "value"],
+        ["Transfer to Sunday", "id-transfer-to-sunday"],
+        ["Celebrate Feast of Christ Eternal Priest", "id-celebrate-feast-of-christ-eternal-priest"],
+        ["Font", "id-font", "value"],
+        ["Text is right to left", "id-text-is-right-to-left"],
+        ["Font Tuning (percent)", "id-font-tuning-percent"],
+        ["Paragraph verses", "id-carriage-return-after-verse"],
+        ["Show verse numbers", "id-show-verse-numbers"],
+        ["Mass Form", "id-no-mass-form"]
+    ]
+}
+

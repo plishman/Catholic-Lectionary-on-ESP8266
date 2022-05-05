@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" /> 
+		<script type="text/javascript">
+			// ref: http://stackoverflow.com/a/1293163/2343
+			// This will parse a delimited string into an array of
+			// arrays. The default delimiter is the comma, but this
+			// can be overriden in the second argument.
+			function CSVToArray( strData, strDelimiter ){
+				// Check to see if the delimiter is defined. If not,
+				// then default to comma.
+				strDelimiter = (strDelimiter || ",");
+
+				// Create a regular expression to parse the CSV values.
+				var objPattern = new RegExp(
+					(
+						// Delimiters.
+						"(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+						// Quoted fields.
+						"(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+						// Standard fields.
+						"([^\"\\" + strDelimiter + "\\r\\n]*))"
+					),
+					"gi"
+					);
+
+
+				// Create an array to hold our data. Give the array
+				// a default empty first row.
+				var arrData = [[]];
+
+				// Create an array to hold our individual pattern
+				// matching groups.
+				var arrMatches = null;
+
+
+				// Keep looping over the regular expression matches
+				// until we can no longer find a match.
+				while (arrMatches = objPattern.exec( strData )){
+
+					// Get the delimiter that was found.
+					var strMatchedDelimiter = arrMatches[ 1 ];
+
+					// Check to see if the given delimiter has a length
+					// (is not the start of string) and if it matches
+					// field delimiter. If id does not, then we know
+					// that this delimiter is a row delimiter.
+					if (
+						strMatchedDelimiter.length &&
+						strMatchedDelimiter !== strDelimiter
+						){
+
+						// Since we have reached a new row of data,
+						// add an empty row to our data array.
+						arrData.push( [] );
+
+					}
+
+					var strMatchedValue;
+
+					// Now that we have our delimiter out of the way,
+					// let's check to see which kind of value we
+					// captured (quoted or unquoted).
+					if (arrMatches[ 2 ]){
+
+						// We found a quoted value. When we capture
+						// this value, unescape any double quotes.
+						strMatchedValue = arrMatches[ 2 ].replace(
+							new RegExp( "\"\"", "g" ),
+							"\""
+							);
+
+					} else {
+
+						// We found a non-quoted value.
+						strMatchedValue = arrMatches[ 3 ];
+
+					}
+
+
+					// Now that we have our value string, let's add
+					// it to the data array.
+					arrData[ arrData.length - 1 ].push( strMatchedValue );
+				}
+
+				// Return the parsed data.
+				return( arrData );
+			}
+		</script>
+		<script type="text/javascript">
+			Date.prototype.stdTimezoneOffset = function () {
+				var jan = new Date(this.getFullYear(), 0, 1);
+				var jul = new Date(this.getFullYear(), 6, 1);
+				return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+			}
+
+			Date.prototype.isDstObserved = function () {
+				return this.getTimezoneOffset() < this.stdTimezoneOffset();
+			}
+
+			function MakeConfigOpt(config) {
+				var optlist = "";
+				var i = 1; //line 0 contains the headings
+				
+				while (i < config.length) {
+					if (config[i] != "") {
+						var opttext = ''; 
+						var selected = '';
+						
+						if (config[i].length >= 1) {
+							opttext = config[i][0]; //+ ' | ' + config[i][1] + ' | ' + config[i][2] + ' | ' + config[i][3];
+						}
+						
+						//if (config[i].length >= 6) {
+						//	selected = config[i][5] == 'selected' ? 'selected="1"' : '';
+						//}
+						
+						optlist += '<option class="optconfig" ' + selected + ' value="' + (i - 1) + '">' + opttext + '</option>\r\n';
+					}
+					i++;
+				}
+				optlist = '<select name="lectionary" id="SelectConfig">\r\n' + optlist + "</select>\r\n";
+				return optlist;
+			}
+			
+			function LoadConfigOpt() {
+				var config;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						// Typical action to be performed when the document is ready:
+						//document.getElementById("config").innerHTML = xhttp.responseText;
+						config = CSVToArray(xhttp.responseText);
+						document.getElementById("config").innerHTML = MakeConfigOpt(config);
+						LoadConfigState();
+					}
+				};
+				xhttp.open("GET", "config.csv", true);
+				xhttp.send();
+			}
+			
+			function LoadConfigState() {
+				var configstate;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						configstate = JSON.parse(xhttp.responseText);
+						var lectionaryselect = document.getElementById('SelectConfig');
+
+						if (configstate.lectionary_config_number && configstate.lectionary_config_number < lectionaryselect.length) {
+							lectionaryselect[configstate.lectionary_config_number].selected = 1;
+						}
+					}
+				};
+				xhttp.open("GET", "settings.json", true);
+				xhttp.send();
+			}
+								
+			function InitOpts() {
+				LoadConfigOpt();
+			}
+			
+			function g(el, val) {
+				document.getElementById(el).value = val;
+			}
+
+			function doDate() {
+				var d = new Date();
+
+				g('hh',d.getUTCHours());    
+				g('mm',d.getUTCMinutes());	
+				g('ss',d.getUTCSeconds());
+				g('day',d.getUTCDate());
+				g('mon',d.getUTCMonth()+1);	
+				g('year',d.getUTCFullYear());
+
+				var currentoffset = 0;
+				var dstoffset = 0;
+				g('dstoffset', 0);
+
+				var dstStart = new Date();
+				var dstEnd = new Date();
+
+				var b_hasDST = false;
+				
+				for (var i=0;i < 365; i++) {
+					var d1 = new Date();
+					var d2 = new Date();
+
+					d1.setHours(0);
+					d1.setMinutes(0);
+					d1.setSeconds(0);                
+					
+					d2.setHours(0);
+					d2.setMinutes(0);
+					d2.setSeconds(0);
+
+					d1.setDate(i);
+					d2.setDate(i+1);
+
+					if (d1.getTimezoneOffset() > d2.getTimezoneOffset()) {
+						//dstStart = d1;
+						dstoffset = d1.getTimezoneOffset() - d2.getTimezoneOffset();
+
+						console.log("dstStart=" + dstStart.toString());
+						console.log("dstoffset=" + dstoffset);
+
+						var d1_midnight = new Date(d1.getTime());
+						console.log("d1 midnight=" + d1_midnight.toString());
+
+						for(var m = 0; m < 60*24; m++) {
+							console.log(d1.toString());
+							d1.setTime(d1.getTime() + 60 * 1000);
+							console.log("******d1_midnight tzoffset=" + d1_midnight.getTimezoneOffset() + "| d1_tzoffset=" + d1.getTimezoneOffset());
+							if (d1_midnight.getTimezoneOffset() > d1.getTimezoneOffset()) {
+								dstStart = new Date(d1.getTime());
+								d1 = new Date(d1_midnight.getTime());
+								b_hasDST = true;
+								break;
+							}
+						}
+					}
+					
+
+					if (d1.getTimezoneOffset() < d2.getTimezoneOffset()) {
+						//dstEnd = d1;
+						var d1_midnight = new Date(d1.getTime());
+
+						for(var m = 0; m < 60*24; m++) {
+							d1.setTime(d1.getTime() + 60 * 1000);
+							if (d1_midnight.getTimezoneOffset() < d1.getTimezoneOffset()) {
+								dstEnd = new Date(d1.getTime());
+								d1 = new Date(d1_midnight.getTime());
+								b_hasDST = true;
+								break;
+							}
+						}
+					}
+				}                      
+
+				if (b_hasDST) {
+					g('dststartmonth', dstStart.getMonth() + 1);
+					g('dststartday', dstStart.getDate());
+					g('dststarthour', dstStart.getHours());
+					g('dstendmonth',dstEnd.getMonth() + 1);
+					g('dstendday', dstEnd.getDate());
+					g('dstendhour', dstStart.getHours());
+					g('dstoffset', dstoffset/60.0);
+				
+					/*
+					g('n_dst_offset', dstoffset/60.0);
+					g('n_dststart_span', dstStart.toString());
+					g('n_dstend_span', dstEnd.toString());
+					*/
+				}
+
+				var today = new Date();
+				var now_dstoffset = (b_hasDST && today.isDstObserved()) ? dstoffset : 0.0;          
+				
+				/*g('n_timezone', 0.0-((d.getTimezoneOffset()+now_dstoffset)/60.0));*/
+				g('timezone', 0.0-((d.getTimezoneOffset()+now_dstoffset)/60.0));
+			}
+
+			/*
+			function doDate() {
+				var d = new Date();
+				g('hh',d.getUTCHours());    
+				g('mm',d.getUTCMinutes());	
+				g('ss',d.getUTCSeconds());
+				g('day',d.getUTCDate());
+				g('mon',d.getUTCMonth()+1);	
+				g('year',d.getUTCFullYear());
+
+				var currentoffset = 0;
+				var dstoffset = 0;
+				
+				if (d.isDstObserved()) {					
+					var dstStart = new Date();
+					var dstEnd = new Date();
+					
+					for (var i=0;i < 365; i++) {
+						var d1 = new Date();
+						var d2 = new Date();
+						d1.setDate(i);
+						d2.setDate(i+1);
+						
+						if (d1.getTimezoneOffset() > d2.getTimezoneOffset()) {
+							dstStart = d1;
+							dstoffset = d1.getTimezoneOffset() - d2.getTimezoneOffset();
+						}
+						
+						if (d1.getTimezoneOffset() < d2.getTimezoneOffset()) {
+							dstEnd = d1;
+						}
+					}
+										
+					g('dststartmonth',dstStart.getMonth() + 1);
+					g('dststartday', dstStart.getDate());
+					g('dststarthour', dstStart.getHours());
+					g('dstendmonth',dstEnd.getMonth() + 1);
+					g('dstendday', dstEnd.getDate());
+					g('dstendhour', dstStart.getHours());
+					g('dstoffset', dstoffset/60.0);
+				}
+				
+				g('timezone', 0.0-((d.getTimezoneOffset()+dstoffset)/60.0));
+			}
+			*/
+			
+		</script>
+		
+		<style>
+			body {
+				background-color: linen;
+			}
+
+			#inner_div {
+				margin: 30px;
+			}
+
+			#container_div {
+				font-size: 28px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -95px;
+				margin-left: -250px;
+				width: 500px;
+				height: 190px;
+				background: rgba(0,0,0,0.1);
+			}​
+		</style>
+	</head>
+	<body onload="InitOpts();">
+		<div id="container_div">
+			<div id="inner_div">
+				<div>Configure Catholic Lectionary</div>
+				<form action="/setconf.htm" method="GET" id="config_form" onsubmit="doDate();">
+					<div id="config"></div>
+					<input type="hidden" id="hh" name="hh"/>
+					<input type="hidden" id="mm" name="mm"/>
+					<input type="hidden" id="ss" name="ss"/>
+					<input type="hidden" id="day" name="day"/>
+					<input type="hidden" id="mon" name="mon"/>
+					<input type="hidden" id="year" name="year"/>
+					<input type="hidden" id="timezone" name="timezone"/>
+					<input type="hidden" id="dstoffset" name="dstoffset"/>
+					<input type="hidden" id="dststartmonth" name="dststartmonth"/>
+					<input type="hidden" id="dststartday" name="dststartday"/>
+					<input type="hidden" id="dststarthour" name="dststarthour"/>
+					<input type="hidden" id="dstendmonth" name="dstendmonth"/>
+					<input type="hidden" id="dstendday" name="dstendday"/>
+					<input type="hidden" id="dstendhour" name="dstendhour"/>					
+					<input id="update" type="submit" value=" Update Settings " />
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

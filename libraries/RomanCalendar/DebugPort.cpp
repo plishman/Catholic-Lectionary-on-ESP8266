@@ -32,6 +32,17 @@ void DebugPort::end() {
 	FileDebug.end();
 }
 
+void DebugPort::off() { DebugPort::_b_enable = false; }
+
+void DebugPort::on() { DebugPort::_b_enable = true; }
+
+bool DebugPort::isOn() { return DebugPort::_b_enable; }
+
+void DebugPort::push() { DebugPort::_b_enable_last = DebugPort::_b_enable; }
+
+void DebugPort::pop() { DebugPort::_b_enable = DebugPort::_b_enable_last; }
+
+
 size_t DebugPort::write(uint8_t character) { /*blahblah is the name of your class*/
 	if (!_b_enable) {
 		return 0;
