@@ -1,0 +1,210 @@
+<html>
+<head>
+    <script type="text/javascript">
+		function g(el, val) {
+            var e = document.getElementById(el);
+            if (e) {
+                if (e.nodeName == "INPUT") {
+                    e.value = val;
+                }
+                else {
+                    e.innerHTML = val;
+                }
+            }
+		    //document.getElementById(el).value = val;
+		}
+
+        Date.prototype.stdTimezoneOffset = function () {
+				var jan = new Date(this.getFullYear(), 0, 1);
+				var jul = new Date(this.getFullYear(), 6, 1);
+				return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+    	}
+
+        Date.prototype.isDstObserved = function () {
+				return this.getTimezoneOffset() < this.stdTimezoneOffset();
+    	}
+
+        function doDate() {
+            var d = new Date();
+
+/*
+            g('hh',d.getUTCHours());    
+            g('mm',d.getUTCMinutes());	
+            g('ss',d.getUTCSeconds());
+            g('day',d.getUTCDate());
+            g('mon',d.getUTCMonth()+1);	
+            g('year',d.getUTCFullYear());
+*/
+            var currentoffset = 0;
+            var dstoffset = 0;
+            
+            var dstStart = new Date();
+            var dstEnd = new Date();
+            
+            for (var i=0;i < 365; i++) {
+                var d1 = new Date();
+                var d2 = new Date();
+                d1.setDate(i);
+                d2.setDate(i+1);
+                
+                if (d1.getTimezoneOffset() > d2.getTimezoneOffset()) {
+                    dstStart = d1;
+                    dstoffset = d1.getTimezoneOffset() - d2.getTimezoneOffset();
+                }
+                
+                if (d1.getTimezoneOffset() < d2.getTimezoneOffset()) {
+                    dstEnd = d1;
+                }
+            }
+/*                                
+            g('dststartmonth',dstStart.getMonth() + 1);
+            g('dststartday', dstStart.getDate());
+            g('dststarthour', dstStart.getHours());
+            g('dstendmonth',dstEnd.getMonth() + 1);
+            g('dstendday', dstEnd.getDate());
+            g('dstendhour', dstStart.getHours());
+            g('dstoffset', dstoffset/60.0);
+            
+*/
+            var today = new Date();
+            var now_dstoffset = today.isDstObserved() ? dstoffset : 0.0;          
+            
+            g('timezone', 0.0-((d.getTimezoneOffset()+now_dstoffset)/60.0));
+            g('dst_offset', dstoffset/60.0);
+            g('dststart_span', dstStart.toString());
+            g('dstend_span', dstEnd.toString());
+        }
+
+
+
+
+
+
+
+        function doDateNew() {
+            var d = new Date();
+
+            g('hh',d.getUTCHours());    
+            g('mm',d.getUTCMinutes());	
+            g('ss',d.getUTCSeconds());
+            g('day',d.getUTCDate());
+            g('mon',d.getUTCMonth()+1);	
+            g('year',d.getUTCFullYear());
+
+            var currentoffset = 0;
+            var dstoffset = 0;
+            g('dstoffset', 0);
+            
+            var dstStart = new Date();
+            var dstEnd = new Date();
+
+            var b_hasDST = false;
+            
+            for (var i=0;i < 365; i++) {
+                var d1 = new Date();
+                var d2 = new Date();
+
+                d1.setHours(0);
+                d1.setMinutes(0);
+                d1.setSeconds(0);                
+                
+                d2.setHours(0);
+                d2.setMinutes(0);
+                d2.setSeconds(0);
+
+                d1.setDate(i);
+                d2.setDate(i+1);
+
+                if (d1.getTimezoneOffset() > d2.getTimezoneOffset()) {
+                    //dstStart = d1;
+                    dstoffset = d1.getTimezoneOffset() - d2.getTimezoneOffset();
+
+                    console.log("dstStart=" + dstStart.toString());
+                    console.log("dstoffset=" + dstoffset);
+
+                    var d1_midnight = new Date(d1.getTime());
+                    console.log("d1 midnight=" + d1_midnight.toString());
+
+                    for(var m = 0; m < 60*24; m++) {
+                        console.log(d1.toString());
+                        d1.setTime(d1.getTime() + 60 * 1000);
+                        console.log("******d1_midnight tzoffset=" + d1_midnight.getTimezoneOffset() + "| d1_tzoffset=" + d1.getTimezoneOffset());
+                        if (d1_midnight.getTimezoneOffset() > d1.getTimezoneOffset()) {
+                            dstStart = new Date(d1.getTime());
+                            d1 = new Date(d1_midnight.getTime());
+                            b_hasDST = true;
+                            break;
+                        }
+                    }
+                }
+                
+
+                if (d1.getTimezoneOffset() < d2.getTimezoneOffset()) {
+                    //dstEnd = d1;
+                    var d1_midnight = new Date(d1.getTime());
+
+                    for(var m = 0; m < 60*24; m++) {
+                        d1.setTime(d1.getTime() + 60 * 1000);
+                        if (d1_midnight.getTimezoneOffset() < d1.getTimezoneOffset()) {
+                            dstEnd = new Date(d1.getTime());
+                            d1 = new Date(d1_midnight.getTime());
+                            b_hasDST = true;
+                            break;
+                        }
+                    }
+                }
+            }                      
+
+            if (b_hasDST) {
+                g('dststartmonth', dstStart.getMonth() + 1);
+                g('dststartday', dstStart.getDate());
+                g('dststarthour', dstStart.getHours());
+                g('dstendmonth',dstEnd.getMonth() + 1);
+                g('dstendday', dstEnd.getDate());
+                g('dstendhour', dstStart.getHours());
+                g('dstoffset', dstoffset/60.0);
+            
+                /*
+                g('n_dst_offset', dstoffset/60.0);
+                g('n_dststart_span', dstStart.toString());
+                g('n_dstend_span', dstEnd.toString());
+                */
+            }
+
+            var today = new Date();
+            var now_dstoffset = (b_hasDST && today.isDstObserved()) ? dstoffset : 0.0;          
+            
+            g('n_timezone', 0.0-((d.getTimezoneOffset()+now_dstoffset)/60.0));
+        }
+    </script>
+</head>    
+<body>
+    <div id="dodate_div" style="background:grey; border:1px solid black;" onclick="doDate();">Do Date</div>
+    <div id="dodate_new_div" style="background:grey; border:1px solid black;" onclick="doDateNew();">Do Date (new)</div>
+    <div> Old function
+        <div>current timezone offset<span id="timezone">timezone offset</span></div>
+        <div>dst offset<span id="dst_offset">dst offset</span></div>
+        <div>dststart<span id="dststart_span">dststart</span></div>
+        <div>dstend<span id="dstend_span">dstend</span></div>
+    </div>
+    <div> New function
+        <div>current timezone offset<span id="n_timezone">timezone offset</span></div>
+        <div>dst offset<span id="n_dst_offset">dst offset</span></div>
+        <div>dststart<span id="n_dststart_span">dststart</span></div>
+        <div>dstend<span id="n_dstend_span">dstend</span></div>
+        <div>dststartmonth<input id="dststartmonth"/></div>
+        <div>dststartday<input id="dststartday"/></div>
+        <div>dststarthour<input id="dststarthour"/></div>
+        <div>dstendmonth<input id="dstendmonth"/></div>
+        <div>dstendday<input id="dstendday"/></div>
+        <div>dstendhour<input id="dstendhour"/></div>
+        <div>dstoffset<input id="dstoffset"/></div>
+        <div>hh<input id="hh"/>
+        <div>mm<input id="mm"/>
+        <div>ss<input id="ss"/>
+        <div>day<input id="day"/>
+        <div>mon<input id="mon"/>
+        <div>year<input id="year"/>
+    </div>
+</body>
+</html>

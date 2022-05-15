@@ -97,7 +97,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			Set_Privileged_Ferias(datetime, pp_season, mass_type);
 			//Promote_Sundays_1955_Advent_and_Lent(datetime, pp_season, mass_type);
 			//Set_Ember_Days_to_Semiduplex_1955(datetime, pp_season, mass_type);
-
+			
 			pr_index_x = Index_x(pp_season);
 		}
 
@@ -773,10 +773,10 @@ uint8_t Precedence::Class_1960(MissalReading& m)
 	}
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavï¿½ I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
 	//DEBUG_PRT.off();
 
-	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "ï¿½" character too well (utf-8 support is patchy in Windows), hence this kludge
+	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "æ" character too well (utf-8 support is patchy in Windows), hence this kludge
 		return 1;
 	}
 
@@ -1128,7 +1128,7 @@ uint8_t Precedence::Class_pre1960(MissalReading& m, time64_t datetime, bool& b_i
 	return DAY_SIMPLEX;
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavï¿½ I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
 	//DEBUG_PRT.off();
 }
 
@@ -1732,9 +1732,11 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 	bool b_season_is_feast_of_nine_lessons = (pp_season.day == DAY_DUPLEX || pp_season.day == DAY_SEMIDUPLEX); // EnglishDORubrics.pdf p. lv, XXVI. Lessons: "On Doubles and Semidoubles nine Lessons are read"
 	bool b_is_saturday = weekday(datetime) == dowSaturday;
 	bool b_is_in_octave = (pp_season.b_is_octave && !pp_season.b_is_in_octave_feast_day) || (pp_feast.b_is_octave && !pp_feast.b_is_in_octave_feast_day);
+	bool b_is_Holy_Week_privileged_feria = !pp_season.b_is_sunday && Tridentine::IsHolyWeek(datetime);
+
 	if (!pp_feast.b_is_saturday_of_our_lady 
 		&& (mass_type < MASS_1955 && pp_feast.b_is_available && pp_feast.day == DAY_SIMPLEX 
-			&& (pp_feast.b_is_sunday && ordering.ordering[1] == -1)	|| (!b_season_is_feast_of_nine_lessons && !b_is_saturday && !b_is_in_octave && ordering.ordering[1] == FIRST)))
+			&& (pp_feast.b_is_sunday && ordering.ordering[1] == -1)	|| (!b_season_is_feast_of_nine_lessons && !b_is_Holy_Week_privileged_feria && !b_is_saturday && !b_is_in_octave && ordering.ordering[1] == FIRST)))
 	{	// if Simplex feast has been placed in Commemoration slot, promote it to main heading for Mass < 1955 (per D.O. software), and commemorate the Seasonal day
 
 		if (pp_feast.b_is_sunday) {

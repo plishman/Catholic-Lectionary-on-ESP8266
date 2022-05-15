@@ -1,0 +1,32 @@
+it:
+  weekday:
+    '0': Domenica
+    '1': Lunedì
+    '2': Martedì
+    '3': Mercoledì
+    '4': Giovedì
+    '5': Venerdì
+    '6': Sabato
+  month:
+    '1': genn.
+    '2': febbr.
+    '3': mar.
+    '4': apr.
+    '5': magg.
+    '6': guigno
+    '7': luglio
+    '8': ag.
+    '9': sett.
+    '10': ott.
+    '11': nov.
+    '12': dic.
+  date: '%{d} %{mmm} %{yyyy}'
+  ordinals: latin
+  colour:
+    violet: viola
+    white: bianco
+    green: verde
+    red: rosso
+  holy_day_of_obligation: <b>+</b>
+  or: o
+  ellipsis: [..]
