@@ -715,15 +715,32 @@ uint16_t GxGDEW042Z15::_setPartialRamArea(uint16_t x, uint16_t y, uint16_t xe, u
 void GxGDEW042Z15::_waitWhileBusy(const char* comment)
 {
   unsigned long start = micros();
+
+  #ifdef ESP8266
+  unsigned long loopctr = 0; // PLL-03-07-2022 Call yield() every 1000 iterations of the loop to prevent watchdog crash
+  #endif
+
   while (1)
   { //=0 BUSY
     if (digitalRead(_busy) == 1) break;
     delay(1);
+
+    #ifdef ESP8266
+    if (loopctr % 1000 == 0) { // PLL-03-07-2022 Call yield() every 1000 iterations of the loop to prevent watchdog crash
+      yield();
+    }
+    #endif
+
     if (micros() - start > GxGDEW042Z15_BUSY_TIMEOUT)
     {
       if (_diag_enabled) Serial.println("Busy Timeout!");
       break;
     }
+
+    #ifdef ESP8266
+    loopctr++; // PLL-03-07-2022 Call yield() every 1000 iterations of the loop to prevent watchdog crash
+    #endif
+
   }
   if (comment)
   {
