@@ -342,7 +342,11 @@ void FrameBuffer::render(GxEPD_Class& ePaper) {
 	uint8_t spiram_mode = get_spiram_mode();
 	set_spiram_mode(SPIRAM_MODE_SEQUENTIAL);
 
+	uint32_t t_start = millis();
+	uint32_t t_now = t_start;
+
 	while (bytesremaining > 0) {
+
 		// read lines between x0,y0 and x1,y1 into pxbuf, in PXBUF_SIZE chunks
 		// fill the pxbuffer
 		bytestoread = bytesremaining > PXBUF_SIZE ? PXBUF_SIZE : bytesremaining;
@@ -363,6 +367,14 @@ void FrameBuffer::render(GxEPD_Class& ePaper) {
 		}
 		
 		for (uint32_t i = 0; i < bytestoread; i++) {
+			if (i % 100 == 0) {											// check every 100 bytes read, to minimize calls to millis()
+				t_now = millis();
+				if ((t_now - t_start) > 1000 || t_now < t_start) {		// PLL-03-07-2022 Make sure WDT doesn't get triggered during display update
+					t_start = t_now;									// yield every 1000ms minimum
+					yield();
+				}
+			}
+
 			pxbuf[i] = IOSPI.transfer(0);			// read bytes from memory at selected address (sequential mode)
 		}
 		
@@ -371,8 +383,16 @@ void FrameBuffer::render(GxEPD_Class& ePaper) {
 
 		fb_cur_addr += bytestoread;
 		pxbuf_index = 0;
-				
+		
 		while (pxbuf_index < bytestoread) {
+			if (pxbuf_index % 100 == 0) {								// check every 100 bytes read, to minimize calls to millis()
+				t_now = millis();
+				if ((t_now - t_start) > 1000 || t_now < t_start) {		// PLL-03-07-2022 Make sure WDT doesn't get triggered during display update
+					t_start = t_now;									// yield every 1000ms minimum
+					yield();
+				}
+			}
+			
 			uint8_t lpixel = (pxbuf[pxbuf_index] & 0xF0) >> 4;
 			uint8_t rpixel = (pxbuf[pxbuf_index] & 0x0F);
 
