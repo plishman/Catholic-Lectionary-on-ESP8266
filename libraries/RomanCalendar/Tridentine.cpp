@@ -2997,7 +2997,8 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			}
 		}
 
-		if (MassType > MASS_TRIDENTINE_1910 && issameday(datetime, ChristTheKing(year))) {
+		bool bIsChristusRex = issameday(datetime, ChristTheKing(year));
+		if (bIsChristusRex && MassType > MASS_TRIDENTINE_1910) {
 			SaintImageFilename = F("ChristusRex");
 			FileDir_Saint = F("/Pentecost/ChristusRex/");
 		}
@@ -3019,11 +3020,17 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			SaintImageFilename = String(F("/11/2"));
 		}
 
-		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay) { // If St Matthias' Day or Lady Day, the SaintImageFilename will already have been set appropriately
+		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay && !bIsChristusRex) { // If St Matthias' Day or Lady Day, the SaintImageFilename will already have been set appropriately
 			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 		}
 		else { // PLL-14-12-2020
-			SeasonImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.
+			if (!bIsChristusRex) {
+				SeasonImageFilename = String(F("/Temporal/")) + ImageFilename;	// prepend Temporal folder for Easter and other moveable feasts that depend on it etc.
+			}
+			else {
+				// PLL-30-10-2022 ChristusRex is handled as a Feast, but, the Mass data is stored in the Pentecost/ folder (under Pentecost/ChristusRex/, however it is treated as a Feast, as if it were a Calendar feast (as if it were in MM/DD folder))
+				SaintImageFilename = String(F("/Temporal/")) + SaintImageFilename;	// PLL-30-10-2022 Christ the King is handled as a Feast, as if it were in the MM/DD folders, but is actually under Pentecost
+			}
 		} // PLL-14-12-2020
 	}
 	DEBUG_PRT.print(F(" 2"));
