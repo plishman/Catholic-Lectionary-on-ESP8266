@@ -263,7 +263,15 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			tablevalue = 5; //Office of 2nd, com. of 1st
 		}
 
-
+		if (tablevalue == 0 && Tridentine::issameday(datetime, Tridentine::AllSaints(year(datetime)))) {
+			// PLL-01-11-2022 Hack: On All Saints, change tablevalue to 1 (from 0), to show no commemoration of Class IV day of the xxth week 
+			// after Pentecost, per DivinumOfficium example (can't find rubric for it, but the pre-1960 All Saints day does not show a 
+			// commemoration for this day)
+#ifdef _WIN32
+			Bidi::printf("<span style='background-color:grey;'>All Souls display feast only</span>");
+#endif
+			tablevalue = 1;
+		}
 
 		//DEBUG_PRT.on();
 		DEBUG_PRT.printf("x=%d y=%d tablevalue=%d: ", pr_index_1960_x, pr_index_1960_y, tablevalue);
@@ -773,10 +781,10 @@ uint8_t Precedence::Class_1960(MissalReading& m)
 	}
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavï¿½ I. classis");
 	//DEBUG_PRT.off();
 
-	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "æ" character too well (utf-8 support is patchy in Windows), hence this kludge
+	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "ï¿½" character too well (utf-8 support is patchy in Windows), hence this kludge
 		return 1;
 	}
 
@@ -1128,7 +1136,7 @@ uint8_t Precedence::Class_pre1960(MissalReading& m, time64_t datetime, bool& b_i
 	return DAY_SIMPLEX;
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavï¿½ I. classis");
 	//DEBUG_PRT.off();
 }
 
