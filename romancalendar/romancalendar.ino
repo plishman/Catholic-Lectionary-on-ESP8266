@@ -2852,7 +2852,7 @@ void LatinMassPropers(time64_t& date,
             //         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
             if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-01-06-2021 Added LadyDay because Divinum Officium displays the commemoration on this day, despite it being a Class I feast //PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
               //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
-              if (!bOverflowedScreen && !bIsVotive && (filenumber == 2 || filenumber == 11)) {   // do a line feed before the text of the commemoration
+              if (!bOverflowedScreen && ((!bIsVotive && (filenumber == 2 || filenumber == 11)) || (bIsVotive && filenumber == 11))) {   // do a line feed before the text of the commemoration
                 String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
 
                 bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb,
@@ -3974,8 +3974,9 @@ bool IsInArray(const int8_t* ar, int8_t value, int8_t& firstindex, int8_t start,
 }
 
 String replacefields(String s, time64_t date) {
-  s.replace("%{monthweek}", "");  // don't yet understand the calculation for the week number, plus including this tends to overflow the line, so omitting for now.
-  s.replace("%{month}", "");
+  //s.replace("%{monthweek}", "");  // don't yet understand the calculation for the week number, plus including this tends to overflow the line, so omitting for now.
+  //s.replace("%{month}", "");
+  s.replace(" %{monthweek} %{month}", ""); // PLL-13-11-2022 forgot to replace the embedded spaces too
   return s;
 
   /*
