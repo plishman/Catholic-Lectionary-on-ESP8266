@@ -10,9 +10,18 @@ It is based on the Ruby program calendarium-romanum (https://github.com/igneus/c
 </p>
 <h2>Latin Mass</h2>
 <p>
-The Latin Mass Propers (shown above) are now available in several languages and versions, based on output captured from a modified version of the Divinum Officium project (https://github.com/DivinumOfficium/divinum-officium). As programmed, Latin Mass Propers update twelve times daily. The Introitus for the day's Mass is shown from Midnight to 9am, then the Gloria, Collect, Lesson, Gradual, Gospel, Credo, Offertorium, Secreta, Prefatio, Communio are shown at hourly intervals thereafter, until 7pm, when the Postcommunio is shown (until midnight). On Good Friday and Holy Saturday a slightly different pattern occurs, due to the Propers for these days having more parts.
+<h3>Latin Mass Propers</h3>
+The Latin Mass Propers (shown above) are now available in several languages and versions, based on output captured from a modified version of the Divinum Officium project (https://github.com/DivinumOfficium/divinum-officium). As programmed, Latin Mass Propers update twelve times daily. The Introitus for the day's Mass is shown from Midnight to 9am, then the Gloria, Collect, Lesson, Gradual, Gospel, Credo, Offertorium, Secreta, Prefatio, Communio are shown at hourly intervals thereafter, until 7pm, when the Postcommunio is shown (until midnight). On Good Friday and Holy Saturday a slightly different pattern occurs, due to the Propers for these days having more parts. 
 </p>
 <p>
+The intention is to make the Holy Roman Mass part of one's day, and over time re-familiarize people with it and with the Eternal Liturgy's many feasts, seasons and devotions, and eventually to re-learn the shape and grammar of the Roman Liturgical Year.
+</p>
+<p>
+  <h3>Deferred Feasts</h3>
+[Beta] Deferred feasts in the Latin Mass calendar are now stored, recalled and celebrated on the first available day. The day is caluclated based on precedence; it remains to be seen how closely this accords with official dates for deferred feast days. Octaves and Vigils for deferred feast days are not modified by this update as yet.
+</p>
+<p>
+<h3>Images</h3>
 Images for seasonal days, feasts and votive masses are included in the SD card file tree. If an image or images are available for a given day, they will be displayed between midnight and 8am and between 8pm and midnight, with all of the text readings displayed at hourly intervals during the day in between as above. 
 </p>
 <p>
@@ -109,8 +118,5 @@ As well as the other Arduino libraries, this project uses the following librarie
 
 Modified versions of the Time and SPI arduino libraries are also used: The time library has been changed to use a 64-bit value to store the time in seconds since 1970 so that the 2038 bug will not occur. The SPI library has had an extra function added which permits 9-bit SPI data to be written, so that the WaveShare/Dalian display used can be operated on 3 wires instead of 4 (no need for a data/command wire, the d/c value is stored in the 9th bit of each byte transmitted to the screen, which saves a pin on the ESP8266).
 
-Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the other libraries on which this project depends.
-<p>
-There is a lot to this project, and it has taken me over four years to develop the software and a board to run it on, so bear with me - I will update the readme as I go.
-</p>
-[This readme is still in the process of being updated]
+Many thanks to the contributors of Calendarium-Romanum, TheDotFactory and all of the public domain libraries and software on which this project depends.
+
