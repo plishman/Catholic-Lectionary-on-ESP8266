@@ -3739,6 +3739,13 @@ void LatinMassPropers(time64_t& date,
 	tb.flush();
 
 	DEBUG_PRT.println(F("\nCompleted displaying reading - Leaving LatinMassPropers()"));
+#ifndef _WIN32
+  DEBUG_PRT.print(F("free memory (before return)= "));
+  //Serial.println("=");
+  
+  DEBUG_PRT.println(String(system_get_free_heap_size()));
+#endif
+
 }
 
 
