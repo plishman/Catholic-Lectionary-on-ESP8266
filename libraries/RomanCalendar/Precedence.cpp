@@ -29,12 +29,19 @@ const uint8_t precedence[10][17] = { {0, 1, 3, 1, 3, 3, 3, 3, 3, 3, 6, 5, 8, 6, 
 							   {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4} };
 
 
+//void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, Ordering& ordering) {
+//	doOrdering(datetime, mass_type, season, feast, votive, ordering);
+//}
+
 // need to handle case of 1st to 5th Jan, which in 1955 Mass are Feria unless feasts - maybe not here, but in DoLatinMassPropers?
 
-void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, Ordering& ordering) {
-	ordering.headings[0] = &season;
+void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, MissalReading& deferred, Ordering& ordering) {
+	/// TODO: sometimes headings[0] will actually be a feast - a Feast of the Lord, and so the temporal (lesser) feast (&feast) should go here in headings[0], 
+	/// and the Feast of the Lord, held in &season, should go in headings[1]
+	ordering.headings[0] = &season; 
 	ordering.headings[1] = &feast;
-	ordering.headings[2] = &votive;
+	ordering.headings[2] = &votive;	
+	ordering.headings[3] = &deferred; //PLL 07-10-2024 adding support for celebrating deferred feasts *replacing feast day* (is this the best way to do it?)
 
 	ordering.b_com_at_lauds = false;
 	ordering.b_com_at_vespers = false;
@@ -44,9 +51,15 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 	ordering.transfer_heading_index = -1;
 	ordering.b_feast_is_commemoration = false;
 	ordering.b_is_votive = false;
+	ordering.b_celebrate_deferred = false;
 	ordering.ordering[0] = -1;
 	ordering.ordering[1] = -1;
 	ordering.ordering[2] = -1;
+	ordering.ordering[3] = -1;
+	ordering.feast_classnumber = 0;
+	ordering.season_classnumber = 0;
+	ordering.votive_classnumber = 0;
+	ordering.deferred_classnumber = 0;
 
 	bool b_use_new_classes = (mass_type >= MASS_1960);
 
@@ -59,8 +72,10 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 
 		PrecedenceParams pp_season;	
 		PrecedenceParams pp_feast;
+		PrecedenceParams pp_deferred; // PLL-06-10-2024 for deferred feast (if present)
 
-		bool b_is_saturday_of_our_lady = votive.isOpen() && isSaturdayOfOurLady(datetime, /*b_use_new_classes*/mass_type, season, feast);
+		bool b_is_saturday_of_our_lady = !deferred.isOpen() && votive.isOpen() && isSaturdayOfOurLady(datetime, /*b_use_new_classes*/mass_type, season, feast);
+		// PLL 08-10-2024 Can't have a Saturday of Our Lady if there is a deferred feast to celebrate, since Saturdays of Our Lady are only celebrated if there is no other feast on that day (although there can sometimes be a commemoration)
 
 		ordering.b_is_votive = b_is_saturday_of_our_lady;
 
@@ -76,9 +91,11 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		}
 		pp_season.b_is_available = ordering.headings[0]->isOpen();
 		pp_feast.b_is_available = ordering.headings[1]->isOpen();
+		pp_deferred.b_is_available = ordering.headings[3]->isOpen();
 
 		int8_t pr_index_x = -1;
 		int8_t pr_index_y = -1;
+		int8_t pr_index_y_deferred = -1;
 
 		if (pp_season.b_is_available) {
 			pp_season.b_is_saturday_of_our_lady = b_is_saturday_of_our_lady;
@@ -113,19 +130,110 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			pr_index_y = Index_y(pp_feast);
 		}
 
+		// if it is neither a duplex day of CLASS I or II, nor a sunday, the transferred day will be celebrated instead of this day's feast (per Claude.ai response)
+		// can do it if there is a deferred feast and today is not Duplex Class I or II
+
+		int8_t day_duplex_class = DUPLEX_NA;
+		bool b_day_is_duplex = false;
+		
+		if (pp_season.b_is_available) {
+			day_duplex_class = pp_season.duplex_class;
+			b_day_is_duplex = pp_season.b_is_duplex;
+		}
+		
+		bool b_is_sunday = Tridentine::sunday(datetime);
+		bool b_celebrate_deferred = (pp_deferred.b_is_available && !b_is_sunday && (!(b_day_is_duplex && day_duplex_class >= DUPLEX_CLASS_II)));
+		
+		if (pp_feast.b_is_available) {
+			day_duplex_class = pp_feast.duplex_class > day_duplex_class ? pp_feast.duplex_class : day_duplex_class;
+			b_day_is_duplex = (pp_feast.b_is_duplex || b_day_is_duplex);
+			b_celebrate_deferred = (pp_deferred.b_is_available && !b_is_sunday && (!(b_day_is_duplex && day_duplex_class >= DUPLEX_CLASS_II)));
+		}
+
+		if (b_celebrate_deferred) { // PLL-06-10-2024 Adding support for deferred feasts				
+			// can celebrate transferred feast if so
+			pp_deferred.b_is_saturday_of_our_lady = b_is_saturday_of_our_lady;
+			pp_deferred.b_is_vigil = IsVigil(deferred, datetime, pp_deferred.vigil_class, pp_deferred.vigil_type);
+			pp_deferred.day = Class_pre1960(deferred, datetime, pp_deferred.b_is_sunday, pp_deferred.sunday_class, pp_deferred.b_is_ferial, pp_deferred.ferial_class, pp_deferred.b_is_duplex, pp_deferred.duplex_class);
+
+			// need to handle that getOctave is neutral as to whether a feast or a seasonal day is being considered. This causes
+			// a problem when the seasonal octave is movable
+			pp_deferred.b_is_octave = getOctave(datetime, false, mass_type, pp_deferred.octave_type, pp_deferred.privileged_octave_order, pp_deferred.b_is_in_octave_day, pp_deferred.b_is_in_octave_feast_day);
+			pp_deferred.b_is_vigil_of_epiphany = Tridentine::issameday(datetime, Tridentine::date(5, 1, year(datetime)));
+			pr_index_y_deferred = Index_y(pp_deferred);
+		}
+
+		///TODO: if deferred feast can be celebrated on this day, need to make it the feast. The feast/seasonal days' references will not need to be deferred
+		///      for a day which without the transferred feast is not a Class I or II day
+		
+		
+		///
+
 		uint8_t tablevalue = pr_index_x == -1 || pr_index_y == -1 ? 0 : precedence[pr_index_y][pr_index_x];
+		
+		uint8_t tablevalue_df = 0;
+		
+		if (b_celebrate_deferred) {
+			tablevalue_df = pr_index_x == -1 || pr_index_y_deferred == -1 ? 0 : precedence[pr_index_y_deferred][pr_index_x];
+
+			ordering.deferred_classnumber = pp_deferred.b_is_available ? (uint8_t)(18 - (Index_x(pp_deferred) + 1)) : 0;
+			ordering.b_celebrate_deferred = b_celebrate_deferred;
+
+			ordering.headings[3] = &feast;
+			ordering.headings[1] = &deferred; //PLL 07-10-2024 adding support for celebrating deferred feasts *replacing feast day* (is this the best way to do it?)
+
+#ifdef _WIN32
+			//Bidi::printf("<span class='flash'>[celebrate deferred feast]</span>");
+#endif
+		}
 
 		ordering.feast_classnumber = pp_feast.b_is_available ? (uint8_t)(18-(Index_x(pp_feast) + 1)) : 0; // makes a "score" from -1 to 16, to which I add 1 and subtract the result from 18, to make it from 18 to 1 (18=simplex, 1=Sunday of the first class). 0 = not available
 		ordering.season_classnumber = pp_season.b_is_available ? (uint8_t)(18-(pr_index_x + 1)) : 0; //
 
+		if (b_celebrate_deferred) {
+			deferred._precedencescore = ordering.feast_classnumber;
+		}
+		else {
+			if (b_is_saturday_of_our_lady) {
+				votive._precedencescore = ordering.feast_classnumber;
+			}
+			else {
+				feast._precedencescore = ordering.feast_classnumber;
+			}
+		}
+		season._precedencescore = ordering.season_classnumber;
+
+		/// TO FIX: a hack - to avoid having to reverify the whole year's output, have fixed this specific case. 
+		/// Has the effect of promoting the Feast of the Lord over hthe Seasonal feast, effectively putting the FOL in the headings[1] (feast) position, 
+		/// and the seasonal feast in the headings[0] position. 
+		/// To do it properly, need to make sure that, when there are two feasts - a feast of the Lord and a fixed temporal feast, where the lesser feast is transferred, 
+		/// that the FOL goes in the Feast headings array entry, and the temporal feast in the headings Seasonal array entry (ie, the reverse of the default situation)
+		
+		// NB. Now know this is because the feasts in the weeks of Pentecost (which move with the date of Pentecost each year), are stored in such as wy that they are opened
+		// as seasonal, rather than feast days. This should fix this.
+		int yr = year(datetime);
+		if (tablevalue == 5 /*office of 1st, transfer of 2nd*/ && Tridentine::IsMoveableFeastOfTheLordInWeeksAfterPentecost(datetime))
+		{
+			tablevalue = 6 /* set to office of 2nd, transfer of 1st if so*/;
+#ifdef _WIN32			
+			Bidi::printf("[Set as feast: Moveable FOL in weeks after Pentecost]");
+#endif
+			DEBUG_PRT.println(F("[Set as feast: Moveable FOL in weeks after Pentecost]"));
+		}
+		///
+		///
+
+		uint8_t tvalue = tablevalue;
+		if (b_celebrate_deferred) tvalue = tablevalue_df; // if the deferred feast will be celebrated today
+
 		//DEBUG_PRT.on();
-		DEBUG_PRT.printf("x=%d y=%d tablevalue=%d: ", pr_index_x, pr_index_y, tablevalue);
+		DEBUG_PRT.printf("x=%d y=%d table value=%d: ", pr_index_x, pr_index_y, tvalue);
 #ifdef _WIN32
-		Bidi::printf("x=%d y=%d tablevalue=%d: ", pr_index_x, pr_index_y, tablevalue);
+		Bidi::printf("x=%d y=%d table value=%d: ", pr_index_x, pr_index_y, tvalue);
 #endif
 		//DEBUG_PRT.off();
 
-		switch (tablevalue)
+		switch (tvalue)
 		{
 		case 0:
 			pr_0(ordering);
@@ -169,6 +277,10 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		}
 
 		handleCommemorations(datetime, mass_type, ordering, pp_season, pp_feast, tablevalue);
+
+//		if ((ordering.b_transfer_1st || ordering.b_transfer_2nd) && ordering.transfer_heading_index != -1) {
+//			Tridentine::setDeferredFeast(ordering.headings[ordering.transfer_heading_index]->_filedir); // PLL-04-10-2024 save filename of Seasonal day to deferred list
+//		}
 	}
 	else
 	{
@@ -179,16 +291,24 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		ordering.season_classnumber = Class_1960(season); // need to adapt for pre-1960 class names
 		ordering.feast_classnumber = Class_1960(feast);
 		ordering.votive_classnumber = Class_1960(votive);
+		ordering.deferred_classnumber = Class_1960(deferred); // PLL-08-10-2024 adding support for recording and celebrating deferred feasts
+
+		season._precedencescore = ordering.season_classnumber;
+		feast._precedencescore = ordering.feast_classnumber;
+		votive._precedencescore = ordering.votive_classnumber;
+		deferred._precedencescore = ordering.deferred_classnumber;
+	
+		bool bIsAshWednesday = Tridentine::issameday(datetime, Tridentine::AshWednesday(year(datetime)));
 
 		uint8_t seas = Tridentine::Season(datetime);
-		if (ordering.feast_classnumber == 3 && seas == SEASON_LENT) { //https://en.wikipedia.org/wiki/General_Roman_Calendar_of_1960
-			ordering.feast_classnumber = 4; // Class III feasts are celebrated as commemorations during Lent
+		if (ordering.feast_classnumber == 3 && seas == SEASON_LENT || bIsAshWednesday) { //https://en.wikipedia.org/wiki/General_Roman_Calendar_of_1960
+			ordering.feast_classnumber = 4; // Class III feasts are celebrated as commemorations during Lent (PLL-21-03-2022 Ash Wednesday supersedes any feast on that day)
 			ordering.b_feast_is_commemoration = true;
 		}
 
 		bool b_season_only = (!feast.isOpen() && ordering.feast_classnumber == 0);
 		bool b_feast_only = (!season.isOpen() && ordering.season_classnumber == 0);
-		bool b_is_saturday_of_our_lady = ordering.votive_classnumber > 0 && isSaturdayOfOurLady(datetime, mass_type, season, feast);
+		bool b_is_saturday_of_our_lady = !deferred.isOpen() && ordering.votive_classnumber > 0 && isSaturdayOfOurLady(datetime, mass_type, season, feast);
 
 		if (ordering.season_classnumber == 0 && ordering.feast_classnumber == 0 && ordering.votive_classnumber == 0) {
 			DEBUG_PRT.println(F("No feast, seasonal or votive day!"));
@@ -215,6 +335,23 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		// Assumption: All feast days in are (should be in this implementation) from the General Roman Calendar, hence
 		// all are Universal Feasts (rather than Particular Feasts). This simplifies implementation of the Table usage
 
+		int8_t day_class = ordering.feast_classnumber > ordering.season_classnumber ? ordering.feast_classnumber : ordering.season_classnumber;
+		bool b_Sunday = Tridentine::sunday(datetime);
+		bool b_celebrate_deferred = (deferred.isOpen() && (!(day_class < 3 || b_Sunday))); // PLL-08-10-2024 Determine whether or not a deferred feast can be celebrated today. Will need to check this catches all cases in the simplified post 1960 liturgical classes - eg, can some deferred feasts be celebrated on a Sunday?
+		if (b_celebrate_deferred) {
+			ordering.headings[3] = &feast;
+			ordering.headings[1] = &deferred; //PLL 07-10-2024 adding support for celebrating deferred feasts *replacing feast day* (is this the best way to do it?)
+			
+			int8_t classnumber_temp = ordering.feast_classnumber;
+			ordering.feast_classnumber = ordering.deferred_classnumber;
+			ordering.deferred_classnumber = classnumber_temp;
+
+			ordering.b_celebrate_deferred = b_celebrate_deferred;
+#ifdef _WIN32
+			//Bidi::printf("<span class='flash'>[celebrate deferred feast]</span>");
+#endif
+		}
+
 		bool b_season_is_vigil = false;
 		bool b_feast_is_vigil = false;
 
@@ -223,10 +360,14 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		}
 	
 		if (!b_season_only) {
-			b_feast_is_vigil = IsVigil(feast);
+			if (b_celebrate_deferred) {
+				b_feast_is_vigil = IsVigil(deferred);
+			}
+			else {
+				b_feast_is_vigil = IsVigil(feast);
+			}
 		}
 
-		bool b_Sunday = Tridentine::sunday(datetime);
 		int8_t sunday_class = -1;
 		if (b_Sunday) {
 			sunday_class = Class_1960(season);
@@ -781,10 +922,10 @@ uint8_t Precedence::Class_1960(MissalReading& m)
 	}
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octav� I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
 	//DEBUG_PRT.off();
 
-	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "�" character too well (utf-8 support is patchy in Windows), hence this kludge
+	if (cls.indexOf("Dies Octav") == 0 && cls.indexOf("I. classis") > 0) {	// Easter (testing on Win32, doesn't handle "æ" character too well (utf-8 support is patchy in Windows), hence this kludge
 		return 1;
 	}
 
@@ -1136,7 +1277,7 @@ uint8_t Precedence::Class_pre1960(MissalReading& m, time64_t datetime, bool& b_i
 	return DAY_SIMPLEX;
 
 	//DEBUG_PRT.on();
-	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octav� I. classis");
+	//DEBUG_PRT.printf("[%s] [%s]", cls.c_str(), "Dies Octavæ I. classis");
 	//DEBUG_PRT.off();
 }
 
@@ -1445,7 +1586,7 @@ int8_t Precedence::Index_x(PrecedenceParams& pp)
 void Precedence::pr_0(Ordering& ordering)
 {
 	//0 (will maintain the ordering of the input season and feast (the table does not specify))
-	DEBUG_PRT.println("0 (will maintain the ordering of the input season and feast (the table does not specify))");
+	DEBUG_PRT.println(F("0: (will maintain the ordering of the input season and feast (the table does not specify))"));
 
 	if (ordering.b_is_votive) {
 		ordering.ordering[0] = SECOND;
@@ -1509,7 +1650,7 @@ void Precedence::pr_3(Ordering& ordering)
 void Precedence::pr_4(Ordering& ordering)
 {
 	//4	Officium de 2, Commemoratio de 1.
-	DEBUG_PRT.println(F("4: Office of 2nd, commemoration of 2nd"));
+	DEBUG_PRT.println(F("4: Office of 2nd, commemoration of 1st"));
 	ordering.ordering[0] = SECOND;
 	ordering.ordering[1] = FIRST; 
 	ordering.ordering[2] = -1;
@@ -1600,6 +1741,8 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 	uint8_t season_week = Tridentine::Season_Week(datetime, season);
 	int year = Tridentine::year(datetime);
 	bool b_feast_has_precedence = (ordering.ordering[0] == 1);
+
+	bool b_is_Ash_Wednesday = Tridentine::issameday(datetime, Tridentine::AshWednesday(year));
 
 	//"..The other Sundays and Octaves are commemorated at Vespers and Lauds unless they fall on the Feasts mentioned above" - DOR. p.xli IX. Commemorations. pt. 7
 	bool b_is_Corpus_Christi_Octave_Day = (mass_type < MASS_1955 && Tridentine::issameday(datetime, Tridentine::CorpusChristi(year) + SECS_PER_WEEK));
@@ -1733,7 +1876,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 		return;
 	}
 
-	// DOR IX. Commemorations: 1. Simple Feasts are commemorated when the concur with the following:
+	// DOR IX. Commemorations: 1. Simple Feasts are commemorated when they concur with the following:
 	// (a) A Feast of nine Lessons (even when transferred);
 	// (b) A Sunday, Octave or Saturday;
 	// (c) a Ferial Office (to fit in the Office of a Sunday that has been passed over).
@@ -1744,7 +1887,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 
 	if (!pp_feast.b_is_saturday_of_our_lady 
 		&& (mass_type < MASS_1955 && pp_feast.b_is_available && pp_feast.day == DAY_SIMPLEX 
-			&& (pp_feast.b_is_sunday && ordering.ordering[1] == -1)	|| (!b_season_is_feast_of_nine_lessons && !b_is_Holy_Week_privileged_feria && !b_is_saturday && !b_is_in_octave && ordering.ordering[1] == FIRST)))
+			&& (pp_feast.b_is_sunday && ordering.ordering[1] == -1)	|| (!b_season_is_feast_of_nine_lessons && !b_is_Holy_Week_privileged_feria && !b_is_saturday && !b_is_in_octave && !b_is_Ash_Wednesday && ordering.ordering[1] == FIRST)))
 	{	// if Simplex feast has been placed in Commemoration slot, promote it to main heading for Mass < 1955 (per D.O. software), and commemorate the Seasonal day
 
 		if (pp_feast.b_is_sunday) {
@@ -1777,18 +1920,18 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 	 // handle transfers
 	 // fixed feast falling on a movable seasonal day
 		bool b_transfer_feast = (!pp_feast.b_is_saturday_of_our_lady && /*pp_feast.b_is_duplex &&*/ (
-			(season == SEASON_ADVENT && pp_feast.b_is_sunday && mass_type == MASS_1955&& !Tridentine::issameday(datetime, Tridentine::nativity(year) - SECS_PER_DAY)) // comms. of feasts possible on Sundays of Advent for mass_type < MASS_1955
+			(season == SEASON_ADVENT && pp_feast.b_is_sunday && mass_type == MASS_1955 && !Tridentine::issameday(datetime, Tridentine::nativity(year) - SECS_PER_DAY)) // comms. of feasts possible on Sundays of Advent for mass_type < MASS_1955
 			|| (pp_season.b_is_sunday && (/*season == SEASON_SEPTUAGESIMA ||*/ (season == SEASON_LENT && mass_type == MASS_1955) || (season == SEASON_EASTER && (season_week <= 1))))		// DOR p.xlii - xliii "X. The Transference of Feasts" (D.O. differs?)
 			|| (Tridentine::issameday(datetime, Tridentine::nativity(year)))
 			//|| (datetime >= Tridentine::Epiphany(year) && (mass_type < MASS_1955 && datetime < (Tridentine::Epiphany(year) + 8 * SECS_PER_DAY)))
 			|| (mass_type == MASS_1955 && Tridentine::issameday(datetime, Tridentine::HolyFamily(year))) // when it falls in the Octave of Epiphany, transfer the day of Epiphany (per D.O.) 1955 Mass only!
-			|| (Tridentine::issameday(datetime, Tridentine::AshWednesday(year)))
+			|| (mass_type >= MASS_1955 && b_is_Ash_Wednesday)
 			|| (mass_type == MASS_1955 && Tridentine::IsHolyWeek(datetime)) // per D.O., no commemorations in Holy Week in 1955 Mass, but present in earlier Masses 
 			|| (season == SEASON_EASTER && season_week == 0 && (mass_type == MASS_1955 || (mass_type < MASS_1955 && weekday(datetime) < dowWednesday)))
 			|| (Tridentine::issameday(datetime, Tridentine::Ascension(year)))
 			|| (datetime >= Tridentine::PentecostVigil(year) && datetime < (Tridentine::TrinitySunday(year) + SECS_PER_DAY))
 			|| (Tridentine::issameday(datetime, Tridentine::CorpusChristi(year))) /*|| (mass_type < MASS_1955 && Tridentine::issameday(datetime, Tridentine::CorpusChristi(year) + SECS_PER_WEEK)))*/	// D.O. doesn't seem to transfer feasts that fall on the Octave Day of Corpus Christi - maybe becuase they are Doctors of the Church in the cases I looked at. As I don't have this information, I will not transfer feasts on this day
-			|| (Tridentine::issameday(datetime, Tridentine::SacredHeart(year)))
+			|| (mass_type > MASS_TRIDENTINE_1910 && Tridentine::issameday(datetime, Tridentine::SacredHeart(year)))
 			));
 
 		if (b_transfer_feast) {
@@ -1798,13 +1941,13 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 			if (pp_season.b_is_sunday && (/*season == SEASON_SEPTUAGESIMA ||*/ (season == SEASON_LENT && mass_type == MASS_1955) || (season == SEASON_EASTER && (season_week <= 1)))) reason = 2;		// DOR p.xlii - xliii "X. The Transference of Feasts" (D.O. differs?)
 			if (Tridentine::issameday(datetime, Tridentine::nativity(year))) reason = 3;
 			if (mass_type == MASS_1955 && Tridentine::issameday(datetime, Tridentine::HolyFamily(year))) reason = 4; // when it falls in the Octave of Epiphany, transfer the day of Epiphany (per D.O.)
-			if (Tridentine::issameday(datetime, Tridentine::AshWednesday(year))) reason = 5;
+			if (mass_type >= MASS_1955 && b_is_Ash_Wednesday) reason = 5;
 			if (mass_type == MASS_1955 && Tridentine::IsHolyWeek(datetime)) reason = 6;
 			if (season == SEASON_EASTER && season_week == 0 && (mass_type == MASS_1955 || (mass_type < MASS_1955 && weekday(datetime) < dowWednesday))) reason = 7;
 			if (Tridentine::issameday(datetime, Tridentine::Ascension(year))) reason = 8;
 			if (datetime >= Tridentine::PentecostVigil(year) && datetime < (Tridentine::TrinitySunday(year) + SECS_PER_DAY)) reason = 9;
 			if (Tridentine::issameday(datetime, Tridentine::CorpusChristi(year))) reason = 10;/*|| (mass_type < MASS_1955 && Tridentine::issameday(datetime, Tridentine::CorpusChristi(year) + SECS_PER_WEEK)))*/	// D.O. doesn't seem to transfer feasts that fall on the Octave Day of Corpus Christi - maybe becuase they are Doctors of the Church in the cases I looked at. As I don't have this information, I will not transfer feasts on this day
-			if (Tridentine::issameday(datetime, Tridentine::SacredHeart(year))) reason = 11;
+			if (mass_type > MASS_TRIDENTINE_1910 && Tridentine::issameday(datetime, Tridentine::SacredHeart(year))) reason = 11;
 			Bidi::printf("<span style='color: lightblue;'> transfer feast reason=%d </span>", reason);
 #endif
 			ordering.ordering[0] = SECOND; // seasonal day only, transfer other (TODO: Transfers written to disk and recalculated - but not even D.O. does this
@@ -1813,6 +1956,11 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 			ordering.b_com = false;
 			ordering.b_com_at_lauds = false;
 			ordering.b_com_at_vespers = false;
+
+			ordering.b_transfer_2nd = true;				// need commenting
+			ordering.transfer_heading_index = FIRST;	// 
+				
+			//Tridentine::setDeferredFeast(ordering.headings[1]->_filedir); // PLL-04-10-2024 save filename of Feast to deferred list
 			return;
 		}
 
@@ -1848,12 +1996,16 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 			if (Tridentine::issameday(datetime, Tridentine::AllSaints(year))) reason = 6;
 			Bidi::printf("<span style='color: lightblue;'> transfer season reason=%d%s </span>", reason, b_transfer_day_in_octave ? " [b_transfer_day_in_octave == 1] " : "");
 #endif
-			ordering.ordering[0] = FIRST; // seasonal day only, transfer other (TODO: Transfers written to disk and recalculated - but not even D.O. does this
+			ordering.ordering[0] = FIRST; // feast day only, transfer other (TODO: Transfers written to disk and recalculated - but not even D.O. does this
 			ordering.ordering[1] = -1; // 
 
 			ordering.b_com = false;
 			ordering.b_com_at_lauds = false;
 			ordering.b_com_at_vespers = false;
+
+			//ordering.b_transfer_2nd = true;
+			//ordering.transfer_heading_index = SECOND;
+			////Tridentine::setDeferredFeast(ordering.headings[0]->_filedir); // PLL-04-10-2024 save filename of Seasonal day to deferred list
 			return;
 		}
 
@@ -1870,6 +2022,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 				|| (mass_type < MASS_1955 && pp_feast.b_is_sunday && pp_feast.b_is_duplex
 					&& pp_season.sunday_class == SUNDAY_SEMIDUPLEX_MINOR  // General Rubrics 1900 p. xxxix "IX. Commemorations": "The Sundays from Pentecost to Advent, from Epiphany to Septuagesima, from Low Sunday to Pentecost exclusive, are commemorated when a Double supplants them. When a Double falls on other Sundays, it is commemorated or transferred ..."
 					&& (season == SEASON_EPIPHANY || season == SEASON_AFTER_PENTECOST || (season == SEASON_EASTER && season_week > 0)))
+				|| (mass_type < MASS_1955 && b_is_Ash_Wednesday)
 				|| (Tridentine::issameday(datetime, Tridentine::MajorRogation(Tridentine::year(datetime)))))
 			{
 
@@ -1884,6 +2037,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 				if (mass_type < MASS_1955 && pp_feast.b_is_sunday && pp_feast.b_is_duplex
 					&& pp_season.sunday_class == SUNDAY_SEMIDUPLEX_MINOR  // General Rubrics 1900 p. xxxix "IX. Commemorations": "The Sundays from Pentecost to Advent, from Epiphany to Septuagesima, from Low Sunday to Pentecost exclusive, are commemorated when a Double supplants them. When a Double falls on other Sundays, it is commemorated or transferred ..."
 					&& (season == SEASON_EPIPHANY || season == SEASON_AFTER_PENTECOST || (season == SEASON_EASTER && season_week > 0))) reason = 5;
+				if (mass_type < MASS_1955 && b_is_Ash_Wednesday) reason = 8;
 				if (Tridentine::issameday(datetime, Tridentine::MajorRogation(Tridentine::year(datetime)))) reason = 6;
 				//if (pp_feast.b_is_vigil && pp_feast.b_is_sunday) reason = 7;
 
@@ -1959,7 +2113,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 			if (ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers || tablevalue == 0) {	// and it is to be commemorated			
 				if ((pp_season.b_is_sunday && (mass_type != MASS_DIVINEAFFLATU || mass_type == MASS_DIVINEAFFLATU && Tridentine::IsHolyWeek(datetime)) && (pp_season.sunday_class == SUNDAY_CLASS_I || pp_season.sunday_class == SUNDAY_SEMIDUPLEX_CLASS_I)) // DA Mass appears to allow Commemorations on 1st Class Sundays (per DivinumOfficium software) * Not Palm Sunday apparently (2023)
 					|| (pp_season.b_is_duplex && pp_season.duplex_class == DUPLEX_CLASS_I && !(b_is_StJosephSponsi && mass_type == MASS_DIVINEAFFLATU && !pp_season.b_is_sunday)) // When St Joseph Sponsi falls on a weekday, commemorations appear to be allowed, despite the fact it is a Duplex Class I
-					|| (pp_season.b_is_ferial && pp_season.ferial_class == FERIAL_PRIVILEGED && !(mass_type < MASS_1955 && Tridentine::IsHolyWeek(datetime)))
+					|| (pp_season.b_is_ferial && pp_season.ferial_class == FERIAL_PRIVILEGED && !(mass_type < MASS_1955 && (Tridentine::IsHolyWeek(datetime) || b_is_Ash_Wednesday)))
 					|| (pp_season.b_is_vigil && pp_season.vigil_class > VIGIL)
 					|| (mass_type == MASS_1955 && pp_feast.vigil_type > VIGIL_TYPE_SUPPRESSED)
 					|| (mass_type <= MASS_TRIDENTINE_1910 && Tridentine::issameday(datetime, Tridentine::AssumptionOfMary(year) - SECS_PER_DAY)) // the Vigil of the Assumption of Mary (14 August) falls permanently within the octave of St. Lawrence in the 1570 and 1910 Masses, and is in the propers baked in as a commemoration, so show no caluclated commemoration on this day for these Masses
@@ -1967,19 +2121,39 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 					|| (mass_type < MASS_1955 && tablevalue != 4 && !pp_season.b_is_sunday && !pp_season.b_is_saturday_of_our_lady && !pp_season.b_is_octave && !(b_is_feast_of_nine_lessons && (season == SEASON_ADVENT || season == SEASON_LENT)))	// EnglishDORubrics p.xxxix IX: "The Ferias of Advent, Lent ... are commemorated when a Feast of nine Lessons falls on them" [So ferias of other seasons are not- DO seems to confirm]. If tablevalue==4 then the commemoration is of the feast, not the seasonal day
 					)
 				{
+
+#if _WIN32
+					int8_t reason_not = 0;
+
+					if (pp_season.b_is_sunday && (mass_type != MASS_DIVINEAFFLATU || mass_type == MASS_DIVINEAFFLATU && Tridentine::IsHolyWeek(datetime)) && (pp_season.sunday_class == SUNDAY_CLASS_I || pp_season.sunday_class == SUNDAY_SEMIDUPLEX_CLASS_I)) reason_not = 1; // DA Mass appears to allow Commemorations on 1st Class Sundays (per DivinumOfficium software) * Not Palm Sunday apparently (2023)
+					if (pp_season.b_is_duplex && pp_season.duplex_class == DUPLEX_CLASS_I && !(b_is_StJosephSponsi && mass_type == MASS_DIVINEAFFLATU && !pp_season.b_is_sunday))  reason_not = 2; // When St Joseph Sponsi falls on a weekday, commemorations appear to be allowed, despite the fact it is a Duplex Class I
+					if (pp_season.b_is_ferial && pp_season.ferial_class == FERIAL_PRIVILEGED && !(mass_type < MASS_1955 && (Tridentine::IsHolyWeek(datetime) || b_is_Ash_Wednesday))) reason_not = 3;
+					if (pp_season.b_is_vigil && pp_season.vigil_class > VIGIL) reason_not = 4;
+					if (mass_type == MASS_1955 && pp_feast.vigil_type > VIGIL_TYPE_SUPPRESSED)  reason_not = 5;
+					if (mass_type <= MASS_TRIDENTINE_1910 && Tridentine::issameday(datetime, Tridentine::AssumptionOfMary(year) - SECS_PER_DAY)) reason_not = 6; // the Vigil of the Assumption of Mary (14 August) falls permanently within the octave of St. Lawrence in the 1570 and 1910 Masses, and is in the propers baked in as a commemoration, so show no caluclated commemoration on this day for these Masses
+					if (mass_type == MASS_1955 && pp_season.day == DAY_SEMIDUPLEX && !b_is_ember_day && pp_season.duplex_class == SEMIDUPLEX_MINOR && season != SEASON_ADVENT && season != SEASON_LENT)  reason_not = 7; //1. The grade and rite of semi-double is suppressed. 2. The liturgical days which are now marked in the calendar as semi - double rite are celebrated in the simple rite except the ...
+					if (mass_type < MASS_1955 && tablevalue != 4 && !pp_season.b_is_sunday && !pp_season.b_is_saturday_of_our_lady && !pp_season.b_is_octave && !(b_is_feast_of_nine_lessons && (season == SEASON_ADVENT || season == SEASON_LENT))) reason_not = 8;	// EnglishDORubrics p.xxxix IX: "The Ferias of Advent, Lent ... are commemorated when a Feast of nine Lessons falls on them" [So ferias of other seasons are not- DO seems to confirm]. If tablevalue==4 then the commemoration is of the feast, not the seasonal day
+
+					Bidi::printf("<i>reason_not=%d</i>", reason_not);
+#endif
+
 					// no commemoration is possible in this case			
 
 					// decide whether the feast will be shown in the bottom left of the epaper display or not (does not affect whether or not it is commemorated in the text)
-					bool b_dont_display_feast = (pp_feast.b_is_duplex && comm_index == 1 && ( // comm_index==1 means that the feast position is not occupied by a seasonal day								 //Vigil of Pentecost which is raised to the double rite. (*In the 1955, all these seasonal days are still recorded as semiduplex, so handle this)
-						((b_dont_display_feast = Tridentine::issameday(datetime, Tridentine::AshWednesday(year)))		// these lines correspond to EnglishDORubrics.pdf p.xlii, X, the transference of feasts
-							|| (b_dont_display_feast = Tridentine::issameday(datetime, Tridentine::Ascension(year)))		//
-							|| (b_dont_display_feast = Tridentine::IsHolyWeek(datetime))									//
-							|| (b_dont_display_feast = (season == SEASON_EASTER && season_week == 0))						//
-							|| (b_dont_display_feast = (datetime >= Tridentine::PentecostVigil(year) && (datetime < Tridentine::TrinitySunday(year) + SECS_PER_DAY)))
-							|| (b_dont_display_feast = (Tridentine::issameday(datetime, Tridentine::CorpusChristi(year)) || (mass_type < MASS_1955 && Tridentine::issameday(datetime, Tridentine::CorpusChristi(year) + SECS_PER_WEEK))))
-							|| (b_dont_display_feast = (Tridentine::issameday(datetime, Tridentine::SacredHeart(year))))	//
-							|| (b_dont_display_feast = (mass_type == MASS_DIVINEAFFLATU && b_is_StJosephSponsi))	//
-							))
+					bool b_dont_display_feast = 
+						(pp_feast.b_is_duplex && comm_index == 1 && 
+							( // comm_index==1 means that the feast position is not occupied by a seasonal day								 //Vigil of Pentecost which is raised to the double rite. (*In the 1955, all these seasonal days are still recorded as semiduplex, so handle this)
+								(
+									// these lines correspond to EnglishDORubrics.pdf p.xlii, X, the transference of feasts
+									   (b_dont_display_feast = Tridentine::issameday(datetime, Tridentine::Ascension(year)))		//
+									|| (b_dont_display_feast = Tridentine::IsHolyWeek(datetime))									//
+									|| (b_dont_display_feast = (season == SEASON_EASTER && season_week == 0))						//
+									|| (b_dont_display_feast = (datetime >= Tridentine::PentecostVigil(year) && (datetime < Tridentine::TrinitySunday(year) + SECS_PER_DAY)))
+									|| (b_dont_display_feast = (Tridentine::issameday(datetime, Tridentine::CorpusChristi(year)) || (mass_type < MASS_1955 && Tridentine::issameday(datetime, Tridentine::CorpusChristi(year) + SECS_PER_WEEK))))
+									|| (b_dont_display_feast = (Tridentine::issameday(datetime, Tridentine::SacredHeart(year))))	//
+									|| (b_dont_display_feast = (mass_type == MASS_DIVINEAFFLATU && b_is_StJosephSponsi))	//
+								)
+							)
 						|| (b_dont_display_feast = (mass_type < MASS_1955 && b_is_Assumption_of_Mary))	// Seasonal day heading is suppressed for Assumption of Mary in D.O. software, for mass_type < D.A., but the Ordo shows it suppressed for D.A. Mass also.
 						);
 

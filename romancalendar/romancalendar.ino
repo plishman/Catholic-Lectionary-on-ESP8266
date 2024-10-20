@@ -2,7 +2,7 @@
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2022 Philip Lishman, Licensed under GPL3, see LICENSE
 
-// Built with NodeMCU1.0(ESP12E module) config (Tools->Board) Using ESP8266 Community version 2.4.0 (Tools->Board->Boards Manager)
+// Built with NodeMCU1.0(ESP12E module) config (Tools->Board) Using ESP8266 Community version 2.7.4 (Tools->Board->Boards Manager)
 // Upload speed 921600
 // CPU Freq 80MHz
 // Debug Port: Disabled/Debug Level: None
@@ -46,6 +46,7 @@ FtpServer ftpSrv;
 #include <Bible.h>
 #include <Tridentine.h>
 #include <Precedence.h>
+#include <RomanTransfers.h>
 #include <SPI.h>
 //#include <epd2in7b.h>
 //#include <epdpaint.h>
@@ -485,9 +486,10 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
 }
 
 void checkSpiffsDump() {
+  DEBUG_PRT.println(F("checkSpiffsDump()"));
   // copy crashdump file from spiffs to sd card (should happen after rebooting)
   
-  fs::File f_spiffs = SPIFFS.open(F(CRASHFILEPATH), "r");
+  fs::File f_spiffs = SPIFFS.open(F(SPIFFS_CRASHFILE), "r");
   if(!f_spiffs) {
     DEBUG_PRT.println(F("No crash file found in SPIFFS"));
     return;
@@ -503,11 +505,13 @@ void checkSpiffsDump() {
     char buf[100];
     os_sprintf(buf,"\nat %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
     f_sd.write((const uint8_t*)buf, strlen(buf));  // write out the current date/time
+    //DEBUG_PRT.println(String(buf));
 
     size_t st = 0;
     while (f_spiffs.available()) {    // then copy the crashdump file to the sd card
       st = f_spiffs.readBytes(buf, 100);
       f_sd.write((const uint8_t*)buf, st);
+      //DEBUG_PRT.println(String(buf));
     }
     
     f_spiffs.close();
@@ -571,8 +575,8 @@ extern "C" void custom_crash_callback(struct rst_info * rst_info, uint32_t stack
   savetoSpiffs(rst_info, stack, stack_end,strprinter2);
 
   SPIFFS.begin();
-  fs::File f = SPIFFS.open(F(CRASHFILEPATH), "a");
-  if(!f) f= SPIFFS.open(F(CRASHFILEPATH), "w");
+  fs::File f = SPIFFS.open(F(SPIFFS_CRASHFILE), "a");
+  if(!f) f= SPIFFS.open(F(SPIFFS_CRASHFILE), "w");
   if(f) {
     unsigned int w=f.write((uint8_t*)strprinter2.str.c_str(), strprinter2.str.length());
     f.close();
@@ -2275,7 +2279,20 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   //Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt"); //removed - using Tridentine::GetFileDir function instead - PLL 19-10-2020
   Tr_Calendar_Day td;
   //Tridentine::get(date, td, true);
+  
+  /// TODO: 15-09-2022 Add support for transferred feasts
+  //String FileDir_Transferred;
+  //GetTransferred(FileDir_Transferred);
+
   Tridentine::GetFileDir2(date, td.FileDir_Season, td.FileDir_Saint, td.FileDir_Votive, td.HolyDayOfObligation, td.SeasonImageFilename, td.SaintsImageFilename, td.VotiveImageFilename, mass_type);
+
+#if _WIN32
+  g_bIsHolyDayOfObligation = td.HolyDayOfObligation;
+  if (g_b_show_hdos_only && !g_bIsHolyDayOfObligation) return false; // only show Holy Days of Obligation ****TESTING****
+  if (td.HolyDayOfObligation && hour(date) == 0) {
+    Bidi::printf("<div style='background-color:red; color:white; font-weight: bold'>Holy Day of Obligation %d</div>", mass_type);
+  }
+#endif
 
   LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime, mass_type);
 
@@ -2288,1383 +2305,1455 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
   return true;
 }
 
+
+
+
+
+
+
 void LatinMassPropers(time64_t& date,
-  String datestring,
-  Tr_Calendar_Day& td,
-  TextBuffer& tb,
-  String lect, String lang,
-  int fbwidth, int fbheight,
-  DiskFont& diskfont_normal,
-  DiskFont& diskfont_i,
-  DiskFont& diskfont_plus1_bi,
-  DiskFont& diskfont_plus2_bi,
-  bool right_to_left,
-  int8_t& waketime,
-  uint8_t mass_type) 
+	String datestring,
+	Tr_Calendar_Day& td,
+	TextBuffer& tb,
+	String lect, String lang,
+	int fbwidth, int fbheight,
+	DiskFont& diskfont_normal,
+	DiskFont& diskfont_i,
+	DiskFont& diskfont_plus1_bi,
+	DiskFont& diskfont_plus2_bi,
+	bool right_to_left,
+	int8_t& waketime,
+	uint8_t mass_type)
 {
 
-  // setup fonts and variables for text output
+	// setup fonts and variables for text output
 
-  waketime = -1; // tell caller to use default waketime
+	waketime = -1; // tell caller to use default waketime
 
-  bool bBold = false;
-  bool bItalic = false;
-  bool bRed = false;
-  int8_t fontsize_rel = 0;
+	bool bBold = false;
+	bool bItalic = false;
+	bool bRed = false;
+	int8_t fontsize_rel = 0;
 
-  DEBUG_PRT.print(F("Done"));
-  DEBUG_PRT.print(F("Loading fonts.."));
-  if (!diskfont_normal.available) diskfont_normal.begin("droid11.lft");
-  if (!diskfont_i.available) diskfont_i.begin("droid11i.lft");
-  if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("droi12bi.lft");
-  if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("droi13bi.lft");
-  DEBUG_PRT.println(F("Done"));
-  DiskFont* pDiskfont = &diskfont_normal;
-  DEBUG_PRT.println(F("Assigned font to diskfont"));
+	DEBUG_PRT.print(F("Done"));
+	DEBUG_PRT.print(F("Loading fonts.."));
+	if (!diskfont_normal.available) diskfont_normal.begin("droid11.lft");
+	if (!diskfont_i.available) diskfont_i.begin("droid11i.lft");
+	if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("droi12bi.lft");
+	if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("droi13bi.lft");
+	DEBUG_PRT.println(F("Done"));
+	DiskFont* pDiskfont = &diskfont_normal;
+	DEBUG_PRT.println(F("Assigned font to diskfont"));
 
-  int xpos = 0;
-  int ypos = pDiskfont->_FontHeader.charheight;
-  fbheight = fbheight - pDiskfont->_FontHeader.charheight;
+	int xpos = 0;
+	int ypos = pDiskfont->_FontHeader.charheight;
+	fbheight = fbheight - pDiskfont->_FontHeader.charheight;
 
-  int8_t line_number = 0;
-  bool bRenderRtl = right_to_left;
-  bool bWrapText = true;
-  bool bMoreText = false;
+	int8_t line_number = 0;
+	bool bRenderRtl = right_to_left;
+	bool bWrapText = true;
+	bool bMoreText = false;
 
-  Bidi::tageffect_init();
-  Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
-  DEBUG_PRT.println(F("Set default tag effects"));
-  pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
-  DEBUG_PRT.print(F("Selected default diskfont"));
+	Bidi::tageffect_init();
+	Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
+	DEBUG_PRT.println(F("Set default tag effects"));
+	pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+	DEBUG_PRT.print(F("Selected default diskfont"));
 
-  bool bLiturgical_Colour_Red = false;
+	bool bLiturgical_Colour_Red = false;
 
-  // text output
+	// text output
 
   /*
    * PLL-19-10-2020 test code removed
-  String mass_version = "1955";
-  //String lang = "en";
-  Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt");
+	String mass_version = "1955";
+	//String lang = "en";
+	Yml::SetConfig(lang, "en-1962.yml", "en-1962.txt");
   */
   // PLL-05-04-2021 Fix for Liturgical class comparison function which was only partially working
-  //bool bUseNewClasses = (lect.indexOf("1960") > -1); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
-  bool bUseNewClasses = (mass_type >= MASS_1960); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
+	//bool bUseNewClasses = (lect.indexOf("1960") > -1); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
+	bool bUseNewClasses = (mass_type >= MASS_1960); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
 
-  tmElements_t ts;
-  breakTime(date, ts);
+	tmElements_t ts;
+	breakTime(date, ts);
 
 #ifdef __AVR__
-  DEBUG_PRT.printf("\nDatetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+	DEBUG_PRT.printf("\nDatetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 #else
-  printf("\nDatetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
+	printf("\nDatetime: %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 #endif
-  //DEBUG_PRT.println(td.DayofWeek);
-  //DEBUG_PRT.println(td.Cls);
-  //DEBUG_PRT.println(td.Colour);
-  //DEBUG_PRT.println(td.Mass);
-  //DEBUG_PRT.println(td.Commemoration);
-  DEBUG_PRT.print(F("td.HolyDayOfObligation=["));
-  DEBUG_PRT.print(td.HolyDayOfObligation);
-  DEBUG_PRT.print(F("]\ntd.FileDir_Season=["));
-  DEBUG_PRT.print(td.FileDir_Season);
-  DEBUG_PRT.print(F("]\ntd.FileDir_Saint=["));
-  DEBUG_PRT.print(td.FileDir_Saint);
-  DEBUG_PRT.print(F("]\ntd.FileDir_Votive=["));
-  DEBUG_PRT.print(td.FileDir_Votive);
-  DEBUG_PRT.print(F("]\ntd.SeasonImageFilename=["));
-  DEBUG_PRT.print(td.SeasonImageFilename);
-  DEBUG_PRT.print(F("]\ntd.SaintsImageFilename=["));
-  DEBUG_PRT.print(td.SaintsImageFilename);
-  DEBUG_PRT.print(F("]\ntd.VotiveImageFilename=["));
-  DEBUG_PRT.print(td.VotiveImageFilename);
-  DEBUG_PRT.println(F("]"));
-
-  int8_t filenumber = ts.Hour - 8;    // (Done) - TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
-
-  if (ts.Hour >= 0 && ts.Hour < 9) {
-    filenumber = 0;
-  }
-
-  if (ts.Hour >= 19) {
-    filenumber = 11;
-  }
-
-  int8_t next_hour_filenumber = filenumber + 1;
-
-  //String fileroot = "/Lect/EF/" + mass_version + "/" + lang; // test code removed
-  bool b_is_1570_Mass = (lect.indexOf("1570") > -1);
-
-  String fileroot = "/" + lect + "/" + lang;
-  String fileroot_img = "/" + lect + "/images";
-  String liturgical_day = "";
-  String sanctoral_day = "";
-  String seasonimagefilename = td.SeasonImageFilename != "" ? fileroot_img + td.SeasonImageFilename + ".bwr" : "";
-  String saintsimagefilename = td.SaintsImageFilename != "" ? fileroot_img + td.SaintsImageFilename + ".bwr" : "";
-  String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
-
-  bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
-  bool bIsFeast = (td.FileDir_Saint != "" && SD.exists(fileroot + td.FileDir_Saint)); // if there is no feast day on this day, the directory/propers for this day will not exist
-  bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
-  bool bHasSeasonImage = (td.SeasonImageFilename != "" && SD.exists(seasonimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
-  bool bHasSaintsImage = (td.SaintsImageFilename != "" && SD.exists(saintsimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
-  bool bHasVotiveImage = (td.VotiveImageFilename != "" && SD.exists(votiveimagefilename)); // if the Mass for the day is a Votive Mass, an image will be displayed if available
-  int8_t seasonimagecount = -1;
-  int8_t saintsimagecount = -1;
-  int8_t votiveimagecount = -1;
-
-  // image filenames are of the form 10-11.bwr, and 10-11-2.bwr, 10-11-3.bwr etc if there is more than one image
-  if (bHasSeasonImage) seasonimagecount = GetImageCount(fileroot_img + td.SeasonImageFilename); // get count of images to be displayed this day
-  if (bHasSaintsImage) saintsimagecount = GetImageCount(fileroot_img + td.SaintsImageFilename); // get count of images to be displayed this day
-  if (bHasVotiveImage) votiveimagecount = GetImageCount(fileroot_img + td.VotiveImageFilename); // get count of votive images to be displayed this day (if applicable)
-
-  int8_t imagecount = saintsimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-  bool bHasImage = bHasSaintsImage;
-  String imagefilename = saintsimagefilename;
-
-  DEBUG_PRT.print(F("seasonimagefilename is ["));
-  DEBUG_PRT.print(seasonimagefilename);
-  DEBUG_PRT.print(F("]\nsaintsimagefilename is ["));
-  DEBUG_PRT.print(saintsimagefilename);
-  DEBUG_PRT.print(F("]\nvotiveimagefilename is ["));
-  DEBUG_PRT.print(votiveimagefilename);
-  DEBUG_PRT.print(F("]\nbHasSeasonImage is "));
-  DEBUG_PRT.println(bHasSeasonImage);
-  DEBUG_PRT.print(F("bHasSaintsImage is "));
-  DEBUG_PRT.println(bHasSaintsImage);
-  DEBUG_PRT.print(F("bHasVotiveImage is "));
-  DEBUG_PRT.println(bHasVotiveImage);
-  DEBUG_PRT.print(F("seasonimagecount="));
-  DEBUG_PRT.println(seasonimagecount);
-  DEBUG_PRT.print(F("saintsimagecount="));
-  DEBUG_PRT.println(saintsimagecount);
-  DEBUG_PRT.print(F("votiveimagecount="));
-  DEBUG_PRT.println(votiveimagecount);
-
-  MissalReading season;
-  MissalReading feast;
-  MissalReading votive;
-
-  if (bIsFeast) {
-    feast.open(fileroot + td.FileDir_Saint);
-  }
-
-  if (bIsVotive) {
-    votive.open(fileroot + td.FileDir_Votive);
-  }
-
-  if (!bFeastDayOnly) {
-    season.open(fileroot + td.FileDir_Season);
-  }
-
-  bool bSunday = Tridentine::sunday(date);
-/*
-  int8_t cls_season = Tridentine::getClassIndex(season.cls(), bUseNewClasses);
-  int8_t cls_feast = Tridentine::getClassIndex(feast.cls(), bUseNewClasses);
-  
-  DEBUG_PRT.print(F("cls_season="));
-  DEBUG_PRT.print(cls_season);
-  DEBUG_PRT.print(F(" cls_feast="));
-  DEBUG_PRT.println(cls_feast);
-*/
-  Ordering ordering;
-  //DEBUG_PRT.on();
-  Precedence::doOrdering(date, mass_type, season, feast, votive, ordering);
-  //DEBUG_PRT.off();
-
-  bFeastDayOnly = (ordering.ordering[0] == MR_FEAST && ordering.ordering[1] == MR_NONE);
-  bIsFeast = (bFeastDayOnly || ordering.ordering[1] != MR_NONE);  // ordering[0]=index into heading[] for object to be used for heading (season=0, feast=1 or votive=2), ordering[1]=index into heading[] for object to be used for subheading (0, 1, or 2 as before if applicable. -1 if no subheading)
-
-  bool b_is_purification_of_mary = (ts.Month == 2 && ts.Day == 2) && ordering.ordering[0] == MR_FEAST;  // first item is the feast, it is not the 12 part one that D.O. outputs for the non-1570 Latin version of the Purification of Mary (bug in D.O.?), because it has 14 parts not 12
-                                  
-  /*
-  // need to exclude commemoration on Sundays and Feasts of the Lord
-  bIsFeast = (bFeastDayOnly ||
-    (bIsFeast && (                                        // PLL-12-04-2021 Can only be a feast day if bIsFeast is already true, indicating that there is a 
-    (!bSunday && cls_feast >= cls_season) ||              //  calendar entry for a feast on this day in the database
-      (cls_feast >= 6) ||                                   // the additions in the commented three lines below may have introduced bugs - need testing  
-      (!bSunday && cls_feast == 0 && cls_season <= 2) ||    // PLL-12-01-2021 commemoration is 0, need to display these eg. on 5 Dec 2020, which is the commemoration of S. Sabbae Abbatis. To display on Seasonal days <= Semiduplex
-      (cls_season - cls_feast == 1) ||                      // PLL-12-01-2021 display feast if it is 1 class lower than that of the season
-      (bSunday && cls_feast > cls_season && cls_feast >= 5) // PLL-12-01-2021 Patched for Feast of St Luke Evangelist on October 18 (Duplex II. classis) if on a Sunday
-      )));
-  
-  bool bIsImmaculateConception = Tridentine::IsImmaculateConception(date);
-  bool bIsLadyDay = Tridentine::IsLadyDay(date);  // shouldn't both be true!
-  */
-  //bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !bIsImmaculateConception && !bIsLadyDay /*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
-  
-  
-  // Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
-  // PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
-
-  // If it is a votive day and the feast is of the same or lower priority, 
-  // or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
-  bIsVotive = ordering.b_is_votive; //(ordering.ordering[0] == MR_VOTIVE); // votive=2
-  /*
-  bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses))
-    || (!bIsFeast && Tridentine::getClassIndex(season.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses)))
-    );
-  */
-  if (bIsVotive) {
-    DEBUG_PRT.println(F("Votive Mass"));
-  }
-
-  // Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
-
-    //if (Tridentine::getClassIndex(indexheader_saint.cls, bUseNewClasses) > Tridentine::getClassIndex(indexheader_season.cls, bUseNewClasses)) {
-    // Feast day takes precendence
-    /*
-      In this case:
-      0 Introitus   - Comes from the feast
-      1 Gloria    - Omit if season requires
-      2 Collect     - Seasonal day becomes commemoration (after the Collect text for the Feast day:
-            "Commemoratio <indexheader_season.name> followed by the Collect text from the season.
-      3, 4, 5 Lesson, Gradual, Gospel - Comes from the Feast
-      6 Credo     - Omit if season requires
-      7 Offertorium   - Comes from the Feast
-      8 Secreta     - Like collect (both)
-      9 Prefatio    - From the Season
-      10 Communio   - From the Feast
-      11 Postcommunio - From both
-    */
-    //}
-
-  bool bFileOk = false;
-  String s = "";
-  bool bOverflowedScreen = true;
-  int8_t subpart = 0;
-  bool bRTL = right_to_left;
-
-  bool bResetPropersFilePtr = false;
-
-  if (bIsFeast) { // there is a feast on this day
-    if (bFeastDayOnly) { // is a saint's feast only
-      DEBUG_PRT.println(F("Feast day only"));
-      ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
-      bool bImageIsDisplayed = false;
-
-      if (b_is_purification_of_mary) {
-        // purification of Mary propers
-        waketime = DoPurificationOfMary(&feast, NULL, false,
-          filenumber, ts.Hour, lang, mass_type,
-          xpos, ypos,
-          pDiskfont,
-          bBold, bItalic, bRed,
-          fontsize_rel, line_number,
-          fbwidth, fbheight,
-          bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
-      }
-      else {
-        if (bHasImage) {
-          if (ts.Hour == 19) {
-            waketime = 20; // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
-          }
-          else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
-            waketime = 8;
-          }
-        }
-
-        if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
-          GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
-          bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-        }
-
-        if (filenumber == 0 || filenumber == 5) { // Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
-          subpart = 0;
-          feast.get(next_hour_filenumber, subpart, s, bMoreText);
-          if (feast.curr_subpartlen < 200) {
-            // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
-            DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (feastday)"));
-            if (next_hour_filenumber == 6) {
-              waketime = ts.Hour + 2; // skip the next hour's reading            
-            }
-            else {
-              waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
-            }
-          }
-          bResetPropersFilePtr = true;
-          bMoreText = false;
-          s = "";
-        }
-        else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 2) {  // 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
-          DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (feastday) - skipping next hour"));
-          waketime = ts.Hour + 2;
-        }
-
-        if (filenumber == 1 || filenumber == 6) { // Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
-          subpart = 0;
-          feast.get(filenumber, subpart, s, bMoreText);
-          if (feast.curr_subpartlen < 200) {
-            // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so display the Collect (2) or the Offertorium (7) (if filenumber == 1 or 6)
-            DEBUG_PRT.println(F("Woken during Gloria or Credo on feastday when not to be displayed - displaying next filenumber"));
-            filenumber++;
-          }
-          bResetPropersFilePtr = true;
-          bMoreText = false;
-          s = "";
-        }
-        else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 3) {  // 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
-          DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (feastday) - displaying next filenumber"));
-          filenumber++;
-        }
-
-        if (!bImageIsDisplayed) { // from 8pm until midnight and midnight to 8am, display the Saint's image(s) (if available)
-          bOverflowedScreen = false;
-          subpart = 0;
-          while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) { // bResetPropersFilePtr gets reset to false if get() is called with it set to true
-            bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-              pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-              bBold, bItalic, bRed, fontsize_rel,
-              line_number, fbwidth, fbheight,
-              bRTL, bRenderRtl, bWrapText, bMoreText);
-          }
-        }
-      }
-    }
-    else { // there is both a feast and a seasonal day
-      DEBUG_PRT.println(F("Feast day and seasonal day"));
-      MissalReading* p_mr_Day = ordering.b_is_votive ? &votive : ordering.headings[ordering.ordering[0]]; //&feast or &votive;
-      MissalReading* p_mr_Comm = ordering.b_is_votive ? &feast : ordering.headings[ordering.ordering[1]]; //&season or &feast (if votive);
-
-      // PLL-24-12-2020 This needs understanding and fixing!
-      //bool bSaintsDayTakesPrecedence = (cls_feast >= cls_season && !bSunday/*|| (cls_season < 2 && !(cls_feast == cls_season))*/); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
-      //PLL-12-01-2021 Saint's day takes precedence if its class is greater the class of the season [and it is not a Sunday - PLL-12-01-2021]
-
-      bool bSaintsDayTakesPrecedence = (ordering.ordering[0] == MR_FEAST);
-
-      //bool bDisplayComm = ((cls_feast >= cls_season || cls_feast == 0 /*PLL-12-01-2021 or commemoration*/) && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
-      /* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class? [No - not in Epiphany/days of January]
-      // need to exclude commemoration on Sundays and Feasts of the Lord
-      bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls(), bUseNewClasses) >= Tridentine::getClassIndex(season.cls(), bUseNewClasses));
-
-      if (Tridentine::sunday(date)) { // TODO: may need to make allowance for feasts that move, such as feast of St Matthias, and for feasts of the Lord which override Sundays
-        bSaintsDayTakesPrecedence = false;
-      }
-      */
-      bool bDisplayComm = (ordering.b_feast_is_commemoration || ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers);
-      //bDisplayComm = (bDisplayComm || bIsLadyDay && (cls_season >= 2 || Tridentine::IsPassionWeek(date))); // PLL-01-06-2021 Display commemoration of the seasonal day if the seasonal day is Class III (Semiduplex) or above
-      // PLL-01-06-2021 in the version of Divinum Officium I based the Latin Mass Propers database on, weekdays of Passion Week were reported as Class IV, which
-      // breaks the logic which decides whether to show the commemoration of the seasonal day if Lady Day falls within Passion Week. This is a workaround for that
-
-      //if (!bSaintsDayTakesPrecedence || feast.isCommemorationOnly()) { // PLL-23-04-2021 seasonal day takes precedence if feast is commemoration only (collect, secreta and postcommunio have commemoration text)
-      //  p_mr_Day = &season;
-      //  p_mr_Comm = &feast;
-
-      switch (ordering.ordering[0])
-      {
-      case MR_SEASON:
-        if (bHasSeasonImage || (bIsVotive && bHasVotiveImage)) {  // hack because Votive is in ordering.headings[0] if it is a votive day (swapped seasonal day with headings[3] if votive day)
-          if (!bIsVotive) {
-            DEBUG_PRT.println(F("Using image from the season"));
-            imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-            bHasImage = bHasSeasonImage;
-            imagefilename = seasonimagefilename;
-          }
-          else {
-            DEBUG_PRT.println(F("Using image from the votive"));
-            imagecount = votiveimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-            bHasImage = bHasVotiveImage;
-            imagefilename = votiveimagefilename;
-          }
-        }
-        break;
-
-      case  MR_FEAST:
-        if (bHasSaintsImage) {
-          DEBUG_PRT.println(F("Using image from the feast"));
-          imagecount = saintsimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-          bHasImage = bHasSaintsImage;
-          imagefilename = saintsimagefilename;
-        }
-        break;
-
-      case MR_VOTIVE:
-        if (bHasVotiveImage) {
-          DEBUG_PRT.println(F("Using image from the votive"));
-          imagecount = votiveimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-          bHasImage = bHasVotiveImage;
-          imagefilename = votiveimagefilename;
-        }
-        break;
-      }
-
-      /*
-      if (bIsVotive) { // in this case, the feast is shown in the commemoration position (bottom left of the screen), and the votive is shown as the heading. The seasonal day is not shown
-        p_mr_Day = &votive;
-        p_mr_Comm = &feast;
-      }
-      */
-      
-      if (ordering.ordering[1] != -1) {
-        bool b_use_commemoration_title = ordering.headings[ordering.ordering[1]]->isCommemorationOnly();
-        sanctoral_day = ordering.headings[ordering.ordering[1]]->name(b_use_commemoration_title);
-      }
-      else {
-        sanctoral_day = bIsVotive ? feast.name() : "";
-      }
-        
-      //sanctoral_day = bIsVotive ? feast.name() : sanctoral_day;
-
-      //sanctoral_day = bIsVotive ? feast.name() :
-      //              ordering.ordering[1] != -1 ? ordering.headings[ordering.ordering[1]]->name() : "";
-      
-      bool bIsCommemorationAndSeasonalDayOnly = feast.isCommemorationOnly(); // && !bIsVotive;
-
-      // on commemorational day, when not also a votive mass day, want the commemoration in the top position on the display (display_date_ex call)
-      //if (bIsCommemorationAndSeasonalDayOnly) { // in this case p_mr_Comm will point to the feast, want day name from this. p_mr_Day will point to the season
-      //  sanctoral_day = p_mr_Day->name(); // text in lower position is from the season, text in upper position will be the name of the commemoration
-      //}
-      //else {
-      //  sanctoral_day = p_mr_Comm->name(); // text in lower position will be from the season, or the feast if !bSaintsDayTakesPrecedence (based on rank)
-      //}
-
-      ypos = display_day_ex(date,
-        //bIsCommemorationAndSeasonalDayOnly ? p_mr_Comm->commemoration() : p_mr_Day->name(),
-        p_mr_Day->name(),
-        p_mr_Day->colour(),         // will be the colour of the season if a commemoration (because in this case p_mr_Day will point to the season,
-        td.HolyDayOfObligation,     // according to the logic (feast.isCommemorationOnly() && !bIsVotive)), or the colour of the feast if not  
-        right_to_left,
-        bLiturgical_Colour_Red,
-        diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
-
-      if (!b_is_purification_of_mary) {
-
-        DEBUG_PRT.print(F("filenumber is "));
-        DEBUG_PRT.println(filenumber);
-
-        // Feast day takes precedence, seasonal day is commemoration
-        switch (filenumber) {
-        case 0: // Introitus (from the feast (PLL-23-04-2021 Unless is a commemoration only, in which case use the introitus from the season))
-        case 5: // Gospel
-          subpart = 0;
-          p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
-          if (p_mr_Day->curr_subpartlen < 200) {
-            // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
-            DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day and/or feastday)"));
-            if (next_hour_filenumber == 6) {
-              waketime = ts.Hour + 2; // skip the next hour's reading            
-            }
-            else {
-              waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
-            }
-          }
-          bResetPropersFilePtr = true;
-          bMoreText = false;
-          s = "";
-
-        case 3: // Lesson
-          if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 3) { // 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
-            DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (seasonal day + feastday) - displaying next filenumber"));
-            filenumber++;
-          }
-
-        case 4: // Gradual
-        case 7: // Offertorium
-        case 10: // Communio
-
-          if (bHasImage && ts.Hour >= 0 && ts.Hour <= 7) {
-            waketime = 8;
-          }
-
-          if (!(bHasImage && ts.Hour >= 0 && ts.Hour <= 7 && DisplayImage(imagefilename, 0, ypos))) { // from midnight until 8am, display the Saint's image (if available)
-            bOverflowedScreen = false;
-            subpart = 0;
-            while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) {
-              bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-                pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                bBold, bItalic, bRed, fontsize_rel,
-                line_number, fbwidth, fbheight,
-                bRTL, bRenderRtl, bWrapText, bMoreText);
-            }
-          }
-          break;
-
-        case 1: // Gloria PLL-03-08-2020 From the day which has precedence (feast or seasonal day)     //(from the season, omit if required)
-        case 6: // Credo
-          subpart = 0;
-          p_mr_Day->get(filenumber, subpart, s, bMoreText);
-          if (p_mr_Day->curr_subpartlen < 200) {
-            // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
-            DEBUG_PRT.println(F("Woken during Gloria or Credo hour, but they are omitted today (seasonal day and/or feastday), so displaying next filenumber"));
-            filenumber++;
-          }
-          bResetPropersFilePtr = true;
-          bMoreText = false;
-          s = "";
-
-        case 9: // Prefatio
-          bOverflowedScreen = false;
-          subpart = 0;
-
-          while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) {
-            bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-              pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-              bBold, bItalic, bRed, fontsize_rel,
-              line_number, fbwidth, fbheight,
-              bRTL, bRenderRtl, bWrapText, bMoreText);
-          }
-          break;
-
-        case 2: // Collect
-          if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 2) { // 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
-            DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (seasonal day + feastday) - skipping next hour"));
-            waketime = ts.Hour + 2;
-          }
-
-        case 8: // Secreta
-        case 11: // Postcommunio
-        {
-          if (bHasImage && ts.Hour == 19) {
-            waketime = ts.Hour + 1;
-          }
-
-          if (bHasImage) { // between 8pm and midnight
-            GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
-          }
-
-          if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
-            bOverflowedScreen = false;
-            subpart = 0;
-
-            bool b_votive_has_extra_commemoration_text = false;
-
-            while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText) && !b_votive_has_extra_commemoration_text) {
-              // will stop reading Votive text when it reaches any of the Commemoratio lines, which are incorrectly 
-              // present (baked in for a certain day) in the Votive mass Propers
-
-              b_votive_has_extra_commemoration_text = (bIsVotive && (
-                s.indexOf("Blasii") != -1 ||
-                s.indexOf("Marcellini") != -1 ||
-                s.indexOf("Telesphor") != -1 ||
-                s.indexOf("Faustini") != -1 ||
-                s.indexOf("Undecima") != -1
-                ));
-
-              if (!bIsVotive || !b_votive_has_extra_commemoration_text) { // bit of a hack to get around the Votive masses, which have picked up the Commemoration of the day they were taken from (which is not always the day they are shown)
-                bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                  bBold, bItalic, bRed, fontsize_rel,
-                  line_number, fbwidth, fbheight,
-                  bRTL, bRenderRtl, bWrapText, bMoreText);
-              }
-            }
-            //// TODO: PLL-25-07-2020 Find out how this works! 
-            //         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
-            if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-01-06-2021 Added LadyDay because Divinum Officium displays the commemoration on this day, despite it being a Class I feast //PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
-              //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
-              if (!bOverflowedScreen && ((!bIsVotive && (filenumber == 2 || filenumber == 11)) || (bIsVotive && filenumber == 11))) {   // do a line feed before the text of the commemoration
-                String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
-
-                bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb,
-                  pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                  bBold, bItalic, bRed, fontsize_rel,
-                  line_number, fbwidth, fbheight,
-                  bRTL, bRenderRtl, bWrapText, true);
-              }
-              // ******* PLL-01-06-2021 need to make sure that Postcommunio etc displays commemoration for seasonal day on Lady Day (25th March unless moved)
-              int8_t linecount = 0;
-              subpart = 0;
-              p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
-
-              bool b_is_ember_day = Tridentine::IsEmberDay(date);
-              bool b_is_ember_wednesday = (b_is_ember_day && weekday(date) == dowWednesday);
-              bool b_is_ember_friday = (b_is_ember_day && weekday(date) == dowFriday);
-              bool b_is_ember_saturday = (b_is_ember_day && weekday(date) == dowSaturday);
-              bool b_is_matching_lent_collect = (td.FileDir_Season.indexOf(F("Lent/1/Saturday")) > -1 || td.FileDir_Season.indexOf(F("Lent/1/Wednesday")) > -1 || td.FileDir_Season.indexOf(F("Lent/4/Wednesday")) > -1);
-
-              //int8_t br_count_max = b_is_matching_lent_collect ? 2 : 1;
-
-              if (bIsCommemorationAndSeasonalDayOnly) {
-                // eat three more lines if so
-                p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (<BR>)
-                p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (Let us pray), (This is in the text where the seasonal day's text goes, which we've already printed from a separate file)
-                p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line ("Oratio missing"), should then get a " <BR>" on its own line after (placeholder for seasonal day's text, already printed from a separate file)
-              }
-
-              while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
-                DEBUG_PRT.print(F("\nlinecount: "));
-                DEBUG_PRT.println(linecount);
-                //Bidi::printf("linecount=%d, filenumber=%d ", linecount, filenumber);
-                if (bIsVotive && (linecount == 1 && (filenumber == 2 || filenumber == 11))) {
-                  linecount++;
-                  continue;
-                }
-
-                if ((((b_is_ember_wednesday || b_is_ember_saturday ) && filenumber == 2 && linecount == 2) || (b_is_matching_lent_collect && filenumber == 2 && linecount == 2)) && s.length() < 30) { // skip "Let us kneel/Arise lines (if present), which are between two <BR> tags each on their own line. Using the length < 30 test to try to catch when these short lines are present. Hopefully the text we're after will be longer in all cases
-                  int br_count = 0;
-                  do {
-                    p_mr_Comm->get(filenumber, subpart, s, bMoreText);
-                    if (s.indexOf("<BR>") == 0) {
-                      br_count++;
-                    }
-                  } while (bMoreText && br_count < 1);
-                }
-
-                if (!bIsCommemorationAndSeasonalDayOnly)
-                {
-                  if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
-                    (linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemoratio line comes after <br>"Let us pray"<br> line
-                    String commtext = "<FONT COLOR=\"red\"><I>Commemoratio " + p_mr_Comm->name() + "</I></FONT>";
-                    commtext.replace(" %{monthweek} %{month}", "");
-                    //Bidi::printf("linecount=%d, filenumber=%d", linecount, filenumber);
-
-                    if (!bIsVotive || ((bIsVotive && linecount == 0 && filenumber == 8) || (linecount == 0 && filenumber == 8))) {
-                      commtext = " <BR>" + commtext;
-                    }
-
-                    bool b_text_starts_with_br = (s.indexOf("<BR>") == 0);
-
-                    // add linebreak after where necessary (according to the structure of the propers text files)
-                    if (!bIsVotive && !b_is_ember_wednesday && !b_is_ember_friday && !b_is_ember_saturday && filenumber != 8 && !(b_is_matching_lent_collect && filenumber == 2) 
-                      || (b_is_ember_saturday && filenumber == 11)
-                      || (b_is_ember_friday && (filenumber == 2 || filenumber == 11))
-                      || (b_is_ember_wednesday && filenumber == 11)
-                      || (bIsVotive && linecount == 2 && (filenumber == 2 || filenumber == 11))
-                      || !b_text_starts_with_br) {
-                      commtext = commtext + "<BR>";
-                    }
-
-                    if (!bOverflowedScreen) {
-                      bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb,
-                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                        bBold, bItalic, bRed, fontsize_rel,
-                        line_number, fbwidth, fbheight,
-                        bRTL, bRenderRtl, bWrapText, true);
-                    }
-                  }
-                }
-                else {                 
-                  if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
-                    (linecount == 2 && (filenumber == 2 || filenumber == 11)))   // commemoratio line comes after <br>"Let us pray"<br> line
-                  {
-                    String commtext = "<BR><FONT COLOR=\"red\"><I>" + p_mr_Comm->commemoration() + "</I></FONT><BR>"; // text will include "Commemoratio" and the Saint's name in this case
-
-                    if (filenumber == 2 || filenumber == 11) // if not secreta, there will be an extra "Commemoratio" line in the text to eat, which will be replaced with the full text "Commemoratio: <Saint's name>"
-                    {
-                      p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat the line ("Commemoratio:")
-                    }
-
-                    if (filenumber == 8) // add a linefeed before the text in this case (overprints on last line of seasonal text otherwise)
-                    {
-                      DEBUG_PRT.println("Prepending linebreak to commtext");
-                      commtext = " <BR>" + commtext;
-                    }
-
-                    if (!bOverflowedScreen)
-                    {
-                      bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb,
-                        pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                        bBold, bItalic, bRed, fontsize_rel,
-                        line_number, fbwidth, fbheight,
-                        bRTL, bRenderRtl, bWrapText, true);
-                    }
-                  }
-                }
-
-                if (!bOverflowedScreen) {
-                  //if (s.length() == 4 && s == "<BR>") {
-                  //  DEBUG_PRT.println("adding space to <BR> for font height measurement");
-                  //  s = " <BR>";
-                  //}
-                  bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-                    pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-                    bBold, bItalic, bRed, fontsize_rel,
-                    line_number, fbwidth, fbheight,
-                    bRTL, bRenderRtl, bWrapText, bMoreText);
-                }
-                if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
-                linecount++;
-              }
-            }
-          }
-          //// PLL-25-07-2020
-          break;
-        }
-
-        default:
-          break;
-        }
-      }
-      else 
-      { // purification of Mary propers
-        waketime = DoPurificationOfMary(p_mr_Day, p_mr_Comm,
-          (ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers),
-          filenumber, ts.Hour, lang, mass_type,
-          xpos, ypos,
-          pDiskfont,
-          bBold, bItalic, bRed,
-          fontsize_rel, line_number,
-          fbwidth, fbheight,
-          bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
-      }
-    }
-  } // if (bIsFeast)
-  else if (season.isOpen() || (bIsVotive && votive.isOpen())) // could be that there is no feast, season or votive for the day due to a mistake in the propers database
-  { // is a seasonal day only                 // If so, will fail gracefully by displaying an image after the else case of this else if...
-    DEBUG_PRT.println(F("Seasonal day only"));
-    if (bHasSeasonImage) {
-      DEBUG_PRT.println(F("Using image from the season"));
-    }
-    imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
-    bHasImage = bHasSeasonImage;
-    imagefilename = seasonimagefilename;
-
-    String name = bIsVotive ? votive.name() : season.name();
-    String colour = bIsVotive ? votive.colour() : season.colour();
-
-    ypos = display_day_ex(date, name, colour, td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
-
-    subpart = 0;
-    bool b_read_only_one_subpart = false; // For Good Friday, the Great Intercessions and the readings from Scripture, Passion, display one at a time over the selected hours of the day
-    int8_t read_subpart_count = 0;
-
-    bool bImageIsDisplayed = false;
-
-    bool b_is_Good_Friday = Tridentine::IsGoodFriday(date);
-    bool b_is_Ash_Wednesday = Tridentine::issameday(date, Tridentine::AshWednesday(Tridentine::year(date)));
-    bool b_is_Holy_Saturday = Tridentine::IsHolySaturday(date);
-    bool b_is_Palm_Sunday = Tridentine::issameday(date, Tridentine::PalmSunday(Tridentine::year(date)));
-
-    if (/*!bIsVotive && (season.filecount != 12 || (b_is_1570_Mass && feast.filecount != 11)) || */ b_is_Ash_Wednesday || b_is_Palm_Sunday || b_is_Good_Friday || b_is_Holy_Saturday)
-    {
-      /*
-      if (b_is_purification_of_mary) {
-        // purification of Mary propers
-        waketime = DoPurificationOfMary(&season, NULL,
-          filenumber, ts.Hour, lang, mass_type,
-          xpos, ypos,
-          pDiskfont,
-          bBold, bItalic, bRed,
-          fontsize_rel, line_number,
-          fbwidth, fbheight,
-          bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
-      }
-      else */
-
-      if (b_is_Ash_Wednesday) {
-        DEBUG_PRT.print(F("Ash Wednesday: ts.Hour="));
-        DEBUG_PRT.println(ts.Hour);
-
-        if (mass_type > MASS_TRIDENTINE_1570) {
-          waketime = (ts.Hour < 3) ? 3 :
-            (ts.Hour == 8 || ts.Hour == 13) ? ts.Hour + 2 :   // no Gloria or Creed
-            (ts.Hour == 9 || ts.Hour == 14) ? ts.Hour + 2 :   // no Gloria or Creed (skip next hour if woken at these times, since it will be the same reading)
-            (ts.Hour >= 3 && ts.Hour <= 18) ? ts.Hour + 1 : 0;  // last reading at 7pm
-
-          filenumber = (ts.Hour < 3) ? 0 :
-            (ts.Hour >= 3 && ts.Hour <= 8) ? 0 :
-            (ts.Hour == 9 || ts.Hour == 14) ? ts.Hour - 8 + 1 : // no Gloria or Creed
-            (ts.Hour >= 9 && ts.Hour <= 19) ? ts.Hour - 8 : 0;
-
-          subpart = (ts.Hour < 3) ? 0 :
-            (ts.Hour >= 3 && ts.Hour <= 8) ? ts.Hour - 3 : 0;   // 0..5 of filenumber 0 between 3 and 8am
-
-          b_read_only_one_subpart = (ts.Hour < 8);
-        }
-        else {
-          waketime = (ts.Hour < 3) ? 3 :
-            (ts.Hour == 8 || ts.Hour == 13 || ts.Hour == 10) ? ts.Hour + 2 :    // no Gloria, Creed or Lesson
-            (ts.Hour == 9 || ts.Hour == 14 || ts.Hour == 11) ? ts.Hour + 2 :    // no Gloria, Creed or Lesson (skip next hour if woken at these times, since it will be the same reading)
-            (ts.Hour >= 3 && ts.Hour <= 18) ? ts.Hour + 1 : 0;  // last reading at 6pm (no Lesson in 1570 mass)
-
-          filenumber = (ts.Hour < 3) ? 0 :
-            (ts.Hour >= 3 && ts.Hour <= 8) ? 0 :
-            (ts.Hour == 11) ? 4 :               // read Graduale at 11am, since there is no Lesson in the 1570 Mass (which would otherwise be shown)
-            (ts.Hour == 9 || ts.Hour == 14) ? ts.Hour - 8 + 1 : // no Gloria or Creed
-            (ts.Hour >= 9 && ts.Hour <= 19) ? ts.Hour - 8 : 0;
-
-          subpart = (ts.Hour < 3) ? 0 :
-            (ts.Hour >= 3 && ts.Hour <= 8) ? ts.Hour - 3 : 0;   // 0..5 of filenumber 0 between 3 and 8am
-
-          b_read_only_one_subpart = (ts.Hour < 8);
-        }
-
-        if (mass_type == MASS_1960) {
-          b_read_only_one_subpart = false;
-          read_subpart_count = (ts.Hour <= 6) ? 2 : 
-            (ts.Hour >= 7 && ts.Hour <= 8) ? 1 : -1;  // -1 = read all available subparts
-
-          subpart = (ts.Hour < 3) ? 0 :
-            (ts.Hour >= 3 && ts.Hour <= 7) ? (ts.Hour - 3) * 2 :  // ten subparts upto and including introitus - read them two at a time from 3am, up until the introitus (pt 10)(8am)
-            (ts.Hour == 8) ? 9 : 0;
-        }
-
-        if (ts.Hour == 19 && bHasImage && waketime == 0) {
-          waketime = 20;
-        }
-
-        if (bHasImage && (ts.Hour >= 0 && ts.Hour <= 2 || ts.Hour >= 20)) {
-          GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
-          bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-        }
-      }
-      else if (b_is_Palm_Sunday) {
-        const int8_t filenumbers_1570_la[24]    = { 0, 0, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-        const int8_t fileparts_1570_la[24]      = { 0, 1, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0 };
-        const int8_t filenumbers_1570[24]     = { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 9, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-        const int8_t fileparts_1570[24]       = { 0, 0, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
-
-        const int8_t filenumbers_1910_and_DA_la[24] = { 0, 0, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-        const int8_t fileparts_1910_and_DA_la[24] = { 0, 1, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
-        const int8_t filenumbers_1910_and_DA[24]  = { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-        const int8_t fileparts_1910_and_DA[24]    = { 0, 0, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
-
-        const int8_t filenumbers_1955_60_la[24]   = { 0, 1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 16, 16 };
-        const int8_t fileparts_1955_60_la[24]   = { 0, 0, 1, 0, 0, 0, 0, 1, 2, 3, 3, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
-        const int8_t filenumbers_1955_60[24]    = { 0, 1, 1, 2, 3, 4, 5, 5, 6, 6, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 17, 17, 17 };
-        const int8_t fileparts_1955_60[24]      = { 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
-
-        const int8_t filenumbers_60New_67_la[24]  = { 0, 0, 1, 2, 3, 3, 3, 3, 3, 4, 4, 5, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-        const int8_t fileparts_60New_67_la[24]    = { 0, 1, 0, 0, 0, 1, 3, 4, 6, 0, 1, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
-        const int8_t filenumbers_60New_67[24]   = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-        const int8_t fileparts_60New_67[24]     = { 0, 0, 0, 0, 0, 1, 3, 4, 6, 0, 1, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
-
-        // for clarity of code, and because they're almost all different, using lookup tables for Palm Sunday Mass parts (total space for luts=384 bytes)
-    
-        switch (mass_type)
-        {
-        case MASS_TRIDENTINE_1570:
-          if (lang == "la") {
-            filenumber = filenumbers_1570_la[ts.Hour];
-            subpart = fileparts_1570_la[ts.Hour];
-            read_subpart_count = (filenumber == 3 && subpart > 0) ? 2 : 0;
-          }
-          else {
-            filenumber = filenumbers_1570[ts.Hour];
-            subpart = fileparts_1570[ts.Hour];
-            read_subpart_count = (filenumber == 4 && subpart > 0) ? 2 : 0;
-          }
-          waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
-          b_read_only_one_subpart = (ts.Hour < 11 && read_subpart_count == 0);
-
-          if (bHasImage && ts.Hour == 12) { // display Palm Sunday image at 1pm
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-
-          if ((!bHasImage && ts.Hour == 11) || ts.Hour == 14) { // No Image, so skip hour 12 (when it would be shown) || No Lesson in 1570 Mass, so skip hour 14 when it would be shown
-            waketime++; // if no image, skip 1pm
-          }
-          break;
-
-        case MASS_TRIDENTINE_1910:
-        case MASS_DIVINEAFFLATU:
-          if (lang == "la") {
-            filenumber = filenumbers_1910_and_DA_la[ts.Hour];
-            subpart = fileparts_1910_and_DA_la[ts.Hour];
-            read_subpart_count = (filenumber == 3 && subpart > 0) ? 2 : 0;
-          }
-          else {
-            filenumber = filenumbers_1910_and_DA[ts.Hour];
-            subpart = fileparts_1910_and_DA[ts.Hour];
-            read_subpart_count = (filenumber == 4 && subpart > 0) ? 2 : 0;
-          }
-          waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
-          b_read_only_one_subpart = (ts.Hour < 11 && read_subpart_count == 0);
-
-          if (bHasImage && ts.Hour == 12) { // display Palm Sunday image at 1pm
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-
-          if (!bHasImage && ts.Hour == 11) {
-            waketime++; // if no image, skip 1pm
-          }
-
-          break;
-
-        case MASS_1955:
-        case MASS_1960:
-          if (lang == "la") {
-            filenumber = filenumbers_1955_60_la[ts.Hour];
-            subpart = fileparts_1955_60_la[ts.Hour];
-          }
-          else {
-            filenumber = filenumbers_1955_60[ts.Hour];
-            subpart = fileparts_1955_60[ts.Hour];
-          }
-          waketime = ts.Hour < 20 ? ts.Hour + 1 : -1;
-          b_read_only_one_subpart = (ts.Hour <= 8 && filenumber != 2);
-
-          if (bHasImage && ts.Hour == 9) {  // display Palm Sunday image at 9am
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-
-          if (!bHasImage && ts.Hour == 8) {
-            waketime++; // if no image, skip 9am
-          }
-
-          break;
-
-        case MASS_1960NEW:
-        case MASS_1965_67:
-          if (lang == "la") {
-            filenumber = filenumbers_60New_67_la[ts.Hour];
-            subpart = fileparts_60New_67_la[ts.Hour];
-          }
-          else {
-            filenumber = filenumbers_60New_67[ts.Hour];
-            subpart = fileparts_60New_67[ts.Hour];
-          }
-          waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
-          b_read_only_one_subpart = (ts.Hour < 11 && ts.Hour != 5 && ts.Hour != 7);
-          read_subpart_count = (ts.Hour == 5 || ts.Hour == 7) ? 2 : 0;
-
-          if (bHasImage && ts.Hour == 12) { // display Palm Sunday image at 9am
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-
-          if (!bHasImage && ts.Hour == 11) {
-            waketime++; // if no image, skip 9am
-          }
-          break;
-
-        default:
-          filenumber = 0;
-          subpart = 0;
-          waketime = 0;
-
-          if (bHasImage) {
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-          else {
-            String imagefilename = fileroot_img + "/Error.bwr";
-            bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-          }
-
-          DEBUG_PRT.println("Unknown Mass type for Palm Sunday Mass");
-          break;
-        }
-      }
-      else if (b_is_Good_Friday) {
-        b_read_only_one_subpart = true;
-
-        DEBUG_PRT.print(F("Good Friday: ts.Hour="));
-        DEBUG_PRT.println(ts.Hour);
-
-        if (mass_type != MASS_1960) {
-          switch (ts.Hour)
-          {
-          case 0:
-          case 1:
-          case 2:
-            if (!(ts.Hour == 2 && mass_type == MASS_1955)) {
-              if (bHasImage) {    // Picture
-                bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-              }
-            }
-            filenumber = 0;
-            subpart = 0;
-
-            waketime = (mass_type == MASS_1955 && (ts.Hour == 0 || ts.Hour == 1)) ? 2 : 3;
-            //waketime = 3;
-            break;
-
-          case 3:
-          case 4:
-            filenumber = (mass_type == MASS_1955) ? 1 : 0;      // Lectiones
-            subpart = ts.Hour - 3;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 5:
-            filenumber = (mass_type == MASS_1955) ? 2 : 1;      // PASSION
-            subpart = 0;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 6:
-          case 7:
-          case 8:
-          case 9:
-          case 10:
-          case 11:
-          case 12:
-          case 13:
-          case 14:
-            filenumber = (mass_type == MASS_1955) ? 3 : 2;      // THE GREAT INTERCESSIONS
-            subpart = ts.Hour - 6;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 15:          // Picture or Adoration of the Cross
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = (mass_type == MASS_1955) ? 4 : 3;
-            subpart = 0;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 16:
-          case 17:
-          case 18:
-            filenumber = (mass_type == MASS_1955) ? 4 : 3;      // Adoration of the Cross
-            subpart = ts.Hour - 16;
-            waketime = ts.Hour + 1;
-            
-            b_read_only_one_subpart = !(mass_type == MASS_1955 && ts.Hour == 18); // read two subparts at 6pm for the 1955 Mass, since there are four Adoration parts not three
-            break;
-
-          case 19:
-          case 20:
-            filenumber = (mass_type == MASS_1955) ? 5 : 4;      // Communion
-            subpart = ts.Hour - 19;
-            waketime = ts.Hour + 1;
-            if (!bHasImage && waketime == 21) {
-              waketime = -1;
-            }
-            break;
-
-          case 21:
-          case 22:
-          case 23:          // Picture
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = (mass_type == MASS_1955) ? 5 : 4;
-            subpart = 1;
-            waketime = -1;
-            break;
-          
-          default:
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = (mass_type == MASS_1955) ? 4 : 3;      // Adoration of the Cross
-            subpart = 0;
-            waketime = -1;
-            break;
-          }
-          
-        }
-        else {
-          switch (ts.Hour)
-          {
-          case 0:
-          case 1:
-            if (bHasImage) {    // Picture
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = 0;
-            subpart = 0;
-            waketime = 2;
-            break;
-          
-          case 2:
-            filenumber = 0;
-            subpart = 0;
-            waketime = 3;
-            break;
-
-          case 3:
-          case 4:
-            filenumber = 1;     // Lectiones (Readings from Scripture, Passion)
-            subpart = ts.Hour - 3;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 5:
-            filenumber = 2;     // PASSION
-            subpart = 0;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 6:
-          case 7:
-          case 8:
-          case 9:
-          case 10:
-          case 11:
-          case 12:
-          case 13:
-          case 14:
-            filenumber = 3;     // THE GREAT INTERCESSIONS
-            subpart = ts.Hour - 6;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 15:          // Picture or Adoration of the Cross
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = 4;
-            subpart = 0;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 16:
-          case 17:
-          case 18:
-          case 19:
-            filenumber = 4;     // Adoration of the Cross
-            subpart = ts.Hour - 16;
-            waketime = ts.Hour + 1;
-            break;
-
-          case 20:
-          case 21:
-            filenumber = 5;     // Communion
-            subpart = ts.Hour - 20;
-            waketime = ts.Hour + 1;
-            if (!bHasImage && waketime == 22) {
-              waketime = -1;
-            }
-            break;
-
-          case 22:
-          case 23:          // Picture
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = 5;
-            subpart = 1;
-            waketime = -1;
-            break;
-
-          default:
-            if (bHasImage) {
-              bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-            }
-            filenumber = 4;     // Adoration of the Cross
-            subpart = 0;
-            waketime = -1;
-            break;
-          }
-        }
-/*
-        if (ts.Hour == 0) {
-          filenumber = 0; // Descriptive heading
-          subpart = 0;
-          waketime = 1;
-        }
-
-        if (ts.Hour >= 1 && ts.Hour <= 2) {
-          filenumber = 1; // Readings from Scripture, Passion
-          subpart = ts.Hour - 1;
-          waketime = ts.Hour + 1;
-        }
-
-        if (ts.Hour >= 3 && ts.Hour <= 5) {
-          filenumber = 2; // Passion
-          subpart = 0;
-          if (ts.Hour == 3) waketime = 6;
-        }
-
-        if (ts.Hour >= 6 && ts.Hour <= 14) {
-          filenumber = 3; // II. The Great Intercessions
-          subpart = ts.Hour - 6; // 0..8
-          waketime = ts.Hour + 1;
-        }
-*/
-        /*
-        if (ts.Hour >= 15 && ts.Hour <= 18) {
-          filenumber = 4; // Adoration of the Cross
-          subpart = ts.Hour - 15; // 0..3
-          waketime = ts.Hour + 1;
-        }
-        */
-/*
-        uint8_t hour_offset_for_image_display = bHasImage ? 1 : 0; // everything will be shifted an hour later from 3pm, to give an hour for the image of the Cross to be displayed
-        if (ts.Hour >= 15 && ts.Hour <= 18 + hour_offset_for_image_display) {
-          if (bHasImage) {
-            if (ts.Hour == 15 && DisplayImage(imagefilename, 0, ypos)) {
-              //filenumber = 4; // Adoration of the Cross, display image of Christ crucified for one hour, then readings at 4 and 5pm
-              //subpart = ts.Hour - 15; // 0..3
-              bImageIsDisplayed = true;
-              waketime = ts.Hour + 1;
-            }
-            else if (ts.Hour >= 16) {
-              filenumber = 4; // Adoration of the Cross
-              subpart = ts.Hour - 16; // 0..3
-              waketime = ts.Hour + 1;
-            }
-          }
-          else {
-            filenumber = 4; // Adoration of the Cross, display readings in three parts from 3pm (time of Christ's death)
-            subpart = ts.Hour - 15; // 0..3
-            waketime = ts.Hour + 1;
-          }
-        }
-
-        if (ts.Hour >= 19 + hour_offset_for_image_display && ts.Hour <= 20 + hour_offset_for_image_display) {
-          filenumber = 5; // Communion
-          subpart = ts.Hour - (19 + hour_offset_for_image_display); // 0 or 1
-          if (ts.Hour == 19 + hour_offset_for_image_display) {
-            waketime = 20 + hour_offset_for_image_display;
-          }
-          else {
-            //waketime = 0; //Allow to default (will be midnight)
-          }
-        }
-
-        if (ts.Hour >= 21 + hour_offset_for_image_display) {
-          filenumber = 5;
-          subpart = 1;  // if woken after the last reading (Communion pt 2), display this same reading again.
-        }
-*/      
-      }
-      else if (Tridentine::IsHolySaturday(date)) {
-        int8_t num_parts = 22;
-
-        if (mass_type <= MASS_DIVINEAFFLATU) {
-          num_parts = 16;
-        }
-
-        if (ts.Hour <= num_parts - 1) { // 22 file parts unless Tridentine Mass (1570, 1910, DivinoAfflatu)
-          filenumber = ts.Hour;
-          subpart = 0;
-          waketime = ts.Hour < (num_parts - 1) ? ts.Hour + 1 : 0;
-        }
-        else {
-          filenumber = num_parts - 1; // if Lectionary is woken after last reading
-          subpart = 0;
-          waketime = 0;
-        }
-      }
-    }
-    else
-    { // if is a 12-part Proper
-      MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
-
-      if (next_hour_filenumber == 1 || next_hour_filenumber == 6) { // removed !bIsVotive from clause. if the next reading will be Gloria or Credo in a non-votive Mass
-        subpart = 0;
-        p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
-        if (p_mr_Day->curr_subpartlen < 200) {
-          // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
-          DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day only)"));
-          if (next_hour_filenumber == 6) {
-            waketime = ts.Hour + 2; // skip the next hour's reading            
-          }
-          else {
-            waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
-          }
-        }
-        bResetPropersFilePtr = true;
-        bMoreText = false;
-        s = "";
-      }
-      else if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 2) {  // 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
-        DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (seasonal day) - skipping next hour"));
-        waketime = ts.Hour + 2;
-      }
-
-      if (filenumber == 1 || filenumber == 6) { // removed !bIsVotive from clause. Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
-        subpart = 0;
-        p_mr_Day->get(filenumber, subpart, s, bMoreText);
-        if (p_mr_Day->curr_subpartlen < 200) {
-          // if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so display the Collect (2) or the Offertorium (7) (if filenumber == 1 or 6)
-          DEBUG_PRT.println(F("Woken during Gloria or Credo on seasonal day when not to be displayed - displaying next filenumber (seasonal day)"));
-          filenumber++;
-          subpart = 0;
-        }
-        bResetPropersFilePtr = true;
-        bMoreText = false;
-        s = "";
-      }
-      else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 3) {  // 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
-        DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (seasonal day) - displaying next filenumber"));
-        filenumber++;
-      }
-    }
-
-    // image will be displayed (if available) in this case between midnight and 8am, and 8pm and midnight
-    if (bIsVotive && bHasVotiveImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image for votive Mass if so
-      GetImageFilenameAndWakeTime(votiveimagefilename, ts.Hour, votiveimagecount, waketime);
-      bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
-    }
-    else if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8 && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) || (!b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday && ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
-      GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
-      bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-    }
-
-    MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
-
-    //subpart = 0; // should be initialized to the correct value by this point (usually 0, but the propers handling for Good Friday above modifies it on some hours)
-    //int8_t first_subpart = subpart;
-    bOverflowedScreen = false;
-
-    if (!bImageIsDisplayed) {
-      bool b_votive_has_extra_commemoration_text = false;
-      int8_t linecount = 0;
-
-      //bool b_end_of_subpart_reached_break_now = false;
-
-      int8_t last_subpart = subpart;
-
-      while (!bOverflowedScreen && /*!b_end_of_subpart_reached_break_now && */ p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr) && !b_votive_has_extra_commemoration_text) {
-        //Bidi::printf("<span style='color: blue;'>fn=%d, sp=%d</span>", filenumber, subpart);
-
-        if (read_subpart_count != -1 && last_subpart != subpart) {
-          read_subpart_count--;
-          if (read_subpart_count == 0) break;
-        }
-
-        if (b_read_only_one_subpart && last_subpart != subpart) break;
-        last_subpart = subpart;
-
-        //Bidi::printf("linecount=%d, filenumber=%d ", linecount, filenumber);
-        b_votive_has_extra_commemoration_text = (bIsVotive && (
-          s.indexOf("Blasii") != -1 ||
-          s.indexOf("Marcellini") != -1 ||
-          s.indexOf("Telesphor") != -1 ||
-          s.indexOf("Faustini") != -1 ||
-          s.indexOf("Undecima") != -1 ||
-          (linecount == 7 && filenumber == 2) || (linecount == 6 && filenumber == 11) // remove Oremus and linebreak before extra commemoration lines in Votive Mass propers for Collect and Postcommunio
-          ));
-
-        if (!bIsVotive || !b_votive_has_extra_commemoration_text) { // bit of a hack to get around the Votive masses, which have picked up the Commemoration of the day they were taken from (which is not always the day they are shown)
-          bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
-            pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
-            bBold, bItalic, bRed, fontsize_rel,
-            line_number, fbwidth, fbheight,
-            bRTL, bRenderRtl, bWrapText, bMoreText);
-        }
-        linecount++;
-
-        //if (b_read_only_one_subpart && first_subpart != subpart) {
-        //  b_end_of_subpart_reached_break_now = true; // when only outputting one subsection per hour, eg for Good Friday Great Intercessions
-        //}
-      }
-    }
-
-    if ((bHasImage || (bIsVotive && bHasVotiveImage)) && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) {
-      if (ts.Hour == 19) {
-        waketime = 20; // at 7pm the Postcommunio is displayed until midnight. If there is an image to display, wake up at 8pm to display the image between 8pm and midnight if so
-      }
-      else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
-        waketime = 8;
-      }
-    }
-  }
-  else {
-    DEBUG_PRT.println(F("No Seasonal, Feast or Votive day! (Mistake in Propers database) - Displaying Error image"));
-#ifdef _WIN32    
-    Bidi::printf("***********No Seasonal, Feast or Votive day! (Mistake in Propers database) - Displaying Error image<br>");
+	//DEBUG_PRT.println(td.DayofWeek);
+	//DEBUG_PRT.println(td.Cls);
+	//DEBUG_PRT.println(td.Colour);
+	//DEBUG_PRT.println(td.Mass);
+	//DEBUG_PRT.println(td.Commemoration);
+	DEBUG_PRT.print(F("td.HolyDayOfObligation=["));
+	DEBUG_PRT.print(td.HolyDayOfObligation);
+	DEBUG_PRT.print(F("]\ntd.FileDir_Season=["));
+	DEBUG_PRT.print(td.FileDir_Season);
+	DEBUG_PRT.print(F("]\ntd.FileDir_Saint=["));
+	DEBUG_PRT.print(td.FileDir_Saint);
+	DEBUG_PRT.print(F("]\ntd.FileDir_Votive=["));
+	DEBUG_PRT.print(td.FileDir_Votive);
+	DEBUG_PRT.print(F("]\ntd.SeasonImageFilename=["));
+	DEBUG_PRT.print(td.SeasonImageFilename);
+	DEBUG_PRT.print(F("]\ntd.SaintsImageFilename=["));
+	DEBUG_PRT.print(td.SaintsImageFilename);
+	DEBUG_PRT.print(F("]\ntd.VotiveImageFilename=["));
+	DEBUG_PRT.print(td.VotiveImageFilename);
+	DEBUG_PRT.println(F("]"));
+
+	int8_t filenumber = ts.Hour - 8;    // (Done) - TODO: need to have special cases for Easter, All Souls and Christmas (which have a larger number of parts/different structure to standard 12-part propers)
+
+	if (ts.Hour >= 0 && ts.Hour < 9) {
+		filenumber = 0;
+	}
+
+	if (ts.Hour >= 19) {
+		filenumber = 11;
+	}
+
+	int8_t next_hour_filenumber = filenumber + 1;
+
+	//String fileroot = "/Lect/EF/" + mass_version + "/" + lang; // test code removed
+	bool b_is_1570_Mass = (lect.indexOf("1570") > -1);
+
+	String fileroot = "/" + lect + "/" + lang;
+	String fileroot_img = "/" + lect + "/images";
+	String liturgical_day = "";
+	String sanctoral_day = "";
+	td.DeferredImageFilename = "";
+
+	String seasonimagefilename = td.SeasonImageFilename != "" ? fileroot_img + td.SeasonImageFilename + ".bwr" : "";
+	String saintsimagefilename = td.SaintsImageFilename != "" ? fileroot_img + td.SaintsImageFilename + ".bwr" : "";
+	String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
+
+	bool bFeastDayOnly = (td.FileDir_Season == td.FileDir_Saint); // will be true if there is no seasonal day
+	bool bIsFeast = (td.FileDir_Saint != "" && SD.exists(fileroot + td.FileDir_Saint)); // if there is no feast day on this day, the directory/propers for this day will not exist
+	bool bIsVotive = (td.FileDir_Votive != "" && SD.exists(fileroot + td.FileDir_Votive)); // if there is no votive day on this day, the directory/propers for this day will not exist
+	bool bHasSeasonImage = (td.SeasonImageFilename != "" && SD.exists(seasonimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
+	bool bHasSaintsImage = (td.SaintsImageFilename != "" && SD.exists(saintsimagefilename)); // if there is an image accompanying the Saint's day on this day, it will be displayed between midnight and 8am, before the introit at 9am
+	bool bHasVotiveImage = (td.VotiveImageFilename != "" && SD.exists(votiveimagefilename)); // if the Mass for the day is a Votive Mass, an image will be displayed if available
+	int8_t seasonimagecount = -1;
+	int8_t saintsimagecount = -1;
+	int8_t votiveimagecount = -1;
+
+	// image filenames are of the form 10-11.bwr, and 10-11-2.bwr, 10-11-3.bwr etc if there is more than one image
+	if (bHasSeasonImage) seasonimagecount = GetImageCount(fileroot_img + td.SeasonImageFilename); // get count of images to be displayed this day
+	if (bHasSaintsImage) saintsimagecount = GetImageCount(fileroot_img + td.SaintsImageFilename); // get count of images to be displayed this day
+	if (bHasVotiveImage) votiveimagecount = GetImageCount(fileroot_img + td.VotiveImageFilename); // get count of votive images to be displayed this day (if applicable)
+
+	int8_t imagecount = saintsimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+	bool bHasImage = bHasSaintsImage;
+	String imagefilename = saintsimagefilename;
+
+	DEBUG_PRT.print(F("seasonimagefilename is ["));
+	DEBUG_PRT.print(seasonimagefilename);
+	DEBUG_PRT.print(F("]\nsaintsimagefilename is ["));
+	DEBUG_PRT.print(saintsimagefilename);
+	DEBUG_PRT.print(F("]\nvotiveimagefilename is ["));
+	DEBUG_PRT.print(votiveimagefilename);
+	DEBUG_PRT.print(F("]\nbHasSeasonImage is "));
+	DEBUG_PRT.println(bHasSeasonImage);
+	DEBUG_PRT.print(F("bHasSaintsImage is "));
+	DEBUG_PRT.println(bHasSaintsImage);
+	DEBUG_PRT.print(F("bHasVotiveImage is "));
+	DEBUG_PRT.println(bHasVotiveImage);
+	DEBUG_PRT.print(F("seasonimagecount="));
+	DEBUG_PRT.println(seasonimagecount);
+	DEBUG_PRT.print(F("saintsimagecount="));
+	DEBUG_PRT.println(saintsimagecount);
+	DEBUG_PRT.print(F("votiveimagecount="));
+	DEBUG_PRT.println(votiveimagecount);
+
+	MissalReading season;
+	MissalReading feast;
+	MissalReading votive;
+	MissalReading deferred;
+
+	if (bIsFeast) {
+		feast.open(td.FileDir_Saint, fileroot);
+		season._imagefn = bHasSeasonImage ? td.SeasonImageFilename : ""; // although not directly needed for the MissalReading objects, storing the corresponding image filename in them
+	}																	 // allows them to be recovered when a deferred feast is celebrated.
+
+	if (bIsVotive) {
+		votive.open(td.FileDir_Votive, fileroot);
+		votive._imagefn = bHasVotiveImage ? td.VotiveImageFilename : ""; //
+	}																	 //
+
+	if (!bFeastDayOnly) {
+		season.open(td.FileDir_Season, fileroot);
+		feast._imagefn = bHasSaintsImage ? td.SaintsImageFilename : "";	 //
+	}																	 //
+
+	// handle transfers
+	TransferRecord transfer;
+	int8_t lectionarynumber = Tridentine::GetLectionaryVersionNumber(lect);
+	bool bhavedeferredfeast = RomanTransfers::GetTransfer(transfer, date, lectionarynumber); // will also close any open transfers from a previous day, if still open
+
+	if (bhavedeferredfeast) {
+		td.FileDir_Deferred = String(transfer.deferredfeastfilename);
+		td.DeferredImageFilename = String(transfer.deferredfeastimagefilename);
+
+		if (transfer.lectionarynumber != RomanTransfers::GetLectionaryVersionNumber(lect)) {
+			bhavedeferredfeast = deferred.open(td.FileDir_Deferred, fileroot);
+		}
+		else {
+			DEBUG_PRT.println(F("Deferred feast does not correspond to presently selected lectionary (settings changed by user?)"));
+		}
+	}
+
+	bool bSunday = Tridentine::sunday(date);
+	Ordering ordering;
+	//DEBUG_PRT.on();
+	Precedence::doOrdering(date, mass_type, season, feast, votive, deferred, ordering);
+
+	if (ordering.b_celebrate_deferred) {
+		feast.close(); // PLL 09-10-2024 Have no need to keep the feast open if it has been displaced by the deferred feast
+		DEBUG_PRT.println(F("today's feast closed feast.close() because celebrating deferred feast instead"));
+
+		if (!RomanTransfers::SetActiveTransfer(transfer, date)) {
+			DEBUG_PRT.println(F("LatinMassPropers() a problem occurred whilst trying to set the current transfer to be active!"));
+		}
+
+		// set the image filename corresponding to the feast (stored in 'saintsimagefilename' to be the filename of the deferred feast's image
+		saintsimagefilename = td.DeferredImageFilename != "" ? fileroot_img + td.DeferredImageFilename + ".bwr" : ""; // the image filename is stored without the full path, unlike the propers filename stored in the MissalReadings object's _filedir variable
+		bHasSaintsImage = (td.DeferredImageFilename != "" && SD.exists(saintsimagefilename));
+		if (bHasSaintsImage) saintsimagecount = GetImageCount(fileroot_img + td.DeferredImageFilename);
+
+		DEBUG_PRT.print(F("]\nsaintsimagefilename (from deferred feast) is ["));
+		DEBUG_PRT.print(saintsimagefilename);
+		DEBUG_PRT.print(F("]\nbHasSaintsImage (from deferred feast) is "));
+		DEBUG_PRT.println(bHasSaintsImage);
+		DEBUG_PRT.print(F("\nsaintsimagecount (from deferred feast) ="));
+		DEBUG_PRT.println(saintsimagecount);
+
+#ifdef _WIN32
+		Bidi::printf("<span class='flash'>[have deferred feast]</span>");
+#endif
+		//Tridentine::clearDeferredFeast(lect);
+	}
+
+	if ((ordering.b_transfer_1st || ordering.b_transfer_2nd) && ordering.transfer_heading_index != -1) {
+		String fd = ordering.headings[ordering.transfer_heading_index]->_filedir;
+		String imgfd = Tridentine::getImageFilenameFromFileDir(fd, fileroot, fileroot_img); //ordering.b_transfer_1st ? feast._imagefn : season._imagefn;
+		//Tridentine::setDeferredFeast(fd, imgfd, lect); // PLL-04-10-2024 save filename of any transferred feast to the deferred list
+		if (!RomanTransfers::AddTransfer(fd, imgfd, ordering.headings[ordering.transfer_heading_index]->_precedencescore, lectionarynumber)) {
+			DEBUG_PRT.println(F("LatinMassPropers() Transfers::AddTransfer() failed!"));
+		}
+	}
+
+	//DEBUG_PRT.off();
+
+	bFeastDayOnly = (ordering.ordering[0] == MR_FEAST && ordering.ordering[1] == MR_NONE);
+	bIsFeast = (bFeastDayOnly || ordering.ordering[1] != MR_NONE);	// ordering[0]=index into heading[] for object to be used for heading (season=0, feast=1 or votive=2), ordering[1]=index into heading[] for object to be used for subheading (0, 1, or 2 as before if applicable. -1 if no subheading)
+
+	bool b_is_purification_of_mary = (ts.Month == 2 && ts.Day == 2) && ordering.ordering[0] == MR_FEAST;	// first item is the feast, it is not the 12 part one that D.O. outputs for the non-1570 Latin version of the Purification of Mary (bug in D.O.?), because it has 14 parts not 12
+
+	/*
+	// need to exclude commemoration on Sundays and Feasts of the Lord
+	bIsFeast = (bFeastDayOnly ||
+		(bIsFeast && (                                        // PLL-12-04-2021 Can only be a feast day if bIsFeast is already true, indicating that there is a
+		(!bSunday && cls_feast >= cls_season) ||              //  calendar entry for a feast on this day in the database
+			(cls_feast >= 6) ||                                   // the additions in the commented three lines below may have introduced bugs - need testing
+			(!bSunday && cls_feast == 0 && cls_season <= 2) ||    // PLL-12-01-2021 commemoration is 0, need to display these eg. on 5 Dec 2020, which is the commemoration of S. Sabbae Abbatis. To display on Seasonal days <= Semiduplex
+			(cls_season - cls_feast == 1) ||                      // PLL-12-01-2021 display feast if it is 1 class lower than that of the season
+			(bSunday && cls_feast > cls_season && cls_feast >= 5) // PLL-12-01-2021 Patched for Feast of St Luke Evangelist on October 18 (Duplex II. classis) if on a Sunday
+			)));
+
+	bool bIsImmaculateConception = Tridentine::IsImmaculateConception(date);
+	bool bIsLadyDay = Tridentine::IsLadyDay(date);  // shouldn't both be true!
+	*/
+	//bFeastDayOnly = (bFeastDayOnly || cls_feast >= 6 && !bIsImmaculateConception && !bIsLadyDay /*Tridentine::Season(date) != SEASON_ADVENT*/); // If Feast of the Lord, Class I or Duplex I classis, don't show seasonal day
+
+
+	// Feast of Immaculate Conception (8 Dec, even if Sunday), the day of Advent is the Commemorio (there may be other exceptions)
+	// PLL-26-12-2020 Added bFeastDayOnly || check so that if the test Saints Day == the Feast Day (above) then this overrides the rest of this test
+
+	// If it is a votive day and the feast is of the same or lower priority, 
+	// or if it is a seasonal day and the seasonal day is of the same or lower priority, the votive mass is observed
+	bIsVotive = ordering.b_is_votive; //(ordering.ordering[0] == MR_VOTIVE); // votive=2
+	/*
+	bIsVotive = (bIsVotive && ((bIsFeast && Tridentine::getClassIndex(feast.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses))
+		|| (!bIsFeast && Tridentine::getClassIndex(season.cls(), bUseNewClasses) <= Tridentine::getClassIndex(votive.cls(), bUseNewClasses)))
+		);
+	*/
+	if (bIsVotive) {
+		DEBUG_PRT.println(F("Votive Mass"));
+	}
+
+	// Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
+
+	  //if (Tridentine::getClassIndex(indexheader_saint.cls, bUseNewClasses) > Tridentine::getClassIndex(indexheader_season.cls, bUseNewClasses)) {
+		// Feast day takes precendence
+		/*
+		  In this case:
+		  0 Introitus   - Comes from the feast
+		  1 Gloria    - Omit if season requires
+		  2 Collect     - Seasonal day becomes commemoration (after the Collect text for the Feast day:
+					  "Commemoratio <indexheader_season.name> followed by the Collect text from the season.
+		  3, 4, 5 Lesson, Gradual, Gospel - Comes from the Feast
+		  6 Credo     - Omit if season requires
+		  7 Offertorium   - Comes from the Feast
+		  8 Secreta     - Like collect (both)
+		  9 Prefatio    - From the Season
+		  10 Communio   - From the Feast
+		  11 Postcommunio - From both
+		*/
+		//}
+
+	bool bFileOk = false;
+	String s = "";
+	bool bOverflowedScreen = true;
+	int8_t subpart = 0;
+	bool bRTL = right_to_left;
+
+	bool bResetPropersFilePtr = false;
+
+	if (bIsFeast) { // there is a feast on this day
+		if (bFeastDayOnly) { // is a saint's feast only
+			DEBUG_PRT.println(F("Feast day only"));
+			ypos = display_day_ex(date, feast.name(), feast.colour(), td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
+			bool bImageIsDisplayed = false;
+
+			if (b_is_purification_of_mary) {
+				// purification of Mary propers
+				waketime = DoPurificationOfMary(&feast, NULL, false,
+					filenumber, ts.Hour, lang, mass_type,
+					xpos, ypos,
+					pDiskfont,
+					bBold, bItalic, bRed,
+					fontsize_rel, line_number,
+					fbwidth, fbheight,
+					bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
+			}
+			else {
+				if (bHasImage) {
+					if (ts.Hour == 19) {
+						waketime = 20; // at 7pm, if there are any images to display, wake at 8pm to begin displaying them
+					}
+					else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
+						waketime = 8;
+					}
+				}
+
+				if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+					GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+					bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+				}
+
+				if (filenumber == 0 || filenumber == 5) { // Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
+					subpart = 0;
+					feast.get(next_hour_filenumber, subpart, s, bMoreText);
+					if (feast.curr_subpartlen < 200) {
+						// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+						DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (feastday)"));
+						if (next_hour_filenumber == 6) {
+							waketime = ts.Hour + 2; // skip the next hour's reading            
+						}
+						else {
+							waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
+						}
+					}
+					bResetPropersFilePtr = true;
+					bMoreText = false;
+					s = "";
+				}
+				else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 2) {	// 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
+					DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (feastday) - skipping next hour"));
+					waketime = ts.Hour + 2;
+				}
+
+				if (filenumber == 1 || filenumber == 6) { // Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
+					subpart = 0;
+					feast.get(filenumber, subpart, s, bMoreText);
+					if (feast.curr_subpartlen < 200) {
+						// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so display the Collect (2) or the Offertorium (7) (if filenumber == 1 or 6)
+						DEBUG_PRT.println(F("Woken during Gloria or Credo on feastday when not to be displayed - displaying next filenumber"));
+						filenumber++;
+					}
+					bResetPropersFilePtr = true;
+					bMoreText = false;
+					s = "";
+				}
+				else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 3) {	// 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
+					DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (feastday) - displaying next filenumber"));
+					filenumber++;
+				}
+
+				if (!bImageIsDisplayed) { // from 8pm until midnight and midnight to 8am, display the Saint's image(s) (if available)
+					bOverflowedScreen = false;
+					subpart = 0;
+					while (!bOverflowedScreen && feast.get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) { // bResetPropersFilePtr gets reset to false if get() is called with it set to true
+						bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+							pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+							bBold, bItalic, bRed, fontsize_rel,
+							line_number, fbwidth, fbheight,
+							bRTL, bRenderRtl, bWrapText, bMoreText);
+					}
+				}
+			}
+		}
+		else { // there is both a feast and a seasonal day
+			DEBUG_PRT.println(F("Feast day and seasonal day"));
+			MissalReading* p_mr_Day = ordering.b_is_votive ? &votive : ordering.headings[ordering.ordering[0]]; //&feast or &votive;
+			MissalReading* p_mr_Comm = ordering.b_is_votive ? &feast : ordering.headings[ordering.ordering[1]]; //&season or &feast (if votive);
+
+			// PLL-24-12-2020 This needs understanding and fixing!
+			//bool bSaintsDayTakesPrecedence = (cls_feast >= cls_season && !bSunday/*|| (cls_season < 2 && !(cls_feast == cls_season))*/); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
+			//PLL-12-01-2021 Saint's day takes precedence if its class is greater the class of the season [and it is not a Sunday - PLL-12-01-2021]
+
+			bool bSaintsDayTakesPrecedence = (ordering.ordering[0] == MR_FEAST);
+
+			//bool bDisplayComm = ((cls_feast >= cls_season || cls_feast == 0 /*PLL-12-01-2021 or commemoration*/) && cls_season >= 2 /*Semiduplex*/); // PLL-15-12-2020 display Commemoration if the seasonal day is >= SemiDuplex
+			/* // now handled above PLL-20-10-2020 - maybe display the seasonal day in the superior position if the feast and seasonal day are of the same class? [No - not in Epiphany/days of January]
+			// need to exclude commemoration on Sundays and Feasts of the Lord
+			bool bSaintsDayTakesPrecedence = (Tridentine::getClassIndex(feast.cls(), bUseNewClasses) >= Tridentine::getClassIndex(season.cls(), bUseNewClasses));
+
+			if (Tridentine::sunday(date)) { // TODO: may need to make allowance for feasts that move, such as feast of St Matthias, and for feasts of the Lord which override Sundays
+			  bSaintsDayTakesPrecedence = false;
+			}
+			*/
+			bool bDisplayComm = (ordering.b_feast_is_commemoration || ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers);
+			//bDisplayComm = (bDisplayComm || bIsLadyDay && (cls_season >= 2 || Tridentine::IsPassionWeek(date))); // PLL-01-06-2021 Display commemoration of the seasonal day if the seasonal day is Class III (Semiduplex) or above
+			// PLL-01-06-2021 in the version of Divinum Officium I based the Latin Mass Propers database on, weekdays of Passion Week were reported as Class IV, which
+			// breaks the logic which decides whether to show the commemoration of the seasonal day if Lady Day falls within Passion Week. This is a workaround for that
+
+			//if (!bSaintsDayTakesPrecedence || feast.isCommemorationOnly()) { // PLL-23-04-2021 seasonal day takes precedence if feast is commemoration only (collect, secreta and postcommunio have commemoration text)
+			//	p_mr_Day = &season;
+			//	p_mr_Comm = &feast;
+
+			switch (ordering.ordering[0])
+			{
+			case MR_SEASON:
+				if (bHasSeasonImage || (bIsVotive && bHasVotiveImage)) {	// hack because Votive is in ordering.headings[0] if it is a votive day (swapped seasonal day with headings[3] if votive day)
+					if (!bIsVotive) {
+						DEBUG_PRT.println(F("Using image from the season"));
+						imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+						bHasImage = bHasSeasonImage;
+						imagefilename = seasonimagefilename;
+					}
+					else {
+						DEBUG_PRT.println(F("Using image from the votive"));
+						imagecount = votiveimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+						bHasImage = bHasVotiveImage;
+						imagefilename = votiveimagefilename;
+					}
+				}
+				break;
+
+			case  MR_FEAST:
+				if (bHasSaintsImage) {
+					DEBUG_PRT.println(F("Using image from the feast"));
+					imagecount = saintsimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+					bHasImage = bHasSaintsImage;
+					imagefilename = saintsimagefilename;
+				}
+				break;
+
+			case MR_VOTIVE:
+				if (bHasVotiveImage) {
+					DEBUG_PRT.println(F("Using image from the votive"));
+					imagecount = votiveimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+					bHasImage = bHasVotiveImage;
+					imagefilename = votiveimagefilename;
+				}
+				break;
+			}
+
+			/*
+			if (bIsVotive) { // in this case, the feast is shown in the commemoration position (bottom left of the screen), and the votive is shown as the heading. The seasonal day is not shown
+				p_mr_Day = &votive;
+				p_mr_Comm = &feast;
+			}
+			*/
+
+			if (ordering.ordering[1] != -1) {
+				bool b_use_commemoration_title = ordering.headings[ordering.ordering[1]]->isCommemorationOnly();
+				sanctoral_day = ordering.headings[ordering.ordering[1]]->name(b_use_commemoration_title);
+			}
+			else {
+				sanctoral_day = bIsVotive ? feast.name() : "";
+			}
+
+			//sanctoral_day = bIsVotive ? feast.name() : sanctoral_day;
+
+			//sanctoral_day = bIsVotive ? feast.name() :
+			//							ordering.ordering[1] != -1 ? ordering.headings[ordering.ordering[1]]->name() : "";
+
+			bool bIsCommemorationAndSeasonalDayOnly = feast.isCommemorationOnly(); // && !bIsVotive;
+
+			// on commemorational day, when not also a votive mass day, want the commemoration in the top position on the display (display_date_ex call)
+			//if (bIsCommemorationAndSeasonalDayOnly) { // in this case p_mr_Comm will point to the feast, want day name from this. p_mr_Day will point to the season
+			//	sanctoral_day = p_mr_Day->name(); // text in lower position is from the season, text in upper position will be the name of the commemoration
+			//}
+			//else {
+			//	sanctoral_day = p_mr_Comm->name(); // text in lower position will be from the season, or the feast if !bSaintsDayTakesPrecedence (based on rank)
+			//}
+
+			ypos = display_day_ex(date,
+				//bIsCommemorationAndSeasonalDayOnly ? p_mr_Comm->commemoration() : p_mr_Day->name(),
+				p_mr_Day->name(),
+				p_mr_Day->colour(),         // will be the colour of the season if a commemoration (because in this case p_mr_Day will point to the season,
+				td.HolyDayOfObligation,     // according to the logic (feast.isCommemorationOnly() && !bIsVotive)), or the colour of the feast if not  
+				right_to_left,
+				bLiturgical_Colour_Red,
+				diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is
+
+			if (!b_is_purification_of_mary) {
+
+				DEBUG_PRT.print(F("filenumber is "));
+				DEBUG_PRT.println(filenumber);
+
+				// Feast day takes precedence, seasonal day is commemoration
+				switch (filenumber) {
+				case 0: // Introitus (from the feast (PLL-23-04-2021 Unless is a commemoration only, in which case use the introitus from the season))
+				case 5: // Gospel
+					subpart = 0;
+					p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
+					if (p_mr_Day->curr_subpartlen < 200) {
+						// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+						DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day and/or feastday)"));
+						if (next_hour_filenumber == 6) {
+							waketime = ts.Hour + 2; // skip the next hour's reading            
+						}
+						else {
+							waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
+						}
+					}
+					bResetPropersFilePtr = true;
+					bMoreText = false;
+					s = "";
+
+				case 3: // Lesson
+					if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 3) {	// 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
+						DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (seasonal day + feastday) - displaying next filenumber"));
+						filenumber++;
+					}
+
+				case 4: // Gradual
+				case 7: // Offertorium
+				case 10: // Communio
+
+					if (bHasImage && ts.Hour >= 0 && ts.Hour <= 7) {
+						waketime = 8;
+					}
+
+					if (!(bHasImage && ts.Hour >= 0 && ts.Hour <= 7 && DisplayImage(imagefilename, 0, ypos))) { // from midnight until 8am, display the Saint's image (if available)
+						bOverflowedScreen = false;
+						subpart = 0;
+						while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) {
+							bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+								pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+								bBold, bItalic, bRed, fontsize_rel,
+								line_number, fbwidth, fbheight,
+								bRTL, bRenderRtl, bWrapText, bMoreText);
+						}
+					}
+					break;
+
+				case 1: // Gloria PLL-03-08-2020 From the day which has precedence (feast or seasonal day)     //(from the season, omit if required)
+				case 6: // Credo
+					subpart = 0;
+					p_mr_Day->get(filenumber, subpart, s, bMoreText);
+					if (p_mr_Day->curr_subpartlen < 200) {
+						// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+						DEBUG_PRT.println(F("Woken during Gloria or Credo hour, but they are omitted today (seasonal day and/or feastday), so displaying next filenumber"));
+						filenumber++;
+					}
+					bResetPropersFilePtr = true;
+					bMoreText = false;
+					s = "";
+
+				case 9: // Prefatio
+					bOverflowedScreen = false;
+					subpart = 0;
+
+					while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr)) {
+						bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+							pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+							bBold, bItalic, bRed, fontsize_rel,
+							line_number, fbwidth, fbheight,
+							bRTL, bRenderRtl, bWrapText, bMoreText);
+					}
+					break;
+
+				case 2: // Collect
+					if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 2) {	// 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
+						DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (seasonal day + feastday) - skipping next hour"));
+						waketime = ts.Hour + 2;
+					}
+
+				case 8: // Secreta
+				case 11: // Postcommunio
+				{
+					if (bHasImage && ts.Hour == 19) {
+						waketime = ts.Hour + 1;
+					}
+
+					if (bHasImage) { // between 8pm and midnight
+						GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+					}
+
+					if (!(bHasImage && ts.Hour > 19 && DisplayImage(imagefilename, 0, ypos))) { // from 8pm until midnight, display the Saint's image (if available)
+						bOverflowedScreen = false;
+						subpart = 0;
+
+						bool b_votive_has_extra_commemoration_text = false;
+
+						while (!bOverflowedScreen && p_mr_Day->get(filenumber, subpart, s, bMoreText) && !b_votive_has_extra_commemoration_text) {
+							// will stop reading Votive text when it reaches any of the Commemoratio lines, which are incorrectly 
+							// present (baked in for a certain day) in the Votive mass Propers
+
+							b_votive_has_extra_commemoration_text = (bIsVotive && (
+								s.indexOf("Blasii") != -1 ||
+								s.indexOf("Marcellini") != -1 ||
+								s.indexOf("Telesphor") != -1 ||
+								s.indexOf("Faustini") != -1 ||
+								s.indexOf("Undecima") != -1
+								));
+
+							if (!bIsVotive || !b_votive_has_extra_commemoration_text) {	// bit of a hack to get around the Votive masses, which have picked up the Commemoration of the day they were taken from (which is not always the day they are shown)
+								bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+									pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+									bBold, bItalic, bRed, fontsize_rel,
+									line_number, fbwidth, fbheight,
+									bRTL, bRenderRtl, bWrapText, bMoreText);
+							}
+						}
+						//// TODO: PLL-25-07-2020 Find out how this works! 
+						//         PLL-15-12-2020 Found a problem with days of Advent, patched, though still not sure how it works
+						if (!bSaintsDayTakesPrecedence || bDisplayComm || bIsCommemorationAndSeasonalDayOnly) {  // PLL-01-06-2021 Added LadyDay because Divinum Officium displays the commemoration on this day, despite it being a Class I feast //PLL-23-04-2021 added bIsCommemorationAndSeasonalDayOnly (St George's Day commemoration and others. Bit byzantine, but hopefully works)
+						  //if (!bOverflowedScreen && (indexrecord_saint.filenumber == 2 || indexrecord_saint.filenumber == 11)) {   // do a line feed before the text of the commemoration
+							if (!bOverflowedScreen && ((!bIsVotive && (filenumber == 2 || filenumber == 11)) || (bIsVotive && filenumber == 11))) {   // do a line feed before the text of the commemoration
+								String crlf = F(" <BR>"); // hack: the space char should give a line height to the typesetter, otherwise it would be 0 since there are no printing characters on the line
+
+								bOverflowedScreen = Bidi::RenderTextEx(crlf, &xpos, &ypos, tb,
+									pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+									bBold, bItalic, bRed, fontsize_rel,
+									line_number, fbwidth, fbheight,
+									bRTL, bRenderRtl, bWrapText, true);
+							}
+							// ******* PLL-01-06-2021 need to make sure that Postcommunio etc displays commemoration for seasonal day on Lady Day (25th March unless moved)
+							int8_t linecount = 0;
+							subpart = 0;
+							p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (the heading), should then get a <BR> on its own line after the heading
+
+							bool b_is_ember_day = Tridentine::IsEmberDay(date);
+							bool b_is_ember_wednesday = (b_is_ember_day && weekday(date) == dowWednesday);
+							bool b_is_ember_friday = (b_is_ember_day && weekday(date) == dowFriday);
+							bool b_is_ember_saturday = (b_is_ember_day && weekday(date) == dowSaturday);
+							bool b_is_matching_lent_collect = (td.FileDir_Season.indexOf(F("Lent/1/Saturday")) > -1 || td.FileDir_Season.indexOf(F("Lent/1/Wednesday")) > -1 || td.FileDir_Season.indexOf(F("Lent/4/Wednesday")) > -1);
+
+							//int8_t br_count_max = b_is_matching_lent_collect ? 2 : 1;
+
+							if (bIsCommemorationAndSeasonalDayOnly) {
+								// eat three more lines if so
+								p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (<BR>)
+								p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line (Let us pray), (This is in the text where the seasonal day's text goes, which we've already printed from a separate file)
+								p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat a line ("Oratio missing"), should then get a " <BR>" on its own line after (placeholder for seasonal day's text, already printed from a separate file)
+							}
+
+							while (!bOverflowedScreen && p_mr_Comm->get(filenumber, subpart, s, bMoreText)) {
+								DEBUG_PRT.print(F("\nlinecount: "));
+								DEBUG_PRT.println(linecount);
+								//Bidi::printf("linecount=%d, filenumber=%d ", linecount, filenumber);
+								if (bIsVotive && (linecount == 1 && (filenumber == 2 || filenumber == 11))) {
+									linecount++;
+									continue;
+								}
+
+								if ((((b_is_ember_wednesday || b_is_ember_saturday) && filenumber == 2 && linecount == 2) || (b_is_matching_lent_collect && filenumber == 2 && linecount == 2)) && s.length() < 30) { // skip "Let us kneel/Arise lines (if present), which are between two <BR> tags each on their own line. Using the length < 30 test to try to catch when these short lines are present. Hopefully the text we're after will be longer in all cases
+									int br_count = 0;
+									do {
+										p_mr_Comm->get(filenumber, subpart, s, bMoreText);
+										if (s.indexOf("<BR>") == 0) {
+											br_count++;
+										}
+									} while (bMoreText && br_count < 1);
+								}
+
+								if (!bIsCommemorationAndSeasonalDayOnly)
+								{
+									if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
+										(linecount == 2 && (filenumber == 2 || filenumber == 11))) { // commemoratio line comes after <br>"Let us pray"<br> line
+										String commtext = "<FONT COLOR=\"red\"><I>Commemoratio " + p_mr_Comm->name() + "</I></FONT>";
+										commtext.replace(" %{monthweek} %{month}", "");
+										//Bidi::printf("linecount=%d, filenumber=%d", linecount, filenumber);
+
+										if (!bIsVotive || ((bIsVotive && linecount == 0 && filenumber == 8) || (linecount == 0 && filenumber == 8))) {
+											commtext = " <BR>" + commtext;
+										}
+
+										bool b_text_starts_with_br = (s.indexOf("<BR>") == 0);
+
+										// add linebreak after where necessary (according to the structure of the propers text files)
+										if (!bIsVotive && !b_is_ember_wednesday && !b_is_ember_friday && !b_is_ember_saturday && filenumber != 8 && !(b_is_matching_lent_collect && filenumber == 2)
+											|| (b_is_ember_saturday && filenumber == 11)
+											|| (b_is_ember_friday && (filenumber == 2 || filenumber == 11))
+											|| (b_is_ember_wednesday && filenumber == 11)
+											|| (bIsVotive && linecount == 2 && (filenumber == 2 || filenumber == 11))
+											|| !b_text_starts_with_br) {
+											commtext = commtext + "<BR>";
+										}
+
+										if (!bOverflowedScreen) {
+											bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb,
+												pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+												bBold, bItalic, bRed, fontsize_rel,
+												line_number, fbwidth, fbheight,
+												bRTL, bRenderRtl, bWrapText, true);
+										}
+									}
+								}
+								else {
+									if ((linecount == 0 && filenumber == 8) ||                       // commemoratio line is first line in this case
+										(linecount == 2 && (filenumber == 2 || filenumber == 11)))   // commemoratio line comes after <br>"Let us pray"<br> line
+									{
+										String commtext = "<BR><FONT COLOR=\"red\"><I>" + p_mr_Comm->commemoration() + "</I></FONT><BR>"; // text will include "Commemoratio" and the Saint's name in this case
+
+										if (filenumber == 2 || filenumber == 11) // if not secreta, there will be an extra "Commemoratio" line in the text to eat, which will be replaced with the full text "Commemoratio: <Saint's name>"
+										{
+											p_mr_Comm->get(filenumber, subpart, s, bMoreText); // eat the line ("Commemoratio:")
+										}
+
+										if (filenumber == 8) // add a linefeed before the text in this case (overprints on last line of seasonal text otherwise)
+										{
+											DEBUG_PRT.println("Prepending linebreak to commtext");
+											commtext = " <BR>" + commtext;
+										}
+
+										if (!bOverflowedScreen)
+										{
+											bOverflowedScreen = Bidi::RenderTextEx(commtext, &xpos, &ypos, tb,
+												pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+												bBold, bItalic, bRed, fontsize_rel,
+												line_number, fbwidth, fbheight,
+												bRTL, bRenderRtl, bWrapText, true);
+										}
+									}
+								}
+
+								if (!bOverflowedScreen) {
+									//if (s.length() == 4 && s == "<BR>") {
+									//  DEBUG_PRT.println("adding space to <BR> for font height measurement");
+									//  s = " <BR>";
+									//}
+									bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+										pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+										bBold, bItalic, bRed, fontsize_rel,
+										line_number, fbwidth, fbheight,
+										bRTL, bRenderRtl, bWrapText, bMoreText);
+								}
+								if (s.indexOf("<FONT COLOR=\"red\"><I>R.</I></FONT>") != -1) break; // Only output commemoration of the Saint, not commemorations of other Saints on the same feast day
+								linecount++;
+							}
+						}
+					}
+					//// PLL-25-07-2020
+					break;
+				}
+
+				default:
+					break;
+				}
+			}
+			else
+			{ // purification of Mary propers
+				waketime = DoPurificationOfMary(p_mr_Day, p_mr_Comm,
+					(ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers),
+					filenumber, ts.Hour, lang, mass_type,
+					xpos, ypos,
+					pDiskfont,
+					bBold, bItalic, bRed,
+					fontsize_rel, line_number,
+					fbwidth, fbheight,
+					bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
+			}
+		}
+	} // if (bIsFeast)
+	else if (season.isOpen() || (bIsVotive && votive.isOpen()))	// could be that there is no feast, season or votive for the day due to a mistake in the propers database
+	{ // is a seasonal day only									// If so, will fail gracefully by displaying an image after the else case of this else if...
+		DEBUG_PRT.println(F("Seasonal day only"));
+		if (bHasSeasonImage) {
+			DEBUG_PRT.println(F("Using image from the season"));
+		}
+		imagecount = seasonimagecount; // is assigned either seasonimagecount or saintsimagecount as appropriate for the day, feast and season
+		bHasImage = bHasSeasonImage;
+		imagefilename = seasonimagefilename;
+
+		String name = bIsVotive ? votive.name() : season.name();
+		String colour = bIsVotive ? votive.colour() : season.colour();
+
+		ypos = display_day_ex(date, name, colour, td.HolyDayOfObligation, right_to_left, bLiturgical_Colour_Red, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);   // feast day is displayed at the top of the screen on feast days otherwise the liturgical day is 
+
+		subpart = 0;
+		bool b_read_only_one_subpart = false;	// For Good Friday, the Great Intercessions and the readings from Scripture, Passion, display one at a time over the selected hours of the day
+		int8_t read_subpart_count = 0;
+
+		bool bImageIsDisplayed = false;
+
+		bool b_is_Good_Friday = Tridentine::IsGoodFriday(date);
+		bool b_is_Ash_Wednesday = Tridentine::issameday(date, Tridentine::AshWednesday(Tridentine::year(date)));
+		bool b_is_Holy_Saturday = Tridentine::IsHolySaturday(date);
+		bool b_is_Palm_Sunday = Tridentine::issameday(date, Tridentine::PalmSunday(Tridentine::year(date)));
+
+		if (/*!bIsVotive && (season.filecount != 12 || (b_is_1570_Mass && feast.filecount != 11)) || */ b_is_Ash_Wednesday || b_is_Palm_Sunday || b_is_Good_Friday || b_is_Holy_Saturday)
+		{
+			/*
+			if (b_is_purification_of_mary) {
+				// purification of Mary propers
+				waketime = DoPurificationOfMary(&season, NULL,
+					filenumber, ts.Hour, lang, mass_type,
+					xpos, ypos,
+					pDiskfont,
+					bBold, bItalic, bRed,
+					fontsize_rel, line_number,
+					fbwidth, fbheight,
+					bRTL, bRenderRtl, bWrapText, bHasImage, imagefilename);
+			}
+			else */
+
+			if (b_is_Ash_Wednesday) {
+				DEBUG_PRT.print(F("Ash Wednesday: ts.Hour="));
+				DEBUG_PRT.println(ts.Hour);
+
+				if (mass_type > MASS_TRIDENTINE_1570) {
+					waketime = (ts.Hour < 3) ? 3 :
+						(ts.Hour == 8 || ts.Hour == 13) ? ts.Hour + 2 :		// no Gloria or Creed
+						(ts.Hour == 9 || ts.Hour == 14) ? ts.Hour + 2 :		// no Gloria or Creed (skip next hour if woken at these times, since it will be the same reading)
+						(ts.Hour >= 3 && ts.Hour <= 18) ? ts.Hour + 1 : 0;	// last reading at 7pm
+
+					filenumber = (ts.Hour < 3) ? 0 :
+						(ts.Hour >= 3 && ts.Hour <= 8) ? 0 :
+						(ts.Hour == 9 || ts.Hour == 14) ? ts.Hour - 8 + 1 :	// no Gloria or Creed
+						(ts.Hour >= 9 && ts.Hour <= 19) ? ts.Hour - 8 : 0;
+
+					subpart = (ts.Hour < 3) ? 0 :
+						(ts.Hour >= 3 && ts.Hour <= 8) ? ts.Hour - 3 : 0;		// 0..5 of filenumber 0 between 3 and 8am
+
+					b_read_only_one_subpart = (ts.Hour < 8);
+				}
+				else {
+					waketime = (ts.Hour < 3) ? 3 :
+						(ts.Hour == 8 || ts.Hour == 13 || ts.Hour == 10) ? ts.Hour + 2 :		// no Gloria, Creed or Lesson
+						(ts.Hour == 9 || ts.Hour == 14 || ts.Hour == 11) ? ts.Hour + 2 :		// no Gloria, Creed or Lesson (skip next hour if woken at these times, since it will be the same reading)
+						(ts.Hour >= 3 && ts.Hour <= 18) ? ts.Hour + 1 : 0;	// last reading at 6pm (no Lesson in 1570 mass)
+
+					filenumber = (ts.Hour < 3) ? 0 :
+						(ts.Hour >= 3 && ts.Hour <= 8) ? 0 :
+						(ts.Hour == 11) ? 4 :								// read Graduale at 11am, since there is no Lesson in the 1570 Mass (which would otherwise be shown)
+						(ts.Hour == 9 || ts.Hour == 14) ? ts.Hour - 8 + 1 :	// no Gloria or Creed
+						(ts.Hour >= 9 && ts.Hour <= 19) ? ts.Hour - 8 : 0;
+
+					subpart = (ts.Hour < 3) ? 0 :
+						(ts.Hour >= 3 && ts.Hour <= 8) ? ts.Hour - 3 : 0;		// 0..5 of filenumber 0 between 3 and 8am
+
+					b_read_only_one_subpart = (ts.Hour < 8);
+				}
+
+				if (mass_type == MASS_1960) {
+					b_read_only_one_subpart = false;
+					read_subpart_count = (ts.Hour <= 6) ? 2 :
+						(ts.Hour >= 7 && ts.Hour <= 8) ? 1 : -1;	// -1 = read all available subparts
+
+					subpart = (ts.Hour < 3) ? 0 :
+						(ts.Hour >= 3 && ts.Hour <= 7) ? (ts.Hour - 3) * 2 :	// ten subparts upto and including introitus - read them two at a time from 3am, up until the introitus (pt 10)(8am)
+						(ts.Hour == 8) ? 9 : 0;
+				}
+
+				if (ts.Hour == 19 && bHasImage && waketime == 0) {
+					waketime = 20;
+				}
+
+				if (bHasImage && (ts.Hour >= 0 && ts.Hour <= 2 || ts.Hour >= 20)) {
+					GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+					bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+				}
+			}
+			else if (b_is_Palm_Sunday) {
+				const int8_t filenumbers_1570_la[24] = { 0, 0, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+				const int8_t fileparts_1570_la[24] = { 0, 1, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0 };
+				const int8_t filenumbers_1570[24] = { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 9, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+				const int8_t fileparts_1570[24] = { 0, 0, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+				const int8_t filenumbers_1910_and_DA_la[24] = { 0, 0, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+				const int8_t fileparts_1910_and_DA_la[24] = { 0, 1, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
+				const int8_t filenumbers_1910_and_DA[24] = { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+				const int8_t fileparts_1910_and_DA[24] = { 0, 0, 0, 0, 0, 1, 3, 5, 0, 1, 2, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+				const int8_t filenumbers_1955_60_la[24] = { 0, 1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 16, 16 };
+				const int8_t fileparts_1955_60_la[24] = { 0, 0, 1, 0, 0, 0, 0, 1, 2, 3, 3, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+				const int8_t filenumbers_1955_60[24] = { 0, 1, 1, 2, 3, 4, 5, 5, 6, 6, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 17, 17, 17 };
+				const int8_t fileparts_1955_60[24] = { 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+				const int8_t filenumbers_60New_67_la[24] = { 0, 0, 1, 2, 3, 3, 3, 3, 3, 4, 4, 5, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+				const int8_t fileparts_60New_67_la[24] = { 0, 1, 0, 0, 0, 1, 3, 4, 6, 0, 1, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0 };
+				const int8_t filenumbers_60New_67[24] = { 0, 1, 2, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
+				const int8_t fileparts_60New_67[24] = { 0, 0, 0, 0, 0, 1, 3, 4, 6, 0, 1, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 };
+
+				// for clarity of code, and because they're almost all different, using lookup tables for Palm Sunday Mass parts (total space for luts=384 bytes)
+
+				switch (mass_type)
+				{
+				case MASS_TRIDENTINE_1570:
+					if (lang == "la") {
+						filenumber = filenumbers_1570_la[ts.Hour];
+						subpart = fileparts_1570_la[ts.Hour];
+						read_subpart_count = (filenumber == 3 && subpart > 0) ? 2 : 0;
+					}
+					else {
+						filenumber = filenumbers_1570[ts.Hour];
+						subpart = fileparts_1570[ts.Hour];
+						read_subpart_count = (filenumber == 4 && subpart > 0) ? 2 : 0;
+					}
+					waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
+					b_read_only_one_subpart = (ts.Hour < 11 && read_subpart_count == 0);
+
+					if (bHasImage && ts.Hour == 12) {	// display Palm Sunday image at 1pm
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+
+					if ((!bHasImage && ts.Hour == 11) || ts.Hour == 14) {	// No Image, so skip hour 12 (when it would be shown) || No Lesson in 1570 Mass, so skip hour 14 when it would be shown
+						waketime++;	// if no image, skip 1pm
+					}
+					break;
+
+				case MASS_TRIDENTINE_1910:
+				case MASS_DIVINEAFFLATU:
+					if (lang == "la") {
+						filenumber = filenumbers_1910_and_DA_la[ts.Hour];
+						subpart = fileparts_1910_and_DA_la[ts.Hour];
+						read_subpart_count = (filenumber == 3 && subpart > 0) ? 2 : 0;
+					}
+					else {
+						filenumber = filenumbers_1910_and_DA[ts.Hour];
+						subpart = fileparts_1910_and_DA[ts.Hour];
+						read_subpart_count = (filenumber == 4 && subpart > 0) ? 2 : 0;
+					}
+					waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
+					b_read_only_one_subpart = (ts.Hour < 11 && read_subpart_count == 0);
+
+					if (bHasImage && ts.Hour == 12) {	// display Palm Sunday image at 1pm
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+
+					if (!bHasImage && ts.Hour == 11) {
+						waketime++;	// if no image, skip 1pm
+					}
+
+					break;
+
+				case MASS_1955:
+				case MASS_1960:
+					if (lang == "la") {
+						filenumber = filenumbers_1955_60_la[ts.Hour];
+						subpart = fileparts_1955_60_la[ts.Hour];
+					}
+					else {
+						filenumber = filenumbers_1955_60[ts.Hour];
+						subpart = fileparts_1955_60[ts.Hour];
+					}
+					waketime = ts.Hour < 20 ? ts.Hour + 1 : -1;
+					b_read_only_one_subpart = (ts.Hour <= 8 && filenumber != 2);
+
+					if (bHasImage && ts.Hour == 9) {	// display Palm Sunday image at 9am
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+
+					if (!bHasImage && ts.Hour == 8) {
+						waketime++;	// if no image, skip 9am
+					}
+
+					break;
+
+				case MASS_1960NEW:
+				case MASS_1965_67:
+					if (lang == "la") {
+						filenumber = filenumbers_60New_67_la[ts.Hour];
+						subpart = fileparts_60New_67_la[ts.Hour];
+					}
+					else {
+						filenumber = filenumbers_60New_67[ts.Hour];
+						subpart = fileparts_60New_67[ts.Hour];
+					}
+					waketime = ts.Hour < 23 ? ts.Hour + 1 : -1;
+					b_read_only_one_subpart = (ts.Hour < 11 && ts.Hour != 5 && ts.Hour != 7);
+					read_subpart_count = (ts.Hour == 5 || ts.Hour == 7) ? 2 : 0;
+
+					if (bHasImage && ts.Hour == 12) {	// display Palm Sunday image at 9am
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+
+					if (!bHasImage && ts.Hour == 11) {
+						waketime++;	// if no image, skip 9am
+					}
+					break;
+
+				default:
+					filenumber = 0;
+					subpart = 0;
+					waketime = 0;
+
+					if (bHasImage) {
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+					else {
+						String imagefilename = fileroot_img + "/Error.bwr";
+						bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+					}
+
+					DEBUG_PRT.println("Unknown Mass type for Palm Sunday Mass");
+					break;
+				}
+			}
+			else if (b_is_Good_Friday) {
+				b_read_only_one_subpart = true;
+
+				DEBUG_PRT.print(F("Good Friday: ts.Hour="));
+				DEBUG_PRT.println(ts.Hour);
+
+				if (mass_type != MASS_1960) {
+					switch (ts.Hour)
+					{
+					case 0:
+					case 1:
+					case 2:
+						if (!(ts.Hour == 2 && mass_type == MASS_1955)) {
+							if (bHasImage) {		// Picture
+								bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+							}
+						}
+						filenumber = 0;
+						subpart = 0;
+
+						waketime = (mass_type == MASS_1955 && (ts.Hour == 0 || ts.Hour == 1)) ? 2 : 3;
+						//waketime = 3;
+						break;
+
+					case 3:
+					case 4:
+						filenumber = (mass_type == MASS_1955) ? 1 : 0;			// Lectiones
+						subpart = ts.Hour - 3;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 5:
+						filenumber = (mass_type == MASS_1955) ? 2 : 1;			// PASSION
+						subpart = 0;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 6:
+					case 7:
+					case 8:
+					case 9:
+					case 10:
+					case 11:
+					case 12:
+					case 13:
+					case 14:
+						filenumber = (mass_type == MASS_1955) ? 3 : 2;			// THE GREAT INTERCESSIONS
+						subpart = ts.Hour - 6;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 15:					// Picture or Adoration of the Cross
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = (mass_type == MASS_1955) ? 4 : 3;
+						subpart = 0;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 16:
+					case 17:
+					case 18:
+						filenumber = (mass_type == MASS_1955) ? 4 : 3;			// Adoration of the Cross
+						subpart = ts.Hour - 16;
+						waketime = ts.Hour + 1;
+
+						b_read_only_one_subpart = !(mass_type == MASS_1955 && ts.Hour == 18);	// read two subparts at 6pm for the 1955 Mass, since there are four Adoration parts not three
+						break;
+
+					case 19:
+					case 20:
+						filenumber = (mass_type == MASS_1955) ? 5 : 4;			// Communion
+						subpart = ts.Hour - 19;
+						waketime = ts.Hour + 1;
+						if (!bHasImage && waketime == 21) {
+							waketime = -1;
+						}
+						break;
+
+					case 21:
+					case 22:
+					case 23:					// Picture
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = (mass_type == MASS_1955) ? 5 : 4;
+						subpart = 1;
+						waketime = -1;
+						break;
+
+					default:
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = (mass_type == MASS_1955) ? 4 : 3;			// Adoration of the Cross
+						subpart = 0;
+						waketime = -1;
+						break;
+					}
+
+				}
+				else {
+					switch (ts.Hour)
+					{
+					case 0:
+					case 1:
+						if (bHasImage) {		// Picture
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = 0;
+						subpart = 0;
+						waketime = 2;
+						break;
+
+					case 2:
+						filenumber = 0;
+						subpart = 0;
+						waketime = 3;
+						break;
+
+					case 3:
+					case 4:
+						filenumber = 1;			// Lectiones (Readings from Scripture, Passion)
+						subpart = ts.Hour - 3;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 5:
+						filenumber = 2;			// PASSION
+						subpart = 0;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 6:
+					case 7:
+					case 8:
+					case 9:
+					case 10:
+					case 11:
+					case 12:
+					case 13:
+					case 14:
+						filenumber = 3;			// THE GREAT INTERCESSIONS
+						subpart = ts.Hour - 6;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 15:					// Picture or Adoration of the Cross
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = 4;
+						subpart = 0;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 16:
+					case 17:
+					case 18:
+					case 19:
+						filenumber = 4;			// Adoration of the Cross
+						subpart = ts.Hour - 16;
+						waketime = ts.Hour + 1;
+						break;
+
+					case 20:
+					case 21:
+						filenumber = 5;			// Communion
+						subpart = ts.Hour - 20;
+						waketime = ts.Hour + 1;
+						if (!bHasImage && waketime == 22) {
+							waketime = -1;
+						}
+						break;
+
+					case 22:
+					case 23:					// Picture
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = 5;
+						subpart = 1;
+						waketime = -1;
+						break;
+
+					default:
+						if (bHasImage) {
+							bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+						}
+						filenumber = 4;			// Adoration of the Cross
+						subpart = 0;
+						waketime = -1;
+						break;
+					}
+				}
+				/*
+								if (ts.Hour == 0) {
+									filenumber = 0; // Descriptive heading
+									subpart = 0;
+									waketime = 1;
+								}
+
+								if (ts.Hour >= 1 && ts.Hour <= 2) {
+									filenumber = 1; // Readings from Scripture, Passion
+									subpart = ts.Hour - 1;
+									waketime = ts.Hour + 1;
+								}
+
+								if (ts.Hour >= 3 && ts.Hour <= 5) {
+									filenumber = 2; // Passion
+									subpart = 0;
+									if (ts.Hour == 3) waketime = 6;
+								}
+
+								if (ts.Hour >= 6 && ts.Hour <= 14) {
+									filenumber = 3; // II. The Great Intercessions
+									subpart = ts.Hour - 6; // 0..8
+									waketime = ts.Hour + 1;
+								}
+				*/
+				/*
+				if (ts.Hour >= 15 && ts.Hour <= 18) {
+					filenumber = 4; // Adoration of the Cross
+					subpart = ts.Hour - 15; // 0..3
+					waketime = ts.Hour + 1;
+				}
+				*/
+				/*
+								uint8_t hour_offset_for_image_display = bHasImage ? 1 : 0; // everything will be shifted an hour later from 3pm, to give an hour for the image of the Cross to be displayed
+								if (ts.Hour >= 15 && ts.Hour <= 18 + hour_offset_for_image_display) {
+									if (bHasImage) {
+										if (ts.Hour == 15 && DisplayImage(imagefilename, 0, ypos)) {
+											//filenumber = 4; // Adoration of the Cross, display image of Christ crucified for one hour, then readings at 4 and 5pm
+											//subpart = ts.Hour - 15; // 0..3
+											bImageIsDisplayed = true;
+											waketime = ts.Hour + 1;
+										}
+										else if (ts.Hour >= 16) {
+											filenumber = 4; // Adoration of the Cross
+											subpart = ts.Hour - 16; // 0..3
+											waketime = ts.Hour + 1;
+										}
+									}
+									else {
+										filenumber = 4; // Adoration of the Cross, display readings in three parts from 3pm (time of Christ's death)
+										subpart = ts.Hour - 15; // 0..3
+										waketime = ts.Hour + 1;
+									}
+								}
+
+								if (ts.Hour >= 19 + hour_offset_for_image_display && ts.Hour <= 20 + hour_offset_for_image_display) {
+									filenumber = 5; // Communion
+									subpart = ts.Hour - (19 + hour_offset_for_image_display); // 0 or 1
+									if (ts.Hour == 19 + hour_offset_for_image_display) {
+										waketime = 20 + hour_offset_for_image_display;
+									}
+									else {
+										//waketime = 0; //Allow to default (will be midnight)
+									}
+								}
+
+								if (ts.Hour >= 21 + hour_offset_for_image_display) {
+									filenumber = 5;
+									subpart = 1;	// if woken after the last reading (Communion pt 2), display this same reading again.
+								}
+				*/
+			}
+			else if (Tridentine::IsHolySaturday(date)) {
+				int8_t num_parts = 22;
+
+				if (mass_type <= MASS_DIVINEAFFLATU) {
+					num_parts = 16;
+				}
+
+				if (ts.Hour <= num_parts - 1) { // 22 file parts unless Tridentine Mass (1570, 1910, DivinoAfflatu)
+					filenumber = ts.Hour;
+					subpart = 0;
+					waketime = ts.Hour < (num_parts - 1) ? ts.Hour + 1 : 0;
+				}
+				else {
+					filenumber = num_parts - 1;	// if Lectionary is woken after last reading
+					subpart = 0;
+					waketime = 0;
+				}
+			}
+		}
+		else
+		{ // if is a 12-part Proper
+			MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
+
+			if (next_hour_filenumber == 1 || next_hour_filenumber == 6) { // removed !bIsVotive from clause. if the next reading will be Gloria or Credo in a non-votive Mass
+				subpart = 0;
+				p_mr_Day->get(next_hour_filenumber, subpart, s, bMoreText);
+				if (p_mr_Day->curr_subpartlen < 200) {
+					// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so skip the next hour's reading (filenumber == 1 or 6)
+					DEBUG_PRT.println(F("Skipping next hour because Gloria or Credo is omitted today (seasonal day only)"));
+					if (next_hour_filenumber == 6) {
+						waketime = ts.Hour + 2; // skip the next hour's reading            
+					}
+					else {
+						waketime = 10; // skip the reading at 9AM (Gloria is at 9AM)
+					}
+				}
+				bResetPropersFilePtr = true;
+				bMoreText = false;
+				s = "";
+			}
+			else if (b_is_1570_Mass && p_mr_Day->filecount == 11 && filenumber == 2) {	// 1570 Mass has no Lectio (filenumber == 3), so skip the next hour when it would have been displayed
+				DEBUG_PRT.println(F("This Mass does not include Lectio scheduled for next hour's filenumber (Tridentine 1570) (seasonal day) - skipping next hour"));
+				waketime = ts.Hour + 2;
+			}
+
+			if (filenumber == 1 || filenumber == 6) { // removed !bIsVotive from clause. Introitus or Gospel, next part is the Gloria or Credo respectively, which may be omitted in some Masses
+				subpart = 0;
+				p_mr_Day->get(filenumber, subpart, s, bMoreText);
+				if (p_mr_Day->curr_subpartlen < 200) {
+					// if they are < 200 bytes, probably means the Gloria or Credo is omitted for this day, so display the Collect (2) or the Offertorium (7) (if filenumber == 1 or 6)
+					DEBUG_PRT.println(F("Woken during Gloria or Credo on seasonal day when not to be displayed - displaying next filenumber (seasonal day)"));
+					filenumber++;
+					subpart = 0;
+				}
+				bResetPropersFilePtr = true;
+				bMoreText = false;
+				s = "";
+			}
+			else if (b_is_1570_Mass && feast.filecount == 11 && filenumber == 3) {	// 1570 Mass has no Lectio (filenumber == 3), so display the Gradual if woken (eg by USB power) during this hour
+				DEBUG_PRT.println(F("Woken during Lectio hour when this Mass does not include it (Tridentine 1570) (seasonal day) - displaying next filenumber"));
+				filenumber++;
+			}
+		}
+
+		// image will be displayed (if available) in this case between midnight and 8am, and 8pm and midnight
+		if (bIsVotive && bHasVotiveImage && ((ts.Hour >= 0 && ts.Hour < 8) || (ts.Hour >= 20 && ts.Hour < 24))) { // display image for votive Mass if so
+			GetImageFilenameAndWakeTime(votiveimagefilename, ts.Hour, votiveimagecount, waketime);
+			bImageIsDisplayed = DisplayImage(votiveimagefilename, 0, ypos);
+		}
+		else if (bHasImage && ((ts.Hour >= 0 && ts.Hour < 8 && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) || (!b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday && ts.Hour >= 20 && ts.Hour < 24))) { // display image if so
+			GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
+			bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+		}
+
+		MissalReading* p_mr_Day = bIsVotive ? &votive : &season;
+
+		//subpart = 0; // should be initialized to the correct value by this point (usually 0, but the propers handling for Good Friday above modifies it on some hours)
+		//int8_t first_subpart = subpart;
+		bOverflowedScreen = false;
+
+		if (!bImageIsDisplayed) {
+			bool b_votive_has_extra_commemoration_text = false;
+			int8_t linecount = 0;
+
+			//bool b_end_of_subpart_reached_break_now = false;
+
+			int8_t last_subpart = subpart;
+
+			while (!bOverflowedScreen && /*!b_end_of_subpart_reached_break_now && */ p_mr_Day->get(filenumber, subpart, s, bMoreText, bResetPropersFilePtr) && !b_votive_has_extra_commemoration_text) {
+				//Bidi::printf("<span style='color: blue;'>fn=%d, sp=%d</span>", filenumber, subpart);
+
+				if (read_subpart_count != -1 && last_subpart != subpart) {
+					read_subpart_count--;
+					if (read_subpart_count == 0) break;
+				}
+
+				if (b_read_only_one_subpart && last_subpart != subpart) break;
+				last_subpart = subpart;
+
+				//Bidi::printf("linecount=%d, filenumber=%d ", linecount, filenumber);
+				b_votive_has_extra_commemoration_text = (bIsVotive && (
+					s.indexOf("Blasii") != -1 ||
+					s.indexOf("Marcellini") != -1 ||
+					s.indexOf("Telesphor") != -1 ||
+					s.indexOf("Faustini") != -1 ||
+					s.indexOf("Undecima") != -1 ||
+					(linecount == 7 && filenumber == 2) || (linecount == 6 && filenumber == 11) // remove Oremus and linebreak before extra commemoration lines in Votive Mass propers for Collect and Postcommunio
+					));
+
+				if (!bIsVotive || !b_votive_has_extra_commemoration_text) {	// bit of a hack to get around the Votive masses, which have picked up the Commemoration of the day they were taken from (which is not always the day they are shown)
+					bOverflowedScreen = Bidi::RenderTextEx(s, &xpos, &ypos, tb,
+						pDiskfont, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi,
+						bBold, bItalic, bRed, fontsize_rel,
+						line_number, fbwidth, fbheight,
+						bRTL, bRenderRtl, bWrapText, bMoreText);
+				}
+				linecount++;
+
+				//if (b_read_only_one_subpart && first_subpart != subpart) {
+				//	b_end_of_subpart_reached_break_now = true; // when only outputting one subsection per hour, eg for Good Friday Great Intercessions
+				//}
+			}
+		}
+
+		if ((bHasImage || (bIsVotive && bHasVotiveImage)) && !b_is_Good_Friday && !b_is_Ash_Wednesday && !b_is_Palm_Sunday) {
+			if (ts.Hour == 19) {
+				waketime = 20; // at 7pm the Postcommunio is displayed until midnight. If there is an image to display, wake up at 8pm to display the image between 8pm and midnight if so
+			}
+			else if (ts.Hour >= 0 && ts.Hour < 8) { // will display image between midnight and 8am, so need to wake at 8 to display the Introit for an hour
+				waketime = 8;
+			}
+		}
+	}
+	else {
+		DEBUG_PRT.println(F("No Seasonal, Feast or Votive day! (Mistake in Propers database) - Displaying Error image"));
+#ifdef _WIN32
+		Bidi::printf("***********No Seasonal, Feast or Votive day! (Mistake in Propers database) - Displaying Error image<br>");
 #endif
 
-    bool bImageIsDisplayed = false;
+		bool bImageIsDisplayed = false;
 
-    if (bHasSeasonImage) {
-      bImageIsDisplayed = DisplayImage(seasonimagefilename, 0, ypos);
-    }
-    else {
-      String imagefilename = fileroot_img + "/Error.bwr";
-      bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
-    }
-    waketime = 0;
-  }
-  votive.close();
-  season.close();
-  feast.close();
+		if (bHasSeasonImage) {
+			bImageIsDisplayed = DisplayImage(seasonimagefilename, 0, ypos);
+		}
+		else {
+			String imagefilename = fileroot_img + "/Error.bwr";
+			bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+		}
+		waketime = 0;
+	}
 
-  DEBUG_PRT.println(F("Done. Now flushing remaining text from textbuffer.."));
-  tb.flush();
+	deferred.close();
+	votive.close();
+	season.close();
+	feast.close();
 
-  DEBUG_PRT.println(F("Displaying date.."));
-  display_date_ex(date, datestring, sanctoral_day, right_to_left, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);  // shown at the top of the screen. If it is a feast day, the liturgical day is displayed at the                                                               // bottom left. Otherwise the bottom left is left blank.
-  tb.flush();
+	DEBUG_PRT.println(F("Done. Now flushing remaining text from textbuffer.."));
+	tb.flush();
 
-  DEBUG_PRT.println(F("\nCompleted displaying reading - Leaving LatinMassPropers()"));
+	DEBUG_PRT.println(F("Displaying date.."));
+	display_date_ex(date, datestring, sanctoral_day, right_to_left, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);  // shown at the top of the screen. If it is a feast day, the liturgical day is displayed at the                                                               // bottom left. Otherwise the bottom left is left blank.
+	tb.flush();
+
+	DEBUG_PRT.println(F("\nCompleted displaying reading - Leaving LatinMassPropers()"));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int display_day_ex(time64_t date, String d, String lit_colour, bool holy_day_of_obligation, bool right_to_left, bool bRed, DiskFont& diskfont_normal, DiskFont& diskfont_i, DiskFont& diskfont_plus1_bi, DiskFont& diskfont_plus2_bi) { // uses Bidi::RenderTextEx and more advanced tag handling
   bool bRTL = right_to_left;

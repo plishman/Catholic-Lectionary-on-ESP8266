@@ -489,6 +489,49 @@ String Yml::readLine(File file) {
     return readLine(file, bOk);
 }
 
+// bFromEnd = true -> reposition file pointer to EOF before scanning backwards, otherwise scan backwards from current file position
+String Yml::readLineAtEnd(File file, bool& bOk, bool bFromEnd) {
+	bOk = false;
+	
+	if (!file || file.size() == 0) {
+		DEBUG_PRT.println(F("file is not available"));
+		return "";
+	}
+
+	int linelen = 0;
+
+	int fpos = file.position();
+	fpos = (bFromEnd || fpos == 0) ? file.size() - 1 : fpos - 1; // on entry, fpos points to the start of the last line scanned, so jump back 1 byte to the end of the line before that
+	file.seek(fpos);	// point to the last character of the end of the next (earlier in the file) line to be scanned
+	char ch = file.peek();	// peek() reads the char without moving the file pointer. Should be a \n, ie, the end of the line about to be whose beginning we're trying to find
+
+	do {
+		++linelen;				// counts from the first char peek'ed above, which should be a \n from the end of the line about to be scanned
+		--fpos;
+		if (fpos < 0) break;	// reached the beginning of the file.
+		file.seek(fpos);
+		ch = file.peek();		// the first (line ending) \n scanned at the 'char ch = file.peek()' line above is counted by ++linelen, but a new character (the one before the \n) is first scanned and then considered by the while() test
+	} while (ch != '\n');
+
+	++fpos;	// add 1 to fpos, since fpos is left pointing to the character before the beginning of the line just scanned, the \n terminator of the previous line before that, or -1 if at beginning of file
+	file.seek(fpos);
+
+	// at this point, file position should be at the start of the previous line terminated by a \n, with a \n just before that in the file, if there are more lines, eg.
+	//
+	// Line_1\nLine2\nLine3\nEOF
+	//                ^			(first call)
+	//		   ^ (second call)
+	// ^ (third call)
+
+	if (linelen > 0) {
+		String line = readLine(file, bOk);
+		file.seek(fpos);	// reposition fpos to the start of the line just read, ready to read the next line (on the next call) before this one
+		return line;
+	}
+	
+	return "";
+}
+
 String Yml::readLine(File file, bool& bOk, int endfilepos, int maxbytes) { 
   //DEBUG_PRT.println("readLine(): position=" + String(file.position()));
   String received = "";
@@ -525,11 +568,11 @@ String Yml::readLine(File file, bool& bOk, int endfilepos, int maxbytes) {
 	  utf8_lastchar += ch;
     }
 
-	utf8_charbytesremaining = (ch & 0xFE == 0xFC) ? 5 :
-							  (ch & 0xFC == 0xF8) ? 4 :
-							  (ch & 0xF8 == 0xF0) ? 3 :
-							  (ch & 0xF0 == 0xE0) ? 2 :
-							  (ch & 0xE0 == 0xC0) ? 1 : 0;
+	utf8_charbytesremaining = ((ch & 0xFE) == 0xFC) ? 5 :
+							  ((ch & 0xFC) == 0xF8) ? 4 :
+							  ((ch & 0xF8) == 0xF0) ? 3 :
+							  ((ch & 0xF0) == 0xE0) ? 2 :
+							  ((ch & 0xE0) == 0xC0) ? 1 : 0;
 
 	if (file.position() == file.size() || (utf8_charbytesremaining == 0 && bytecount >= maxbytes && Bidi::IsSpace(utf8_lastchar, false))) { // tell Bidi::IsSpace not to match a < as a word boundary (false)
 		//DEBUG_PRT.println("EOF");

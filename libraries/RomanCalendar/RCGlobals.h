@@ -32,6 +32,7 @@
 	#endif
 
 	#define CRASHFILEPATH "/html/CRASHDMP.TXT"
+	#define SPIFFS_CRASHFILE "CRASHDMP.TXT"
 
 	#define USE_SPI_RAM_FRAMEBUFFER
 	#define FRAMEBUFFER_TEST_GRADIENT 0	// display red and black level test gradients on the screen (set to 1 for debugging/testing only)

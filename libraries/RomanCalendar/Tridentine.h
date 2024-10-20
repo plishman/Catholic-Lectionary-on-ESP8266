@@ -62,9 +62,11 @@ typedef struct Tr_Calendar_Day {
 	String FileDir_Season;
 	String FileDir_Saint;
 	String FileDir_Votive;
+	String FileDir_Deferred;
 	String SeasonImageFilename;
 	String SaintsImageFilename;
 	String VotiveImageFilename;
+	String DeferredImageFilename;
 } Tr_Calendar_Day;
 
 typedef struct IndexHeader {
@@ -97,8 +99,12 @@ public:
 	int8_t partcount = -1;
 	int curr_subpartlen = -1;
 
+	String _filedir = "";
+	String _imagefn = "";
+	int8_t _precedencescore = -1;
+
 	MissalReading();
-	bool open(String filedir);
+	bool open(String filedir, String fileroot = "");
 	bool get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText);
 	bool get(int8_t& ir_part, int8_t& ir_subpart, String& text, bool& bMoreText, bool& bResetPropersFilePtr);
 	bool getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetIndexFilePtr = false);
@@ -266,6 +272,7 @@ public:
 	static time64_t StJosephOpificis(int year);
 
 	static bool IsAlsoFeastOfTheLord(time64_t datetime);
+	static bool IsMoveableFeastOfTheLordInWeeksAfterPentecost(time64_t datetime);
 
 	static time64_t SSPhilipAndJames(int year);
 	static time64_t StJames(int year);
@@ -363,6 +370,25 @@ public:
 	static bool IsHolyWeek(time64_t datetime);
 	static uint8_t mass_type;
 
+
+#ifdef TRANSFERS_OLDCODE
+#ifndef _WIN32
+	static String strDeferredFeastFilename;
+	static String strDeferredFeastImageFilename;
+	static bool getDeferredFeast(String& FileDir_df, String& ImageFilename_df);
+#else
+	static String strDeferredFeastFilename[5];
+	static String strDeferredFeastImageFilename[5];
+	static int getTrIndex(String& FileDir_df);
+	static bool getDeferredFeast(String& FileDir_df, String& ImageFilename_df, String lect);
+#endif
+	static bool setDeferredFeast(String FileDir_df, String ImageFilename_df, String lect);
+	static bool clearDeferredFeast(String lect);
+#endif
+
+	static String getImageFilenameFromFileDir(String filedir, String lect_fileroot, String lect_imageroot);
+
+
 #define MASS_TRIDENTINE_1570 1
 #define MASS_TRIDENTINE_1910 2
 #define MASS_DIVINEAFFLATU 3
@@ -371,7 +397,13 @@ public:
 #define MASS_1960NEW 6
 #define MASS_1965_67 7
 
-	static void GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, uint8_t MassType = MASS_1960); // used for getting filedirs for DivinumOfficium-based calendar database
+	static int8_t GetLectionaryVersionNumber(String& FileDir_df);
+
+	static void GetFileDir2(time64_t datetime, 
+		String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, 
+		bool& HolyDayOfObligation, 
+		String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, /*String& DeferredImageFilename,*/
+		uint8_t MassType = MASS_1960); // used for getting filedirs for DivinumOfficium-based calendar database
 	//static bool FileExists(String filename);
 
 	///////////////////////////////////

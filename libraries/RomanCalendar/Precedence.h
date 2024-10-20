@@ -8,9 +8,9 @@
 #include "TimeLib.h"
 
 typedef struct Ordering {
-	MissalReading* headings[3];
+	MissalReading* headings[4];
 	// Missalreadings should be passed in as headings[]={Seasonal, Feast, Votive}
-	int8_t ordering[3];
+	int8_t ordering[4];
 	bool b_com_at_vespers;
 	bool b_com_at_lauds;
 	bool b_com;
@@ -20,8 +20,10 @@ typedef struct Ordering {
 	uint8_t season_classnumber;
 	uint8_t feast_classnumber;
 	uint8_t votive_classnumber;
+	uint8_t deferred_classnumber;
 	bool b_feast_is_commemoration;
 	bool b_is_votive;
+	bool b_celebrate_deferred; // will be true if a deferred feast is to be celebrated on this day
 } Ordering;
 
 typedef struct PrecedenceParams {
@@ -82,13 +84,14 @@ public:
 #define FIRST 1		// corresponds to sanctorale feasts
 #define SECOND 0	// corresponds to moveable and temporale feasts
 #define THIRD 2 // corresponds to the votive feast, or the seasonal day on votive days
+#define FOURTH 3 // corresponds to the deferred feast, if available
 
 #define MR_SEASON 0
 #define MR_FEAST 1
 #define MR_VOTIVE 2
 #define MR_NONE -1
 
-
+	static void doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, MissalReading& deferred, Ordering& ordering);
 	static void doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, Ordering& ordering);
 
 	static uint8_t Class_1960(MissalReading& m);

@@ -54,6 +54,7 @@ public:
 	static bool get_fixed_feast(time64_t date, Tr_Fixed_Feast& feast);
 	static uint16_t setLectionaryNumber(String s);
 
+	static String readLineAtEnd(File file, bool& bOk, bool bFromEnd = false);
     static String readLine(File file);
     static String readLine(File file, bool& bOk, int endfilepos = -1, int maxbytes = 255);
 };

@@ -373,9 +373,19 @@ bool Tridentine::IsAlsoFeastOfTheLord(time64_t datetime) {
 
 	return (issameday(datetime, PurificationOfMary(y)) 
 		|| issameday(datetime, TransfigurationOfTheLord(y))
-		|| issameday(datetime, HolyCross(y)));
+		/*|| issameday(datetime, SacredHeart(y))*/ // discovered gaslighted? 05-10-2024 (some feasts of the Lord now missing, added back SacredHeart)
+		|| issameday(datetime, HolyCross(y)));	
 }
 
+// NB. This is becuase the feasts in the weeks of Pentecost (which move with the date of Pentecost each year), are stored in such as wy that they are opened
+// as seasonal, rather than feast days. This helper function will allow the Precedence module to determine if this seasonal day should be treated as a feast.
+bool Tridentine::IsMoveableFeastOfTheLordInWeeksAfterPentecost(time64_t datetime) {
+	int y = year(datetime);
+
+	return (issameday(datetime, SacredHeart(y))
+		|| issameday(datetime, CorpusChristi(y))
+		|| issameday(datetime, ChristTheKing(y)));
+}
 
 time64_t Tridentine::SSPhilipAndJames(int year) {
 	return date(1, 5, year);
@@ -2558,7 +2568,7 @@ void Tridentine::GetFileDir(time64_t datetime, String& FileDir_Season, String& F
 }
 
 
-bool Tridentine::IsPassionWeek (time64_t datetime) 
+bool Tridentine::IsPassionWeek(time64_t datetime) 
 {
 	// PLL-01-06-2021 Work around for bug in Divinum Officium (version I used) that made days of Holy Week Class IV instead of Class III/Semiduplex
 	
@@ -2581,7 +2591,199 @@ bool Tridentine::IsHolyWeek(time64_t datetime)
 #define MASS_1960 5
 */
 
-void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive, bool& HolyDayOfObligation, String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, uint8_t MassType) {
+#ifdef TRANSFERS_OLDCODE
+#ifndef _WIN32
+String Tridentine::strDeferredFeastFilename = ""; // initialize deferred feast filename
+String Tridentine::strDeferredFeastImageFilename = ""; // initialize deferred feast image filename
+#else
+String Tridentine::strDeferredFeastFilename[5]; // initialize deferred feast filename
+String Tridentine::strDeferredFeastImageFilename[5]; // initialize deferred feast image filename
+
+int Tridentine::getTrIndex(String& FileDir_df) {
+	int trIndex = -1;
+	if (FileDir_df.indexOf("1570") != -1) { trIndex = 0; }
+	if (FileDir_df.indexOf("1910") != -1) { trIndex = 1; }
+	if (FileDir_df.indexOf("Affl") != -1) { trIndex = 2; }
+	if (FileDir_df.indexOf("1955") != -1) { trIndex = 3; }
+	if (FileDir_df.indexOf("1960") != -1) { trIndex = 4; }
+
+	return trIndex;
+}
+#endif
+
+#ifndef _WIN32
+bool Tridentine::getDeferredFeast(String& FileDir_df, String& ImageFilename_df) {
+	String deferredFilename = Tridentine::strDeferredFeastFilename;
+	String deferredImageFilename = Tridentine::strDeferredFeastImageFilename;
+#else
+bool Tridentine::getDeferredFeast(String& FileDir_df, String& ImageFilename_df, String lect) {
+	int trIndex = getTrIndex(lect);
+	String deferredFilename = trIndex != -1 ? Tridentine::strDeferredFeastFilename[trIndex] : "";
+	String deferredImageFilename = trIndex != -1 ? Tridentine::strDeferredFeastImageFilename[trIndex] : "";
+#endif
+
+	if (deferredFilename != "") {
+		DEBUG_PRT.print(F("getDeferredFeast(): deferred feast filename = ["));
+		DEBUG_PRT.print(deferredFilename);
+		DEBUG_PRT.println(F("]"));
+		DEBUG_PRT.print(F("getDeferredFeast(): deferred feast image filename = ["));
+		DEBUG_PRT.print(deferredImageFilename);
+		DEBUG_PRT.println(F("]"));
+
+#ifdef _WIN32
+		Tridentine::strDeferredFeastFilename[trIndex] = ""; // clear deferred filename once used **testing/temporary - since will be used more than once in real usage
+		Tridentine::strDeferredFeastImageFilename[trIndex] = ""; // clear deferred image filename once used **testing/temporary - since will be used more than once in real usage
+		Bidi::printf("<span style='color:violet; background-color:lightgray;'>getDeferredFeast(): [%s][%s][%d]</span>", deferredFilename.c_str(), deferredImageFilename.c_str(), trIndex);
+#endif
+	}
+	else {
+		DEBUG_PRT.println(F("getDeferredFeast(): no deferred feast"));
+
+#ifdef _WIN32
+		Bidi::printf("<span style='color:violet; background-color:lightgray;'>getDeferredFeast(): no deferred feast</span>");
+#endif
+	}
+
+	FileDir_df = deferredFilename;
+	ImageFilename_df = deferredImageFilename;
+	return (deferredFilename != "");
+}
+
+bool Tridentine::setDeferredFeast(String FileDir_df, String ImageFilename_df, String lect) {
+	DEBUG_PRT.print(F("setDeferredFeast(): called with FileDir_df = ["));
+	DEBUG_PRT.print(FileDir_df);
+	DEBUG_PRT.print(F("] and ImageFilename_df = ["));
+	DEBUG_PRT.print(ImageFilename_df);
+	DEBUG_PRT.println(F("]"));
+
+#ifndef _WIN32
+	String deferredFilename = Tridentine::strDeferredFeastFilename;
+#else
+	int trIndex = getTrIndex(lect);
+	if (trIndex == -1) return false;
+	String deferredFilename = Tridentine::strDeferredFeastFilename[trIndex];
+#endif
+
+	if (deferredFilename != "") {
+		DEBUG_PRT.print(F("setDeferredFeast(): already have a deferred feast filename set ( = ["));
+		DEBUG_PRT.print(deferredFilename);
+		DEBUG_PRT.println(F("], clear it first"));
+#ifdef _WIN32
+		Bidi::printf("<span style='color:violet; background-color:lightgray;'>setDeferredFeast(): deferred feast is already set [%s][%d], clear it first</span>", deferredFilename.c_str(), trIndex);
+#endif
+		return false;
+	}
+	
+#ifndef _WIN32
+	Tridentine::strDeferredFeastFilename = FileDir_df;
+	Tridentine::strDeferredFeastImageFilename = ImageFilename_df;
+#else
+	Tridentine::strDeferredFeastFilename[trIndex] = FileDir_df;
+	Tridentine::strDeferredFeastImageFilename[trIndex] = ImageFilename_df;
+#endif
+
+	if (FileDir_df != "") {
+		DEBUG_PRT.print(F("setDeferredFeast(): set deferred feast filename to = ["));
+		DEBUG_PRT.print(FileDir_df);
+		DEBUG_PRT.print(F("] and ImageFilename_df = ["));
+		DEBUG_PRT.print(ImageFilename_df);
+		DEBUG_PRT.println(F("]"));
+
+#ifdef _WIN32
+		Bidi::printf("<span style='color:violet; background-color:lightgray;'>setDeferredFeast(): deferred feast now set to [%s][%s][%d]</span>", FileDir_df.c_str(), ImageFilename_df.c_str(), trIndex);
+#endif
+
+		return true;
+	}
+	
+	DEBUG_PRT.print(F("setDeferredFeast(): cleared deferred feast filename"));
+#ifdef _WIN32
+	Bidi::printf("<span style='color:violet; background-color:lightgray;'>setDeferredFeast(): cleared deferred feast filename [%d]</span>", trIndex);
+#endif
+
+	return false;
+}
+
+#ifndef _WIN32
+bool Tridentine::clearDeferredFeast() {
+	Tridentine::strDeferredFeastFilename = ""; // clear deferred filename once used **testing/temporary - since will be used more than once in real usage
+	Tridentine::strDeferredFeastImageFilename = ""; // clear deferred image filename once used **testing/temporary - since will be used more than once in real usage
+	return true;
+}
+#else
+bool Tridentine::clearDeferredFeast(String lect) {
+	int trIndex = getTrIndex(lect);
+	if (trIndex != -1) {
+		Tridentine::strDeferredFeastFilename[trIndex] = ""; // clear deferred filename once used **testing/temporary - since will be used more than once in real usage
+		Tridentine::strDeferredFeastImageFilename[trIndex] = ""; // clear deferred image filename once used **testing/temporary - since will be used more than once in real usage
+		DEBUG_PRT.println(F("clearDeferredFeast() deferred feast cleared"));
+		Bidi::printf("clearDeferredFeast() OK [%d]\n", trIndex);
+		return true;
+	}
+	DEBUG_PRT.println(F("clearDeferredFeast() deferred feast not found"));
+	Bidi::printf("clearDeferredFeast() Feast not found [%d]\n", trIndex);
+	return false;
+}
+#endif
+#endif
+
+String Tridentine::getImageFilenameFromFileDir(String filedir, String lect_fileroot, String lect_imageroot) { // lect_fileroot should include the lang part of the path (eg 1955/en/)
+	// reverse calculate the image filename from the Missalreading filedir (used for finding image name when a deferred feast is being celebrated)
+	// works for /m/d/ type filedir values
+	String imagefn = "";
+
+	int lectfilerootindex = filedir.indexOf(lect_fileroot);
+	//if (lectfilerootindex != 0) return imagefn;
+	if (lectfilerootindex != -1) {
+		imagefn = filedir.substring(lect_fileroot.length());
+	}
+	else {
+		imagefn = filedir;
+	}
+	int offset_day = imagefn.indexOf(F("/"), 1);
+	String month_of_year = imagefn.substring(1, offset_day);	// is of the form /12/24/ (where 12 is the month)
+	String day_of_month = imagefn.substring(offset_day + 1, imagefn.lastIndexOf(F("/")));
+	if (day_of_month.toInt() != 0 && month_of_year.toInt() != 0) {
+		return String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+	}
+#ifdef _WIN32
+	Bidi::printf("getImageFilenameFromFileDir() WARN (probably won't work!): returning [%s]", imagefn);
+#endif
+	DEBUG_PRT.print(F("getImageFilenameFromFileDir() WARN (probably won't work!): returning "));
+	DEBUG_PRT.println(imagefn);
+
+	return imagefn; // *** PLL-17-10-2024 TODO: Need to make this function return correct values for filenames for Feasts of the Lord, which it will not do yet
+}
+
+int8_t Tridentine::GetLectionaryVersionNumber(String& FileDir_df) {
+	int lectnum = -1;
+
+	if (FileDir_df.indexOf("1570") != -1) { lectnum = MASS_TRIDENTINE_1570; }
+	else if (FileDir_df.indexOf("1910") != -1) { lectnum = MASS_TRIDENTINE_1910; }
+	else if (FileDir_df.indexOf("DivAffla") != -1) { lectnum = MASS_DIVINEAFFLATU; }
+	else if (FileDir_df.indexOf("1955") != -1) { lectnum = MASS_1955; }
+	else if (FileDir_df.indexOf("1960") != -1) { lectnum = MASS_1960; }
+	else if (FileDir_df.indexOf("1960New") != -1) { lectnum = MASS_1960NEW; }
+	else if (FileDir_df.indexOf("1965-67") != -1) { lectnum = MASS_1965_67; }
+
+	return lectnum;
+}
+
+#define MASS_TRIDENTINE_1570 1
+#define MASS_TRIDENTINE_1910 2
+#define MASS_DIVINEAFFLATU 3
+#define MASS_1955 4
+#define MASS_1960 5
+#define MASS_1960NEW 6
+#define MASS_1965_67 7
+
+
+void Tridentine::GetFileDir2(
+	time64_t datetime,
+	String& FileDir_Season, String& FileDir_Saint, String& FileDir_Votive,
+	bool& HolyDayOfObligation,
+	String& SeasonImageFilename, String& SaintImageFilename, String& VotiveImageFilename, /*String& DeferredImageFilename,*/
+	uint8_t MassType) {
 
 	DEBUG_PRT.print(F("Tridentine::GetFileDir2():"));
 
@@ -2602,6 +2804,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	SeasonImageFilename = "";
 	SaintImageFilename = "";
 	VotiveImageFilename = "";
+	//DeferredImageFilename = "";
 
 #ifdef _WIN32
 	Tridentine::print_season = true;
@@ -2660,7 +2863,26 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 */
 	DEBUG_PRT.print(F("0 "));
 
-	if (issameday(datetime, StJoseph(year))) { HolyDayOfObligation = true; }
+	// The Six Holy Days (per https://lms.org.uk/sites/default/files/resource_documents/fiuv/fiuv_pp_13_holy_days_of_obligation.pdf p9)
+
+	bool bIsStJosephSponsiTransferred = false;
+
+	if (issameday(datetime, StJoseph(year))) { 
+		HolyDayOfObligation = true; 
+		if (!(issameday(datetime, date(19, 3, year)))) { // was transferred if not 19th March (happened in 2023)
+			bIsStJosephSponsiTransferred = true;
+			FileDir_Saint = String(F("/3/19/"));
+			SaintImageFilename = String(F("/3/19-3"));
+
+		}
+	}
+
+	if (issameday(datetime, date(1, 1, year))) { HolyDayOfObligation = true; } // 07-01-2023 Octave day of Christmas is always Holy Day of Obligation.
+	if (issameday(datetime, ImmaculateConception(year))) { HolyDayOfObligation = true; } // 07-01-2023 Immaculate Conception is always Holy Day of Obligation.
+	if (issameday(datetime, AssumptionOfMary(year))) { HolyDayOfObligation = true; } // 07-01-2023 Assumption of Mary is always Holy Day of Obligation.
+	if (issameday(datetime, MartyrdomOfSSPeterAndPaul(year))) { HolyDayOfObligation = true; } // per https://lms.org.uk/sites/default/files/resource_documents/fiuv/fiuv_pp_13_holy_days_of_obligation.pdf p9
+	if (issameday(datetime, AllSaints(year))) { HolyDayOfObligation = true; } // 07-01-2023 All Saints is a Holy Day of Obligation.
+	// Epiphany, Corpus Christi and Ascension Day are handled in the code below
 
 	switch (season) {
 	case SEASON_ADVENT:
@@ -2726,6 +2948,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 
 		if (issameday(datetime, Epiphany(year))) {
 			bOverrideIfFeast = true;	// date is fixed, 6 Jan
+			HolyDayOfObligation = true; 
 			break;
 		}
 
@@ -2972,7 +3195,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 	DEBUG_PRT.print(F(" 1"));
 
 	if (!bSuppressFeast) {
-		if (!bIsLadyDay) // filedir is precalculated to take account of transferred date if so, so don't overwrite with default
+		if (!bIsLadyDay && !bIsStJosephSponsiTransferred) // filedir is precalculated to take account of transferred date if so, so don't overwrite with default
 		{
 			FileDir_Saint = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("/"));
 		}
@@ -3020,7 +3243,7 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 			SaintImageFilename = String(F("/11/2"));
 		}
 
-		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay && !bIsChristusRex) { // If St Matthias' Day or Lady Day, the SaintImageFilename will already have been set appropriately
+		if (ImageFilename == "" && !bIsStMatthiasDayInLeapYear && !bIsLadyDay && !bIsChristusRex && !bIsStJosephSponsiTransferred) { // If St Matthias' Day, Lady Day or St Joseph Sponsi (if transferred), the SaintImageFilename will already have been set appropriately
 			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 		}
 		else { // PLL-14-12-2020
@@ -3043,6 +3266,9 @@ void Tridentine::GetFileDir2(time64_t datetime, String& FileDir_Season, String& 
 		if (ImageFilename == "") {
 			SaintImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
 		}
+		//else {
+		//	DeferredImageFilename = String(F("/")) + String(month_of_year) + String(F("/")) + String(day_of_month) + String(F("-")) + String(month_of_year);
+		//}
 	}
 
 	FileDir_Votive = "";
@@ -3757,7 +3983,7 @@ void Tridentine::DumpIndexRecord(IndexRecord& ir) {
 MissalReading::MissalReading() {
 }
 
-bool MissalReading::open(String filedir) {
+bool MissalReading::open(String filedir, String fileroot) {
 	DEBUG_PRT.print(F("MissalReading::open() filedir="));
 	
 	filecount = -1;
@@ -3768,11 +3994,15 @@ bool MissalReading::open(String filedir) {
 		filedir += "/";
 	}
 
-	DEBUG_PRT.print(filedir);
+	if (fileroot != "" && !fileroot.endsWith("/")) {
+		fileroot += "/";
+	}
+
+	DEBUG_PRT.print(fileroot + filedir);
 	DEBUG_PRT.print(F(": "));
 
-	String indexfilename = filedir + "index.txt";
-  	String propersfilename = filedir + "propers.txt";
+	String indexfilename = fileroot + filedir + "index.txt";
+  	String propersfilename = fileroot + filedir + "propers.txt";
 
     _fpindex = SD.open(indexfilename, FILE_READ);
     if (!_fpindex.available()) {
@@ -3804,9 +4034,10 @@ bool MissalReading::open(String filedir) {
 	DEBUG_PRT.println(F("ok"));
 	
 	_open = true;
+	_filedir = filedir;
 
 	patchHolyFamily1570();
-	patchDiesJanuarii1955(filedir);
+	patchDiesJanuarii1955(fileroot + filedir);
 	patchOctaveDayofAscension();
 	return true;
 }
@@ -3950,14 +4181,15 @@ bool MissalReading::getIndex(int8_t& ir_part, int8_t& ir_subpart, bool bResetInd
 }
 
 void MissalReading::close() {
+	DEBUG_PRT.println(F("MissalReading::close()"));
 	_fpindex.close();
 	_fppropers.close();
 	_open = false;
+	_filedir = "";
+
 	filecount = -1;
 	partcount = -1;
     curr_subpartlen = -1;
-
-	DEBUG_PRT.println(F("MissalReading::close()"));
 }
 
 bool MissalReading::isOpen() {
