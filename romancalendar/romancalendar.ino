@@ -2293,12 +2293,12 @@ bool DoLatinMassPropers(time64_t date, String datestring, bool right_to_left, St
     Bidi::printf("<div style='background-color:red; color:white; font-weight: bold'>Holy Day of Obligation %d</div>", mass_type);
   }
 #endif
-
-  LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime, mass_type);
+  int8_t antialias_level = 1;
+  LatinMassPropers(date, datestring, td, tb, lectionary_path, lang, fbwidth, fbheight, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi, right_to_left, waketime, mass_type, antialias_level);
 
 #ifndef _WIN32
-#ifndef LM_DEBUG
-  updateDisplay(display_reading, diskfont_normal._FontHeader.antialias_level);
+#ifndef LM_DEBUG  
+  updateDisplay(display_reading, /*diskfont_normal._FontHeader.*/antialias_level);
   DEBUG_PRT.println(F("OK"));
 #endif
 #endif
@@ -2323,7 +2323,8 @@ void LatinMassPropers(time64_t& date,
 	DiskFont& diskfont_plus2_bi,
 	bool right_to_left,
 	int8_t& waketime,
-	uint8_t mass_type)
+	uint8_t mass_type,
+	int8_t& antialias_level)
 {
 
 	// setup fonts and variables for text output
@@ -2344,6 +2345,9 @@ void LatinMassPropers(time64_t& date,
 	DEBUG_PRT.println(F("Done"));
 	DiskFont* pDiskfont = &diskfont_normal;
 	DEBUG_PRT.println(F("Assigned font to diskfont"));
+
+  //PLL-21-10-2024 Have low memory problems after adding RomanTransfers module - maybe this will fix it!
+  antialias_level = diskfont_normal._FontHeader.antialias_level;
 
 	int xpos = 0;
 	int ypos = pDiskfont->_FontHeader.charheight;
@@ -2534,14 +2538,19 @@ void LatinMassPropers(time64_t& date,
 		//Tridentine::clearDeferredFeast(lect);
 	}
 
-	if ((ordering.b_transfer_1st || ordering.b_transfer_2nd) && ordering.transfer_heading_index != -1) {
-		String fd = ordering.headings[ordering.transfer_heading_index]->_filedir;
-		String imgfd = Tridentine::getImageFilenameFromFileDir(fd, fileroot, fileroot_img); //ordering.b_transfer_1st ? feast._imagefn : season._imagefn;
-		//Tridentine::setDeferredFeast(fd, imgfd, lect); // PLL-04-10-2024 save filename of any transferred feast to the deferred list
-		if (!RomanTransfers::AddTransfer(fd, imgfd, ordering.headings[ordering.transfer_heading_index]->_precedencescore, lectionarynumber)) {
-			DEBUG_PRT.println(F("LatinMassPropers() Transfers::AddTransfer() failed!"));
-		}
-	}
+  if ((ordering.b_transfer_1st || ordering.b_transfer_2nd) && ordering.transfer_heading_index != -1) {
+    if (ordering.headings[ordering.transfer_heading_index] != NULL) {
+      String fd = ordering.headings[ordering.transfer_heading_index]->_filedir;
+      String imgfd = Tridentine::getImageFilenameFromFileDir(fd, fileroot, fileroot_img); //ordering.b_transfer_1st ? feast._imagefn : season._imagefn;
+      //Tridentine::setDeferredFeast(fd, imgfd, lect); // PLL-04-10-2024 save filename of any transferred feast to the deferred list
+      if (!RomanTransfers::AddTransfer(fd, imgfd, ordering.headings[ordering.transfer_heading_index]->_precedencescore, lectionarynumber)) {
+        DEBUG_PRT.println(F("LatinMassPropers() Transfers::AddTransfer() failed!"));
+      }
+    }
+    else {
+      DEBUG_PRT.println(F("Inspecting transfer - caught a null pointer access!"));
+    }
+  }
 
 	//DEBUG_PRT.off();
 
@@ -3737,6 +3746,11 @@ void LatinMassPropers(time64_t& date,
 	DEBUG_PRT.println(F("Displaying date.."));
 	display_date_ex(date, datestring, sanctoral_day, right_to_left, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);  // shown at the top of the screen. If it is a feast day, the liturgical day is displayed at the                                                               // bottom left. Otherwise the bottom left is left blank.
 	tb.flush();
+
+  diskfont_normal.end();
+  diskfont_i.end();
+  diskfont_plus1_bi.end();
+  diskfont_plus2_bi.end();
 
 	DEBUG_PRT.println(F("\nCompleted displaying reading - Leaving LatinMassPropers()"));
 #ifndef _WIN32

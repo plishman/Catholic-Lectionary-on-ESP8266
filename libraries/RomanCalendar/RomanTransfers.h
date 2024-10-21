@@ -28,7 +28,7 @@
 #else
 #define TRANSFER_TRANSFERS_FN "/transfers.txt" // stores transferred feast records in a ring buffer of TranferRecord structs.
 #endif
-#define TRANSFER_F_QUEUESIZE 20 //maximum of 20 entries in the queue stored in the tranfers file
+#define TRANSFER_F_QUEUESIZE 7 //maximum of 7 entries in the queue stored in the tranfers file
 #define TRANSFER_DOW_PENDING -1 // the value that will be placed in the activedayofweek variable in TransferRecord structs for deferred feasts that have yet to be celebrated
 #define TRANSFER_DOW_FINISHED -2 // the value that will be placed in the activedayofweek variable in TransferRecord structs for deferred feasts that are complete (have been celebrated on a previous day)
 #define TRANSFER_F_OFFSET_NUMENTRIES 0 // the file offset of the uint8_t that contains the number of TransferRecord records in the file
@@ -85,6 +85,8 @@ public:
 	static void DumpTransferRecord(TransferRecord transfer, bool bdumptodebugprt = false);
 
 private:
+	static File tfile;
+
 	static bool GetTransfer(TransferRecord& transfer, time64_t datetime, File& tfile, int8_t lectionarynumber = -1);
 	static bool SetActiveTransfer(TransferRecord& transfer, time64_t datetime, File& tfile);
 

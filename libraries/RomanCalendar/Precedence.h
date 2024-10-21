@@ -92,7 +92,7 @@ public:
 #define MR_NONE -1
 
 	static void doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, MissalReading& deferred, Ordering& ordering);
-	static void doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, Ordering& ordering);
+	//static void doOrdering(time64_t datetime, uint8_t mass_type, MissalReading& season, MissalReading& feast, MissalReading& votive, Ordering& ordering);
 
 	static uint8_t Class_1960(MissalReading& m);
 	//static uint8_t getClassIndex1960(MissalReading& m);

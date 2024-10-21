@@ -1,5 +1,7 @@
 #include "RomanTransfers.h"
 
+File RomanTransfers::tfile;
+
 bool RomanTransfers::OpenTransfersFile(File& tfile) {	
 	bool btransferfileexists = SD.exists(TRANSFER_TRANSFERS_FN);
 	if (!btransferfileexists) {
@@ -105,7 +107,7 @@ bool operator!=(const TransferRecord& lhs, const TransferRecord& rhs)
 
 
 bool RomanTransfers::AddTransfer(TransferRecord transfer, bool& ballrecordspresent) { // Append new transfer when the queue is still growing, will use Get/PutTransferRecord when all entries are present
-	File tfile;
+	//File tfile;
 	bool bhavefile = OpenTransfersFile(tfile);
 
 	if (!bhavefile) {
@@ -382,7 +384,7 @@ bool RomanTransfers::CloseTransfer(File& tfile, int8_t entry, bool bcloseevenifp
 // SetActiveTransfer(transfer, datetime) (this form) is the function for the lectionary to call to set a transfer as active, if not already set so. 
 // Called when the decision to celebrate a deferred feast is made that was already found pending or active by a prior call to GetTransfer().
 bool RomanTransfers::SetActiveTransfer(TransferRecord& transfer, time64_t datetime) {
-	File tfile;
+	//File tfile;
 #ifdef _WIN32
 	int opencount = SD.opencount;
 #endif
@@ -694,7 +696,7 @@ bool RomanTransfers::WriteFixedFieldString(String& str, File& tfile, int fieldsi
 
 // Put a transfer record (these functions do not update lastaddedentry)
 bool RomanTransfers::PutTransferRecord(TransferRecord& transfer) {
-	File tfile;
+	//File tfile;
 	bool bok = OpenTransfersFile(tfile);
 	if (bok) {
 		bok = PutTransferRecord(tfile, transfer.id, transfer);
@@ -747,7 +749,7 @@ bool RomanTransfers::PutTransferRecord(File& tfile, uint8_t recordnum, TransferR
 ////
 // GetTransfer() is the function the lectionary should call to obtain the next pending transfer record (if any)
 bool RomanTransfers::GetTransfer(TransferRecord& transfer, time64_t datetime, int8_t lectionarynumber) { // get any available transfer. Will return the active one if available, or a Pending one
-	File tfile;
+	//File tfile;
 
 #ifdef _WIN32
 	int opencount = SD.opencount;
@@ -770,6 +772,7 @@ bool RomanTransfers::GetTransfer(TransferRecord& transfer, time64_t datetime, in
 bool RomanTransfers::GetTransfer(TransferRecord& transfer, time64_t datetime, File& tfile, int8_t lectionarynumber) { // get any available transfer. Will return the active one if available, or a Pending one
 																		   // if available, or false if there are no transfers in use or pending
 	DEBUG_PRT.print(F("GetTransfer() "));
+	//return false; // testing/debugging
 	bool bfilewasopen = tfile;
 	bool bok = OpenTransfersFile(tfile);
 
@@ -911,7 +914,7 @@ int8_t RomanTransfers::GetLectionaryVersionNumber(String& FileDir_df) {
 }
 
 void RomanTransfers::DumpTransfersFile(bool bheaderonly) {
-	File tfile;
+	//File tfile;
 
 #ifdef _WIN32
 	tfile = SD.open(TRANSFER_TRANSFERS_FN, FILE_READWRITE);
