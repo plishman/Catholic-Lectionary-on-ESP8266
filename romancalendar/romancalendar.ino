@@ -2336,33 +2336,32 @@ void LatinMassPropers(time64_t& date,
 	bool bRed = false;
 	int8_t fontsize_rel = 0;
 
-	DEBUG_PRT.print(F("Done"));
-	DEBUG_PRT.print(F("Loading fonts.."));
-	if (!diskfont_normal.available) diskfont_normal.begin("droid11.lft");
-	if (!diskfont_i.available) diskfont_i.begin("droid11i.lft");
-	if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("droi12bi.lft");
-	if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("droi13bi.lft");
-	DEBUG_PRT.println(F("Done"));
-	DiskFont* pDiskfont = &diskfont_normal;
-	DEBUG_PRT.println(F("Assigned font to diskfont"));
-
-  //PLL-21-10-2024 Have low memory problems after adding RomanTransfers module - maybe this will fix it!
-  antialias_level = diskfont_normal._FontHeader.antialias_level;
-
-	int xpos = 0;
-	int ypos = pDiskfont->_FontHeader.charheight;
-	fbheight = fbheight - pDiskfont->_FontHeader.charheight;
-
-	int8_t line_number = 0;
-	bool bRenderRtl = right_to_left;
-	bool bWrapText = true;
-	bool bMoreText = false;
-
-	Bidi::tageffect_init();
-	Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
-	DEBUG_PRT.println(F("Set default tag effects"));
-	pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
-	DEBUG_PRT.print(F("Selected default diskfont"));
+//	DEBUG_PRT.print(F("Loading fonts.."));
+//	if (!diskfont_normal.available) diskfont_normal.begin("droid11.lft");
+//	if (!diskfont_i.available) diskfont_i.begin("droid11i.lft");
+//	if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("droi12bi.lft");
+//	if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("droi13bi.lft");
+//	DEBUG_PRT.println(F("Done"));
+//	DiskFont* pDiskfont = &diskfont_normal;
+//	DEBUG_PRT.println(F("Assigned font to diskfont"));
+//
+// //PLL-21-10-2024 Have low memory problems after adding RomanTransfers module - maybe this will fix it!
+//  antialias_level = diskfont_normal._FontHeader.antialias_level;
+//
+//	int xpos = 0;
+//	int ypos = pDiskfont->_FontHeader.charheight;
+//	fbheight = fbheight - pDiskfont->_FontHeader.charheight;
+//
+//	int8_t line_number = 0;
+//	bool bRenderRtl = right_to_left;
+//	bool bWrapText = true;
+//	bool bMoreText = false;
+//
+//	Bidi::tageffect_init();
+//	Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
+//	DEBUG_PRT.println(F("Set default tag effects"));
+//	pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+//	DEBUG_PRT.print(F("Selected default diskfont"));
 
 	bool bLiturgical_Colour_Red = false;
 
@@ -2428,6 +2427,12 @@ void LatinMassPropers(time64_t& date,
 	String sanctoral_day = "";
 	td.DeferredImageFilename = "";
 
+  // handle transfers - first check if there is a stored transfer (1 file open, should have been left closed after GetTransfer()
+  TransferRecord transfer;
+  int8_t lectionarynumber = Tridentine::GetLectionaryVersionNumber(lect);
+  bool bhavedeferredfeast = RomanTransfers::GetTransfer(transfer, date, lectionarynumber); // will also close any open transfers from a previous day, if still open
+  //
+  
 	String seasonimagefilename = td.SeasonImageFilename != "" ? fileroot_img + td.SeasonImageFilename + ".bwr" : "";
 	String saintsimagefilename = td.SaintsImageFilename != "" ? fileroot_img + td.SaintsImageFilename + ".bwr" : "";
 	String votiveimagefilename = td.VotiveImageFilename != "" ? fileroot_img + td.VotiveImageFilename + ".bwr" : "";
@@ -2476,31 +2481,33 @@ void LatinMassPropers(time64_t& date,
 	MissalReading deferred;
 
 	if (bIsFeast) {
-		feast.open(td.FileDir_Saint, fileroot);
+		feast.open(td.FileDir_Saint, fileroot); // 2 file buffers
 		season._imagefn = bHasSeasonImage ? td.SeasonImageFilename : ""; // although not directly needed for the MissalReading objects, storing the corresponding image filename in them
 	}																	 // allows them to be recovered when a deferred feast is celebrated.
 
 	if (bIsVotive) {
-		votive.open(td.FileDir_Votive, fileroot);
+		votive.open(td.FileDir_Votive, fileroot); // 2 file buffers
 		votive._imagefn = bHasVotiveImage ? td.VotiveImageFilename : ""; //
 	}																	 //
 
 	if (!bFeastDayOnly) {
-		season.open(td.FileDir_Season, fileroot);
+		season.open(td.FileDir_Season, fileroot); // 2 file buffers
 		feast._imagefn = bHasSaintsImage ? td.SaintsImageFilename : "";	 //
 	}																	 //
+//(6 Missalreading concurrently open files and 4 open font files (font file opening moved to after doPrecedence()), max 10?)
 
-	// handle transfers
-	TransferRecord transfer;
-	int8_t lectionarynumber = Tridentine::GetLectionaryVersionNumber(lect);
-	bool bhavedeferredfeast = RomanTransfers::GetTransfer(transfer, date, lectionarynumber); // will also close any open transfers from a previous day, if still open
+
+//	// handle transfers - moveed up to above the opening of the Season, Saint and Votive MissalReadings, to reduce concurrently open File buffers
+//	TransferRecord transfer;
+//	int8_t lectionarynumber = Tridentine::GetLectionaryVersionNumber(lect);
+//	bool bhavedeferredfeast = RomanTransfers::GetTransfer(transfer, date, lectionarynumber); // will also close any open transfers from a previous day, if still open
 
 	if (bhavedeferredfeast) {
 		td.FileDir_Deferred = String(transfer.deferredfeastfilename);
 		td.DeferredImageFilename = String(transfer.deferredfeastimagefilename);
 
 		if (transfer.lectionarynumber != RomanTransfers::GetLectionaryVersionNumber(lect)) {
-			bhavedeferredfeast = deferred.open(td.FileDir_Deferred, fileroot);
+			bhavedeferredfeast = deferred.open(td.FileDir_Deferred, fileroot);  // 2 file buffers - now we have 8 open (9 if using logging)
 		}
 		else {
 			DEBUG_PRT.println(F("Deferred feast does not correspond to presently selected lectionary (settings changed by user?)"));
@@ -2513,7 +2520,7 @@ void LatinMassPropers(time64_t& date,
 	Precedence::doOrdering(date, mass_type, season, feast, votive, deferred, ordering);
 
 	if (ordering.b_celebrate_deferred) {
-		feast.close(); // PLL 09-10-2024 Have no need to keep the feast open if it has been displaced by the deferred feast
+		feast.close(); // PLL 09-10-2024 Have no need to keep the feast open if it has been displaced by the deferred feast     -2 file buffers (now have 6 open (7 if logging)
 		DEBUG_PRT.println(F("today's feast closed feast.close() because celebrating deferred feast instead"));
 
 		if (!RomanTransfers::SetActiveTransfer(transfer, date)) {
@@ -2590,8 +2597,34 @@ void LatinMassPropers(time64_t& date,
 	if (bIsVotive) {
 		DEBUG_PRT.println(F("Votive Mass"));
 	}
+  // Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
 
-	// Now have the indexrecords for the season and saint (if also a feast), and the filepointers pointing to the start of the text.
+// PLL-21-10-2024 Have low memory problems after adding RomanTransfers module - maybe this will fix it!
+// PLL-22-10-2024 Trying to load fonts here, to minimize open file count. At this point, should have a maximum of 4 files open (2 for Saints' MissalReading object, and 2 for Season).
+  DEBUG_PRT.print(F("Loading fonts.."));
+  if (!diskfont_normal.available) diskfont_normal.begin("droid11.lft");       // +1 file buffers  (7)
+  if (!diskfont_i.available) diskfont_i.begin("droid11i.lft");                // +1 file buffers  (8)
+  if (!diskfont_plus1_bi.available) diskfont_plus1_bi.begin("droi12bi.lft");  // +1 file buffers  (9)
+  if (!diskfont_plus2_bi.available) diskfont_plus2_bi.begin("droi13bi.lft");  // +1 file buffers (10)
+  DEBUG_PRT.println(F("Done"));
+  DiskFont* pDiskfont = &diskfont_normal;
+  DEBUG_PRT.println(F("Assigned font to diskfont"));
+
+  antialias_level = diskfont_normal._FontHeader.antialias_level;
+  int xpos = 0;
+  int ypos = pDiskfont->_FontHeader.charheight;
+  fbheight = fbheight - pDiskfont->_FontHeader.charheight;
+
+  int8_t line_number = 0;
+  bool bRenderRtl = right_to_left;
+  bool bWrapText = true;
+  bool bMoreText = false;
+
+  Bidi::tageffect_init();
+  Bidi::tageffect_reset(bBold, bItalic, bRed, fontsize_rel);
+  DEBUG_PRT.println(F("Set default tag effects"));
+  pDiskfont = Bidi::SelectDiskFont(bBold, bItalic, fontsize_rel, diskfont_normal, diskfont_i, diskfont_plus1_bi, diskfont_plus2_bi);
+  DEBUG_PRT.print(F("Selected default diskfont"));
 
 	  //if (Tridentine::getClassIndex(indexheader_saint.cls, bUseNewClasses) > Tridentine::getClassIndex(indexheader_season.cls, bUseNewClasses)) {
 		// Feast day takes precendence
@@ -3755,9 +3788,10 @@ void LatinMassPropers(time64_t& date,
 	DEBUG_PRT.println(F("\nCompleted displaying reading - Leaving LatinMassPropers()"));
 #ifndef _WIN32
   DEBUG_PRT.print(F("free memory (before return)= "));
-  //Serial.println("=");
-  
   DEBUG_PRT.println(String(system_get_free_heap_size()));
+  size_t maxFreeBlock = ESP.getMaxFreeBlockSize();
+  DEBUG_PRT.print("Largest free block size: ");
+  DEBUG_PRT.println(maxFreeBlock);
 #endif
 
 }

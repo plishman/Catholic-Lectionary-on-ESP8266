@@ -4037,7 +4037,7 @@ bool MissalReading::open(String filedir, String fileroot) {
 	_filedir = filedir;
 
 	patchHolyFamily1570();
-	patchDiesJanuarii1955(fileroot + filedir);
+	patchDiesJanuarii1955(fileroot);
 	patchOctaveDayofAscension();
 	return true;
 }
