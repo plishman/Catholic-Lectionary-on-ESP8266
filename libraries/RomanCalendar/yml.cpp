@@ -396,7 +396,7 @@ bool Yml::get_fixed_feast(time64_t date, Tr_Fixed_Feast& feast) {
 	// scan from end of day number up to the first : char to get the flags
 	String monthdayandflags = readLine.substring(0, readLine.indexOf(":"));
 
-	bool bIsSanctorale = false;
+	//bool bIsSanctorale = false;
 
 	if (monthdayandflags.indexOf("o") != -1) {	// holy day of obligation
 		feast.Holy_Day_Of_Obligation = true;
@@ -475,7 +475,7 @@ uint16_t Yml::setLectionaryNumber(String s) {
 	int pos = s.indexOf("L");
 	if (pos != -1) {
 		pos++;
-		while (pos < s.length() && digits.indexOf(s.charAt(pos)) != -1) {
+		while (pos < (int)s.length() && digits.indexOf(s.charAt(pos)) != -1) {
 			n += s.charAt(pos++);
 		}
 
@@ -548,11 +548,11 @@ String Yml::readLine(File file, bool& bOk, int endfilepos, int maxbytes) {
   if (endfilepos == -1) endfilepos = file.size();
 
   uint8_t utf8_charbytesremaining = 0;
-  int utf8_lastcharstart = 0;
+  //int utf8_lastcharstart = 0;
   String utf8_lastchar = "";
   utf8_lastchar.reserve(10);
 
-  while (file.available() && file.position() < endfilepos) {
+  while (file.available() && (long int)file.position() < endfilepos) {
     ch = file.read();
 	
 	if (ch == '\r' && file.available()) { // skip over windows line ending 

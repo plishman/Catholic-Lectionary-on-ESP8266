@@ -1,3 +1,5 @@
+#undef DEBUG_SERIAL
+#undef DEBUG_UPDATER
 #include <RCGlobals.h>
 // Catholic Lectionary on ESP
 // Copyright (c) 2017-2022 Philip Lishman, Licensed under GPL3, see LICENSE
@@ -104,7 +106,6 @@ DiskFont diskfont(fb);
   DiskFont diskfont_plus1_bi(fb); 
   DiskFont diskfont_plus2_bi(fb);
 // PLL-07-07-2020 fonts for Latin Mass Propers
-
 #else
 TextBuffer tb(ePaper);
 DiskFont diskfont(ePaper);
@@ -117,6 +118,13 @@ DiskFont diskfont(ePaper);
 // PLL-15-12-2020 fonts for Latin Mass Propers
 
 #endif
+
+// PLL-25-10-2024
+	MissalReading season;
+	MissalReading feast;
+	MissalReading votive;
+	MissalReading deferred;
+//
 
 
 enum DISPLAY_UPDATE_TYPE {
@@ -131,7 +139,6 @@ enum DISPLAY_UPDATE_TYPE {
   font_missing, 
   crash_bug
 };
-
 
 // Although function prototypes are usually handled by the Arduino IDE for .ino sketches, these prototypes 
 // are necessary to allow default values to be set for the functions
@@ -478,6 +485,8 @@ bool CrashCheck(String& resetreason) { // returns true if crash is detected
       os_sprintf(reset_info_buf,"\nat %02d/%02d/%04d %02d:%02d:%02d\n", ts.Day, ts.Month, tmYearToCalendar(ts.Year), ts.Hour, ts.Minute, ts.Second);
 
       resetreason += String(reset_info_buf);
+      // PLL-25-10-2024
+      resetreason += ESP.checkFlashCRC() ? F("Flash CRC Good") : F("Flash CRC FAILED\n");
       
       return true;
   }
@@ -527,7 +536,7 @@ void checkSpiffsDump() {
 
 void savetoSpiffs(struct rst_info * rst_info, uint32_t stack, uint32_t stack_end,Print& outputDev ){
 
-  uint32_t crashTime = millis();
+  unsigned long crashTime = millis();
   outputDev.printf("Crash # at %ld ms\n",crashTime);
 
   outputDev.printf("Reason of restart: %d\n", rst_info->reason);
@@ -578,7 +587,7 @@ extern "C" void custom_crash_callback(struct rst_info * rst_info, uint32_t stack
   fs::File f = SPIFFS.open(F(SPIFFS_CRASHFILE), "a");
   if(!f) f= SPIFFS.open(F(SPIFFS_CRASHFILE), "w");
   if(f) {
-    unsigned int w=f.write((uint8_t*)strprinter2.str.c_str(), strprinter2.str.length());
+    /*unsigned int w=*/f.write((uint8_t*)strprinter2.str.c_str(), strprinter2.str.length());
     f.close();
   }
 }
@@ -1266,7 +1275,7 @@ void config_server(String lang)
     }
   }
 
-  bool bSettingsUpdated = false;
+  //bool bSettingsUpdated = false;
 
   if (!bNetworkAvailable && Battery::power_connected()) {
     DEBUG_PRT.println(F("On USB power, but Network is not available - disconnect and reconnect power to use WPS setup"));
@@ -1286,7 +1295,12 @@ void config_server(String lang)
     });
     ArduinoOTA.onEnd([]() {
       DEBUG_PRT.println(F("\nOTA End"));
-      updateDisplay(crash_bug, "Flash update SUCCESS!", GxEPD_RED);
+      if (ESP.checkFlashCRC()) {
+          updateDisplay(crash_bug, F("Flash update SUCCESS!"), GxEPD_RED);
+      }
+      else {
+        updateDisplay(crash_bug, F("Flash update FAILED (Bad CRC)!"), GxEPD_RED);
+      }
     });
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
       DEBUG_PRT.printf("OTA Progress: %u%%\r", (progress / (total / 100)));
@@ -2123,11 +2137,11 @@ String get_verse(String verse_record, String* book_name, String sentence_range, 
         verse_fragment_array[verse_fragment_array_index++] = ((more_than_one?" ":"") + fragment);
         if (verse_fragment_array_index == 26) return ("verse fragment array index out of range");
       }
-    } while (pos < verse_record.length() && i++ != 4);
+    } while (pos < (int)verse_record.length() && i++ != 4);
     //DEBUG_PRT.println("pos = " + String(pos) + " charAt pos = [" + String(verse_record.charAt(pos)) + "]");
     more_than_one = true;
     sentence_count++;
-  } while (pos < verse_record.length());
+  } while (pos < (int)verse_record.length());
 
   DEBUG_PRT.println(F("get_verse() *2*"));      
 
@@ -2375,7 +2389,7 @@ void LatinMassPropers(time64_t& date,
   */
   // PLL-05-04-2021 Fix for Liturgical class comparison function which was only partially working
 	//bool bUseNewClasses = (lect.indexOf("1960") > -1); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
-	bool bUseNewClasses = (mass_type >= MASS_1960); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
+	//bool bUseNewClasses = (mass_type >= MASS_1960); // Use new table for assessing Liturgical class priority for versions 1960 and 1960New
 
 	tmElements_t ts;
 	breakTime(date, ts);
@@ -2475,10 +2489,10 @@ void LatinMassPropers(time64_t& date,
 	DEBUG_PRT.print(F("votiveimagecount="));
 	DEBUG_PRT.println(votiveimagecount);
 
-	MissalReading season;
-	MissalReading feast;
-	MissalReading votive;
-	MissalReading deferred;
+//	MissalReading season;
+//	MissalReading feast;
+//	MissalReading votive;
+//	MissalReading deferred;
 
 	if (bIsFeast) {
 		feast.open(td.FileDir_Saint, fileroot); // 2 file buffers
@@ -2514,7 +2528,7 @@ void LatinMassPropers(time64_t& date,
 		}
 	}
 
-	bool bSunday = Tridentine::sunday(date);
+	//bool bSunday = Tridentine::sunday(date);
 	Ordering ordering;
 	//DEBUG_PRT.on();
 	Precedence::doOrdering(date, mass_type, season, feast, votive, deferred, ordering);
@@ -2644,8 +2658,9 @@ void LatinMassPropers(time64_t& date,
 		*/
 		//}
 
-	bool bFileOk = false;
+	//bool bFileOk = false;
 	String s = "";
+  //s.reserve(512);
 	bool bOverflowedScreen = true;
 	int8_t subpart = 0;
 	bool bRTL = right_to_left;
@@ -2740,6 +2755,14 @@ void LatinMassPropers(time64_t& date,
 			DEBUG_PRT.println(F("Feast day and seasonal day"));
 			MissalReading* p_mr_Day = ordering.b_is_votive ? &votive : ordering.headings[ordering.ordering[0]]; //&feast or &votive;
 			MissalReading* p_mr_Comm = ordering.b_is_votive ? &feast : ordering.headings[ordering.ordering[1]]; //&season or &feast (if votive);
+
+      if (p_mr_Day == NULL) {
+        DEBUG_PRT.println("p_mr_Day is NULL!");
+      }
+
+      if (p_mr_Comm == NULL) {
+        DEBUG_PRT.println("p_mr_Comm is NULL!");
+      }
 
 			// PLL-24-12-2020 This needs understanding and fixing!
 			//bool bSaintsDayTakesPrecedence = (cls_feast >= cls_season && !bSunday/*|| (cls_season < 2 && !(cls_feast == cls_season))*/); // Seasonal day takes precedence if of same class as the feast day (usually with class IV commemorations)
@@ -3030,7 +3053,7 @@ void LatinMassPropers(time64_t& date,
 										bool b_text_starts_with_br = (s.indexOf("<BR>") == 0);
 
 										// add linebreak after where necessary (according to the structure of the propers text files)
-										if (!bIsVotive && !b_is_ember_wednesday && !b_is_ember_friday && !b_is_ember_saturday && filenumber != 8 && !(b_is_matching_lent_collect && filenumber == 2)
+										if ((!bIsVotive && !b_is_ember_wednesday && !b_is_ember_friday && !b_is_ember_saturday && filenumber != 8 && !(b_is_matching_lent_collect && filenumber == 2))
 											|| (b_is_ember_saturday && filenumber == 11)
 											|| (b_is_ember_friday && (filenumber == 2 || filenumber == 11))
 											|| (b_is_ember_wednesday && filenumber == 11)
@@ -3208,7 +3231,7 @@ void LatinMassPropers(time64_t& date,
 					waketime = 20;
 				}
 
-				if (bHasImage && (ts.Hour >= 0 && ts.Hour <= 2 || ts.Hour >= 20)) {
+				if (bHasImage && ((ts.Hour >= 0 && ts.Hour <= 2) || ts.Hour >= 20)) {
 					GetImageFilenameAndWakeTime(imagefilename, ts.Hour, imagecount, waketime);
 					bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
 				}
@@ -3756,14 +3779,14 @@ void LatinMassPropers(time64_t& date,
 		Bidi::printf("***********No Seasonal, Feast or Votive day! (Mistake in Propers database) - Displaying Error image<br>");
 #endif
 
-		bool bImageIsDisplayed = false;
+		//bool bImageIsDisplayed = false;
 
 		if (bHasSeasonImage) {
-			bImageIsDisplayed = DisplayImage(seasonimagefilename, 0, ypos);
+			/*bImageIsDisplayed = */DisplayImage(seasonimagefilename, 0, ypos);
 		}
 		else {
 			String imagefilename = fileroot_img + "/Error.bwr";
-			bImageIsDisplayed = DisplayImage(imagefilename, 0, ypos);
+			/*bImageIsDisplayed = */DisplayImage(imagefilename, 0, ypos);
 		}
 		waketime = 0;
 	}
@@ -4097,14 +4120,16 @@ int8_t DoPurificationOfMary(MissalReading* p_mr_Day, MissalReading* p_mr_Comm, b
 bool IsInArray(const int8_t* ar, int8_t value, int8_t& firstindex, int8_t start, size_t ar_size) {
   firstindex = -1;
 
-  if (start >= ar_size) {
+  int8_t arsize8 = (int8_t) ar_size;
+
+  if (start >= arsize8) {
     return false;
   }
 
   const int8_t* arptr = ar + start;
   int8_t i = start;
 
-  while (i < ar_size && *arptr != value) {
+  while (i < arsize8 && *arptr != value) {
     arptr++;
     i++;
   }

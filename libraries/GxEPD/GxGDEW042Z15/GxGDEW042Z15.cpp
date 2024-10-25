@@ -13,7 +13,7 @@
 
 #include "GxGDEW042Z15.h"
 
-//#define DISABLE_DIAGNOSTIC_OUTPUT
+#define DISABLE_DIAGNOSTIC_OUTPUT
 
 // partial update produces distortion on the right half of the screen in b/w/r mode (on my display)
 
@@ -715,6 +715,7 @@ uint16_t GxGDEW042Z15::_setPartialRamArea(uint16_t x, uint16_t y, uint16_t xe, u
 void GxGDEW042Z15::_waitWhileBusy(const char* comment)
 {
   unsigned long start = micros();
+  unsigned long yieldstart = start;
 
   #ifdef ESP8266
   unsigned long loopctr = 0; // PLL-03-07-2022 Call yield() every 1000 iterations of the loop to prevent watchdog crash
@@ -735,6 +736,11 @@ void GxGDEW042Z15::_waitWhileBusy(const char* comment)
     {
       if (_diag_enabled) Serial.println("Busy Timeout!");
       break;
+    }
+
+    if (micros() - yieldstart > 1000000) {
+      yield();
+      yieldstart = micros();
     }
 
     #ifdef ESP8266
@@ -786,9 +792,9 @@ void GxGDEW042Z15::_wakeUp(void)
 
     //_writeData(0x1e);                
 */						// 11v   10v    9v    8v   7v     6v    5v
-	uint8_t voltages[8] = {0x2b, 0x26, 0x21, 0x1c, 0x17, 0x12, 0x0d};
+	//uint8_t voltages[8] = {0x2b, 0x26, 0x21, 0x1c, 0x17, 0x12, 0x0d};
 	
-	uint8_t v = voltages[_refreshnumber];
+	//uint8_t v = voltages[_refreshnumber];
 	
 	
 	_writeCommand(POWER_SETTING);

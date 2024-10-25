@@ -89,9 +89,9 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			//ordering.ordering[2] = -1; // third item not displayed
 			//return;
 		}
-		pp_season.b_is_available = ordering.headings[0]->isOpen();
-		pp_feast.b_is_available = ordering.headings[1]->isOpen();
-		pp_deferred.b_is_available = ordering.headings[3]->isOpen();
+		pp_season.b_is_available = ordering.headings[0] != NULL && ordering.headings[0]->isOpen();
+		pp_feast.b_is_available = ordering.headings[1] != NULL && ordering.headings[1]->isOpen();
+		pp_deferred.b_is_available = ordering.headings[3] != NULL && ordering.headings[3]->isOpen();
 
 		int8_t pr_index_x = -1;
 		int8_t pr_index_y = -1;
@@ -2056,7 +2056,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 				e) The Major Litanies
 				*/
 				ordering.b_com = true;
-				if (ordering.headings[1]->isCommemorationOnly() /*|| b_is_after_ashes*/) {
+				if (ordering.headings[1] != NULL && ordering.headings[1]->isCommemorationOnly() /*|| b_is_after_ashes*/) {
 #ifdef _WIN32
 					//Bidi::printf(" %s ", b_is_after_ashes ? "(after ashes)" : "(is comm.)");
 					Bidi::printf("(is comm.)");
@@ -2109,7 +2109,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 		bool b_is_ember_day = Tridentine::IsEmberDay(datetime);
 		bool b_is_StJosephSponsi = Tridentine::issameday(datetime, Tridentine::StJosephSponsi(year));
 
-		if (comm->isOpen()) {	// there is a feast
+		if (comm != NULL && comm->isOpen()) {	// there is a feast
 			if (ordering.b_com || ordering.b_com_at_lauds || ordering.b_com_at_vespers || tablevalue == 0) {	// and it is to be commemorated			
 				if ((pp_season.b_is_sunday && (mass_type != MASS_DIVINEAFFLATU || mass_type == MASS_DIVINEAFFLATU && Tridentine::IsHolyWeek(datetime)) && (pp_season.sunday_class == SUNDAY_CLASS_I || pp_season.sunday_class == SUNDAY_SEMIDUPLEX_CLASS_I)) // DA Mass appears to allow Commemorations on 1st Class Sundays (per DivinumOfficium software) * Not Palm Sunday apparently (2023)
 					|| (pp_season.b_is_duplex && pp_season.duplex_class == DUPLEX_CLASS_I && !(b_is_StJosephSponsi && mass_type == MASS_DIVINEAFFLATU && !pp_season.b_is_sunday)) // When St Joseph Sponsi falls on a weekday, commemorations appear to be allowed, despite the fact it is a Duplex Class I
