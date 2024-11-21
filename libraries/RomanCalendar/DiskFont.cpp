@@ -48,7 +48,8 @@ bool DiskFont::CloseFontFile() {
 
 	if (_file_spiffs.available()) {
 		_file_spiffs.close();
-	}	
+	}
+	return true;	
 }
 
 bool DiskFont::Seek(uint64_t offset) {
