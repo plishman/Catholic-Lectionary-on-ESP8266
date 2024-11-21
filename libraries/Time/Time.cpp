@@ -26,11 +26,20 @@
                      add examples to DS1307RTC library.
   1.4  5  Sep 2014 - compatibility with Arduino 1.5.7
 */
-
+#ifndef _WIN32
 #if ARDUINO >= 100
 #include <Arduino.h> 
 #else
 #include <WProgram.h> 
+#endif
+#else
+#include <sys\timeb.h> 
+unsigned short millis();
+unsigned short millis() {
+	struct timeb tm;
+	ftime(&tm);
+	return tm.millitm;
+}
 #endif
 
 #include "TimeLib.h"
@@ -207,9 +216,9 @@ time_t makeTime32(tmElements_t &tm)
   return (time_t) makeTime(tm);
 }
 
-time64_t makeTime(tmElements_t &tm){
+time64_t makeTime(tmElements_t &tm, bool busenewmethod){
 
-	if (tm.Year < 0) return 0;
+	//if (tm.Year < 0) return 0; // tm.Year is unsigned, so this cannot happen
 	
 // assemble time elements into time_t 
 // note year argument is offset from 1970 (see macros in time.h to convert to other formats)
@@ -222,12 +231,36 @@ time64_t makeTime(tmElements_t &tm){
  
   // seconds from 1970 till 1 jan 00:00:00 of the given year
   seconds= tm.Year*(SECS_PER_DAY * 365);
-  for (i = 0; i < tm.Year; i++) {
-    if (LEAP_YEAR(i)) {
-      seconds += SECS_PER_DAY;   // add extra days for leap years
-    }
-  }
   
+  if (tm.Year > 0) { // if not, then date in first year of BEGIN_EPOCH, so only need to calculate the part of the year (no full years up to this date)
+	  if (busenewmethod) {
+		  int64_t calyear = tmYearToCalendar(tm.Year) - 1; // subtract 1 since only full years are considered. The remainder of the current year is calculated next
+		  //int64_t nearest4start = 1970 + (4 - (1970 % 4));
+		  #define NEAREST4START (1970 + (4 - (1970 % 4))) // conserve stack by doing it this way (ESP8266 has only 4Kb stack, and the Lectionary code has already had stack overflow problems
+		  int64_t nearest4end = calyear - (calyear % 4);
+
+		  //int64_t nearest100start = 1970 + (100 - (1970 % 100));
+		  #define NEAREST100START (1970 + (100 - (1970 % 100)))
+		  int64_t nearest100end = calyear - (calyear % 100);
+
+		  //int64_t nearest400start = 1970 + (400 - (1970 % 400));
+		  #define NEAREST400START (1970 + (400 - (1970 % 400)))
+		  int64_t nearest400end = calyear - (calyear % 400);
+
+		  int64_t leapyearcount = (1 + ((nearest4end - NEAREST4START) / 4))
+			  - (1 + ((nearest100end - NEAREST100START) / 100))
+			  + (1 + ((nearest400end - NEAREST400START) / 400));
+
+		  seconds += leapyearcount * SECS_PER_DAY;
+	  }
+	  else {
+		  for (i = 0; i < tm.Year; i++) {
+			  if (LEAP_YEAR(i)) {
+				  seconds += SECS_PER_DAY;   // add extra days for leap years
+			  }
+		  }
+	  }
+  }
   // add days for this year, months start from 1
   for (i = 1; i < tm.Month; i++) {
     if ( (i == 2) && LEAP_YEAR(tm.Year)) { 
@@ -248,16 +281,16 @@ time64_t makeTime(tmElements_t &tm){
 }
  
 // 32 bit version for compatibility
-void breakTime(time_t timeInput, tmElements_t &tm)
+void breakTime(time_t timeInput, tmElements_t &tm, bool busenewmethod)
 {
   //Serial.printf("timeInput (time_t)=[%lx] ", timeInput);
-  breakTime(TO64(timeInput), tm);
+  breakTime(TO64(timeInput), tm, busenewmethod);
 }
 
-void breakTime(time64_t timeInput, tmElements_t &tm){
+void breakTime(time64_t timeInput, tmElements_t &tm, bool busenewmethod){
   //Serial.printf("timeInput (time64_t)=[%llx] ", timeInput);
 
-  if (timeInput < 0) timeInput = 0; // doesn't support negative time yet (dates before 1970)
+  if (timeInput < 0) timeInput = 0; // doesn't support negative time yet (dates before 1970) * time_t, time64_t are unsigned, so this will do nothing...*
 
 // break the given time_t into time components
 // this is a more compact version of the C library localtime function
@@ -266,8 +299,8 @@ void breakTime(time64_t timeInput, tmElements_t &tm){
   uint8_t month, monthLength;
   uint64_t time; // **** was uint32_t time - fix for y2038 bug changed to uint64_t
   uint64_t days; // **** was unsigned long - fix for y2038 bug
-  uint64_t sixty_ll = 60;
-  uint64_t twentyfour_ll = 24;
+  //uint64_t sixty_ll = 60;
+  //uint64_t twentyfour_ll = 24;
   
   //T64 t64;
   //t64.time = timeInput; I2CSerial.printf("\n\nbreakTime() seconds=%lx %lx\n", t64.words[1], t64.words[0]);
@@ -285,6 +318,16 @@ void breakTime(time64_t timeInput, tmElements_t &tm){
  
   year = 0;  
   days = 0;
+
+  if (busenewmethod) {
+	  //int64_t daysper4centuries = (365 * 400) + ((400 / 4) - 3);
+	  #define DAYSPER4CENTURIES ((365 * 400) + ((400 / 4) - 3))
+	  int64_t numberof4cblocks = (time / DAYSPER4CENTURIES);
+	  //int64_t daysremaininginpartial4cblock = (time % DAYSPER4CENTURIES);
+	  year = year + (400 * numberof4cblocks);
+	  time -= (numberof4cblocks * DAYSPER4CENTURIES);
+  }
+
   while((days += (LEAP_YEAR(year) ? 366 : 365)) <= time) {
     year++;
     //Serial.print("#");
@@ -548,9 +591,9 @@ int year(time64_t t) { // the year for the given time
 
 static  const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
 
-time64_t makeTime(tmElements_t &tm){
+time64_t makeTime(tmElements_t &tm, bool busenewmethod){
 
-	if (tm.Year < 0) return 0;
+	//if (tm.Year < 0) return 0; // tm.Year is unsigned, so this cannot happen
 	
 // assemble time elements into time_t 
 // note year argument is offset from 1970 (see macros in time.h to convert to other formats)
@@ -563,12 +606,37 @@ time64_t makeTime(tmElements_t &tm){
  
   // seconds from 1970 till 1 jan 00:00:00 of the given year
   seconds= tm.Year*(SECS_PER_DAY * 365);
-  for (i = 0; i < tm.Year; i++) {
-    if (LEAP_YEAR(i)) {
-      seconds += SECS_PER_DAY;   // add extra days for leap years
-    }
+
+  if (tm.Year > 0) { // if not, then date in first year of BEGIN_EPOCH, so only need to calculate the part of the year (no full years up to this date)
+	  if (busenewmethod) {
+		  int64_t calyear = tmYearToCalendar(tm.Year) - 1; // subtract 1 since only full years are considered. The remainder of the current year is calculated next
+		  //int64_t nearest4start = 1970 + (4 - (1970 % 4));
+		  #define NEAREST4START (1970 + (4 - (1970 % 4))) // conserve stack by doing it this way (ESP8266 has only 4Kb stack, and the Lectionary code has already had stack overflow problems
+		  int64_t nearest4end = calyear - (calyear % 4);
+		
+		  //int64_t nearest100start = 1970 + (100 - (1970 % 100));
+		  #define NEAREST100START (1970 + (100 - (1970 % 100)))
+		  int64_t nearest100end = calyear - (calyear % 100);
+		  
+		  //int64_t nearest400start = 1970 + (400 - (1970 % 400));
+		  #define NEAREST400START (1970 + (400 - (1970 % 400)))
+		  int64_t nearest400end = calyear - (calyear % 400);
+
+		  int64_t leapyearcount = (1 + ((nearest4end - NEAREST4START) / 4))
+			  - (1 + ((nearest100end - NEAREST100START) / 100))
+			  + (1 + ((nearest400end - NEAREST400START) / 400));
+
+		  seconds += leapyearcount * SECS_PER_DAY;
+	  }
+	  else {
+		  for (i = 0; i < tm.Year; i++) {
+			  if (LEAP_YEAR(i)) {
+				  seconds += SECS_PER_DAY;   // add extra days for leap years
+			  }
+		  }
+	  }
   }
-  
+
   // add days for this year, months start from 1
   for (i = 1; i < tm.Month; i++) {
     if ( (i == 2) && LEAP_YEAR(tm.Year)) { 
@@ -588,10 +656,10 @@ time64_t makeTime(tmElements_t &tm){
   return seconds;
 }
  
-void breakTime(time64_t timeInput, tmElements_t &tm){
+void breakTime(time64_t timeInput, tmElements_t &tm, bool busenewmethod){
   //Serial.printf("timeInput (time64_t)=[%llx] ", timeInput);
 
-  if (timeInput < 0) timeInput = 0; // doesn't support negative time yet (dates before 1970)
+  if (timeInput < 0) timeInput = 0; // doesn't support negative time yet (dates before 1970) * time_t, time64_t are unsigned, so this will do nothing...*
 
 // break the given time_t into time components
 // this is a more compact version of the C library localtime function
@@ -600,8 +668,8 @@ void breakTime(time64_t timeInput, tmElements_t &tm){
   uint8_t month, monthLength;
   uint64_t time; // **** was uint32_t time - fix for y2038 bug changed to uint64_t
   uint64_t days; // **** was unsigned long - fix for y2038 bug
-  uint64_t sixty_ll = 60;
-  uint64_t twentyfour_ll = 24;
+  //uint64_t sixty_ll = 60;
+  //uint64_t twentyfour_ll = 24;
   
   //T64 t64;
   //t64.time = timeInput; I2CSerial.printf("\n\nbreakTime() seconds=%lx %lx\n", t64.words[1], t64.words[0]);
@@ -619,6 +687,16 @@ void breakTime(time64_t timeInput, tmElements_t &tm){
  
   year = 0;  
   days = 0;
+
+  if (busenewmethod) {
+	  //int64_t daysper4centuries = (365 * 400) + ((400 / 4) - 3);
+	  #define DAYSPER4CENTURIES ((365 * 400) + ((400 / 4) - 3))
+	  int64_t numberof4cblocks = (time / DAYSPER4CENTURIES);
+	  //int64_t daysremaininginpartial4cblock = (time % DAYSPER4CENTURIES);
+	  year = year + (400 * numberof4cblocks);
+	  time -= (numberof4cblocks * DAYSPER4CENTURIES);
+  }
+  
   while((days += (LEAP_YEAR(year) ? 366 : 365)) <= time) {
     year++;
     //Serial.print("#");
@@ -678,6 +756,7 @@ time_t sysUnsyncedTime = 0; // the time sysTime unadjusted by sync
 
 
 time64_t now() {
+#ifndef _WIN32
 	// calculate number of seconds passed since last call to now()
   while (millis() - prevMillis >= 1000) {
 		// millis() and prevMillis are both unsigned ints thus the subtraction will always be the absolute value of the difference
@@ -699,6 +778,7 @@ time64_t now() {
       }
     }
   }  
+#endif
   return (time64_t)sysTime;
 }
 

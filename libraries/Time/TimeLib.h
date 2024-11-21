@@ -15,6 +15,7 @@
 #include <inttypes.h>
 #ifndef __AVR__
 #include <sys/types.h> // for __time_t_defined, but avr libc lacks sys/types.h
+#define __time_t_defined
 #endif
 
 #if !defined(__time_t_defined) // avoid conflict with newlib or other posix libc
@@ -170,10 +171,10 @@ void    setSyncProvider( getExternalTime getTimeFunction); // identify the exter
 void    setSyncInterval(time_t interval); // set the number of seconds between re-sync
 
 /* low level functions to convert to and from system time                     */
-void breakTime(time_t time, tmElements_t &tm);  // break time_t into elements
-void breakTime(time64_t time, tmElements_t &tm);  // break time_t into elements
+void breakTime(time_t time, tmElements_t &tm, bool busenewmethod = true);  // break time_t into elements
+void breakTime(time64_t time, tmElements_t &tm, bool busenewmethod = true);  // break time_t into elements
 time_t makeTime32(tmElements_t &tm);
-time64_t makeTime(tmElements_t &tm);  // convert time elements into time_t
+time64_t makeTime(tmElements_t &tm, bool busenewmethod = true);  // convert time elements into time_t
 //void breakTime(T64 &timeInput, tmElements_t &tm);
 //void makeTime(tmElements_t &tm, T64 &t64); // fixed for 64 bit time_t values
 #else
@@ -225,10 +226,10 @@ void    setSyncProvider( getExternalTime getTimeFunction); // identify the exter
 void    setSyncInterval(time64_t interval); // set the number of seconds between re-sync
 
 /* low level functions to convert to and from system time                     */
-void breakTime(time64_t time, tmElements_t &tm);  // break time_t into elements
-time64_t makeTime(tmElements_t &tm);  // convert time elements into time_t
+void breakTime(time64_t time, tmElements_t &tm, bool busenewmethod = true);  // break time_t into elements
+time64_t makeTime(tmElements_t &tm, bool busenewmethod = true);  // convert time elements into time_t
 #endif // #if defined(_USE_LONG_TIME_T) || __LONG_MAX__ > 0x7fffffffL
 } // extern "C++"
 #endif // __cplusplus
-#endif /* _Time_h */
+#endif // _Time_h
 
