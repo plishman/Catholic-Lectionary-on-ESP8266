@@ -223,6 +223,12 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		///
 		///
 
+//		if (tablevalue = 6 && Tridentine::issameday(datetime, Tridentine::ImmaculateConception(yr)) && mass_type > MASS_TRIDENTINE_1570) {
+//			tablevalue = 3; // Officium de 1, nihil de 2. (Following 1960 Rubrics and D.O. website, Occurrence of Immaculate Conception take precedence if it falls on on Sunday of Advent)
+//			// D.O. website transfers 1570 Occurrence of Immaculate Conception if it falls on Sunday of Advent, but celbrates it for all other versions.
+//			// I'm showing the Sunday of Advent as a Commemoration in this case!
+//		}
+
 		uint8_t tvalue = tablevalue;
 		if (b_celebrate_deferred) tvalue = tablevalue_df; // if the deferred feast will be celebrated today
 
@@ -412,6 +418,12 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			Bidi::printf("<span style='background-color:grey;'>All Souls display feast only</span>");
 #endif
 			tablevalue = 1;
+		}
+
+		if (tablevalue == 7 && Tridentine::issameday(datetime, Tridentine::ImmaculateConception(year(datetime)))) {
+			// General Rubrics 1960 (paragraph 15) Immaculate Conception take place of Sunday of Advent in case of Occurrence
+			tablevalue = 3; // Office if 1st (feast), nothing of 2nd = 1
+			// I'm showing the Sunday of Advent as a Commemoration in this case!
 		}
 
 		//DEBUG_PRT.on();
@@ -1809,6 +1821,25 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 		}
 	}
 
+	if (pp_season.b_is_sunday && b_is_Immaculate_Conception) { // has to be in Advent, so won't check (Dec 8th)
+		//tablevalue = 3; // Officium de 1, nihil de 2.(=1) (Following 1960 Rubrics and D.O. website, Occurrence of Immaculate Conception take precedence if it falls on on Sunday of Advent)
+		// D.O. website transfers 1570 Occurrence of Immaculate Conception if it falls on Sunday of Advent, but celbrates it for all other versions.
+		// I'm showing the Sunday of Advent as a Commemoration in this case! (=3)
+#ifdef _WIN32
+		Bidi::printf("<span style='color: darkgreen;'> Immaculate Conception on Advent Sunday </span>");
+#endif
+		if (mass_type > MASS_TRIDENTINE_1570) {
+			// tablevalue = 3 (Celebrate Feast, commemorate Sunday)
+			pr_3(ordering);
+		}
+		else {
+			// tablevalue = 6 (transfer Immaculate Conception)
+			pr_6(ordering);
+		}
+		return;
+	}
+
+
 	bool b_commemorate_sunday = pp_season.b_is_sunday && mass_type < MASS_1955
 		&& (b_is_Finding_Of_Holy_Cross || b_is_NativityStJohnBaptist || b_is_St_Lawrence || b_is_Transfiguration_of_the_Lord
 			|| b_is_Purification_Of_Mary || b_is_Annunciation || b_is_Immaculate_Conception || b_is_Assumption_of_Mary || b_is_Precious_Blood_Of_Jesus || b_is_Visitation_of_Mary
@@ -1817,7 +1848,7 @@ void Precedence::handleCommemorations(time64_t datetime, uint8_t mass_type, Orde
 	b_commemorate_sunday = b_commemorate_sunday || b_is_Assumption_of_Mary_Vigil || b_is_Christus_Rex || (pp_season.b_is_sunday && b_is_StJosephOpificis);
 
 	if (b_commemorate_sunday) {
-		if (season != SEASON_ADVENT && !b_is_Assumption_of_Mary_Vigil) {
+		if (season != SEASON_ADVENT && !b_is_Assumption_of_Mary_Vigil && !b_is_Immaculate_Conception) {
 #ifdef _WIN32
 			Bidi::printf("<span style='color: darkgreen;'> comm. Sunday </span>");
 #endif
