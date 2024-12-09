@@ -70,7 +70,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			return;
 		}
 
-		PrecedenceParams pp_season;	
+		PrecedenceParams pp_season;
 		PrecedenceParams pp_feast;
 		PrecedenceParams pp_deferred; // PLL-06-10-2024 for deferred feast (if present)
 
@@ -82,7 +82,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		if (b_is_saturday_of_our_lady) {
 			DEBUG_PRT.println(F("Saturday of Our Lady"));
 			ordering.headings[0] = &votive;
-			ordering.headings[2] = &season;		
+			ordering.headings[2] = &season;
 			//ordering.ordering[0] = 2; // Votive mass as heading
 			//ordering.ordering[1] = feast.isOpen() ? FIRST : 
 			//					   season.isOpen() ? SECOND : -1; // Feast day as subheading (if available), else seasonal day as subheading, else not displayed
@@ -114,7 +114,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			Set_Privileged_Ferias(datetime, pp_season, mass_type);
 			//Promote_Sundays_1955_Advent_and_Lent(datetime, pp_season, mass_type);
 			//Set_Ember_Days_to_Semiduplex_1955(datetime, pp_season, mass_type);
-			
+
 			pr_index_x = Index_x(pp_season);
 		}
 
@@ -122,7 +122,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			pp_feast.b_is_saturday_of_our_lady = b_is_saturday_of_our_lady;
 			pp_feast.b_is_vigil = IsVigil(feast, datetime, pp_feast.vigil_class, pp_feast.vigil_type);
 			pp_feast.day = Class_pre1960(feast, datetime, pp_feast.b_is_sunday, pp_feast.sunday_class, pp_feast.b_is_ferial, pp_feast.ferial_class, pp_feast.b_is_duplex, pp_feast.duplex_class);
-			
+
 			// need to handle that getOctave is neutral as to whether a feast or a seasonal day is being considered. This causes
 			// a problem when the seasonal octave is movable
 			pp_feast.b_is_octave = getOctave(datetime, false, mass_type, pp_feast.octave_type, pp_feast.privileged_octave_order, pp_feast.b_is_in_octave_day, pp_feast.b_is_in_octave_feast_day);
@@ -135,15 +135,15 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 
 		int8_t day_duplex_class = DUPLEX_NA;
 		bool b_day_is_duplex = false;
-		
+
 		if (pp_season.b_is_available) {
 			day_duplex_class = pp_season.duplex_class;
 			b_day_is_duplex = pp_season.b_is_duplex;
 		}
-		
+
 		bool b_is_sunday = Tridentine::sunday(datetime);
 		bool b_celebrate_deferred = (pp_deferred.b_is_available && !b_is_sunday && (!(b_day_is_duplex && day_duplex_class >= DUPLEX_CLASS_II)));
-		
+
 		if (pp_feast.b_is_available) {
 			day_duplex_class = pp_feast.duplex_class > day_duplex_class ? pp_feast.duplex_class : day_duplex_class;
 			b_day_is_duplex = (pp_feast.b_is_duplex || b_day_is_duplex);
@@ -160,19 +160,28 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			// a problem when the seasonal octave is movable
 			pp_deferred.b_is_octave = getOctave(datetime, false, mass_type, pp_deferred.octave_type, pp_deferred.privileged_octave_order, pp_deferred.b_is_in_octave_day, pp_deferred.b_is_in_octave_feast_day);
 			pp_deferred.b_is_vigil_of_epiphany = Tridentine::issameday(datetime, Tridentine::date(5, 1, year(datetime)));
+			if (pp_deferred.b_is_octave) {
+				// PLL-09-12-2024 if going to celebrate this deferred feast, and it has an octave, the precedence value may be affected by *its own octave*, that is, the day on which the
+				// deferred feast is to be celebrated may be one of its own octave days, thus the decision to show the deferred day as a commemoration on this day (when it should
+				// be celebrated on its own), may be the result of a Semiduplex day becoming promoted to a Dies infr. Oct. comm. So need to handle this case by suppressing the fact this
+				// is a day in the deferred feast's own octave (I do not shift the octave days following the deferred fixed feast yet, as would make sense to do - I'm not sure if I should!).
+				// before calling Index_y(). This situation has arisen for the 1570 Mass, where I am deferring the Feast of the Immaculate Conception when it occurs on a Sunday of Advent,
+				// as it did in 2024, per the D.O. website's example.
+				pp_deferred.b_celebrating_deferred_feast = b_celebrate_deferred;
+			}
 			pr_index_y_deferred = Index_y(pp_deferred);
 		}
 
 		///TODO: if deferred feast can be celebrated on this day, need to make it the feast. The feast/seasonal days' references will not need to be deferred
 		///      for a day which without the transferred feast is not a Class I or II day
-		
-		
+
+
 		///
 
 		uint8_t tablevalue = pr_index_x == -1 || pr_index_y == -1 ? 0 : precedence[pr_index_y][pr_index_x];
-		
+
 		uint8_t tablevalue_df = 0;
-		
+
 		if (b_celebrate_deferred) {
 			tablevalue_df = pr_index_x == -1 || pr_index_y_deferred == -1 ? 0 : precedence[pr_index_y_deferred][pr_index_x];
 
@@ -187,11 +196,11 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 #endif
 		}
 
-		ordering.feast_classnumber = pp_feast.b_is_available ? (uint8_t)(18-(Index_x(pp_feast) + 1)) : 0; // makes a "score" from -1 to 16, to which I add 1 and subtract the result from 18, to make it from 18 to 1 (18=simplex, 1=Sunday of the first class). 0 = not available
-		ordering.season_classnumber = pp_season.b_is_available ? (uint8_t)(18-(pr_index_x + 1)) : 0; //
+		ordering.feast_classnumber = pp_feast.b_is_available ? (uint8_t)(18 - (Index_x(pp_feast) + 1)) : 0; // makes a "score" from -1 to 16, to which I add 1 and subtract the result from 18, to make it from 18 to 1 (18=simplex, 1=Sunday of the first class). 0 = not available
+		ordering.season_classnumber = pp_season.b_is_available ? (uint8_t)(18 - (pr_index_x + 1)) : 0; //
 
 		if (b_celebrate_deferred) {
-			deferred._precedencescore = ordering.feast_classnumber;
+			deferred._precedencescore = ordering.deferred_classnumber; //ordering.feast_classnumber;
 		}
 		else {
 			if (b_is_saturday_of_our_lady) {
@@ -208,7 +217,7 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		/// and the seasonal feast in the headings[0] position. 
 		/// To do it properly, need to make sure that, when there are two feasts - a feast of the Lord and a fixed temporal feast, where the lesser feast is transferred, 
 		/// that the FOL goes in the Feast headings array entry, and the temporal feast in the headings Seasonal array entry (ie, the reverse of the default situation)
-		
+
 		// NB. Now know this is because the feasts in the weeks of Pentecost (which move with the date of Pentecost each year), are stored in such as wy that they are opened
 		// as seasonal, rather than feast days. This should fix this.
 		int yr = year(datetime);
@@ -233,9 +242,9 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 		if (b_celebrate_deferred) tvalue = tablevalue_df; // if the deferred feast will be celebrated today
 
 		//DEBUG_PRT.on();
-		DEBUG_PRT.printf("x=%d y=%d table value=%d: ", pr_index_x, pr_index_y, tvalue);
+		DEBUG_PRT.printf("x=%d y=%d table value=%d: ", pr_index_x, b_celebrate_deferred ? pr_index_y_deferred : pr_index_y, tvalue);
 #ifdef _WIN32
-		Bidi::printf("x=%d y=%d table value=%d: ", pr_index_x, pr_index_y, tvalue);
+		Bidi::printf("x=%d y=%d table value=%d: ", pr_index_x, b_celebrate_deferred ? pr_index_y_deferred : pr_index_y, tvalue);
 #endif
 		//DEBUG_PRT.off();
 
@@ -282,7 +291,9 @@ void Precedence::doOrdering(time64_t datetime, uint8_t mass_type, MissalReading&
 			break;
 		}
 
-		handleCommemorations(datetime, mass_type, ordering, pp_season, pp_feast, tablevalue);
+		if (!b_celebrate_deferred) { // not sure how to handle this - should leave the ordering from the pr_n functions as is if it has been determined to celebrate a deferred feast
+			handleCommemorations(datetime, mass_type, ordering, pp_season, pp_feast, tablevalue);
+		}
 
 //		if ((ordering.b_transfer_1st || ordering.b_transfer_2nd) && ordering.transfer_heading_index != -1) {
 //			Tridentine::setDeferredFeast(ordering.headings[ordering.transfer_heading_index]->_filedir); // PLL-04-10-2024 save filename of Seasonal day to deferred list
@@ -1560,8 +1571,8 @@ int8_t Precedence::Index_y(PrecedenceParams& pp)
 	// feast
 	return pp.day == DAY_DUPLEX && pp.duplex_class == DUPLEX_CLASS_I ? 0 :
 		pp.day == DAY_DUPLEX && !pp.b_is_vigil && pp.duplex_class == DUPLEX_CLASS_II ? 1 :
-		pp.b_is_octave && pp.b_is_in_octave_day && pp.octave_type == OCTAVE_COMMON ? 2 :
-		pp.b_is_octave && !pp.b_is_in_octave_day && pp.octave_type == OCTAVE_COMMON ? 6 :
+		pp.b_is_octave && !pp.b_celebrating_deferred_feast && pp.b_is_in_octave_day && pp.octave_type == OCTAVE_COMMON ? 2 : 
+		pp.b_is_octave && !pp.b_celebrating_deferred_feast && !pp.b_is_in_octave_day && pp.octave_type == OCTAVE_COMMON ? 6 :
 		pp.b_is_vigil ? 7 :
 		pp.b_is_octave && pp.b_is_in_octave_day && pp.octave_type == OCTAVE_SIMPLE ? 8 :
 		pp.day == DAY_DUPLEX && pp.duplex_class == DUPLEX_MAJOR ? 3 :

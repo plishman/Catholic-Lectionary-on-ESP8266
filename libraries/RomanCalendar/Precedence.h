@@ -52,6 +52,8 @@ typedef struct PrecedenceParams {
 	uint8_t duplex_class;
 
 	bool b_is_saturday_of_our_lady;
+
+	bool b_celebrating_deferred_feast = false;
 } PrecedenceParams;
 
 typedef struct PrecedenceParams_1960 {

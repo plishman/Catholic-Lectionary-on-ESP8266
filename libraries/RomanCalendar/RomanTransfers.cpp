@@ -651,7 +651,7 @@ bool RomanTransfers::ReadFixedFieldString(String& str, File& tfile, int fieldsiz
 		str.reserve(strlength);
 	
 		for (int i = 0; i < strlength; i++) {
-			str += tfile.read();
+			str += (char)tfile.read();
 		}
 	}
 
