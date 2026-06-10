@@ -321,6 +321,48 @@ int8_t RomanTransfers::GetActiveEntry(File& tfile, int8_t headerfieldnum) { // r
 	return -1;	// defaults to -1 if not found
 }
 
+
+bool RomanTransfers::SetActiveEntry(File& tfile, int8_t entry, int8_t headerfieldnum) { // set the int8_t number of the active entry
+	//int transferrecordsize = sizeof(TransferRecord) / sizeof(uint8_t);
+	long tfilesize = 0;
+	if (tfile) {
+		tfilesize = tfile.size();
+	}
+	else {
+		return false;
+	}
+
+	int recordcount = (tfilesize - TRANSFER_F_OFFSET_XFERRECORDS) / transferrecordsize;
+	int numentries = GetNumEntries(tfile);
+	//long tfile_minsizeneeded = TRANSFER_F_OFFSET_XFERRECORDS + ((long)entry * transferrecordsize);
+
+	bool bfileok = (tfilesize >= (TRANSFER_F_OFFSET_XFERRECORDS + ((entry + 1) * transferrecordsize)));
+
+	DEBUG_PRT.print(F("SetActiveEntry(): reccount="));
+	DEBUG_PRT.print(recordcount);
+	DEBUG_PRT.print(F("numentries="));
+	DEBUG_PRT.print(numentries);
+	DEBUG_PRT.print(F("tfile size="));
+	DEBUG_PRT.print(tfilesize);
+	DEBUG_PRT.print(bfileok ? F("[file ok]") : F("[file short]"));
+
+	if (numentries == recordcount && bfileok) // entry number is zero based
+	{ // the file is open and at least big enough to contain the record, and the number of records in the file matches the number stored in the numentries field
+		if (entry < numentries &&
+		    (headerfieldnum == TRANSFER_F_OFFSET_ACTIVEENTRY 
+				|| headerfieldnum == TRANSFER_F_OFFSET_LASTACTIVEENTRY 
+				|| headerfieldnum == TRANSFER_F_OFFSET_LASTADDEDENTRY)
+		   )
+		{
+			tfile.seek(headerfieldnum);
+			tfile.write((uint8_t *)&entry, sizeof(uint8_t));
+			return true;
+		}
+	}
+	return false;	// defaults to -1 if not found
+}
+
+/*
 bool RomanTransfers::SetActiveEntry(File& tfile, int8_t entry, int8_t headerfieldnum) { // set the int8_t number of the active entry
 	//int transferrecordsize = sizeof(TransferRecord) / sizeof(uint8_t);
 	int recordcount = (tfile.size() - TRANSFER_F_OFFSET_XFERRECORDS) / transferrecordsize;
@@ -341,6 +383,7 @@ bool RomanTransfers::SetActiveEntry(File& tfile, int8_t entry, int8_t headerfiel
 	}
 	return false;	// defaults to -1 if not found
 }
+*/
 
 int8_t RomanTransfers::GetLastActiveEntry(File& tfile) {
 	return GetActiveEntry(tfile, TRANSFER_F_OFFSET_LASTACTIVEENTRY);
@@ -371,6 +414,37 @@ bool RomanTransfers::CloseTransfer(File& tfile, int8_t entry, bool bcloseevenifp
 		|| (bcloseevenifpending && transfer.activedayofweek == TRANSFER_DOW_PENDING)))
 	{ // <entry> is an open transfer record
 		transfer.activedayofweek = TRANSFER_DOW_FINISHED;
+		bool bok = SetActiveEntry(tfile, TRANSFER_F_ACTIVEENTRY_NONE);
+		if (!bok) DEBUG_PRT.print(F("SetActiveEntry failed!"));
+
+		bok = bok && SetLastActiveEntry(tfile, entry);
+		if (!bok) DEBUG_PRT.print(F("SetLastActiveEntry failed!"));
+
+		bok = bok && PutTransferRecord(tfile, entry, transfer); // is not atomic, but hopefully the rest of the code will have enough checking to recover from nonatomic write interruption
+		if (!bok) DEBUG_PRT.print(F("PutTransferRecord failed!"));
+
+		DEBUG_PRT.print(F("attempted to close transfer with id="));
+		DEBUG_PRT.println(transfer.id);
+		return bok;
+	}
+	DEBUG_PRT.print(F("failed"));
+	return false;
+}
+
+/*
+bool RomanTransfers::CloseTransfer(File& tfile, int8_t entry, bool bcloseevenifpending) {
+	// set the DOW of the transfer numbered <entry> to be -2 (TRANSFER_DOW_FINISHED),
+	// set the LASTACTIVEENTRY byte to be the same as the ACTIVEENTRY byte, and set the ACTIVEENTRY byte to -1 (=TRANSFER_F_ACTIVEENTRY_NONE)
+	TransferRecord transfer;
+	int8_t activetransfer = GetActiveEntry(tfile);
+
+	DEBUG_PRT.print(F("CloseTransfer() "));
+
+	if (GetTransferRecord(tfile, entry, transfer) 
+		&& ((activetransfer == entry && transfer.activedayofweek >= dowSunday && transfer.activedayofweek <= dowSaturday)
+		|| (bcloseevenifpending && transfer.activedayofweek == TRANSFER_DOW_PENDING)))
+	{ // <entry> is an open transfer record
+		transfer.activedayofweek = TRANSFER_DOW_FINISHED;
 		bool bok = SetActiveEntry(tfile, TRANSFER_F_ACTIVEENTRY_NONE) && SetLastActiveEntry(tfile, entry) && PutTransferRecord(tfile, entry, transfer); // is not atomic, but hopefully the rest of the code will have enough checking to recover from nonatomic write interruption
 		DEBUG_PRT.print(F("closed transfer with id="));
 		DEBUG_PRT.println(transfer.id);
@@ -379,10 +453,20 @@ bool RomanTransfers::CloseTransfer(File& tfile, int8_t entry, bool bcloseevenifp
 	DEBUG_PRT.print(F("failed"));
 	return false;
 }
+*/
 
 ////
 // SetActiveTransfer(transfer, datetime) (this form) is the function for the lectionary to call to set a transfer as active, if not already set so. 
 // Called when the decision to celebrate a deferred feast is made that was already found pending or active by a prior call to GetTransfer().
+bool RomanTransfers::CloseTransfer(TransferRecord& transfer) {
+	bool bok = OpenTransfersFile(tfile);
+	if (bok) {
+		bok = CloseTransfer(tfile, transfer.id);
+		tfile.close();
+	}
+	return bok;
+}
+
 bool RomanTransfers::SetActiveTransfer(TransferRecord& transfer, time64_t datetime) {
 	//File tfile;
 #ifdef _WIN32
@@ -783,7 +867,7 @@ bool RomanTransfers::GetTransfer(TransferRecord& transfer, time64_t datetime, Fi
 
 	uint8_t numentries = GetNumEntries(tfile);
 	if (numentries == 0) {
-		if (!bfilewasopen) tfile.close();
+		if (!bfilewasopen) tfile.close();  //?
 		DEBUG_PRT.println(F(" transfers file is empty"));
 		return false; // no entries to get
 	}
@@ -822,7 +906,10 @@ bool RomanTransfers::GetTransfer(TransferRecord& transfer, time64_t datetime, Fi
 #endif
 			}
 			else {
-				DEBUG_PRT.println(F(" Tried to close stale transfer, but failed!"));
+				DEBUG_PRT.println(F(" Tried to close stale transfer, but failed, resetting transfers file!"));
+				ResetTransfersFile(tfile);
+				tfile.close();
+				return false;
 			}
 		}
 	}

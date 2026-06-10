@@ -767,6 +767,13 @@ void GxGDEW042Z15::_wakeUp(void)
 {
   if (_rst >= 0)
   {
+    for (int i = 0; i < 3; i++)
+    {
+      digitalWrite(_rst, 0);
+      delay(200);
+      digitalWrite(_rst, 1);
+      delay(200);
+    }
     digitalWrite(_rst, 0);
     delay(1250);          // was 750 - lengthened due to slight instability when using grey/red level lookup tables 
     digitalWrite(_rst, 1);

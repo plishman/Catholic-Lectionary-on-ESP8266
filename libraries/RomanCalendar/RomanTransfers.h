@@ -80,6 +80,11 @@ public:
 	// get a number corresponding to the lectionary edition in use. This function should probably be put in the Tridentine class
 	static int8_t GetLectionaryVersionNumber(String& FileDir_df);
 
+	// CloseTransfer() closes an active (or pending) transfer obtained by a prior call to GetTransfer().
+	// Call this when a transfer returned by GetTransfer() should be discarded, e.g. when the stored
+	// lectionarynumber no longer matches the lectionary currently in use.
+	static bool CloseTransfer(TransferRecord& transfer);
+
 	// dump the transfers file to the browser
 	static void DumpTransfersFile(bool bheaderonly = false);
 	static void DumpTransferRecord(TransferRecord transfer, bool bdumptodebugprt = false);

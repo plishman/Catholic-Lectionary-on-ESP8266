@@ -144,6 +144,7 @@ enum DISPLAY_UPDATE_TYPE {
 // are necessary to allow default values to be set for the functions
 void updateDisplay(DISPLAY_UPDATE_TYPE d, int8_t lut_mode = LUT_MODE_1BPP);
 void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor, int8_t lut_mode = LUT_MODE_1BPP);
+void epaperMaintenanceUpdate();
 
 //void updateDisplay(DISPLAY_UPDATE_TYPE d);
 //void updateDisplay(DISPLAY_UPDATE_TYPE d, String messagetext, uint16_t messagecolor);
@@ -176,6 +177,47 @@ EPD_DISPLAY_IMAGE* epd_image = NULL;
 String epaper_messagetext = "";
 uint16_t epaper_messagetext_color = GxEPD_BLACK;
 int displayPage = 0;
+uint16_t epaper_maintenance_color = GxEPD_WHITE;
+
+void runEpaperMaintenanceStep(uint16_t color) {
+  epaper_maintenance_color = color;
+  ePaper.drawPaged(epaperMaintenanceUpdate);
+}
+
+void epaperMaintenanceUpdate() {
+  wdt_reset();
+  ePaper.fillScreen(epaper_maintenance_color);
+}
+
+void runEpaperMaintenanceCycle(unsigned long duration_ms = 2 * 60000UL) {
+  DEBUG_PRT.println(F("Running e-paper maintenance refresh cycle"));
+  ePaper.init();
+
+  unsigned long start = millis();
+  uint16_t sequence_count = 0;
+  while ((millis() - start) < duration_ms) {
+    // One sequence drives both black and red pigments through full travel.
+    wdt_reset();
+    runEpaperMaintenanceStep(GxEPD_WHITE);
+
+    wdt_reset();
+    runEpaperMaintenanceStep(GxEPD_BLACK);
+
+    wdt_reset();
+    runEpaperMaintenanceStep(GxEPD_WHITE);
+
+    wdt_reset();
+    runEpaperMaintenanceStep(GxEPD_RED);
+
+    wdt_reset();
+    runEpaperMaintenanceStep(GxEPD_WHITE);
+
+    sequence_count++;
+    yield();
+  }
+
+  DEBUG_PRT.printf("E-paper maintenance complete (%u sequence(s))\n", sequence_count);
+}
 
 void updateDisplay(DISPLAY_UPDATE_TYPE d, int8_t lut_mode) {
 	updateDisplay(d, "", GxEPD_BLACK, lut_mode);
@@ -1065,6 +1107,11 @@ void loop(void) {
     
     tmElements_t ts;
     breakTime(date, ts);
+
+    int8_t wday = (int8_t)((weekday(date) + 6) % 7); // Sunday=0 ... Saturday=6
+    if (ts.Hour == 0 && wday == 1) { // weekly depolarization pass at midnight on Mondays
+  		runEpaperMaintenanceCycle();
+  	}
   
     //while (!network.get_ntp_time(&date)) {
     //  Serial.print(".");
@@ -2520,11 +2567,17 @@ void LatinMassPropers(time64_t& date,
 		td.FileDir_Deferred = String(transfer.deferredfeastfilename);
 		td.DeferredImageFilename = String(transfer.deferredfeastimagefilename);
 
-		if (transfer.lectionarynumber != RomanTransfers::GetLectionaryVersionNumber(lect)) {
+    if (transfer.lectionarynumber == RomanTransfers::GetLectionaryVersionNumber(lect)) {
 			bhavedeferredfeast = deferred.open(td.FileDir_Deferred, fileroot);  // 2 file buffers - now we have 8 open (9 if using logging)
 		}
 		else {
-			DEBUG_PRT.println(F("Deferred feast does not correspond to presently selected lectionary (settings changed by user?)"));
+			// The stored transfer belongs to a different lectionary version — close it so it cannot
+			// reappear on the same weekday in a future week after the user switches back.
+			if (!RomanTransfers::CloseTransfer(transfer)) {
+				DEBUG_PRT.println(F("LatinMassPropers() warning: could not close transfer with mismatched lectionary"));
+			}
+			bhavedeferredfeast = false;
+			DEBUG_PRT.println(F("Deferred feast does not correspond to presently selected lectionary (settings changed by user?) - transfer closed"));
 		}
 	}
 
